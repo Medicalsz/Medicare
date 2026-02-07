@@ -1,0 +1,20 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Medicare - Gestion de rendez-vous en ligne{% endblock %}
+
+{% block body %}
+    {# Hero Section #}
+    {% include 'components/hero/hero.html.twig' %}
+    
+    {# About Section - Qui sommes-nous #}
+    {% include 'components/about/about.html.twig' %}
+    
+    {# Services Section #}
+    {% include 'components/services/services.html.twig' %}
+    
+    {# Medecins Preview Section #}
+    {% include 'components/medecins-preview/medecins-preview.html.twig' %}
+    
+    {# Contact Section #}
+    {% include 'components/contact/contact.html.twig' %}
+{% endblock %}

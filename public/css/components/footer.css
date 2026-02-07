@@ -1,0 +1,174 @@
+/* Footer Component Styles */
+
+.footer-medicare {
+    background: linear-gradient(135deg, #2F80ED 0%, #1a5cbf 100%);
+    color: white;
+    padding: 30px 0 10px;
+    margin-top: 50px;
+}
+
+.footer-brand {
+    text-align: left;
+}
+
+.footer-logo {
+    height: 50px;
+    width: auto;
+    margin-bottom: 8px;
+}
+
+.footer-tagline {
+    font-size: 0.85rem;
+    color: rgba(255,255,255,0.8);
+    margin: 0;
+}
+
+.footer-title {
+    font-size: 0.95rem;
+    font-weight: 700;
+    margin-bottom: 10px;
+    color: white;
+}
+
+.footer-links {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.footer-links li {
+    margin-bottom: 5px;
+}
+
+.footer-links a {
+    color: rgba(255,255,255,0.85);
+    text-decoration: none;
+    font-size: 0.85rem;
+    transition: all 0.3s ease;
+    display: inline-block;
+}
+
+.footer-links a:hover {
+    color: white;
+    transform: translateX(5px);
+}
+
+.footer-links i {
+    width: 16px;
+    font-size: 0.8rem;
+}
+
+.footer-contact {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.footer-contact li {
+    color: rgba(255,255,255,0.85);
+    font-size: 0.8rem;
+    margin-bottom: 6px;
+    display: flex;
+    gap: 8px;
+}
+
+.footer-contact i {
+    color: #56CCF2;
+    margin-top: 2px;
+    font-size: 0.85rem;
+}
+
+.footer-social {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.footer-social a {
+    width: 35px;
+    height: 35px;
+    background: rgba(255,255,255,0.1);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    font-size: 0.9rem;
+}
+
+.footer-social a:hover {
+    background: white;
+    color: #2F80ED;
+    transform: translateY(-3px);
+}
+
+.footer-apps {
+    display: flex;
+    flex-direction: column;
+}
+
+.app-btn {
+    background: rgba(255,255,255,0.1);
+    color: white;
+    text-decoration: none;
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-size: 0.8rem;
+    margin-bottom: 6px;
+    transition: all 0.3s ease;
+    text-align: center;
+}
+
+.app-btn:hover {
+    background: white;
+    color: #2F80ED;
+}
+
+.app-btn i {
+    margin-right: 5px;
+}
+
+.footer-bottom {
+    border-top: 1px solid rgba(255,255,255,0.1);
+    margin-top: 20px;
+    padding-top: 15px;
+    text-align: center;
+}
+
+.footer-bottom p {
+    margin: 0;
+    font-size: 0.8rem;
+    color: rgba(255,255,255,0.7);
+}
+
+/* Responsive */
+@media (max-width: 991px) {
+    .footer-medicare {
+        padding: 25px 0 10px;
+    }
+    
+    .footer-brand {
+        text-align: center;
+        margin-bottom: 15px;
+    }
+    
+    .footer-title {
+        margin-top: 15px;
+    }
+}
+
+@media (max-width: 576px) {
+    .footer-medicare {
+        padding: 20px 0 10px;
+    }
+    
+    .footer-logo {
+        height: 40px;
+    }
+    
+    .footer-apps {
+        margin-top: 15px;
+    }
+}

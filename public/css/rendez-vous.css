@@ -1,0 +1,222 @@
+/* Rendez-vous Page Styles */
+
+.rendez-vous-section {
+    min-height: 100vh;
+    padding: 140px 0 80px;
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+}
+
+.rdv-header {
+    margin-bottom: 50px;
+}
+
+.rdv-title {
+    font-size: 2.8rem;
+    font-weight: 700;
+    color: #333;
+    margin-bottom: 15px;
+    background: linear-gradient(135deg, #56CCF2 0%, #2F80ED 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.rdv-subtitle {
+    font-size: 1.2rem;
+    color: #666;
+}
+
+.rdv-form-wrapper {
+    background: white;
+    border-radius: 25px;
+    padding: 40px;
+    box-shadow: 0 10px 50px rgba(0,0,0,0.1);
+    margin-bottom: 30px;
+}
+
+.step-title {
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: #2F80ED;
+    margin-bottom: 25px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.step-title i {
+    font-size: 1.3rem;
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    display: block;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 8px;
+    font-size: 0.95rem;
+}
+
+.form-group label i {
+    color: #2F80ED;
+    margin-right: 5px;
+}
+
+.form-control {
+    width: 100%;
+    padding: 12px 18px;
+    border: 2px solid #e0e0e0;
+    border-radius: 12px;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+}
+
+.form-control:focus {
+    outline: none;
+    border-color: #2F80ED;
+    box-shadow: 0 0 0 4px rgba(47, 128, 237, 0.1);
+}
+
+select.form-control {
+    cursor: pointer;
+}
+
+textarea.form-control {
+    resize: vertical;
+    min-height: 100px;
+}
+
+.form-actions {
+    margin-top: 35px;
+    text-align: center;
+}
+
+.btn-submit-rdv {
+    background: linear-gradient(135deg, #56CCF2 0%, #2F80ED 100%);
+    color: white;
+    border: none;
+    padding: 16px 50px;
+    border-radius: 50px;
+    font-size: 1.1rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 8px 25px rgba(47, 128, 237, 0.3);
+}
+
+.btn-submit-rdv:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 12px 35px rgba(47, 128, 237, 0.4);
+}
+
+.btn-submit-rdv i {
+    margin-right: 10px;
+}
+
+.rdv-info-box {
+    background: white;
+    border-radius: 20px;
+    padding: 25px;
+    box-shadow: 0 5px 30px rgba(0,0,0,0.08);
+}
+
+.info-item {
+    display: flex;
+    gap: 15px;
+    align-items: flex-start;
+    padding: 15px;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.info-item:last-child {
+    border-bottom: none;
+}
+
+.info-item i {
+    font-size: 2rem;
+    color: #2F80ED;
+    flex-shrink: 0;
+}
+
+.info-item h5 {
+    font-size: 1rem;
+    font-weight: 700;
+    color: #333;
+    margin: 0 0 5px 0;
+}
+
+.info-item p {
+    font-size: 0.85rem;
+    color: #777;
+    margin: 0;
+}
+
+/* Responsive */
+@media (max-width: 991px) {
+    .rendez-vous-section {
+        padding: 120px 0 60px;
+    }
+    
+    .rdv-title {
+        font-size: 2.2rem;
+    }
+    
+    .rdv-form-wrapper {
+        padding: 30px 25px;
+    }
+}
+
+@media (max-width: 576px) {
+    .rendez-vous-section {
+        padding: 100px 0 50px;
+    }
+    
+    .rdv-title {
+        font-size: 1.8rem;
+    }
+    
+    .rdv-subtitle {
+        font-size: 1rem;
+    }
+    
+    .rdv-form-wrapper {
+        padding: 25px 20px;
+    }
+    
+    .step-title {
+        font-size: 1.2rem;
+    }
+    
+    .form-group label {
+        font-size: 0.85rem;
+    }
+    
+    .form-control {
+        padding: 10px 15px;
+        font-size: 0.9rem;
+    }
+    
+    .btn-submit-rdv {
+        padding: 14px 40px;
+        font-size: 1rem;
+    }
+    
+    .info-item {
+        padding: 12px;
+    }
+    
+    .info-item i {
+        font-size: 1.5rem;
+    }
+    
+    .info-item h5 {
+        font-size: 0.9rem;
+    }
+    
+    .info-item p {
+        font-size: 0.75rem;
+    }
+}

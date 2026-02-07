@@ -1,0 +1,166 @@
+{# Navbar Component #}
+<link rel="stylesheet" href="/css/components/navbar.css">
+
+<nav class="navbar navbar-expand-xl navbar-medicare fixed-top">
+    <div class="container">
+        <a class="navbar-brand" href="{{ path('home') }}">
+            <img src="/images/logomedicare.png" alt="Medicare Logo">
+        </a>
+        <button class="navbar-toggler d-xl-none" type="button" id="mobileMenuToggle">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        
+        {# Desktop Menu #}
+        <div class="navbar-collapse d-none d-xl-flex" id="navbarNav">
+            <ul class="navbar-nav ms-auto align-items-center">
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ path('home') }}">
+                        <i class="fas fa-home"></i> Accueil
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#about">
+                        <i class="fas fa-info-circle"></i> Qui sommes-nous
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#services">
+                        <i class="fas fa-stethoscope"></i> Services
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#medecins">
+                        <i class="fas fa-user-md"></i> Médecins
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#contact">
+                        <i class="fas fa-envelope"></i> Contact
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ path('rendez_vous') }}">
+                        <i class="fas fa-calendar-check"></i> Rendez-vous
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="btn btn-connexion" href="#connexion">
+                        <i class="fas fa-sign-in-alt"></i> Connexion
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="btn btn-inscription" href="#inscription">
+                        <i class="fas fa-user-plus"></i> Inscription
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+{# Mobile Menu Overlay #}
+<div class="mobile-menu-overlay" id="mobileMenuOverlay"></div>
+
+{# Mobile Menu Sidebar #}
+<div class="mobile-menu-sidebar" id="mobileMenuSidebar">
+    <div class="mobile-menu-header">
+        <img src="/images/logomedicare.png" alt="Medicare" class="mobile-menu-logo">
+        <button class="mobile-menu-close" id="mobileMenuClose">
+            <i class="fas fa-times"></i>
+        </button>
+    </div>
+    <ul class="mobile-menu-nav">
+        <li class="mobile-menu-item">
+            <a class="mobile-menu-link" href="{{ path('home') }}">
+                <i class="fas fa-home"></i> Accueil
+            </a>
+        </li>
+        <li class="mobile-menu-item">
+            <a class="mobile-menu-link" href="#about">
+                <i class="fas fa-info-circle"></i> Qui sommes-nous
+            </a>
+        </li>
+        <li class="mobile-menu-item">
+            <a class="mobile-menu-link" href="#services">
+                <i class="fas fa-stethoscope"></i> Services
+            </a>
+        </li>
+        <li class="mobile-menu-item">
+            <a class="mobile-menu-link" href="#medecins">
+                <i class="fas fa-user-md"></i> Médecins
+            </a>
+        </li>
+        <li class="mobile-menu-item">
+            <a class="mobile-menu-link" href="#contact">
+                <i class="fas fa-envelope"></i> Contact
+            </a>
+        </li>
+        <li class="mobile-menu-item">
+            <a class="mobile-menu-link" href="{{ path('rendez_vous') }}">
+                <i class="fas fa-calendar-check"></i> Rendez-vous
+            </a>
+        </li>
+        <li class="mobile-menu-item">
+            <a class="mobile-menu-link btn-mobile-connexion" href="#connexion">
+                <i class="fas fa-sign-in-alt"></i> Connexion
+            </a>
+        </li>
+        <li class="mobile-menu-item">
+            <a class="mobile-menu-link btn-mobile-inscription" href="#inscription">
+                <i class="fas fa-user-plus"></i> Inscription
+            </a>
+        </li>
+    </ul>
+</div>
+
+<script>
+    // Effet scroll sur la navbar
+    window.addEventListener('scroll', function() {
+        const navbar = document.querySelector('.navbar-medicare');
+        if (window.scrollY > 50) {
+            navbar.classList.add('scrolled');
+        } else {
+            navbar.classList.remove('scrolled');
+        }
+    });
+    
+    // Mobile Menu Toggle
+    const mobileMenuToggle = document.getElementById('mobileMenuToggle');
+    const mobileMenuClose = document.getElementById('mobileMenuClose');
+    const mobileMenuOverlay = document.getElementById('mobileMenuOverlay');
+    const mobileMenuSidebar = document.getElementById('mobileMenuSidebar');
+    
+    function openMobileMenu() {
+        mobileMenuSidebar.classList.add('active');
+        mobileMenuOverlay.classList.add('active');
+        document.body.style.overflow = 'hidden';
+    }
+    
+    function closeMobileMenu() {
+        mobileMenuSidebar.classList.remove('active');
+        mobileMenuOverlay.classList.remove('active');
+        document.body.style.overflow = '';
+    }
+    
+    if (mobileMenuToggle) {
+        mobileMenuToggle.addEventListener('click', openMobileMenu);
+    }
+    
+    if (mobileMenuClose) {
+        mobileMenuClose.addEventListener('click', closeMobileMenu);
+    }
+    
+    if (mobileMenuOverlay) {
+        mobileMenuOverlay.addEventListener('click', closeMobileMenu);
+    }
+    
+    // Fermer le menu quand on clique sur un lien
+    const mobileMenuLinks = document.querySelectorAll('.mobile-menu-link');
+    mobileMenuLinks.forEach(link => {
+        link.addEventListener('click', closeMobileMenu);
+    });
+</script>
+            navbar.classList.remove('scrolled');
+        }
+    });
+</script>

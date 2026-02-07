@@ -1,0 +1,233 @@
+{# Medecins Preview Component #}
+<link rel="stylesheet" href="/css/components/medecins-preview.css">
+
+<section class="medecins-section" id="medecins">
+    <div class="container">
+        <div class="section-header text-center" data-aos="fade-up">
+            <span class="section-subtitle">NOS MÉDECINS</span>
+            <h2 class="section-title">Rencontrez nos experts</h2>
+            <p class="section-description">
+                Des médecins qualifiés et expérimentés à votre service
+            </p>
+        </div>
+
+        <div class="doctors-carousel-wrapper">
+            <button class="carousel-btn carousel-prev" onclick="slideDoctors(-1)">
+                <i class="fas fa-chevron-left"></i>
+            </button>
+            
+            <div class="doctors-carousel">
+                <div class="doctors-track" id="doctorsTrack">
+                    <div class="doctor-card">
+                        <div class="doctor-image">
+                            <img src="/images/doctor-1.jpg" alt="Dr. Sarah Martin" class="img-fluid">
+                            <div class="doctor-social">
+                                <a href="#"><i class="fab fa-facebook-f"></i></a>
+                                <a href="#"><i class="fab fa-twitter"></i></a>
+                                <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                            </div>
+                        </div>
+                        <div class="doctor-info">
+                            <h4 class="doctor-name">Dr. Sarah Martin</h4>
+                            <p class="doctor-specialty">Cardiologue</p>
+                            <div class="doctor-rating">
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <span>5.0</span>
+                            </div>
+                            <p class="doctor-experience"><i class="fas fa-briefcase"></i> 15 ans d'expérience</p>
+                            <a href="#rendez-vous" class="btn-doctor-rdv">
+                                <i class="fas fa-calendar-alt"></i> Prendre RDV
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="doctor-card">
+                        <div class="doctor-image">
+                            <img src="/images/doctor-2.jpg" alt="Dr. Ahmed Benali" class="img-fluid">
+                            <div class="doctor-social">
+                                <a href="#"><i class="fab fa-facebook-f"></i></a>
+                                <a href="#"><i class="fab fa-twitter"></i></a>
+                                <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                            </div>
+                        </div>
+                        <div class="doctor-info">
+                            <h4 class="doctor-name">Dr. Ahmed Benali</h4>
+                            <p class="doctor-specialty">Dentiste</p>
+                            <div class="doctor-rating">
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star-half-alt"></i>
+                                <span>4.9</span>
+                            </div>
+                            <p class="doctor-experience"><i class="fas fa-briefcase"></i> 12 ans d'expérience</p>
+                            <a href="#rendez-vous" class="btn-doctor-rdv">
+                                <i class="fas fa-calendar-alt"></i> Prendre RDV
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="doctor-card">
+                        <div class="doctor-image">
+                            <img src="/images/doctor-3.jpg" alt="Dr. Marie Dubois" class="img-fluid">
+                            <div class="doctor-social">
+                                <a href="#"><i class="fab fa-facebook-f"></i></a>
+                                <a href="#"><i class="fab fa-twitter"></i></a>
+                                <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                            </div>
+                        </div>
+                        <div class="doctor-info">
+                            <h4 class="doctor-name">Dr. Marie Dubois</h4>
+                            <p class="doctor-specialty">Pédiatre</p>
+                            <div class="doctor-rating">
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <span>5.0</span>
+                            </div>
+                            <p class="doctor-experience"><i class="fas fa-briefcase"></i> 10 ans d'expérience</p>
+                            <a href="#rendez-vous" class="btn-doctor-rdv">
+                                <i class="fas fa-calendar-alt"></i> Prendre RDV
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="doctor-card">
+                        <div class="doctor-image">
+                            <img src="/images/doctor-1.jpg" alt="Dr. Jean Lefèvre" class="img-fluid">
+                            <div class="doctor-social">
+                                <a href="#"><i class="fab fa-facebook-f"></i></a>
+                                <a href="#"><i class="fab fa-twitter"></i></a>
+                                <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                            </div>
+                        </div>
+                        <div class="doctor-info">
+                            <h4 class="doctor-name">Dr. Jean Lefèvre</h4>
+                            <p class="doctor-specialty">Chirurgien</p>
+                            <div class="doctor-rating">
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <span>4.8</span>
+                            </div>
+                            <p class="doctor-experience"><i class="fas fa-briefcase"></i> 20 ans d'expérience</p>
+                            <a href="#rendez-vous" class="btn-doctor-rdv">
+                                <i class="fas fa-calendar-alt"></i> Prendre RDV
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="doctor-card">
+                        <div class="doctor-image">
+                            <img src="/images/doctor-2.jpg" alt="Dr. Sophie Laurent" class="img-fluid">
+                            <div class="doctor-social">
+                                <a href="#"><i class="fab fa-facebook-f"></i></a>
+                                <a href="#"><i class="fab fa-twitter"></i></a>
+                                <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                            </div>
+                        </div>
+                        <div class="doctor-info">
+                            <h4 class="doctor-name">Dr. Sophie Laurent</h4>
+                            <p class="doctor-specialty">Dermatologue</p>
+                            <div class="doctor-rating">
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <span>4.9</span>
+                            </div>
+                            <p class="doctor-experience"><i class="fas fa-briefcase"></i> 8 ans d'expérience</p>
+                            <a href="#rendez-vous" class="btn-doctor-rdv">
+                                <i class="fas fa-calendar-alt"></i> Prendre RDV
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="doctor-card">
+                        <div class="doctor-image">
+                            <img src="/images/doctor-3.jpg" alt="Dr. Pierre Moreau" class="img-fluid">
+                            <div class="doctor-social">
+                                <a href="#"><i class="fab fa-facebook-f"></i></a>
+                                <a href="#"><i class="fab fa-twitter"></i></a>
+                                <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                            </div>
+                        </div>
+                        <div class="doctor-info">
+                            <h4 class="doctor-name">Dr. Pierre Moreau</h4>
+                            <p class="doctor-specialty">Neurologue</p>
+                            <div class="doctor-rating">
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star-half-alt"></i>
+                                <span>4.7</span>
+                            </div>
+                            <p class="doctor-experience"><i class="fas fa-briefcase"></i> 18 ans d'expérience</p>
+                            <a href="#rendez-vous" class="btn-doctor-rdv">
+                                <i class="fas fa-calendar-alt"></i> Prendre RDV
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <button class="carousel-btn carousel-next" onclick="slideDoctors(1)">
+                <i class="fas fa-chevron-right"></i>
+            </button>
+        </div>
+
+        <div class="text-center mt-5" data-aos="fade-up">
+            <a href="#" class="btn-view-all-doctors">
+                Voir tous nos médecins <i class="fas fa-arrow-right"></i>
+            </a>
+        </div>
+    </div>
+</section>
+
+<script>
+let currentIndex = 0;
+const track = document.getElementById('doctorsTrack');
+const cards = document.querySelectorAll('.doctor-card');
+const totalCards = cards.length;
+
+function getCardsPerView() {
+    if (window.innerWidth >= 1200) return 4;
+    if (window.innerWidth >= 768) return 2;
+    return 1;
+}
+
+function updateCarousel() {
+    const cardsPerView = getCardsPerView();
+    const cardWidth = cards[0].offsetWidth + 20; // 20 = gap
+    const offset = currentIndex * cardWidth;
+    track.style.transform = `translateX(-${offset}px)`;
+}
+
+function slideDoctors(direction) {
+    const cardsPerView = getCardsPerView();
+    const maxIndex = totalCards - cardsPerView;
+    
+    currentIndex += direction;
+    
+    if (currentIndex < 0) {
+        currentIndex = maxIndex;
+    } else if (currentIndex > maxIndex) {
+        currentIndex = 0;
+    }
+    
+    updateCarousel();
+}
+
+window.addEventListener('resize', updateCarousel);
+</script>
