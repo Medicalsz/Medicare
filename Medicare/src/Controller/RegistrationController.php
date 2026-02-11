@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\User;
+use App\Entity\Patient;
 use App\Form\RegistrationFormType;
 use App\Security\EmailVerifier;
 use Doctrine\ORM\EntityManagerInterface;
@@ -33,15 +34,45 @@ class RegistrationController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            // Vérifier que les mots de passe correspondent
+            $plainPassword = $form->get('plainPassword')->getData();
+            $confirmPassword = $form->get('confirmPassword')->getData();
+            
+            if ($plainPassword !== $confirmPassword) {
+                $this->addFlash('error', 'Les mots de passe ne correspondent pas');
+                return $this->render('registration/register.html.twig', [
+                    'registrationForm' => $form->createView(),
+                ]);
+            }
+            
             // encode the plain password
             $user->setPassword(
                 $userPasswordHasher->hashPassword(
                     $user,
-                    $form->get('plainPassword')->getData()
+                    $plainPassword
                 )
             );
 
-            $entityManager->persist($user);
+            // Détecter si l'email contient @admin pour créer un administrateur
+            $email = $user->getEmail();
+            if (stripos($email, '@admin') !== false) {
+                // C'est un administrateur
+                $user->setRoles(['ROLE_ADMIN', 'ROLE_USER']);
+                
+                // Pas de création d'entité Patient pour les admins
+                $entityManager->persist($user);
+            } else {
+                // Définir le rôle par défaut : PATIENT
+                $user->setRoles(['ROLE_PATIENT', 'ROLE_USER']);
+
+                // Créer l'entité Patient liée à ce User
+                $patient = new Patient();
+                $patient->setUser($user);
+
+                $entityManager->persist($user);
+                $entityManager->persist($patient);
+            }
+            
             $entityManager->flush();
 
             // generate a signed url and email it to the user
@@ -54,7 +85,7 @@ class RegistrationController extends AbstractController
             );
             // do anything else you need here, like send an email
 
-            return $this->redirectToRoute('app_login');
+            return $this->redirectToRoute('app_register', ['registered' => 'success']);
         }
 
         return $this->render('registration/register.html.twig', [

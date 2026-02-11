@@ -4,13 +4,13 @@
 <head>
   <meta charset="utf-8">
   <meta content="width=device-width, initial-scale=1.0" name="viewport">
-  <title>Index - MediNest Bootstrap Template</title>
-  <meta name="description" content="">
-  <meta name="keywords" content="">
+  <title>Medicare - Plateforme de Gestion de Santé</title>
+  <meta name="description" content="Medicare - Votre plateforme de gestion de rendez-vous médicaux">
+  <meta name="keywords" content="medicare, santé, rendez-vous, médecin, consultation">
 
   <!-- Favicons -->
-  <link href="{{ asset('assets/img/favicon.png') }}" rel="icon">
-  <link href="{{ asset('assets/img/apple-touch-icon.png') }}" rel="apple-touch-icon">
+  <link href="{{ asset('assets/img/logomedicare.png') }}" rel="icon">
+  <link href="{{ asset('assets/img/logomedicare.png') }}" rel="apple-touch-icon">
 
   <!-- Fonts -->
   <link href="https://fonts.googleapis.com" rel="preconnect">
@@ -35,55 +35,33 @@
   <header id="header" class="header d-flex align-items-center fixed-top">
     <div class="container position-relative d-flex align-items-center justify-content-between">
 
-      <a href="index.html" class="logo d-flex align-items-center me-auto me-xl-0">
-        <!-- Uncomment the line below if you also wish to use an image logo -->
-        <!-- <img src="assets/img/logo.webp" alt=""> -->
-        <h1 class="sitename">Medi<span>Nest</span></h1>
+      <a href="{{ path('app_home') }}" class="logo d-flex align-items-center me-auto me-xl-0">
+        <img src="{{ asset('assets/img/logomedicare.png') }}" alt="Medicare" style="height: 50px; width: auto; margin-right: 10px;">
+        <h1 class="sitename">Medicare<span>+</span></h1>
       </a>
 
       <nav id="navmenu" class="navmenu">
         <ul>
-          <li><a href="index.html" class="active">Home</a></li>
-          <li><a href="about.html">About</a></li>
-          <li><a href="departments.html">Departments</a></li>
-          <li><a href="services.html">Services</a></li>
-          <li><a href="doctors.html">Doctors</a></li>
-          <li class="dropdown"><a href="#"><span>More Pages</span> <i class="bi bi-chevron-down toggle-dropdown"></i></a>
-            <ul>
-              <li><a href="department-details.html">Department Details</a></li>
-              <li><a href="service-details.html">Service Details</a></li>
-              <li><a href="appointment.html">Appointment</a></li>
-              <li><a href="testimonials.html">Testimonials</a></li>
-              <li><a href="faq.html">Frequently Asked Questions</a></li>
-              <li><a href="gallery.html">Gallery</a></li>
-              <li><a href="terms.html">Terms</a></li>
-              <li><a href="privacy.html">Privacy</a></li>
-              <li><a href="404.html">404</a></li>
-            </ul>
-          </li>
-          <li class="dropdown"><a href="#"><span>Dropdown</span> <i class="bi bi-chevron-down toggle-dropdown"></i></a>
-            <ul>
-              <li><a href="#">Dropdown 1</a></li>
-              <li class="dropdown"><a href="#"><span>Deep Dropdown</span> <i class="bi bi-chevron-down toggle-dropdown"></i></a>
-                <ul>
-                  <li><a href="#">Deep Dropdown 1</a></li>
-                  <li><a href="#">Deep Dropdown 2</a></li>
-                  <li><a href="#">Deep Dropdown 3</a></li>
-                  <li><a href="#">Deep Dropdown 4</a></li>
-                  <li><a href="#">Deep Dropdown 5</a></li>
-                </ul>
-              </li>
-              <li><a href="#">Dropdown 2</a></li>
-              <li><a href="#">Dropdown 3</a></li>
-              <li><a href="#">Dropdown 4</a></li>
-            </ul>
-          </li>
-          <li><a href="contact.html">Contact</a></li>
+          <li><a href="{{ path('app_home') }}" class="active">Accueil</a></li>
+          <li><a href="#home-about">À propos</a></li>
+          <li><a href="#featured-departments">Spécialités</a></li>
+          <li><a href="#featured-services">Services</a></li>
+          <li><a href="#find-a-doctor">Médecins</a></li>
+          <li><a href="#footer">Contact</a></li>
         </ul>
         <i class="mobile-nav-toggle d-xl-none bi bi-list"></i>
       </nav>
 
-      <a class="btn-getstarted" href="apointment.html">Apointment</a>
+      <div class="auth-buttons d-flex gap-2">
+        <a class="btn-login" href="{{ path('app_login') }}">
+          <i class="bi bi-box-arrow-in-right"></i>
+          <span>Connexion</span>
+        </a>
+        <a class="btn-register" href="{{ path('app_register') }}">
+          <i class="bi bi-person-plus"></i>
+          <span>Inscription</span>
+        </a>
+      </div>
 
     </div>
   </header>

@@ -190,19 +190,95 @@ h6 {
   background: color-mix(in srgb, var(--accent-color), transparent 15%);
 }
 
+/* Auth Buttons */
+.header .auth-buttons {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.header .btn-login,
+.header .btn-register {
+  font-size: 14px;
+  padding: 10px 24px;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+  text-decoration: none;
+  font-weight: 500;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.header .btn-login {
+  color: #87CEEB;
+  background: transparent;
+  border: 2px solid #87CEEB;
+}
+
+.header .btn-login:hover {
+  color: white;
+  background: #87CEEB;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(135, 206, 235, 0.3);
+}
+
+.header .btn-register {
+  color: white;
+  background: linear-gradient(135deg, #87CEEB, #5FB7DB);
+  border: 2px solid transparent;
+}
+
+.header .btn-register:hover {
+  background: linear-gradient(135deg, #5FB7DB, #4AA8CC);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(135, 206, 235, 0.4);
+}
+
+.header .btn-login i,
+.header .btn-register i {
+  font-size: 16px;
+}
+
 @media (max-width: 1200px) {
   .header .logo {
     order: 1;
   }
 
-  .header .btn-getstarted {
+  .header .auth-buttons {
     order: 2;
     margin: 0 15px 0 0;
-    padding: 6px 20px;
+  }
+
+  .header .btn-login,
+  .header .btn-register {
+    padding: 6px 16px;
+    font-size: 13px;
   }
 
   .header .navmenu {
     order: 3;
+  }
+}
+
+@media (max-width: 768px) {
+  .header .auth-buttons {
+    gap: 8px;
+  }
+
+  .header .btn-login span,
+  .header .btn-register span {
+    display: none;
+  }
+
+  .header .btn-login,
+  .header .btn-register {
+    padding: 8px 12px;
+  }
+
+  .header .btn-login i,
+  .header .btn-register i {
+    margin: 0;
   }
 }
 

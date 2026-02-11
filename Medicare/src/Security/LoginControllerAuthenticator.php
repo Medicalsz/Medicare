@@ -48,9 +48,15 @@ class LoginControllerAuthenticator extends AbstractLoginFormAuthenticator
             return new RedirectResponse($targetPath);
         }
 
-        // For example:
-        // return new RedirectResponse($this->urlGenerator->generate('some_route'));
-        throw new \Exception('TODO: provide a valid redirect inside '.__FILE__);
+        // Vérifier si l'utilisateur est admin
+        $user = $token->getUser();
+        if (in_array('ROLE_ADMIN', $user->getRoles(), true)) {
+            // Redirection vers le dashboard admin
+            return new RedirectResponse($this->urlGenerator->generate('app_admin_dashboard', ['login_success' => 'true']));
+        }
+
+        // Redirection vers le dashboard patient après connexion réussie
+        return new RedirectResponse($this->urlGenerator->generate('app_dashboard', ['login_success' => 'true']));
     }
 
     protected function getLoginUrl(Request $request): string
