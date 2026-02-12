@@ -48,10 +48,34 @@ class SeedCausesCommand extends Command
                 'description' => 'Aidez-nous à financer une clinique mobile pour apporter des soins médicaux de base aux populations vivant dans les zones rurales reculées.',
                 'image' => 'https://images.unsplash.com/photo-1516549655169-df83a0774514?auto=format&fit=crop&w=800&q=80',
                 'objectif' => 100000
+            ],
+            [
+                'titre' => 'Lutte contre le SIDA',
+                'description' => 'Financement des programmes de dépistage, de sensibilisation et d\'accès aux traitements antirétroviraux pour les personnes touchées par le VIH/SIDA.',
+                'image' => 'https://images.unsplash.com/photo-1532187875605-7fe3584d0ee5?auto=format&fit=crop&w=800&q=80',
+                'objectif' => 60000
+            ],
+            [
+                'titre' => 'Prévention du cancer du sein',
+                'description' => 'Campagnes de mammographie gratuite et sensibilisation à l\'autodépistage pour réduire la mortalité liée au cancer du sein.',
+                'image' => 'https://images.unsplash.com/photo-1515377905703-c4788e51af15?auto=format&fit=crop&w=800&q=80',
+                'objectif' => 45000
+            ],
+            [
+                'titre' => 'Soutien à la santé mentale',
+                'description' => 'Mise en place de lignes d\'écoute et de centres de consultation psychologique gratuits pour les personnes en situation de détresse mentale.',
+                'image' => 'https://images.unsplash.com/photo-1527137342181-19aab11a8ee1?auto=format&fit=crop&w=800&q=80',
+                'objectif' => 35000
             ]
         ];
 
         foreach ($causesData as $data) {
+            // Vérifier si la cause existe déjà pour éviter les doublons
+            $existingCause = $this->entityManager->getRepository(Cause::class)->findOneBy(['titre' => $data['titre']]);
+            if ($existingCause) {
+                continue;
+            }
+
             $cause = new Cause();
             $cause->setTitre($data['titre']);
             $cause->setDescription($data['description']);
@@ -69,7 +93,7 @@ class SeedCausesCommand extends Command
 
         $this->entityManager->flush();
 
-        $io->success('3 causes de test ont été ajoutées avec succès.');
+        $io->success('Les causes de test ont été ajoutées ou mises à jour avec succès.');
 
         return Command::SUCCESS;
     }
