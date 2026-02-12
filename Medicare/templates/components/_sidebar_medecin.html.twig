@@ -1,0 +1,74 @@
+<aside class="sidebar">
+    <!-- Header mobile avec logo + bouton fermer -->
+    <div class="sidebar-mobile-header">
+        <div class="sidebar-logo">
+            <img src="{{ asset('assets/img/logomedicare.png') }}" alt="Medicare">
+            <span>Medicare</span>
+        </div>
+        <button class="close-sidebar" id="closeSidebar">
+            <i class="fas fa-times"></i>
+        </button>
+    </div>
+
+    <nav class="sidebar-nav">
+        <!-- Dashboard Médecin -->
+        <a href="{{ path('app_medecin_dashboard') }}" class="nav-item {{ app.request.attributes.get('_route') == 'app_medecin_dashboard' ? 'active' : '' }}">
+            <span class="nav-icon"><i class="fas fa-home"></i></span>
+            <span class="nav-text">Dashboard</span>
+        </a>
+
+        <!-- Mes Patients -->
+        <a href="{{ path('app_medecin_patients') }}" class="nav-item {{ app.request.attributes.get('_route') == 'app_medecin_patients' ? 'active' : '' }}">
+            <span class="nav-icon"><i class="fas fa-users"></i></span>
+            <span class="nav-text">Mes Patients</span>
+        </a>
+
+        <!-- Mon Calendrier -->
+        <a href="{{ path('app_medecin_disponibilites') }}" class="nav-item {{ app.request.attributes.get('_route') == 'app_medecin_disponibilites' ? 'active' : '' }}">
+            <span class="nav-icon"><i class="fas fa-calendar-week"></i></span>
+            <span class="nav-text">Mon Calendrier</span>
+        </a>
+
+        <!-- Mes Rendez-vous -->
+        <a href="{{ path('app_medecin_rendezvous') }}" class="nav-item {{ app.request.attributes.get('_route') == 'app_medecin_rendezvous' ? 'active' : '' }}">
+            <span class="nav-icon"><i class="fas fa-calendar-check"></i></span>
+            <span class="nav-text">Rendez-vous</span>
+        </a>
+
+        <!-- Mes Rapports / Consultations -->
+        <a href="{{ path('app_medecin_consultations') }}" class="nav-item {{ app.request.attributes.get('_route') == 'app_medecin_consultations' ? 'active' : '' }}">
+            <span class="nav-icon"><i class="fas fa-file-medical-alt"></i></span>
+            <span class="nav-text">Mes Rapports</span>
+        </a>
+
+        <div class="nav-divider"></div>
+
+        <!-- Mon profil -->
+        <a href="{{ path('app_profile') }}" class="nav-item {{ app.request.attributes.get('_route') == 'app_profile' ? 'active' : '' }}">
+            <span class="nav-icon"><i class="fas fa-user"></i></span>
+            <span class="nav-text">Mon profil</span>
+        </a>
+
+        <!-- Paramètres -->
+        <a href="{{ path('app_settings') }}" class="nav-item {{ app.request.attributes.get('_route') == 'app_settings' ? 'active' : '' }}">
+            <span class="nav-icon"><i class="fas fa-cog"></i></span>
+            <span class="nav-text">Paramètres</span>
+        </a>
+    </nav>
+
+    <!-- Footer avec profil utilisateur -->
+    <div class="sidebar-footer">
+        <div class="user-profile">
+            <div class="user-avatar">
+                <span>{{ app.user.prenom|first|upper }}{{ app.user.nom|first|upper }}</span>
+            </div>
+            <div class="user-details">
+                <div class="user-name">{{ app.user.prenom }} {{ app.user.nom }}</div>
+                <div class="user-role">Médecin</div>
+            </div>
+        </div>
+        <a href="{{ path('app_logout') }}" class="logout-btn" title="Déconnexion">
+            <i class="fas fa-sign-out-alt"></i>
+        </a>
+    </div>
+</aside>

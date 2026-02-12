@@ -1,0 +1,180 @@
+{% extends 'admin_base.html.twig' %}
+
+{% block title %}Gestion des Patients - Admin{% endblock %}
+
+{% block body %}
+<div class="admin-page-header">
+    <h1 class="admin-page-title">
+        <i class="bi bi-person-heart"></i> Gestion des Patients
+    </h1>
+    <p class="admin-page-subtitle">Liste complète des patients inscrits</p>
+</div>
+
+<div class="admin-stats-grid" style="grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); margin-bottom: 30px;">
+    <div class="admin-stat-card">
+        <div class="admin-stat-icon success">
+            <i class="bi bi-person-heart"></i>
+        </div>
+        <div class="admin-stat-content">
+            <div class="admin-stat-label">Total Patients</div>
+            <div class="admin-stat-value">{{ patients|length }}</div>
+        </div>
+    </div>
+</div>
+
+<div class="admin-card">
+    <div class="admin-card-header">
+        <h3 class="admin-card-title">
+            <i class="bi bi-table"></i> Liste des Patients
+        </h3>
+        <input type="text" id="searchInput" placeholder="Rechercher..." style="padding: 8px 15px; border: 1px solid #ddd; border-radius: 8px; width: 250px;">
+    </div>
+    <div class="admin-card-body">
+        <div class="admin-table-container">
+            <table class="admin-table" id="patientsTable">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Nom Complet</th>
+                        <th>Email</th>
+                        <th>Téléphone</th>
+                        <th>Date de Naissance</th>
+                        <th>Groupe Sanguin</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for patient in patients %}
+                    <tr>
+                        <td>#{{ patient.id }}</td>
+                        <td>
+                            <div style="display: flex; align-items: center; gap: 10px;">
+                                <div style="width: 35px; height: 35px; border-radius: 50%; background: linear-gradient(135deg, #4ade80 0%, #22c55e 100%); display: flex; align-items: center; justify-content: center; color: white; font-weight: 700; font-size: 14px;">
+                                    {{ patient.user.prenom|first|upper }}{{ patient.user.nom|first|upper }}
+                                </div>
+                                <strong>{{ patient.user.prenom }} {{ patient.user.nom }}</strong>
+                            </div>
+                        </td>
+                        <td>{{ patient.user.email }}</td>
+                        <td>{{ patient.user.numero }}</td>
+                        <td>
+                            {% if patient.dateNaissance %}
+                                {{ patient.dateNaissance|date('d/m/Y') }}
+                            {% else %}
+                                <span style="color: #999;">Non renseigné</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if patient.groupeSanguin %}
+                                <span class="admin-badge info">{{ patient.groupeSanguin }}</span>
+                            {% else %}
+                                <span style="color: #999;">-</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <button class="admin-btn admin-btn-secondary btn-sm" title="Voir détails" 
+                                    onclick="viewPatient({{ patient.id }}, '{{ patient.user.prenom }}', '{{ patient.user.nom }}', '{{ patient.user.email }}', '{{ patient.user.numero }}', '{{ patient.dateNaissance ? patient.dateNaissance|date('d/m/Y') : 'Non renseignée' }}', '{{ patient.groupeSanguin ?? 'Non renseigné' }}')">
+                                <i class="bi bi-eye"></i> Voir
+                            </button>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Modal détails patient -->
+<div class="modal fade" id="patientDetailsModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content" style="border-radius: 15px; border: none;">
+            <div class="modal-header" style="background: linear-gradient(135deg, #28a745 0%, #20c997 100%); color: white; border-radius: 15px 15px 0 0;">
+                <h5 class="modal-title" style="font-weight: 700;">
+                    <i class="bi bi-person-heart"></i> Détails du patient
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body" style="padding: 30px;">
+                <div style="text-align: center; margin-bottom: 25px;">
+                    <div id="patientAvatar" style="width: 100px; height: 100px; border-radius: 50%; background: linear-gradient(135deg, #28a745 0%, #20c997 100%); display: flex; align-items: center; justify-content: center; color: white; font-weight: 700; font-size: 42px; margin: 0 auto; box-shadow: 0 4px 15px rgba(40, 167, 69, 0.4);"></div>
+                    <h3 id="patientName" style="margin-top: 15px; font-weight: 700; color: #1e1e2d;"></h3>
+                    <p id="patientId" style="color: #666; font-size: 14px;"></p>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <div style="background: #f8f9fa; padding: 15px; border-radius: 10px;">
+                            <p style="margin: 0; color: #666; font-size: 12px; text-transform: uppercase; font-weight: 600;">
+                                <i class="bi bi-envelope"></i> Email
+                            </p>
+                            <p id="patientEmail" style="margin: 5px 0 0 0; font-weight: 600; color: #1e1e2d;"></p>
+                        </div>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <div style="background: #f8f9fa; padding: 15px; border-radius: 10px;">
+                            <p style="margin: 0; color: #666; font-size: 12px; text-transform: uppercase; font-weight: 600;">
+                                <i class="bi bi-telephone"></i> Téléphone
+                            </p>
+                            <p id="patientPhone" style="margin: 5px 0 0 0; font-weight: 600; color: #1e1e2d;"></p>
+                        </div>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <div style="background: #f8f9fa; padding: 15px; border-radius: 10px;">
+                            <p style="margin: 0; color: #666; font-size: 12px; text-transform: uppercase; font-weight: 600;">
+                                <i class="bi bi-calendar-event"></i> Date de naissance
+                            </p>
+                            <p id="patientBirth" style="margin: 5px 0 0 0; font-weight: 600; color: #1e1e2d;"></p>
+                        </div>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <div style="background: #f8f9fa; padding: 15px; border-radius: 10px;">
+                            <p style="margin: 0; color: #666; font-size: 12px; text-transform: uppercase; font-weight: 600;">
+                                <i class="bi bi-droplet-fill"></i> Groupe sanguin
+                            </p>
+                            <p id="patientBlood" style="margin: 5px 0 0 0; font-weight: 600; color: #dc3545;"></p>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="background: linear-gradient(135deg, rgba(40, 167, 69, 0.1) 0%, rgba(32, 201, 151, 0.1) 100%); padding: 15px; border-radius: 10px; margin-top: 20px;">
+                    <p style="margin: 0; color: #666; font-size: 13px;">
+                        <i class="bi bi-info-circle"></i> Pour modifier les informations de ce patient, rendez-vous dans la section <strong>Utilisateurs</strong>.
+                    </p>
+                </div>
+            </div>
+            <div class="modal-footer" style="border-top: 1px solid #e0e0e0; padding: 20px;">
+                <button type="button" class="admin-btn admin-btn-secondary" data-bs-dismiss="modal">
+                    <i class="bi bi-x-circle"></i> Fermer
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.getElementById('searchInput').addEventListener('keyup', function() {
+    const searchValue = this.value.toLowerCase();
+    const rows = document.querySelectorAll('#patientsTable tbody tr');
+    
+    rows.forEach(row => {
+        const text = row.textContent.toLowerCase();
+        row.style.display = text.includes(searchValue) ? '' : 'none';
+    });
+});
+
+// Voir détails patient
+function viewPatient(id, prenom, nom, email, phone, birth, blood) {
+    document.getElementById('patientAvatar').textContent = prenom.charAt(0).toUpperCase() + nom.charAt(0).toUpperCase();
+    document.getElementById('patientName').textContent = prenom + ' ' + nom;
+    document.getElementById('patientId').textContent = 'Patient #' + id;
+    document.getElementById('patientEmail').textContent = email;
+    document.getElementById('patientPhone').textContent = phone || 'Non renseigné';
+    document.getElementById('patientBirth').textContent = birth;
+    document.getElementById('patientBlood').textContent = blood;
+    
+    const modal = new bootstrap.Modal(document.getElementById('patientDetailsModal'));
+    modal.show();
+}
+</script>
+{% endblock %}

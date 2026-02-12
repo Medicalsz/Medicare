@@ -1,0 +1,257 @@
+{% extends 'admin_base.html.twig' %}
+
+{% block title %}Demandes Médecin - Admin{% endblock %}
+
+{% block body %}
+<div class="admin-page-header">
+    <h1 class="admin-page-title">
+        <i class="bi bi-file-earmark-medical"></i> Demandes de Médecins
+    </h1>
+    <p class="admin-page-subtitle">Gérez les demandes d'inscription des médecins</p>
+</div>
+
+<!-- Statistiques -->
+<div class="row" style="margin-bottom: 30px;">
+    <div class="col-md-3">
+        <div class="admin-stat-card">
+            <div class="admin-stat-icon" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                <i class="bi bi-clock-history"></i>
+            </div>
+            <div class="admin-stat-content">
+                <div class="admin-stat-value">{{ demandes|filter(d => d.statut.value == 'en_attente')|length }}</div>
+                <div class="admin-stat-label">En Attente</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="admin-stat-card">
+            <div class="admin-stat-icon" style="background: linear-gradient(135deg, #28a745 0%, #20c997 100%);">
+                <i class="bi bi-check-circle"></i>
+            </div>
+            <div class="admin-stat-content">
+                <div class="admin-stat-value">{{ demandes|filter(d => d.statut.value == 'acceptee')|length }}</div>
+                <div class="admin-stat-label">Acceptées</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="admin-stat-card">
+            <div class="admin-stat-icon" style="background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);">
+                <i class="bi bi-x-circle"></i>
+            </div>
+            <div class="admin-stat-content">
+                <div class="admin-stat-value">{{ demandes|filter(d => d.statut.value == 'rejetee')|length }}</div>
+                <div class="admin-stat-label">Refusées</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="admin-stat-card">
+            <div class="admin-stat-icon" style="background: linear-gradient(135deg, #ffc107 0%, #ff9800 100%);">
+                <i class="bi bi-files"></i>
+            </div>
+            <div class="admin-stat-content">
+                <div class="admin-stat-value">{{ demandes|length }}</div>
+                <div class="admin-stat-label">Total</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Table des demandes -->
+<div class="admin-card">
+    <div class="admin-card-header">
+        <h3 class="admin-card-title">
+            <i class="bi bi-list-ul"></i> Liste des demandes
+        </h3>
+        <input type="text" id="searchInput" placeholder="Rechercher..." class="admin-search-input">
+    </div>
+    <div class="admin-card-body">
+        <div class="table-responsive">
+            <table class="admin-table" id="demandesTable">
+                <thead>
+                    <tr>
+                        <th>Candidat</th>
+                        <th>Spécialité</th>
+                        <th>Cabinet</th>
+                        <th>Date demande</th>
+                        <th>Statut</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for demande in demandes %}
+                    <tr>
+                        <td>
+                            <div style="display: flex; align-items: center; gap: 10px;">
+                                <div style="width: 35px; height: 35px; border-radius: 50%; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); display: flex; align-items: center; justify-content: center; color: white; font-weight: 700; font-size: 14px;">
+                                    {{ demande.user.prenom|first|upper }}{{ demande.user.nom|first|upper }}
+                                </div>
+                                <div>
+                                    <strong>{{ demande.user.prenom }} {{ demande.user.nom }}</strong>
+                                    <div style="font-size: 12px; color: #666;">{{ demande.user.email }}</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <span class="admin-badge info">
+                                <i class="bi bi-stethoscope"></i> {{ demande.specialite }}
+                            </span>
+                        </td>
+                        <td>{{ demande.cabinet }}</td>
+                        <td>{{ demande.dateDemande|date('d/m/Y H:i') }}</td>
+                        <td>
+                            {% if demande.statut.value == 'en_attente' %}
+                                <span class="admin-badge warning">
+                                    <i class="bi bi-clock-history"></i> En attente
+                                </span>
+                            {% elseif demande.statut.value == 'acceptee' %}
+                                <span class="admin-badge success">
+                                    <i class="bi bi-check-circle"></i> Acceptée
+                                </span>
+                            {% else %}
+                                <span class="admin-badge danger">
+                                    <i class="bi bi-x-circle"></i> Refusée
+                                </span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <div style="display: flex; gap: 5px;">
+                                <button class="admin-btn admin-btn-secondary btn-sm" title="Voir détails" 
+                                        onclick="viewDemande({{ demande.id }}, '{{ demande.user.prenom }}', '{{ demande.user.nom }}', '{{ demande.specialite }}', '{{ demande.cabinet }}', '{{ demande.adresse }}', '{{ demande.bio|escape('js') }}', '{{ demande.certificats }}')">
+                                    <i class="bi bi-eye"></i>
+                                </button>
+                                {% if demande.statut.value == 'en_attente' %}
+                                    <button class="admin-btn admin-btn-success btn-sm" title="Accepter" 
+                                            onclick="acceptDemande({{ demande.id }}, '{{ demande.user.prenom }} {{ demande.user.nom }}')">
+                                        <i class="bi bi-check-circle"></i>
+                                    </button>
+                                    <button class="admin-btn admin-btn-danger btn-sm" title="Refuser" 
+                                            onclick="rejectDemande({{ demande.id }}, '{{ demande.user.prenom }} {{ demande.user.nom }}')">
+                                        <i class="bi bi-x-circle"></i>
+                                    </button>
+                                {% endif %}
+                            </div>
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="6" style="text-align: center; padding: 40px; color: #999;">
+                            <i class="bi bi-inbox" style="font-size: 48px; display: block; margin-bottom: 15px;"></i>
+                            Aucune demande pour le moment
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Modal voir détails -->
+<div class="modal fade" id="viewDemandeModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content" style="border-radius: 15px; border: none;">
+            <div class="modal-header" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border-radius: 15px 15px 0 0;">
+                <h5 class="modal-title" style="font-weight: 700;">
+                    <i class="bi bi-file-earmark-medical"></i> Détails de la demande
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body" style="padding: 30px;">
+                <div id="demandeDetails"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal refuser -->
+<div class="modal fade" id="rejectModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content" style="border-radius: 15px; border: none;">
+            <div class="modal-header" style="background: #dc3545; color: white; border-radius: 15px 15px 0 0;">
+                <h5 class="modal-title" style="font-weight: 700;">
+                    <i class="bi bi-x-circle"></i> Refuser la demande
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <form id="rejectForm" method="POST">
+                <div class="modal-body" style="padding: 30px;">
+                    <p style="color: #666;">Vous êtes sur le point de refuser la demande de <strong id="rejectName"></strong></p>
+                    <label style="display: block; font-weight: 600; margin-bottom: 8px;">Raison du refus :</label>
+                    <textarea name="raison" class="form-control" rows="4" required placeholder="Ex: Documents incomplets, qualification insuffisante..."></textarea>
+                </div>
+                <div class="modal-footer" style="padding: 20px;">
+                    <button type="button" class="admin-btn admin-btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                    <button type="submit" class="admin-btn admin-btn-danger">
+                        <i class="bi bi-x-circle"></i> Refuser
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+// Recherche
+document.getElementById('searchInput').addEventListener('keyup', function() {
+    const searchValue = this.value.toLowerCase();
+    const rows = document.querySelectorAll('#demandesTable tbody tr');
+    
+    rows.forEach(row => {
+        const text = row.textContent.toLowerCase();
+        row.style.display = text.includes(searchValue) ? '' : 'none';
+    });
+});
+
+// Voir détails
+function viewDemande(id, prenom, nom, specialite, cabinet, adresse, bio, certificats) {
+    const docs = certificats ? certificats.split(',') : [];
+    let docsHtml = docs.length > 0 
+        ? docs.map(doc => `<a href="${doc}" target="_blank" class="admin-badge info" style="margin: 2px;"><i class="bi bi-file-earmark"></i> Document</a>`).join(' ')
+        : '<span style="color: #999;">Aucun document</span>';
+    
+    document.getElementById('demandeDetails').innerHTML = `
+        <h4 style="font-weight: 700; color: #1e1e2d; margin-bottom: 20px;">${prenom} ${nom}</h4>
+        <div style="background: #f9fafb; padding: 20px; border-radius: 10px; margin-bottom: 20px;">
+            <p><strong><i class="bi bi-heart-pulse"></i> Spécialité :</strong> ${specialite}</p>
+            <p><strong><i class="bi bi-hospital"></i> Cabinet :</strong> ${cabinet}</p>
+            <p><strong><i class="bi bi-geo-alt"></i> Adresse :</strong> ${adresse}</p>
+        </div>
+        <div style="background: #f9fafb; padding: 20px; border-radius: 10px; margin-bottom: 20px;">
+            <p><strong><i class="bi bi-person-badge"></i> Biographie :</strong></p>
+            <p style="color: #666; white-space: pre-wrap;">${bio || 'Non renseignée'}</p>
+        </div>
+        <div style="background: #f9fafb; padding: 20px; border-radius: 10px;">
+            <p><strong><i class="bi bi-file-earmark"></i> Documents :</strong></p>
+            ${docsHtml}
+        </div>
+    `;
+    
+    const modal = new bootstrap.Modal(document.getElementById('viewDemandeModal'));
+    modal.show();
+}
+
+// Accepter
+function acceptDemande(id, name) {
+    if (confirm(`Accepter la demande de ${name} ?\n\nCette personne deviendra médecin sur la plateforme.`)) {
+        const form = document.createElement('form');
+        form.method = 'POST';
+        form.action = `/admin/demandes-medecin/${id}/accepter`;
+        document.body.appendChild(form);
+        form.submit();
+    }
+}
+
+// Refuser
+let rejectDemandeId = null;
+function rejectDemande(id, name) {
+    rejectDemandeId = id;
+    document.getElementById('rejectName').textContent = name;
+    document.getElementById('rejectForm').action = `/admin/demandes-medecin/${id}/refuser`;
+    
+    const modal = new bootstrap.Modal(document.getElementById('rejectModal'));
+    modal.show();
+}
+</script>
+{% endblock %}

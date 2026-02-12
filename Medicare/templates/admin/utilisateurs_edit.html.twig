@@ -1,0 +1,184 @@
+{% extends 'admin_base.html.twig' %}
+
+{% block title %}Modifier Utilisateur - Admin{% endblock %}
+
+{% block body %}
+<div class="admin-page-header">
+    <h1 class="admin-page-title">
+        <i class="bi bi-pencil"></i> Modifier l'utilisateur
+    </h1>
+    <p class="admin-page-subtitle">Modifiez les informations de {{ user.prenom }} {{ user.nom }}</p>
+</div>
+
+<div class="row">
+    <div class="col-lg-8">
+        <div class="admin-card">
+            <div class="admin-card-header">
+                <h3 class="admin-card-title">
+                    <i class="bi bi-person-circle"></i> Informations personnelles
+                </h3>
+            </div>
+            <div class="admin-card-body">
+                <form method="POST" action="{{ path('app_admin_utilisateurs_edit', {id: user.id}) }}">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Nom *</label>
+                            <input type="text" name="nom" class="form-control" value="{{ user.nom }}" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Prénom *</label>
+                            <input type="text" name="prenom" class="form-control" value="{{ user.prenom }}" required>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Email *</label>
+                            <input type="email" name="email" class="form-control" value="{{ user.email }}" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Téléphone *</label>
+                            <input type="tel" name="numero" class="form-control" value="{{ user.numero }}" required>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Adresse</label>
+                        <input type="text" name="adresse" class="form-control" value="{{ user.adresse }}">
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="form-label">Rôles</label>
+                        <div style="display: flex; flex-direction: column; gap: 10px;">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" name="roles[]" value="ROLE_USER" 
+                                       {{ 'ROLE_USER' in user.roles ? 'checked' : '' }} id="roleUser">
+                                <label class="form-check-label" for="roleUser">
+                                    Utilisateur (ROLE_USER)
+                                </label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" name="roles[]" value="ROLE_PATIENT" 
+                                       {{ 'ROLE_PATIENT' in user.roles ? 'checked' : '' }} id="rolePatient">
+                                <label class="form-check-label" for="rolePatient">
+                                    Patient (ROLE_PATIENT)
+                                </label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" name="roles[]" value="ROLE_MEDECIN" 
+                                       {{ 'ROLE_MEDECIN' in user.roles ? 'checked' : '' }} id="roleMedecin">
+                                <label class="form-check-label" for="roleMedecin">
+                                    Médecin (ROLE_MEDECIN)
+                                </label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" name="roles[]" value="ROLE_ADMIN" 
+                                       {{ 'ROLE_ADMIN' in user.roles ? 'checked' : '' }} id="roleAdmin">
+                                <label class="form-check-label" for="roleAdmin">
+                                    Administrateur (ROLE_ADMIN)
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div style="display: flex; gap: 10px; justify-content: flex-end;">
+                        <a href="{{ path('app_admin_utilisateurs') }}" class="admin-btn admin-btn-secondary">
+                            <i class="bi bi-arrow-left"></i> Annuler
+                        </a>
+                        <button type="submit" class="admin-btn admin-btn-primary">
+                            <i class="bi bi-check-circle"></i> Enregistrer
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-4">
+        <div class="admin-card">
+            <div class="admin-card-header">
+                <h3 class="admin-card-title">
+                    <i class="bi bi-info-circle"></i> Informations
+                </h3>
+            </div>
+            <div class="admin-card-body">
+                <div style="text-align: center; margin-bottom: 20px;">
+                    <div style="width: 80px; height: 80px; border-radius: 50%; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); display: flex; align-items: center; justify-content: center; color: white; font-weight: 700; font-size: 32px; margin: 0 auto;">
+                        {{ user.prenom|first|upper }}{{ user.nom|first|upper }}
+                    </div>
+                    <h4 style="margin-top: 15px;">{{ user.prenom }} {{ user.nom }}</h4>
+                    <p style="color: #666;">ID: #{{ user.id }}</p>
+                </div>
+
+                <hr>
+
+                <div style="margin-top: 20px;">
+                    <p style="color: #666; font-size: 14px; margin-bottom: 10px;">
+                        <i class="bi bi-envelope"></i> Email vérifié :
+                        {% if user.isVerified %}
+                            <span class="admin-badge success">Oui</span>
+                        {% else %}
+                            <span class="admin-badge warning">Non</span>
+                        {% endif %}
+                    </p>
+
+                    <p style="color: #666; font-size: 14px;">
+                        <i class="bi bi-shield-lock"></i> Rôles actifs :
+                    </p>
+                    <div style="display: flex; flex-wrap: wrap; gap: 5px; margin-top: 5px;">
+                        {% if 'ROLE_ADMIN' in user.roles %}
+                            <span class="admin-badge danger">Admin</span>
+                        {% endif %}
+                        {% if 'ROLE_MEDECIN' in user.roles %}
+                            <span class="admin-badge warning">Médecin</span>
+                        {% endif %}
+                        {% if 'ROLE_PATIENT' in user.roles %}
+                            <span class="admin-badge success">Patient</span>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.form-label {
+    font-weight: 600;
+    color: #1e1e2d;
+    margin-bottom: 8px;
+    display: block;
+}
+
+.form-control {
+    width: 100%;
+    padding: 10px 15px;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    font-size: 14px;
+    transition: all 0.3s ease;
+}
+
+.form-control:focus {
+    outline: none;
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.form-check-input {
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
+}
+
+.form-check-label {
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.btn-sm {
+    padding: 6px 12px;
+    font-size: 13px;
+}
+</style>
+{% endblock %}

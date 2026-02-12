@@ -1,0 +1,126 @@
+{% extends 'dashboard_base.html.twig' %}
+
+{% block title %}Mes Disponibilités - Medicare{% endblock %}
+
+{% block body %}
+<div style="padding: 30px;">
+    <!-- Header -->
+    <div style="margin-bottom: 30px;">
+        <a href="{{ path('app_medecin_dashboard') }}" style="color: #667eea; text-decoration: none; font-weight: 600;">
+            <i class="bi bi-arrow-left"></i> Retour au dashboard
+        </a>
+        <h1 style="font-size: 32px; font-weight: 700; color: #1e1e2d; margin: 10px 0 5px 0;">
+            <i class="bi bi-calendar-week"></i> Mes Disponibilités
+        </h1>
+        <p style="color: #666;">Gérez vos horaires de consultation hebdomadaires</p>
+    </div>
+
+    <div class="row">
+        <!-- Formulaire d'ajout -->
+        <div class="col-md-4">
+            <div style="background: white; padding: 25px; border-radius: 15px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); position: sticky; top: 20px;">
+                <h3 style="font-size: 18px; font-weight: 700; margin-bottom: 20px; color: #1e1e2d;">
+                    <i class="bi bi-plus-circle"></i> Ajouter un créneau
+                </h3>
+
+                <form method="POST">
+                    <div style="margin-bottom: 15px;">
+                        <label style="display: block; font-weight: 600; margin-bottom: 8px; color: #1e1e2d;">Jour</label>
+                        <select name="jour" class="form-select" required>
+                            <option value="lundi">Lundi</option>
+                            <option value="mardi">Mardi</option>
+                            <option value="mercredi">Mercredi</option>
+                            <option value="jeudi">Jeudi</option>
+                            <option value="vendredi">Vendredi</option>
+                            <option value="samedi">Samedi</option>
+                            <option value="dimanche">Dimanche</option>
+                        </select>
+                    </div>
+
+                    <div style="margin-bottom: 15px;">
+                        <label style="display: block; font-weight: 600; margin-bottom: 8px; color: #1e1e2d;">Heure début</label>
+                        <input type="time" name="heure_debut" class="form-control" required>
+                    </div>
+
+                    <div style="margin-bottom: 20px;">
+                        <label style="display: block; font-weight: 600; margin-bottom: 8px; color: #1e1e2d;">Heure fin</label>
+                        <input type="time" name="heure_fin" class="form-control" required>
+                    </div>
+
+                    <button type="submit" style="width: 100%; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; padding: 12px; border-radius: 8px; font-weight: 600; cursor: pointer;">
+                        <i class="bi bi-check-circle"></i> Ajouter la disponibilité
+                    </button>
+                </form>
+
+                <div style="margin-top: 20px; padding: 15px; background: #f0f7ff; border-radius: 8px; border-left: 4px solid #667eea;">
+                    <p style="margin: 0; color: #666; font-size: 13px;">
+                        <i class="bi bi-info-circle"></i> <strong>Important :</strong> Aucun rendez-vous ne pourra être pris en dehors de vos disponibilités.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Liste des disponibilités -->
+        <div class="col-md-8">
+            <div style="background: white; padding: 25px; border-radius: 15px; box-shadow: 0 2px 10px rgba(0,0,0,0.05);">
+                <h3 style="font-size: 18px; font-weight: 700; margin-bottom: 20px; color: #1e1e2d;">
+                    <i class="bi bi-list-ul"></i> Mes créneaux de disponibilité
+                </h3>
+
+                {% if disponibilites is not empty %}
+                    {% set jours = ['lundi', 'mardi', 'mercredi', 'jeudi', 'vendredi', 'samedi', 'dimanche'] %}
+                    {% for jourNom in jours %}
+                        {% set disposDuJour = disponibilites|filter(d => d.jourSemaine.value == jourNom) %}
+                        {% if disposDuJour is not empty %}
+                        <div style="margin-bottom: 25px;">
+                            <h4 style="font-size: 16px; font-weight: 700; color: #667eea; margin-bottom: 10px; text-transform: capitalize;">
+                                <i class="bi bi-calendar-day"></i> {{ jourNom }}
+                            </h4>
+                            <div style="display: flex; flex-direction: column; gap: 10px;">
+                                {% for dispo in disposDuJour %}
+                                <div style="display: flex; justify-content: space-between; align-items: center; padding: 15px; background: #f9fafb; border-radius: 8px; border: 1px solid #e0e0e0;">
+                                    <div style="display: flex; align-items: center; gap: 10px;">
+                                        <i class="bi bi-clock" style="color: #667eea; font-size: 20px;"></i>
+                                        <span style="font-weight: 600; color: #1e1e2d;">
+                                            {{ dispo.heureDebut|date('H:i') }} - {{ dispo.heureFin|date('H:i') }}
+                                        </span>
+                                    </div>
+                                    <form method="POST" action="{{ path('app_medecin_disponibilites_delete', {id: dispo.id}) }}" style="margin: 0;">
+                                        <button type="submit" onclick="return confirm('Supprimer ce créneau ?')" style="background: #dc3545; color: white; border: none; padding: 8px 15px; border-radius: 6px; cursor: pointer; font-size: 13px;">
+                                            <i class="bi bi-trash"></i> Supprimer
+                                        </button>
+                                    </form>
+                                </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        {% endif %}
+                    {% endfor %}
+                {% else %}
+                    <div style="text-align: center; padding: 60px 20px; color: #999;">
+                        <i class="bi bi-calendar-x" style="font-size: 64px; display: block; margin-bottom: 20px; opacity: 0.5;"></i>
+                        <h4 style="font-weight: 600; color: #666; margin-bottom: 10px;">Aucune disponibilité configurée</h4>
+                        <p style="font-size: 14px;">Ajoutez vos premiers créneaux de disponibilité pour que les patients puissent prendre rendez-vous.</p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.form-control, .form-select {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    font-size: 14px;
+}
+
+.form-control:focus, .form-select:focus {
+    outline: none;
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+</style>
+{% endblock %}

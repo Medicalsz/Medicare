@@ -21,7 +21,16 @@ class Medecin
     private ?string $cabinet = null;
 
     #[ORM\Column(type: 'text', nullable: true)]
+    private ?string $adresseCabinet = null;
+
+    #[ORM\Column(length: 20, nullable: true)]
+    private ?string $numeroCabinet = null;
+
+    #[ORM\Column(type: 'text', nullable: true)]
     private ?string $bio = null;
+
+    #[ORM\Column(type: 'json', nullable: true)]
+    private ?array $documents = [];
 
     #[ORM\OneToOne]
     #[ORM\JoinColumn(nullable: false)]
@@ -73,6 +82,28 @@ class Medecin
         return $this;
     }
 
+    public function getAdresseCabinet(): ?string
+    {
+        return $this->adresseCabinet;
+    }
+
+    public function setAdresseCabinet(?string $adresseCabinet): static
+    {
+        $this->adresseCabinet = $adresseCabinet;
+        return $this;
+    }
+
+    public function getNumeroCabinet(): ?string
+    {
+        return $this->numeroCabinet;
+    }
+
+    public function setNumeroCabinet(?string $numeroCabinet): static
+    {
+        $this->numeroCabinet = $numeroCabinet;
+        return $this;
+    }
+
     public function getBio(): ?string
     {
         return $this->bio;
@@ -81,6 +112,17 @@ class Medecin
     public function setBio(?string $bio): static
     {
         $this->bio = $bio;
+        return $this;
+    }
+
+    public function getDocuments(): ?array
+    {
+        return $this->documents;
+    }
+
+    public function setDocuments(?array $documents): static
+    {
+        $this->documents = $documents;
         return $this;
     }
 

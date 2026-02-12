@@ -19,17 +19,26 @@ class Consultation
     #[ORM\Column(type: 'text')]
     private ?string $description = null;
 
+    #[ORM\Column(type: 'text')]
+    private ?string $diagnostic = null;
+
+    #[ORM\Column(type: 'text')]
+    private ?string $traitement = null;
+
     #[ORM\Column(type: 'text', nullable: true)]
     private ?string $ordonnance = null;
+
+    #[ORM\Column(type: 'text', nullable: true)]
+    private ?string $notes = null;
 
     #[ORM\Column(enumType: TypeConsultation::class)]
     private ?TypeConsultation $type = null;
 
-    #[ORM\ManyToOne]
+    #[ORM\ManyToOne(inversedBy: 'consultations')]
     #[ORM\JoinColumn(nullable: false)]
     private ?Medecin $medecin = null;
 
-    #[ORM\ManyToOne]
+    #[ORM\ManyToOne(inversedBy: 'consultations')]
     #[ORM\JoinColumn(nullable: false)]
     private ?Patient $patient = null;
 
@@ -66,6 +75,28 @@ class Consultation
         return $this;
     }
 
+    public function getDiagnostic(): ?string
+    {
+        return $this->diagnostic;
+    }
+
+    public function setDiagnostic(string $diagnostic): static
+    {
+        $this->diagnostic = $diagnostic;
+        return $this;
+    }
+
+    public function getTraitement(): ?string
+    {
+        return $this->traitement;
+    }
+
+    public function setTraitement(string $traitement): static
+    {
+        $this->traitement = $traitement;
+        return $this;
+    }
+
     public function getOrdonnance(): ?string
     {
         return $this->ordonnance;
@@ -74,6 +105,17 @@ class Consultation
     public function setOrdonnance(?string $ordonnance): static
     {
         $this->ordonnance = $ordonnance;
+        return $this;
+    }
+
+    public function getNotes(): ?string
+    {
+        return $this->notes;
+    }
+
+    public function setNotes(?string $notes): static
+    {
+        $this->notes = $notes;
         return $this;
     }
 
