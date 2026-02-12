@@ -1,0 +1,65 @@
+{% extends 'dashboard_base.html.twig' %}
+
+{% block title %}Forum - Medicare{% endblock %}
+
+{% block body %}
+<div class="dashboard-content">
+    <div class="page-header">
+        <div>
+            <h1 class="page-title">Forum</h1>
+            <p class="page-subtitle">Échangez avec la communauté Medicare</p>
+        </div>
+        <a href="{{ path('forum_new') }}" class="btn btn-primary"><i class="fas fa-plus"></i> Nouveau sujet</a>
+    </div>
+
+    <div class="card">
+        <div class="card-header">
+            <h3 class="card-title">Tous les sujets</h3>
+        </div>
+
+        {% if topics is empty %}
+            <p style="padding: 10px 5px; color: #666;">Aucun sujet pour le moment.</p>
+        {% else %}
+            <div class="table-wrapper">
+                <table class="forum-table">
+                    <thead>
+                        <tr>
+                            <th>Titre</th>
+                            <th>Auteur</th>
+                            <th>Créé le</th>
+                            <th style="width: 200px; text-align: right;">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for t in topics %}
+                            <tr>
+                                <td>{{ t.title }}</td>
+                                <td>{{ t.author.prenom }} {{ t.author.nom }}</td>
+                                <td>{{ t.createdAt|date('d/m/Y H:i') }}</td>
+                                <td class="actions">
+                                    <a href="{{ path('forum_show', {id: t.id}) }}" class="btn btn-secondary btn-small">Voir</a>
+                                    <a href="{{ path('forum_edit', {id: t.id}) }}" class="btn btn-secondary btn-small">Modifier</a>
+                                    <form method="post" action="{{ path('forum_delete', {id: t.id}) }}" style="display:inline;" onsubmit="return confirm('Supprimer ce sujet ?');">
+                                        <input type="hidden" name="_token" value="{{ csrf_token('delete_topic_' ~ t.id) }}">
+                                        <button class="btn btn-secondary btn-small" type="submit">Supprimer</button>
+                                    </form>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% endif %}
+    </div>
+</div>
+
+<style>
+    .table-wrapper { overflow-x: auto; }
+    .forum-table { width: 100%; border-collapse: collapse; }
+    .forum-table th, .forum-table td { padding: 12px 10px; text-align: left; border-bottom: 1px solid #eee; }
+    .forum-table th { color: #666; font-weight: 600; }
+    .forum-table tr:hover { background: #f9fcff; }
+    .actions { text-align: right; white-space: nowrap; }
+    .btn-small { padding: 8px 12px; font-size: 13px; }
+</style>
+{% endblock %}

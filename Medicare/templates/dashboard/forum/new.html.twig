@@ -1,0 +1,27 @@
+{% extends 'dashboard_base.html.twig' %}
+
+{% block title %}Nouveau sujet - Medicare{% endblock %}
+
+{% block body %}
+<div class="dashboard-content">
+    <div class="page-header">
+        <div>
+            <h1 class="page-title">Nouveau sujet</h1>
+            <p class="page-subtitle">Partagez votre question ou votre expérience.</p>
+        </div>
+        <a href="{{ path('dashboard_forum') }}" class="btn btn-secondary">Retour au forum</a>
+    </div>
+
+    <div class="card">
+        {{ form_start(form) }}
+            {{ form_row(form.title) }}
+            {{ form_row(form.content) }}
+
+            <div style="margin-top: 15px;">
+                <button class="btn btn-primary" type="submit">Publier</button>
+                <a href="{{ path('dashboard_forum') }}" class="btn btn-secondary" style="margin-left: 10px;">Annuler</a>
+            </div>
+        {{ form_end(form) }}
+    </div>
+</div>
+{% endblock %}

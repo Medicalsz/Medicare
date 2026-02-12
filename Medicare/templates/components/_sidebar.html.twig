@@ -12,6 +12,8 @@
 
     <nav class="sidebar-nav">
 
+        {% set current_route = app.request.attributes.get('_route') %}
+
         <!-- Dashboard -->
         <a href="{{ path('app_dashboard') }}" class="nav-item {{ app.request.attributes.get('_route') == 'app_dashboard' ? 'active' : '' }}">
             <span class="nav-icon"><i class="fas fa-home"></i></span>
@@ -37,8 +39,7 @@
         </a>
 
         <!-- Forum -->
-        <a href="{{ path('dashboard_forum') }}
-" class="nav-item {{ app.request.attributes.get('_route') == 'app_forum' ? 'active' : '' }}">
+        <a href="{{ path('dashboard_forum') }}" class="nav-item {{ current_route starts with 'dashboard_forum' or current_route starts with 'forum_' ? 'active' : '' }}">
             <span class="nav-icon"><i class="fas fa-comments"></i></span>
             <span class="nav-text">Forum</span>
         </a>
