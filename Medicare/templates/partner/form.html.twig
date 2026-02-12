@@ -1,0 +1,40 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ id ? 'Edit' : 'New' }} Partner - MediCare{% endblock %}
+
+{% block body %}
+<section class="container section">
+    <h2>{{ id ? 'Edit' : 'New' }} Partner</h2>
+    <form id="form">
+        <input type="hidden" id="id" value="{{ id ?: '' }}" />
+        <div class="mb-3"><label for="type" class="form-label">Type</label><input id="type" class="form-control" value="{{ partner.type|default('') }}" /></div>
+        <div class="mb-3"><label for="name" class="form-label">Name</label><input id="name" class="form-control" value="{{ partner.name|default('') }}" /></div>
+        <div class="mb-3"><label for="phone" class="form-label">Phone</label><input id="phone" class="form-control" value="{{ partner.phone|default('') }}" /></div>
+        <div class="mb-3"><label for="email" class="form-label">Email</label><input id="email" class="form-control" value="{{ partner.email|default('') }}" /></div>
+        <div style="margin-top:8px"><button type="submit" class="btn btn-primary">Save</button> <a href="/home/partners" class="btn btn-secondary">Cancel</a></div>
+    </form>
+    <div id="msg" class="text-danger"></div>
+</section>
+{% endblock %}
+
+{% block scripts %}
+{{ parent() }}
+<script>
+document.getElementById('form').addEventListener('submit', async e=>{
+  e.preventDefault();
+  const id = document.getElementById('id').value;
+  const body = {
+    type: document.getElementById('type').value,
+    name: document.getElementById('name').value,
+    phone: document.getElementById('phone').value,
+    email: document.getElementById('email').value,
+  };
+  const url = id ? '/partners/' + id : '/partners';
+  const method = id ? 'PUT' : 'POST';
+  const res = await fetch(url, {method, headers:{'Content-Type':'application/json','Accept':'application/json'}, body: JSON.stringify(body)});
+  const json = await res.json().catch(()=>null);
+  if(res.status >= 400) document.getElementById('msg').innerText = 'Error: '+(json?.error||res.status);
+  else location.href = '/home/partners';
+});
+</script>
+{% endblock %}
