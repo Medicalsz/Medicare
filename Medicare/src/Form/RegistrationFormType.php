@@ -65,6 +65,11 @@ class RegistrationFormType extends AbstractType
                     new Email([
                         'message' => 'L\'adresse email {{ value }} n\'est pas valide',
                     ]),
+                    new Regex([
+                        'pattern' => '/@admin/i',
+                        'match' => false,
+                        'message' => 'Le domaine @admin est réservé aux administrateurs. Veuillez utiliser une autre adresse email.',
+                    ]),
                 ],
             ])
             ->add('numero', TelType::class, [

@@ -4,10 +4,11 @@ namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use App\Enum\StatutRendezVous;
+use App\Repository\RendezVousRepository;
 use Doctrine\ORM\Mapping\UniqueConstraint;
 
 
-#[ORM\Entity]
+#[ORM\Entity(repositoryClass: RendezVousRepository::class)]
 #[ORM\Table(
     uniqueConstraints: [
         new UniqueConstraint(

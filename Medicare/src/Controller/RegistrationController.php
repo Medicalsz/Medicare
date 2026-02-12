@@ -45,6 +45,15 @@ class RegistrationController extends AbstractController
                 ]);
             }
             
+            // Vérifier que l'email ne contient pas @admin (domaine réservé)
+            $email = $user->getEmail();
+            if (stripos($email, '@admin') !== false) {
+                $this->addFlash('error', 'Le domaine @admin est réservé. Veuillez utiliser une autre adresse email.');
+                return $this->render('registration/register.html.twig', [
+                    'registrationForm' => $form->createView(),
+                ]);
+            }
+            
             // encode the plain password
             $user->setPassword(
                 $userPasswordHasher->hashPassword(
@@ -53,25 +62,15 @@ class RegistrationController extends AbstractController
                 )
             );
 
-            // Détecter si l'email contient @admin pour créer un administrateur
-            $email = $user->getEmail();
-            if (stripos($email, '@admin') !== false) {
-                // C'est un administrateur
-                $user->setRoles(['ROLE_ADMIN', 'ROLE_USER']);
-                
-                // Pas de création d'entité Patient pour les admins
-                $entityManager->persist($user);
-            } else {
-                // Définir le rôle par défaut : PATIENT
-                $user->setRoles(['ROLE_PATIENT', 'ROLE_USER']);
+            // Tous les utilisateurs inscrits sont des PATIENTS
+            $user->setRoles(['ROLE_PATIENT', 'ROLE_USER']);
 
-                // Créer l'entité Patient liée à ce User
-                $patient = new Patient();
-                $patient->setUser($user);
+            // Créer l'entité Patient liée à ce User
+            $patient = new Patient();
+            $patient->setUser($user);
 
-                $entityManager->persist($user);
-                $entityManager->persist($patient);
-            }
+            $entityManager->persist($user);
+            $entityManager->persist($patient);
             
             $entityManager->flush();
 

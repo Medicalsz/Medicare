@@ -2,6 +2,8 @@
 
 namespace App\Controller;
 
+use App\Repository\PatientRepository;
+use App\Repository\RendezVousRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -36,12 +38,30 @@ class DashboardController extends AbstractController
     }
 
     #[Route('/appointments', name: 'app_appointments')]
-    public function appointments(): Response
+    public function appointments(
+        PatientRepository $patientRepository,
+        RendezVousRepository $rendezVousRepository
+    ): Response
     {
         $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
         
-        // TODO: Créer la page rendez-vous
-        return new Response('Page rendez-vous - À développer');
+        /** @var \App\Entity\User $user */
+        $user = $this->getUser();
+        
+        // Récupérer le patient associé à l'utilisateur connecté
+        $patient = $patientRepository->findOneByUser($user);
+        
+        if (!$patient) {
+            $this->addFlash('error', 'Votre profil patient n\'a pas été trouvé.');
+            return $this->redirectToRoute('app_dashboard');
+        }
+        
+        // Récupérer tous les rendez-vous du patient triés par date
+        $rendezVous = $rendezVousRepository->findByPatientOrderByDate($patient);
+        
+        return $this->render('dashboard/rendezvous.html.twig', [
+            'rendezVous' => $rendezVous,
+        ]);
     }
 
     #[Route('/cabinets', name: 'app_cabinets')]
@@ -69,5 +89,14 @@ class DashboardController extends AbstractController
         
         // TODO: Créer le formulaire de demande médecin
         return new Response('Formulaire demande médecin - À développer');
+    }
+
+    #[Route('/prendre-rendez-vous', name: 'app_prendre_rdv')]
+    public function prendreRendezVous(): Response
+    {
+        $this->denyAccessUnlessGranted('ROLE_PATIENT');
+        
+        // Composant multi-étapes pour prendre rendez-vous
+        return $this->render('rendezvous/prendre_rdv.html.twig');
     }
 }
