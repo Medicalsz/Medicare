@@ -7,12 +7,20 @@
         <div>
             <h1 class="admin-page-title">Gestion des Donations</h1>
             <p class="admin-page-subtitle">Visualisez et gérez l'ensemble des dons reçus</p>
-            <button type="button" class="btn btn-primary shadow-sm d-flex align-items-center gap-2 mt-2" 
-                    style="border-radius: 12px; padding: 10px 20px; font-weight: 600;"
-                    data-bs-toggle="modal" 
-                    data-bs-target="#addCauseModal">
-                <i class="bi bi-plus-circle-fill"></i> Ajouter une cause
-            </button>
+            <div class="d-flex gap-2 mt-2">
+                <button type="button" class="btn btn-primary shadow-sm d-flex align-items-center gap-2" 
+                        style="border-radius: 12px; padding: 10px 20px; font-weight: 600;"
+                        data-bs-toggle="modal" 
+                        data-bs-target="#addCauseModal">
+                    <i class="bi bi-plus-circle-fill"></i> Ajouter une cause
+                </button>
+                <button type="button" class="btn btn-outline-primary shadow-sm d-flex align-items-center gap-2" 
+                        style="border-radius: 12px; padding: 10px 20px; font-weight: 600;"
+                        data-bs-toggle="modal" 
+                        data-bs-target="#listCausesModal">
+                    <i class="bi bi-list-ul"></i> Toutes les causes
+                </button>
+            </div>
         </div>
         <div class="search-container d-flex align-items-center gap-2" style="min-width: 400px;">
             <div class="input-group shadow-sm" style="border-radius: 12px; overflow: hidden; flex-grow: 1;">
@@ -379,6 +387,24 @@
                 }
             });
         });
+
+        function confirmDeleteCause(causeId) {
+            Swal.fire({
+                title: 'Êtes-vous sûr ?',
+                text: "Cette action est irréversible et la cause sera définitivement supprimée.",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
+                confirmButtonText: 'Oui, supprimer !',
+                cancelButtonText: 'Annuler',
+                borderRadius: '15px'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    document.getElementById('delete-cause-form-' + causeId).submit();
+                }
+            })
+        }
     </script>
 
     {# Modal Ajouter une Cause #}
@@ -428,6 +454,60 @@
                         <button type="submit" class="btn btn-primary fw-bold px-4" style="border-radius: 10px;">Enregistrer la cause</button>
                     </div>
                 </form>
+            </div>
+        </div>
+    </div>
+
+    {# Modal Liste des Causes #}
+    <div class="modal fade" id="listCausesModal" tabindex="-1" aria-labelledby="listCausesModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content border-0 shadow" style="border-radius: 20px;">
+                <div class="modal-header border-0 pb-0">
+                    <h4 class="modal-title fw-bold" id="listCausesModalLabel">Toutes les causes</h4>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body p-4">
+                    <div class="admin-table-container" style="max-height: 400px; overflow-y: auto;">
+                        <table class="admin-table">
+                            <thead>
+                                <tr>
+                                    <th>Cause</th>
+                                    <th>Montant Collecté</th>
+                                    <th class="text-end">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for causeData in allCauses %}
+                                    <tr>
+                                        <td>
+                                            <div class="fw-bold">{{ causeData.entity.titre }}</div>
+                                            <small class="text-muted">{{ causeData.entity.description|slice(0, 50) }}...</small>
+                                        </td>
+                                        <td>
+                                            <span class="fw-bold text-success">{{ causeData.montant|number_format(2, ',', ' ') }} DT</span>
+                                        </td>
+                                        <td class="text-end">
+                                            <form id="delete-cause-form-{{ causeData.entity.id }}" action="{{ path('app_admin_cause_delete', {id: causeData.entity.id}) }}" method="POST">
+                                                <button type="button" class="btn btn-sm btn-outline-danger border-2 fw-bold" 
+                                                        style="border-radius: 8px;"
+                                                        onclick="confirmDeleteCause({{ causeData.entity.id }})">
+                                                    <i class="bi bi-trash-fill"></i> Supprimer
+                                                </button>
+                                            </form>
+                                        </td>
+                                    </tr>
+                                {% else %}
+                                    <tr>
+                                        <td colspan="3" class="text-center py-4 text-muted">Aucune cause trouvée.</td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="modal-footer border-0 pt-0 px-4 pb-4">
+                    <button type="button" class="btn btn-light fw-bold" data-bs-dismiss="modal" style="border-radius: 10px;">Fermer</button>
+                </div>
             </div>
         </div>
     </div>

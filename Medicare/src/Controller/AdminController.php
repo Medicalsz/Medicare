@@ -30,23 +30,42 @@ class AdminController extends AbstractController
     }
 
     #[Route('/donations', name: 'donations')]
-    public function donations(DonRepository $donRepository): Response
+    public function donations(DonRepository $donRepository, EntityManagerInterface $entityManager): Response
     {
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
 
         $donsArgent = $donRepository->findBy(['typeDon' => TypeDon::ARGENT], ['dateDon' => 'DESC']);
         $donsMateriel = $donRepository->findBy(['typeDon' => TypeDon::MATERIEL], ['dateDon' => 'DESC']);
-
-        // Calcul des statistiques par cause pour le camembert
+        
+        $allCauses = $entityManager->getRepository(Cause::class)->findAll();
+        
+        // Calcul des statistiques par cause
         $statsCauses = [];
         $totalArgent = 0;
+        
+        // Initialiser toutes les causes avec 0 pour la liste complète
+        $causesCollecte = [];
+        foreach ($allCauses as $cause) {
+            $causesCollecte[$cause->getId()] = [
+                'entity' => $cause,
+                'montant' => 0
+            ];
+        }
+
         foreach ($donsArgent as $don) {
-            $causeTitre = $don->getCause()->getTitre();
+            $cause = $don->getCause();
+            $causeTitre = $cause->getTitre();
+            
             if (!isset($statsCauses[$causeTitre])) {
                 $statsCauses[$causeTitre] = 0;
             }
             $statsCauses[$causeTitre] += $don->getMontant();
             $totalArgent += $don->getMontant();
+            
+            // Mise à jour pour le modal de gestion des causes
+            if (isset($causesCollecte[$cause->getId()])) {
+                $causesCollecte[$cause->getId()]['montant'] += $don->getMontant();
+            }
         }
 
         return $this->render('admin/donations.html.twig', [
@@ -54,6 +73,7 @@ class AdminController extends AbstractController
             'donsMateriel' => $donsMateriel,
             'statsCauses' => $statsCauses,
             'totalArgent' => $totalArgent,
+            'allCauses' => $causesCollecte,
         ]);
     }
 
@@ -148,6 +168,32 @@ class AdminController extends AbstractController
         $entityManager->flush();
 
         $this->addFlash('success', 'La cause a été ajoutée avec succès.');
+
+        return $this->redirectToRoute('app_admin_donations');
+    }
+
+    #[Route('/cause/delete/{id}', name: 'cause_delete', methods: ['POST'])]
+    public function deleteCause(int $id, EntityManagerInterface $entityManager): Response
+    {
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
+
+        $cause = $entityManager->getRepository(Cause::class)->find($id);
+
+        if (!$cause) {
+            $this->addFlash('error', 'La cause demandée n\'existe pas.');
+            return $this->redirectToRoute('app_admin_donations');
+        }
+
+        // Vérifier si la cause a des dons associés
+        if (!$cause->getDons()->isEmpty()) {
+            $this->addFlash('error', 'Impossible de supprimer cette cause car elle contient déjà des dons.');
+            return $this->redirectToRoute('app_admin_donations');
+        }
+
+        $entityManager->remove($cause);
+        $entityManager->flush();
+
+        $this->addFlash('success', 'La cause a été supprimée avec succès.');
 
         return $this->redirectToRoute('app_admin_donations');
     }
