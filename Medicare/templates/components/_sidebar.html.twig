@@ -1,5 +1,5 @@
 <aside class="sidebar">
-    <!-- Header mobile avec logo + bouton fermer -->
+
     <div class="sidebar-mobile-header">
         <div class="sidebar-logo">
             <img src="{{ asset('assets/img/logomedicare.png') }}" alt="Medicare">
@@ -11,6 +11,7 @@
     </div>
 
     <nav class="sidebar-nav">
+
         <!-- Dashboard -->
         <a href="{{ path('app_dashboard') }}" class="nav-item {{ app.request.attributes.get('_route') == 'app_dashboard' ? 'active' : '' }}">
             <span class="nav-icon"><i class="fas fa-home"></i></span>
@@ -23,21 +24,28 @@
             <span class="nav-text">Mes rendez-vous</span>
         </a>
 
-        <!-- Cabinets / Médecins -->
+        <!-- Cabinets -->
         <a href="{{ path('app_cabinets') }}" class="nav-item {{ app.request.attributes.get('_route') == 'app_cabinets' ? 'active' : '' }}">
             <span class="nav-icon"><i class="fas fa-hospital"></i></span>
             <span class="nav-text">Cabinets</span>
         </a>
 
-        <!-- Mes consultations -->
+        <!-- Consultations -->
         <a href="{{ path('app_consultations') }}" class="nav-item {{ app.request.attributes.get('_route') == 'app_consultations' ? 'active' : '' }}">
             <span class="nav-icon"><i class="fas fa-clipboard-list"></i></span>
             <span class="nav-text">Mes consultations</span>
         </a>
 
+        <!-- Forum -->
+        <a href="{{ path('dashboard_forum') }}
+" class="nav-item {{ app.request.attributes.get('_route') == 'app_forum' ? 'active' : '' }}">
+            <span class="nav-icon"><i class="fas fa-comments"></i></span>
+            <span class="nav-text">Forum</span>
+        </a>
+
         {% if 'ROLE_PATIENT' in app.user.roles and 'ROLE_MEDECIN' not in app.user.roles %}
-        <!-- Devenir médecin (uniquement pour patients) -->
         <div class="nav-divider"></div>
+
         <a href="{{ path('app_demande_medecin') }}" class="nav-item {{ app.request.attributes.get('_route') == 'app_demande_medecin' ? 'active' : '' }}">
             <span class="nav-icon"><i class="fas fa-stethoscope"></i></span>
             <span class="nav-text">Devenir médecin</span>
@@ -46,7 +54,7 @@
 
         <div class="nav-divider"></div>
 
-        <!-- Mon profil -->
+        <!-- Profil -->
         <a href="{{ path('app_profile') }}" class="nav-item {{ app.request.attributes.get('_route') == 'app_profile' ? 'active' : '' }}">
             <span class="nav-icon"><i class="fas fa-user"></i></span>
             <span class="nav-text">Mon profil</span>
@@ -57,16 +65,19 @@
             <span class="nav-icon"><i class="fas fa-cog"></i></span>
             <span class="nav-text">Paramètres</span>
         </a>
+
     </nav>
 
-    <!-- Footer avec profil utilisateur -->
     <div class="sidebar-footer">
+
         <div class="user-profile">
             <div class="user-avatar">
                 <span>{{ app.user.prenom|first|upper }}{{ app.user.nom|first|upper }}</span>
             </div>
+
             <div class="user-details">
                 <div class="user-name">{{ app.user.prenom }} {{ app.user.nom }}</div>
+
                 <div class="user-role">
                     {% if 'ROLE_ADMIN' in app.user.roles %}
                         Administrateur
@@ -78,8 +89,11 @@
                 </div>
             </div>
         </div>
-        <a href="{{ path('app_logout') }}" class="logout-btn" title="Déconnexion">
+
+        <a href="{{ path('app_logout') }}" class="logout-btn">
             <i class="fas fa-sign-out-alt"></i>
         </a>
+
     </div>
+
 </aside>

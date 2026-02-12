@@ -1,0 +1,15 @@
+<h2>{{ topic.title }}</h2>
+<p>{{ topic.content }}</p>
+
+<hr>
+
+<h4>Commentaires</h4>
+
+{% for c in topic.comments %}
+<p>{{ c.content }}</p>
+{% endfor %}
+
+{{ form_start(form) }}
+{{ form_widget(form) }}
+<button>Commenter</button>
+{{ form_end(form) }}

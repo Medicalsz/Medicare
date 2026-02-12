@@ -1,0 +1,11 @@
+<h2>Forum</h2>
+
+<a href="{{ path('forum_new') }}">➕ Nouveau sujet</a>
+
+{% for t in topics %}
+<hr>
+<h4>{{ t.title }}</h4>
+<a href="{{ path('forum_show',{id:t.id}) }}">Voir</a>
+<a href="{{ path('forum_edit',{id:t.id}) }}">Modifier</a>
+<a href="{{ path('forum_delete',{id:t.id}) }}">Supprimer</a>
+{% endfor %}

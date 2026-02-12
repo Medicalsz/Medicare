@@ -24,7 +24,6 @@ final class Version20260211140702 extends AbstractMigration
         $this->addSql('ALTER TABLE consultation ADD CONSTRAINT FK_964685A64F31A84 FOREIGN KEY (medecin_id) REFERENCES medecin (id)');
         $this->addSql('ALTER TABLE consultation ADD CONSTRAINT FK_964685A66B899279 FOREIGN KEY (patient_id) REFERENCES patient (id)');
         $this->addSql('ALTER TABLE consultation ADD CONSTRAINT FK_964685A691EF7EAA FOREIGN KEY (rendez_vous_id) REFERENCES rendez_vous (id)');
-        $this->addSql('DROP INDEX unique_medecin_date_heure ON rendez_vous');
     }
 
     public function down(Schema $schema): void
