@@ -1,0 +1,26 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Collaborations - MediCare{% endblock %}
+
+{% block body %}
+<section class="container section">
+    <h2>Collaborations</h2>
+    <p><a class="btn btn-primary" href="{{ path('home_collaboration_new') }}">New collaboration</a></p>
+    <div id="content">Loading…</div>
+</section>
+{% endblock %}
+
+{% block scripts %}
+{{ parent() }}
+<script>
+async function load(){
+  const res = await fetch('/collaborations', {headers:{'Accept':'application/json'}});
+  const data = await res.json();
+  const el = document.getElementById('content');
+  if(!Array.isArray(data)) { el.innerText = JSON.stringify(data); return; }
+  const rows = data.map(c => `\n<tr>\n<td>${c.id}</td><td>${c.partner_id}</td><td>${c.organization_id||''}</td><td>${c.contract_start}</td><td>${c.contract_end||''}</td><td>${c.status}</td>\n</tr>`).join('');
+  el.innerHTML = `<table class="table table-striped table-hover table-bordered table-responsive"><thead><tr><th>ID</th><th>Partner</th><th>Org</th><th>Start</th><th>End</th><th>Status</th></tr></thead><tbody>${rows}</tbody></table>`;
+}
+window.addEventListener('load', load);
+</script>
+{% endblock %}
