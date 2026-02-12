@@ -19,12 +19,8 @@
     {# TopBar - Composant réutilisable #}
     {{ include('components/_topbar.html.twig') }}
 
-    {# Sidebar - Navigation verticale selon le rôle #}
-    {% if is_granted('ROLE_MEDECIN') %}
-        {{ include('components/_sidebar_medecin.html.twig') }}
-    {% else %}
-        {{ include('components/_sidebar.html.twig') }}
-    {% endif %}
+    {# Sidebar - Navigation verticale #}
+    {{ include('components/_sidebar.html.twig') }}
 
     {# Overlay pour mobile (après sidebar pour z-index correct) #}
     <div class="sidebar-overlay"></div>
@@ -209,93 +205,6 @@
                     }
                 }
             });
-            
-            // Vérifier toutes les 5 secondes si la demande médecin a été traitée
-            function checkDemandeStatus() {
-                fetch('/check-demande-status')
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.status === 'acceptee') {
-                            clearInterval(statusCheckInterval);
-                            showAcceptedModal();
-                            localStorage.setItem('demande_shown', '1');
-                        } else if (data.status === 'rejetee') {
-                            clearInterval(statusCheckInterval);
-                            showRejectedModal(data.raison);
-                            localStorage.setItem('demande_shown', '1');
-                        }
-                    })
-                    .catch(error => console.error('Erreur:', error));
-            }
-            
-            function showAcceptedModal() {
-                const modalHtml = `
-                    <div class="modal fade show" id="acceptedModal" style="display: block; background: rgba(0,0,0,0.8);" data-bs-backdrop="static" data-bs-keyboard="false">
-                        <div class="modal-dialog modal-dialog-centered">
-                            <div class="modal-content" style="border-radius: 15px; border: none;">
-                                <div class="modal-body" style="padding: 40px; text-align: center;">
-                                    <div style="width: 80px; height: 80px; border-radius: 50%; background: rgba(40, 167, 69, 0.1); display: flex; align-items: center; justify-content: center; margin: 0 auto 20px;">
-                                        <i class="bi bi-check-circle-fill" style="font-size: 50px; color: #28a745;"></i>
-                                    </div>
-                                    <h4 style="font-weight: 700; color: #1e1e2d; margin-bottom: 10px;">Demande acceptée !</h4>
-                                    <p style="color: #666; font-size: 15px; margin-bottom: 20px;">
-                                        Félicitations ! Votre demande pour devenir médecin a été acceptée.<br>
-                                        <strong style="color: #28a745;">Vous devez vous reconnecter pour accéder à vos nouvelles fonctionnalités.</strong>
-                                    </p>
-                                    <button onclick="window.location.href='/logout'" style="background: #28a745; color: white; border: none; padding: 15px 40px; border-radius: 8px; font-weight: 600; cursor: pointer; font-size: 16px; box-shadow: 0 4px 15px rgba(40, 167, 69, 0.3);">
-                                        <i class="bi bi-arrow-repeat"></i> Se reconnecter maintenant
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                `;
-                document.body.insertAdjacentHTML('beforeend', modalHtml);
-                
-                // Bloquer tous les clics en dehors de la modal
-                document.getElementById('acceptedModal').addEventListener('click', function(e) {
-                    if (e.target.id === 'acceptedModal') {
-                        e.stopPropagation();
-                        e.preventDefault();
-                        return false;
-                    }
-                });
-            }
-            
-            function showRejectedModal(raison) {
-                const modalHtml = `
-                    <div class="modal fade show" id="rejectedModal" style="display: block; background: rgba(0,0,0,0.5);">
-                        <div class="modal-dialog modal-dialog-centered">
-                            <div class="modal-content" style="border-radius: 15px; border: none;">
-                                <div class="modal-body" style="padding: 40px; text-align: center;">
-                                    <div style="width: 80px; height: 80px; border-radius: 50%; background: rgba(220, 53, 69, 0.1); display: flex; align-items: center; justify-content: center; margin: 0 auto 20px;">
-                                        <i class="bi bi-x-circle-fill" style="font-size: 50px; color: #dc3545;"></i>
-                                    </div>
-                                    <h4 style="font-weight: 700; color: #1e1e2d; margin-bottom: 10px;">Demande refusée</h4>
-                                    <p style="color: #666; font-size: 15px; margin-bottom: 10px;">
-                                        Malheureusement, votre demande pour devenir médecin a été refusée.
-                                    </p>
-                                    <div style="background: #f8f9fa; padding: 15px; border-radius: 10px; margin-bottom: 20px; text-align: left;">
-                                        <strong style="color: #1e1e2d;">Raison :</strong>
-                                        <p style="color: #666; margin: 5px 0 0 0;">${raison || 'Non spécifiée'}</p>
-                                    </div>
-                                    <button onclick="this.closest('.modal').remove()" style="background: #6c757d; color: white; border: none; padding: 12px 30px; border-radius: 8px; font-weight: 600; cursor: pointer;">
-                                        <i class="bi bi-x-circle"></i> Fermer
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                `;
-                document.body.insertAdjacentHTML('beforeend', modalHtml);
-            }
-            
-            // Lancer la vérification seulement si pas déjà montré
-            let statusCheckInterval = null;
-            if (!localStorage.getItem('demande_shown')) {
-                statusCheckInterval = setInterval(checkDemandeStatus, 5000);
-                checkDemandeStatus();
-            }
         </script>
     {% endblock %}
 </body>

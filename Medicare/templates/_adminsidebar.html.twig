@@ -4,49 +4,42 @@
         <nav class="admin-nav">
             <ul class="admin-nav-list">
                 <li class="admin-nav-item">
-                    <a href="{{ path('app_admin_dashboard') }}" class="admin-nav-link {{ app.request.attributes.get('_route') == 'app_admin_dashboard' ? 'active' : '' }}">
+                    <a href="#" class="admin-nav-link active">
                         <i class="bi bi-speedometer2"></i>
                         <span>Dashboard</span>
                     </a>
                 </li>
 
                 <li class="admin-nav-item">
-                    <a href="{{ path('app_admin_utilisateurs') }}" class="admin-nav-link {{ app.request.attributes.get('_route') == 'app_admin_utilisateurs' ? 'active' : '' }}">
+                    <a href="#" class="admin-nav-link">
                         <i class="bi bi-people"></i>
                         <span>Utilisateurs</span>
                     </a>
                 </li>
 
                 <li class="admin-nav-item">
-                    <a href="{{ path('app_admin_patients') }}" class="admin-nav-link {{ app.request.attributes.get('_route') == 'app_admin_patients' ? 'active' : '' }}">
+                    <a href="#" class="admin-nav-link">
                         <i class="bi bi-person-heart"></i>
                         <span>Patients</span>
                     </a>
                 </li>
 
                 <li class="admin-nav-item">
-                    <a href="{{ path('app_admin_medecins') }}" class="admin-nav-link {{ app.request.attributes.get('_route') == 'app_admin_medecins' ? 'active' : '' }}">
+                    <a href="#" class="admin-nav-link">
                         <i class="bi bi-hospital"></i>
                         <span>Médecins</span>
                     </a>
                 </li>
 
                 <li class="admin-nav-item">
-                    <a href="{{ path('app_admin_rendezvous') }}" class="admin-nav-link {{ app.request.attributes.get('_route') == 'app_admin_rendezvous' ? 'active' : '' }}">
+                    <a href="#" class="admin-nav-link">
                         <i class="bi bi-calendar-check"></i>
                         <span>Rendez-vous</span>
                     </a>
                 </li>
 
                 <li class="admin-nav-item">
-                    <a href="{{ path('app_admin_demandes_medecin') }}" class="admin-nav-link {{ app.request.attributes.get('_route') == 'app_admin_demandes_medecin' ? 'active' : '' }}">
-                        <i class="bi bi-file-earmark-medical"></i>
-                        <span>Demandes Médecin</span>
-                    </a>
-                </li>
-
-                <li class="admin-nav-item">
-                    <a href="{{ path('app_admin_collaborations') }}" class="admin-nav-link {{ app.request.attributes.get('_route') == 'app_admin_collaborations' ? 'active' : '' }}">
+                    <a href="#" class="admin-nav-link">
                         <i class="bi bi-person-badge"></i>
                         <span>Collaborateurs</span>
                     </a>

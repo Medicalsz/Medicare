@@ -48,21 +48,14 @@ class LoginControllerAuthenticator extends AbstractLoginFormAuthenticator
             return new RedirectResponse($targetPath);
         }
 
-        // Vérifier les rôles de l'utilisateur et rediriger vers le bon dashboard
+        // Vérifier si l'utilisateur est admin
         $user = $token->getUser();
-        $roles = $user->getRoles();
-        
-        if (in_array('ROLE_ADMIN', $roles, true)) {
+        if (in_array('ROLE_ADMIN', $user->getRoles(), true)) {
             // Redirection vers le dashboard admin
             return new RedirectResponse($this->urlGenerator->generate('app_admin_dashboard', ['login_success' => 'true']));
         }
-        
-        if (in_array('ROLE_MEDECIN', $roles, true)) {
-            // Redirection vers le dashboard médecin
-            return new RedirectResponse($this->urlGenerator->generate('app_medecin_dashboard', ['login_success' => 'true']));
-        }
 
-        // Redirection vers le dashboard patient par défaut
+        // Redirection vers le dashboard patient après connexion réussie
         return new RedirectResponse($this->urlGenerator->generate('app_dashboard', ['login_success' => 'true']));
     }
 

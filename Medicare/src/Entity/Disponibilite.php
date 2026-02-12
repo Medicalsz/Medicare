@@ -22,7 +22,7 @@ class Disponibilite
     #[ORM\Column(type: 'time')]
     private ?\DateTimeInterface $heureFin = null;
 
-    #[ORM\ManyToOne(inversedBy: 'disponibilites')]
+    #[ORM\ManyToOne]
     #[ORM\JoinColumn(nullable: false)]
     private ?Medecin $medecin = null;
 

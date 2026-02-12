@@ -475,11 +475,6 @@ function updateStepDisplay() {
         }
     });
 
-    // Charger les médecins quand on arrive à l'étape 3
-    if (currentStep === 3 && formData.specialty) {
-        loadDoctors();
-    }
-
     // Gérer les boutons
     document.getElementById('prevBtn').style.display = currentStep > 1 ? 'flex' : 'none';
     
@@ -510,115 +505,6 @@ function updateNextButton() {
     }
 
     nextBtn.disabled = !canProceed;
-}
-
-// Charger les médecins selon la spécialité sélectionnée
-function loadDoctors() {
-    console.log('=== loadDoctors() appelée ===');
-    {% if medecins is defined %}
-    const medecins = {{ medecins|json_encode|raw }};
-    {% else %}
-    const medecins = [];
-    {% endif %}
-    
-    console.log('Médecins disponibles:', medecins);
-    console.log('Spécialité sélectionnée:', formData.specialty);
-    
-    const doctorsList = document.getElementById('doctors-list');
-    
-    if (medecins.length === 0) {
-        doctorsList.innerHTML = `
-            <div style="text-align: center; padding: 60px 20px; color: #999;">
-                <i class="fas fa-exclamation-circle" style="font-size: 64px; margin-bottom: 20px; opacity: 0.3;"></i>
-                <h4 style="color: #666; font-weight: 600;">Aucun médecin dans le système</h4>
-                <p>Veuillez contacter l'administrateur.</p>
-            </div>
-        `;
-        return;
-    }
-    
-    const selectedSpecialty = formData.specialty;
-    
-    // Mapping des spécialités sélectionnées vers les spécialités en base
-    const specialtyMap = {
-        'generaliste': ['généraliste', 'generaliste', 'médecine générale', 'medecine generale'],
-        'cardiologue': ['cardiologie', 'cardiologue'],
-        'dermatologue': ['dermatologie', 'dermatologue'],
-        'pediatre': ['pédiatrie', 'pediatre', 'pédiatre'],
-        'dentiste': ['dentiste', 'dentisterie', 'chirurgie dentaire'],
-        'ophtalmologue': ['ophtalmologie', 'ophtalmologue'],
-        'gynécologue': ['gynécologie', 'gynecologue', 'gynécologue'],
-        'psychiatre': ['psychiatrie', 'psychiatre']
-    };
-    
-    // Filtrer les médecins par spécialité
-    const filteredDoctors = medecins.filter(medecin => {
-        const specialty = medecin.specialite.toLowerCase().trim();
-        const mappedSpecialties = specialtyMap[selectedSpecialty] || [selectedSpecialty];
-        
-        return mappedSpecialties.some(mapped => 
-            specialty.includes(mapped.toLowerCase()) || 
-            mapped.toLowerCase().includes(specialty)
-        );
-    });
-    
-    if (filteredDoctors.length === 0) {
-        doctorsList.innerHTML = `
-            <div style="text-align: center; padding: 60px 20px; color: #999;">
-                <i class="fas fa-user-md" style="font-size: 64px; margin-bottom: 20px; opacity: 0.3;"></i>
-                <h4 style="color: #666; font-weight: 600;">Aucun médecin disponible</h4>
-                <p>Il n'y a pas encore de ${formData.specialty} enregistré dans notre système.</p>
-            </div>
-        `;
-        return;
-    }
-    
-    // Afficher les médecins
-    let html = '<div style="display: flex; flex-direction: column; gap: 15px;">';
-    
-    filteredDoctors.forEach(medecin => {
-        const initials = medecin.user.prenom.charAt(0) + medecin.user.nom.charAt(0);
-        html += `
-            <div class="doctor-card" data-doctor-id="${medecin.id}" style="border: 2px solid #e0e0e0; border-radius: 15px; padding: 20px; cursor: pointer; transition: all 0.3s ease; display: flex; gap: 20px; align-items: center;">
-                <div style="width: 70px; height: 70px; border-radius: 50%; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); display: flex; align-items: center; justify-content: center; color: white; font-weight: 700; font-size: 24px; flex-shrink: 0;">
-                    ${initials}
-                </div>
-                <div style="flex: 1;">
-                    <h4 style="margin: 0 0 5px 0; font-size: 18px; font-weight: 700; color: #1e1e2d;">
-                        Dr. ${medecin.user.prenom} ${medecin.user.nom}
-                    </h4>
-                    <p style="margin: 0 0 5px 0; color: #00BFFF; font-weight: 600; font-size: 14px;">
-                        <i class="fas fa-stethoscope"></i> ${medecin.specialite}
-                    </p>
-                    ${medecin.cabinet ? `<p style="margin: 0; color: #666; font-size: 14px;"><i class="fas fa-hospital-alt"></i> ${medecin.cabinet}</p>` : ''}
-                    ${medecin.bio ? `<p style="margin: 8px 0 0 0; color: #888; font-size: 13px; line-height: 1.4;">${medecin.bio.substring(0, 120)}${medecin.bio.length > 120 ? '...' : ''}</p>` : ''}
-                </div>
-                <div>
-                    <i class="fas fa-check-circle" style="font-size: 24px; color: #4CAF50; display: none;"></i>
-                </div>
-            </div>
-        `;
-    });
-    
-    html += '</div>';
-    doctorsList.innerHTML = html;
-    
-    // Ajouter les événements de sélection
-    document.querySelectorAll('.doctor-card').forEach(card => {
-        card.addEventListener('click', function() {
-            document.querySelectorAll('.doctor-card').forEach(c => {
-                c.style.borderColor = '#e0e0e0';
-                c.style.background = 'white';
-                c.querySelector('.fa-check-circle').style.display = 'none';
-            });
-            this.style.borderColor = '#00BFFF';
-            this.style.background = '#e6f7ff';
-            this.querySelector('.fa-check-circle').style.display = 'block';
-            
-            formData.doctor = parseInt(this.dataset.doctorId);
-            updateNextButton();
-        });
-    });
 }
 
 // Debug : afficher les données
