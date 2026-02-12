@@ -4,9 +4,16 @@
         <nav class="admin-nav">
             <ul class="admin-nav-list">
                 <li class="admin-nav-item">
-                    <a href="#" class="admin-nav-link active">
+                    <a href="{{ path('app_admin_dashboard') }}" class="admin-nav-link {{ app.request.get('_route') == 'app_admin_dashboard' ? 'active' : '' }}">
                         <i class="bi bi-speedometer2"></i>
                         <span>Dashboard</span>
+                    </a>
+                </li>
+
+                <li class="admin-nav-item">
+                    <a href="{{ path('app_admin_donations') }}" class="admin-nav-link {{ app.request.get('_route') == 'app_admin_donations' ? 'active' : '' }}">
+                        <i class="bi bi-heart-pulse"></i>
+                        <span>Donations</span>
                     </a>
                 </li>
 

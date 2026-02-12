@@ -25,7 +25,7 @@
                         <i class="bi bi-person-circle"></i>
                     </div>
                     <div class="admin-info">
-                        <span class="admin-name">{{ app.user.prenom }} {{ app.user.nom }}</span>
+                        <span class="admin-name">{% if app.user %}{{ app.user.prenom }} {{ app.user.nom }}{% else %}Utilisateur{% endif %}</span>
                         <span class="admin-role">Administrateur</span>
                     </div>
                     <i class="bi bi-chevron-down"></i>

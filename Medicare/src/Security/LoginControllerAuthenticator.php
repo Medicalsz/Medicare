@@ -55,8 +55,8 @@ class LoginControllerAuthenticator extends AbstractLoginFormAuthenticator
             return new RedirectResponse($this->urlGenerator->generate('app_admin_dashboard', ['login_success' => 'true']));
         }
 
-        // Redirection vers le dashboard patient après connexion réussie
-        return new RedirectResponse($this->urlGenerator->generate('app_dashboard', ['login_success' => 'true']));
+        // Redirection vers la page d'accueil pour les autres rôles (patients, etc.)
+        return new RedirectResponse($this->urlGenerator->generate('app_home', ['login_success' => 'true']));
     }
 
     protected function getLoginUrl(Request $request): string

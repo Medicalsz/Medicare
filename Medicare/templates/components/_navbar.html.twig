@@ -1,0 +1,120 @@
+<header id="header" class="header d-flex align-items-center fixed-top">
+  <div class="container position-relative d-flex align-items-center justify-content-between">
+
+    <a href="{{ path('app_home') }}" class="logo d-flex align-items-center me-auto me-xl-0">
+      <img src="{{ asset('assets/img/logomedicare.png') }}" alt="Medicare" style="height: 50px; width: auto; margin-right: 10px;">
+      <h1 class="sitename">Medicare<span>+</span></h1>
+    </a>
+
+    <nav id="navmenu" class="navmenu">
+      <ul>
+        <li><a href="{{ path('app_home') }}" {% if app.request.get('_route') == 'app_home' %}class="active"{% endif %}>Accueil</a></li>
+        <li><a href="{{ path('app_home') }}#home-about">À propos</a></li>
+        <li><a href="{{ path('app_home') }}#featured-departments">Spécialités</a></li>
+        <li class="d-flex align-items-center">
+            <a href="{{ path('app_donation_index') }}" {% if app.request.get('_route') == 'app_donation_index' %}class="active"{% endif %}>Donnation</a>
+            {% if is_granted('IS_AUTHENTICATED_FULLY') %}
+                <div class="donation-arrow-container ms-1 position-relative">
+                    <a href="{{ path('app_user_donations') }}" class="donation-arrow-link-new text-decoration-none">
+                        <i class="bi bi-chevron-down text-muted" style="font-size: 0.8rem; cursor: pointer;"></i>
+                        <span class="hover-text-new">Mes dons</span>
+                    </a>
+                </div>
+            {% endif %}
+        </li>
+        <li><a href="{{ path('app_home') }}#find-a-doctor">Médecins</a></li>
+        <li><a href="#footer">Contact</a></li>
+      </ul>
+      <i class="mobile-nav-toggle d-xl-none bi bi-list"></i>
+    </nav>
+
+    <style>
+        .donation-arrow-container {
+            display: inline-flex;
+            align-items: center;
+        }
+        .donation-arrow-link-new {
+            display: flex;
+            align-items: center;
+            padding: 5px;
+            transition: 0.3s;
+        }
+        .donation-arrow-link-new:hover i {
+            color: var(--accent-color) !important;
+        }
+        .donation-arrow-link-new .hover-text-new {
+            position: absolute;
+            left: 50%;
+            top: 100%;
+            transform: translateX(-50%) translateY(10px);
+            background: #444;
+            color: white;
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            white-space: nowrap;
+            opacity: 0;
+            visibility: hidden;
+            transition: 0.3s;
+            pointer-events: none;
+            z-index: 1000;
+        }
+        .donation-arrow-link-new .hover-text-new::after {
+            content: "";
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            border: 5px solid transparent;
+            border-bottom-color: #444;
+        }
+        .donation-arrow-link-new:hover .hover-text-new {
+            opacity: 1;
+            visibility: visible;
+            transform: translateX(-50%) translateY(5px);
+        }
+    </style>
+
+    <div class="auth-buttons d-flex gap-2 align-items-center">
+      {% if is_granted('IS_AUTHENTICATED_FULLY') %}
+          <div class="user-profile d-flex align-items-center gap-3">
+              <div class="user-info d-flex flex-column text-end d-none d-md-flex">
+                  <span class="user-name fw-bold" style="color: var(--heading-color);">{{ app.user.prenom }} {{ app.user.nom }}</span>
+                  <small class="user-role text-muted" style="font-size: 0.75rem;">
+                      {% if is_granted('ROLE_ADMIN') %}Administrateur
+                      {% elseif is_granted('ROLE_MEDECIN') %}Médecin
+                      {% else %}Patient{% endif %}
+                  </small>
+              </div>
+              <div class="dropdown">
+                  <a href="#" class="d-flex align-items-center text-decoration-none dropdown-toggle" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                      <div class="avatar-circle" style="width: 40px; height: 40px; background: var(--accent-color); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold;">
+                          {{ app.user.prenom|first|upper }}{{ app.user.nom|first|upper }}
+                      </div>
+                  </a>
+                  <ul class="dropdown-menu dropdown-menu-end shadow border-0 mt-2" aria-labelledby="userDropdown">
+                      {% if is_granted('ROLE_ADMIN') %}
+                          <li><a class="dropdown-item" href="{{ path('app_admin_dashboard') }}"><i class="bi bi-speedometer2 me-2"></i>Dashboard Admin</a></li>
+                      {% else %}
+                          <li><a class="dropdown-item" href="{{ path('app_dashboard') }}"><i class="bi bi-person me-2"></i>Mon Profil</a></li>
+                      {% endif %}
+                      <li><a class="dropdown-item" href="{{ path('app_user_donations') }}"><i class="bi bi-heart-fill text-danger me-2"></i>Mes Dons</a></li>
+                      <li><hr class="dropdown-divider"></li>
+                      <li><a class="dropdown-item text-danger" href="{{ path('app_logout') }}"><i class="bi bi-box-arrow-right me-2"></i>Déconnexion</a></li>
+                  </ul>
+              </div>
+          </div>
+      {% else %}
+          <a class="btn-login" href="{{ path('app_login') }}">
+              <i class="bi bi-box-arrow-in-right"></i>
+              <span>Connexion</span>
+          </a>
+          <a class="btn-register" href="{{ path('app_register') }}">
+              <i class="bi bi-person-plus"></i>
+              <span>Inscription</span>
+          </a>
+      {% endif %}
+    </div>
+
+  </div>
+</header>

@@ -1,0 +1,377 @@
+{% extends 'admin_base.html.twig' %}
+
+{% block title %}Gestion des Donations{% endblock %}
+
+{% block body %}
+    <div class="admin-page-header d-flex justify-content-between align-items-center flex-wrap gap-3">
+        <div>
+            <h1 class="admin-page-title">Gestion des Donations</h1>
+            <p class="admin-page-subtitle">Visualisez et gérez l'ensemble des dons reçus</p>
+        </div>
+        <div class="search-container d-flex align-items-center gap-2" style="min-width: 400px;">
+            <div class="input-group shadow-sm" style="border-radius: 12px; overflow: hidden; flex-grow: 1;">
+                <span class="input-group-text bg-white border-0 ps-3">
+                    <i class="bi bi-search text-muted"></i>
+                </span>
+                <input type="text" id="causeSearch" class="form-control border-0 py-2" placeholder="Rechercher par cause..." style="box-shadow: none;">
+            </div>
+            <a href="{{ path('app_admin_donations_pdf') }}" class="btn btn-danger shadow-sm d-flex align-items-center gap-2" style="border-radius: 12px; padding: 8px 15px;">
+                <i class="bi bi-file-earmark-pdf-fill"></i> PDF
+            </a>
+        </div>
+    </div>
+
+    {% for message in app.flashes('success') %}
+        <div class="alert alert-success alert-dismissible fade show border-0 shadow-sm mb-4" role="alert" style="border-radius: 15px;">
+            <i class="bi bi-check-circle-fill me-2"></i>
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    {% endfor %}
+
+    {# Section Dons d'Argent #}
+    <div class="admin-card mb-5">
+        <div class="admin-card-header d-flex justify-content-between align-items-center">
+            <h3 class="admin-card-title mb-0">
+                <i class="bi bi-cash-stack text-success"></i> Dons d'Argent
+            </h3>
+            <div class="d-flex align-items-center gap-3">
+                <button type="button" class="btn btn-sm btn-outline-primary border-2 fw-bold d-flex align-items-center gap-2" 
+                        style="border-radius: 10px;"
+                        data-bs-toggle="modal" 
+                        data-bs-target="#statsModal">
+                    <i class="bi bi-pie-chart-fill"></i> Statistiques
+                </button>
+                <span class="admin-badge info">{{ donsArgent|length }} dons</span>
+            </div>
+        </div>
+        <div class="admin-card-body">
+            <div class="admin-table-container">
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                                <th>Donateur</th>
+                                <th>Cause</th>
+                                <th class="sortable" data-sort="amount" style="cursor: pointer; user-select: none;">
+                                    Montant <i class="bi bi-arrow-down-up small ms-1 text-muted"></i>
+                                </th>
+                                <th>Adresse</th>
+                                <th>Date</th>
+                                <th>Mode</th>
+                                <th>Statut</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for don in donsArgent %}
+                                <tr class="donation-row" data-cause="{{ don.cause.titre|lower }}" data-amount="{{ don.montant }}">
+                                    <td>
+                                        <div class="fw-bold">{{ don.donateur.prenom }} {{ don.donateur.nom }}</div>
+                                        <small class="text-muted">{{ don.donateur.email }}</small>
+                                    </td>
+                                    <td>{{ don.cause.titre }}</td>
+                                    <td class="fw-bold text-success">{{ don.montant|number_format(2, ',', ' ') }} DT</td>
+                                    <td>
+                                        <small class="text-muted">
+                                            <i class="bi bi-geo-alt"></i> 
+                                            {% if don.statutDon.value == 'confirmé' and not don.isPickupAddressConfirmed %}
+                                                <span class="text-warning small italic">En attente de l'utilisateur...</span>
+                                            {% else %}
+                                                {{ don.adresse|default('N/A') }}
+                                            {% endif %}
+                                        </small>
+                                    </td>
+                                    <td>{{ don.dateDon|date('d/m/Y H:i') }}</td>
+                                    <td>{{ don.modePaiement.value|capitalize }}</td>
+                                <td>
+                                    <div class="d-flex align-items-center gap-2">
+                                        {% if don.statutDon.value == 'confirmé' %}
+                                            <span class="admin-badge success">Confirmé</span>
+                                        {% elseif don.statutDon.value == 'en attente' %}
+                                            <span class="admin-badge warning">En attente</span>
+                                            <form action="{{ path('app_admin_don_confirm', {id: don.id}) }}" method="POST" class="d-inline">
+                                                <button type="submit" class="btn btn-sm btn-outline-success border-2 fw-bold" title="Confirmer le don" style="border-radius: 8px;">
+                                                    <i class="bi bi-check-lg"></i> Confirmer
+                                                </button>
+                                            </form>
+                                        {% else %}
+                                            <span class="admin-badge danger">{{ don.statutDon.value|capitalize }}</span>
+                                        {% endif %}
+                                    </div>
+                                </td>
+                            </tr>
+                        {% else %}
+                            <tr>
+                                <td colspan="6" class="text-center py-4">Aucun don d'argent enregistré.</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    {# Section Dons Matériels #}
+    <div class="admin-card">
+        <div class="admin-card-header">
+            <h3 class="admin-card-title">
+                <i class="bi bi-box-seam text-primary"></i> Dons Matériels
+            </h3>
+            <span class="admin-badge info">{{ donsMateriel|length }} dons</span>
+        </div>
+        <div class="admin-card-body">
+            <div class="admin-table-container">
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                                <th>Donateur</th>
+                                <th>Cause</th>
+                                <th>Matériels</th>
+                                <th class="sortable" data-sort="quantity" style="cursor: pointer; user-select: none;">
+                                    Quantité <i class="bi bi-arrow-down-up small ms-1 text-muted"></i>
+                                </th>
+                                <th>Adresse</th>
+                                <th>Date</th>
+                                <th>Statut</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for don in donsMateriel %}
+                                <tr class="donation-row" data-cause="{{ don.cause.titre|lower }}" data-quantity="{{ don.montant|round(0, 'floor') }}">
+                                    <td>
+                                        <div class="fw-bold">{{ don.donateur.prenom }} {{ don.donateur.nom }}</div>
+                                        <small class="text-muted">{{ don.donateur.email }}</small>
+                                    </td>
+                                    <td>{{ don.cause.titre }}</td>
+                                    <td>
+                                        <ul class="list-unstyled mb-0 small">
+                                            {% for objet in don.objets %}
+                                                <li><i class="bi bi-dot"></i> {{ objet.nomObjet }} (x{{ objet.quantite }})</li>
+                                            {% endfor %}
+                                        </ul>
+                                    </td>
+                                    <td class="text-center fw-bold">{{ don.montant|round(0, 'floor') }}</td>
+                                    <td>
+                                        <small class="text-muted">
+                                            <i class="bi bi-geo-alt"></i> 
+                                            {% if don.statutDon.value == 'confirmé' and not don.isPickupAddressConfirmed %}
+                                                <span class="text-warning small italic">En attente de l'utilisateur...</span>
+                                            {% else %}
+                                                {{ don.adresse|default('N/A') }}
+                                            {% endif %}
+                                        </small>
+                                    </td>
+                                    <td>{{ don.dateDon|date('d/m/Y H:i') }}</td>
+                                    <td>
+                                    <div class="d-flex align-items-center gap-2">
+                                        {% if don.statutDon.value == 'confirmé' %}
+                                            <span class="admin-badge success">Confirmé</span>
+                                        {% elseif don.statutDon.value == 'en attente' %}
+                                            <span class="admin-badge warning">En attente</span>
+                                            <form action="{{ path('app_admin_don_confirm', {id: don.id}) }}" method="POST" class="d-inline">
+                                                <button type="submit" class="btn btn-sm btn-outline-success border-2 fw-bold" title="Confirmer le don" style="border-radius: 8px;">
+                                                    <i class="bi bi-check-lg"></i> Confirmer
+                                                </button>
+                                            </form>
+                                        {% else %}
+                                            <span class="admin-badge danger">{{ don.statutDon.value|capitalize }}</span>
+                                        {% endif %}
+
+                                        {# Bouton Supprimer (Livré) - UNIQUEMENT pour matériel #}
+                                        <button type="button" class="btn btn-sm btn-outline-danger border-2 fw-bold" 
+                                                style="border-radius: 8px;"
+                                                data-bs-toggle="modal" 
+                                                data-bs-target="#deleteModalMat{{ don.id }}"
+                                                title="Marquer comme livré et supprimer">
+                                            <i class="bi bi-trash"></i>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                        {% else %}
+                            <tr>
+                                <td colspan="6" class="text-center py-4">Aucun don matériel enregistré.</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    {# Modals de suppression hors de la table pour éviter les conflits de rendu #}
+    {% for don in donsMateriel %}
+        <div class="modal fade" id="deleteModalMat{{ don.id }}" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content" style="border-radius: 20px; border: none; overflow: hidden;">
+                    <div class="modal-header bg-danger text-white border-0 py-3">
+                        <h5 class="modal-title fw-bold"><i class="bi bi-exclamation-triangle-fill me-2"></i>Attention</h5>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body p-4 text-center">
+                        <i class="bi bi-box-seam text-danger mb-3" style="font-size: 3rem;"></i>
+                        <p class="mb-0 fs-5 text-dark fw-bold">
+                            Cette fonctionnalité de suppression n'est faite que pour lorsque les dons matériels sont arrivés à destination et sont livrés chez nous.
+                        </p>
+                        <div class="alert alert-warning mt-3 border-0 shadow-sm" style="border-radius: 12px; text-align: left;">
+                            <strong>Note :</strong> Si vous confirmez la suppression, ce don sera considéré comme livré et sera supprimé de la base de données.
+                        </div>
+                    </div>
+                    <div class="modal-footer border-0 p-4 pt-0 justify-content-center">
+                        <button type="button" class="btn btn-light fw-bold px-4 py-2 me-2" data-bs-dismiss="modal" style="border-radius: 10px; min-width: 120px;">Annuler</button>
+                        <form action="{{ path('app_admin_don_delete', {id: don.id}) }}" method="POST" class="d-inline">
+                            <button type="submit" class="btn btn-danger fw-bold px-4 py-2" style="border-radius: 10px; min-width: 120px;">Confirmer la livraison</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endfor %}
+
+    {# Modal Statistiques #}
+    <div class="modal fade" id="statsModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content" style="border-radius: 20px; border: none; overflow: hidden;">
+                <div class="modal-header border-0 py-4 px-4">
+                    <h5 class="modal-title fw-bold fs-4">
+                        <i class="bi bi-pie-chart-fill text-primary me-2"></i> Répartition des dons par cause
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body p-4 pt-0 text-center">
+                    <div class="mb-4">
+                        <span class="text-muted d-block mb-1">Montant Total Collecté</span>
+                        <h2 class="fw-bold text-success mb-0">{{ totalArgent|number_format(0, '.', ' ') }} DT</h2>
+                    </div>
+                    <p class="text-muted mb-4 small">Visualisation du pourcentage de chaque cause par rapport au total des dons d'argent reçus.</p>
+                    <div style="max-width: 420px; margin: 0 auto;">
+                        <canvas id="donationsChart"></canvas>
+                    </div>
+                </div>
+                <div class="modal-footer border-0 p-4 pt-0 justify-content-center">
+                    <button type="button" class="btn btn-primary fw-bold px-5 py-2" data-bs-dismiss="modal" style="border-radius: 12px;">Fermer</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // --- Logique de recherche ---
+            const searchInput = document.getElementById('causeSearch');
+            const rows = document.querySelectorAll('.donation-row');
+
+            searchInput.addEventListener('input', function() {
+                const searchTerm = this.value.toLowerCase().trim();
+
+                rows.forEach(row => {
+                    const causeName = row.getAttribute('data-cause');
+                    if (causeName.includes(searchTerm)) {
+                        row.style.display = '';
+                    } else {
+                        row.style.display = 'none';
+                    }
+                });
+
+                updateNoResultMessages();
+            });
+
+            // --- Logique de tri ---
+            const sortableHeaders = document.querySelectorAll('.sortable');
+            
+            sortableHeaders.forEach(header => {
+                let ascending = true;
+                
+                header.addEventListener('click', function() {
+                    const sortType = this.getAttribute('data-sort');
+                    const table = this.closest('table');
+                    const tbody = table.querySelector('tbody');
+                    const rowsArray = Array.from(tbody.querySelectorAll('.donation-row'));
+                    
+                    sortableHeaders.forEach(h => {
+                        if (h !== header) {
+                            h.querySelector('i').className = 'bi bi-arrow-down-up small ms-1 text-muted';
+                        }
+                    });
+
+                    rowsArray.sort((a, b) => {
+                        const valA = parseFloat(a.getAttribute(`data-${sortType}`));
+                        const valB = parseFloat(b.getAttribute(`data-${sortType}`));
+                        return ascending ? valA - valB : valB - valA;
+                    });
+
+                    const icon = this.querySelector('i');
+                    icon.className = ascending ? 'bi bi-arrow-up small ms-1 text-primary' : 'bi bi-arrow-down small ms-1 text-primary';
+                    
+                    rowsArray.forEach(row => tbody.appendChild(row));
+                    ascending = !ascending;
+                });
+            });
+
+            function updateNoResultMessages() {
+                const tableBodies = document.querySelectorAll('tbody');
+                tableBodies.forEach(tbody => {
+                    const visibleRows = tbody.querySelectorAll('.donation-row[style="display: "], .donation-row:not([style*="display: none"])');
+                    let noResultMsg = tbody.querySelector('.no-result-message');
+                    
+                    if (visibleRows.length === 0) {
+                        if (!noResultMsg) {
+                            noResultMsg = document.createElement('tr');
+                            noResultMsg.className = 'no-result-message';
+                            noResultMsg.innerHTML = `<td colspan="10" class="text-center py-4 text-muted italic">Aucun don ne correspond à cette recherche.</td>`;
+                            tbody.appendChild(noResultMsg);
+                        }
+                    } else if (noResultMsg) {
+                        noResultMsg.remove();
+                    }
+                });
+            }
+
+            // --- Logique du Graphique (Chart.js) ---
+            const statsData = {{ statsCauses|json_encode|raw }};
+            const ctx = document.getElementById('donationsChart').getContext('2d');
+            
+            new Chart(ctx, {
+                type: 'pie',
+                data: {
+                    labels: Object.keys(statsData),
+                    datasets: [{
+                        data: Object.values(statsData),
+                        backgroundColor: [
+                            '#0d6efd', '#198754', '#ffc107', '#dc3545', '#0dcaf0', 
+                            '#6610f2', '#fd7e14', '#20c997', '#e83e8c', '#6f42c1'
+                        ],
+                        borderWidth: 2,
+                        borderColor: '#ffffff'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                padding: 20,
+                                font: {
+                                    size: 14,
+                                    weight: '500'
+                                }
+                            }
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    const label = context.label || '';
+                                    const value = context.parsed || 0;
+                                    const total = context.dataset.data.reduce((acc, curr) => acc + curr, 0);
+                                    const percentage = ((value / total) * 100).toFixed(1);
+                                    return ` ${label}: ${value.toLocaleString()} DT (${percentage}%)`;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        });
+    </script>
+{% endblock %}

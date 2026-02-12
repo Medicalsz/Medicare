@@ -2,6 +2,8 @@
 
 namespace App\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -39,6 +41,14 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[ORM\Column(type: 'boolean')]
     private $isVerified = false;
+
+    #[ORM\OneToMany(mappedBy: 'user', targetEntity: Donateur::class)]
+    private Collection $donateurs;
+
+    public function __construct()
+    {
+        $this->donateurs = new ArrayCollection();
+    }
 
     // ===== GETTERS & SETTERS =====
 
@@ -150,8 +160,15 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setIsVerified(bool $isVerified): static
     {
         $this->isVerified = $isVerified;
-
         return $this;
+    }
+
+    /**
+     * @return Collection<int, Donateur>
+     */
+    public function getDonateurs(): Collection
+    {
+        return $this->donateurs;
     }
 
 }
