@@ -1,0 +1,88 @@
+{# Admin Sidebar Component #}
+<aside class="admin-sidebar" id="adminSidebar">
+    <div class="admin-sidebar-content">
+        <nav class="admin-nav">
+            <ul class="admin-nav-list">
+                <li class="admin-nav-item">
+                    <a href="#" class="admin-nav-link active">
+                        <i class="bi bi-speedometer2"></i>
+                        <span>Dashboard</span>
+                    </a>
+                </li>
+
+                <li class="admin-nav-item">
+                    <a href="#" class="admin-nav-link">
+                        <i class="bi bi-people"></i>
+                        <span>Utilisateurs</span>
+                    </a>
+                </li>
+
+                <li class="admin-nav-item">
+                    <a href="#" class="admin-nav-link">
+                        <i class="bi bi-person-heart"></i>
+                        <span>Patients</span>
+                    </a>
+                </li>
+
+                <li class="admin-nav-item">
+                    <a href="#" class="admin-nav-link">
+                        <i class="bi bi-hospital"></i>
+                        <span>Médecins</span>
+                    </a>
+                </li>
+
+                <li class="admin-nav-item">
+                    <a href="#" class="admin-nav-link">
+                        <i class="bi bi-calendar-check"></i>
+                        <span>Rendez-vous</span>
+                    </a>
+                </li>
+
+                <li class="admin-nav-item">
+                    <a href="#" class="admin-nav-link">
+                        <i class="bi bi-person-badge"></i>
+                        <span>Collaborateurs</span>
+                    </a>
+                </li>
+
+                <li class="admin-nav-divider"></li>
+
+                <li class="admin-nav-item">
+                    <a href="#" class="admin-nav-link">
+                        <i class="bi bi-graph-up"></i>
+                        <span>Statistiques</span>
+                    </a>
+                </li>
+
+                <li class="admin-nav-item">
+                    <a href="#" class="admin-nav-link">
+                        <i class="bi bi-gear"></i>
+                        <span>Paramètres</span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+
+        {# Footer avec profil - visible uniquement sur mobile #}
+        <div class="admin-sidebar-footer">
+            <div class="admin-nav-divider"></div>
+            <div class="sidebar-profile">
+                <div class="sidebar-profile-info">
+                    <div class="sidebar-avatar">
+                        <i class="bi bi-person-circle"></i>
+                    </div>
+                    <div class="sidebar-user-info">
+                        <span class="sidebar-name">{{ app.user.prenom }} {{ app.user.nom }}</span>
+                        <span class="sidebar-role">Administrateur</span>
+                    </div>
+                </div>
+                <a href="{{ path('app_logout') }}" class="sidebar-logout-btn" title="Déconnexion">
+                    <i class="bi bi-box-arrow-right"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+</aside>
+
+{# Overlay pour mobile #}
+<div class="admin-sidebar-overlay" id="adminSidebarOverlay"></div>

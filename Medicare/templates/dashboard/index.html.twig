@@ -1,0 +1,60 @@
+{% extends 'dashboard_base.html.twig' %}
+
+{% block title %}Tableau de bord - Medicare{% endblock %}
+
+{% block body %}
+<div class="dashboard-content">
+    <div class="page-header">
+        <h1 class="page-title">Bienvenue, {{ app.user.prenom }} ! 👋</h1>
+        <p class="page-subtitle">Voici un aperçu de votre activité</p>
+    </div>
+
+    {# Cards statistiques #}
+    <div class="dashboard-cards">
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">Rendez-vous</h3>
+                <span class="card-icon"><i class="fas fa-calendar-check"></i></span>
+            </div>
+            <div class="card-value">3</div>
+            <p class="card-label">Rendez-vous à venir</p>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">Consultations</h3>
+                <span class="card-icon"><i class="fas fa-stethoscope"></i></span>
+            </div>
+            <div class="card-value">12</div>
+            <p class="card-label">Consultations effectuées</p>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">Médecins</h3>
+                <span class="card-icon"><i class="fas fa-user-md"></i></span>
+            </div>
+            <div class="card-value">5</div>
+            <p class="card-label">Médecins consultés</p>
+        </div>
+    </div>
+
+    {# Section Prochains RDV #}
+    <div class="card">
+        <div class="card-header">
+            <h3 class="card-title">Prochains rendez-vous</h3>
+            <a href="{{ path('app_appointments') }}" class="btn btn-primary">Prendre RDV</a>
+        </div>
+        <p style="color: #666; margin-top: 15px;">Vous n'avez aucun rendez-vous prévu pour le moment.</p>
+    </div>
+
+    {# Section Devenir médecin #}
+    {% if 'ROLE_PATIENT' in app.user.roles and 'ROLE_MEDECIN' not in app.user.roles %}
+    <div class="card" style="margin-top: 25px; border-left: 4px solid #87CEEB;">
+        <h3 class="card-title">Vous êtes professionnel de santé ?</h3>
+        <p style="color: #666; margin: 15px 0;">Déposez votre demande pour devenir médecin sur Medicare et gérer vos consultations en ligne.</p>
+        <a href="{{ path('app_demande_medecin') }}" class="btn btn-primary">Déposer une demande</a>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

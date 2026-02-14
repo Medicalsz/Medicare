@@ -1,0 +1,13 @@
+ccb171,127.0.0.1,GET,http://127.0.0.1:8000/home/collaborations/new,1770843974,,200,request
+b99bd0,127.0.0.1,GET,http://127.0.0.1:8000/home/partners,1770843979,,200,request
+4d344a,127.0.0.1,GET,http://127.0.0.1:8000/partners,1770843980,,301,request
+4ecb0e,127.0.0.1,GET,http://127.0.0.1:8000/partners/,1770843981,,200,request
+639633,127.0.0.1,GET,http://127.0.0.1:8000/home/collaborations,1770843982,,200,request
+7b4694,127.0.0.1,GET,http://127.0.0.1:8000/collaborations,1770843984,,301,request
+9beb1b,127.0.0.1,GET,http://127.0.0.1:8000/collaborations/,1770843984,,200,request
+786d3d,127.0.0.1,GET,http://127.0.0.1:8000/home/partners,1770843996,,200,request
+8d9be4,127.0.0.1,GET,http://127.0.0.1:8000/partners,1770843997,,301,request
+745766,127.0.0.1,GET,http://127.0.0.1:8000/partners/,1770843998,,200,request
+60cae2,127.0.0.1,GET,http://127.0.0.1:8000/dashboard,1770844246,20fddc,404,request
+20fddc,127.0.0.1,GET,http://127.0.0.1:8000/dashboard,1770844246,,404,request
+9d7a24,127.0.0.1,GET,http://127.0.0.1:8000/,1770844260,,404,request
