@@ -2,7 +2,6 @@
 
 namespace App\Controller;
 
-use App\Repository\ForumTopicRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -10,16 +9,11 @@ use Symfony\Component\Routing\Annotation\Route;
 class DashboardController extends AbstractController
 {
     #[Route('/dashboard', name: 'app_dashboard')]
-    public function index(ForumTopicRepository $forumTopicRepository): Response
+    public function index(): Response
     {
         $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
 
-        // Récupérer tous les topics
-        $topics = $forumTopicRepository->findAll();
-
-        return $this->render('dashboard/index.html.twig', [
-            'topics' => $topics,
-        ]);
+        return $this->render('dashboard/index.html.twig');
     }
 
     #[Route('/profile', name: 'app_profile')]
@@ -27,7 +21,7 @@ class DashboardController extends AbstractController
     {
         $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
 
-        return new Response('Page profil - À développer');
+        return new Response('Page profil - A developper');
     }
 
     #[Route('/settings', name: 'app_settings')]
@@ -35,7 +29,7 @@ class DashboardController extends AbstractController
     {
         $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
 
-        return new Response('Page paramètres - À développer');
+        return new Response('Page parametres - A developper');
     }
 
     #[Route('/appointments', name: 'app_appointments')]
@@ -43,7 +37,7 @@ class DashboardController extends AbstractController
     {
         $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
 
-        return new Response('Page rendez-vous - À développer');
+        return new Response('Page rendez-vous - A developper');
     }
 
     #[Route('/cabinets', name: 'app_cabinets')]
@@ -51,7 +45,7 @@ class DashboardController extends AbstractController
     {
         $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
 
-        return new Response('Page cabinets - À développer');
+        return new Response('Page cabinets - A developper');
     }
 
     #[Route('/consultations', name: 'app_consultations')]
@@ -59,7 +53,7 @@ class DashboardController extends AbstractController
     {
         $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
 
-        return new Response('Page consultations - À développer');
+        return new Response('Page consultations - A developper');
     }
 
     #[Route('/demande-medecin', name: 'app_demande_medecin')]
@@ -67,6 +61,6 @@ class DashboardController extends AbstractController
     {
         $this->denyAccessUnlessGranted('ROLE_PATIENT');
 
-        return new Response('Formulaire demande médecin - À développer');
+        return new Response('Formulaire demande medecin - A developper');
     }
 }

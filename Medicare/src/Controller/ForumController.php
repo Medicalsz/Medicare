@@ -14,23 +14,23 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 
-#[Route('/dashboard/forum')]
+#[Route('/admin/forum', name: 'app_admin_forum_')]
 class ForumController extends AbstractController
 {
-    #[Route('/', name: 'dashboard_forum', methods: ['GET'])]
+    #[Route('/', name: 'index', methods: ['GET'])]
     public function index(ForumTopicRepository $repo): Response
     {
-        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
 
         return $this->render('dashboard/forum/index.html.twig', [
             'topics' => $repo->findBy([], ['createdAt' => 'DESC'])
         ]);
     }
 
-    #[Route('/new', name: 'forum_new', methods: ['GET', 'POST'])]
+    #[Route('/new', name: 'new', methods: ['GET', 'POST'])]
     public function new(Request $request, EntityManagerInterface $em): Response
     {
-        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
 
         $topic = new ForumTopic();
         $form = $this->createForm(ForumTopicType::class, $topic);
@@ -41,7 +41,7 @@ class ForumController extends AbstractController
             $em->persist($topic);
             $em->flush();
 
-            return $this->redirectToRoute('dashboard_forum');
+            return $this->redirectToRoute('app_admin_forum_index');
         }
 
         return $this->render('dashboard/forum/new.html.twig', [
@@ -49,10 +49,10 @@ class ForumController extends AbstractController
         ]);
     }
 
-    #[Route('/{id}/edit', name: 'forum_edit', methods: ['GET', 'POST'])]
+    #[Route('/{id}/edit', name: 'edit', methods: ['GET', 'POST'])]
     public function edit(int $id, ForumTopicRepository $repo, Request $request, EntityManagerInterface $em): Response
     {
-        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
 
         $topic = $repo->find($id);
         if (!$topic) {
@@ -66,7 +66,7 @@ class ForumController extends AbstractController
             $topic->setUpdatedAt(new \DateTimeImmutable());
             $em->flush();
 
-            return $this->redirectToRoute('dashboard_forum');
+            return $this->redirectToRoute('app_admin_forum_index');
         }
 
         return $this->render('dashboard/forum/edit.html.twig', [
@@ -75,10 +75,10 @@ class ForumController extends AbstractController
         ]);
     }
 
-    #[Route('/{id}/delete', name: 'forum_delete', methods: ['POST'])]
+    #[Route('/{id}/delete', name: 'delete', methods: ['POST'])]
     public function delete(int $id, ForumTopicRepository $repo, Request $request, EntityManagerInterface $em): Response
     {
-        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
 
         $topic = $repo->find($id);
         if (!$topic) {
@@ -90,13 +90,13 @@ class ForumController extends AbstractController
             $em->flush();
         }
 
-        return $this->redirectToRoute('dashboard_forum');
+        return $this->redirectToRoute('app_admin_forum_index');
     }
 
-    #[Route('/{id}', name: 'forum_show', methods: ['GET', 'POST'])]
+    #[Route('/{id}', name: 'show', methods: ['GET', 'POST'])]
     public function show(int $id, ForumTopicRepository $repo, Request $request, EntityManagerInterface $em): Response
     {
-        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
 
         $topic = $repo->find($id);
         if (!$topic) {
@@ -113,7 +113,7 @@ class ForumController extends AbstractController
             $em->persist($comment);
             $em->flush();
 
-            return $this->redirectToRoute('forum_show', ['id' => $topic->getId()]);
+            return $this->redirectToRoute('app_admin_forum_show', ['id' => $topic->getId()]);
         }
 
         return $this->render('dashboard/forum/show.html.twig', [

@@ -12,9 +12,8 @@ class AdminController extends AbstractController
     #[Route('/dashboard', name: 'dashboard')]
     public function dashboard(): Response
     {
-        // Vérifier que l'utilisateur est admin (à implémenter avec les rôles)
-        // $this->denyAccessUnlessGranted('ROLE_ADMIN');
-        
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
+
         return $this->render('admin/dashboard.html.twig');
     }
 }

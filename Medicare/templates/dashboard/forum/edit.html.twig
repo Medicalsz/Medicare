@@ -1,37 +1,48 @@
-{% extends 'dashboard_base.html.twig' %}
+{% extends 'admin_base.html.twig' %}
 
 {% block title %}Modifier le sujet - Medicare{% endblock %}
 
+{% block stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet" href="{{ asset('assets/css/forum-modern.css') }}">
+{% endblock %}
+
 {% block body %}
-<div class="dashboard-content">
-    <div class="page-header d-flex justify-content-between align-items-center mb-4">
+<div class="dashboard-content forum-modern forum-page">
+    <div class="forum-header d-flex flex-column flex-lg-row justify-content-between align-items-lg-center gap-3 mb-4">
         <div>
-            <h1 class="page-title">Modifier le sujet</h1>
-            <p class="page-subtitle text-muted">Mettez à jour votre publication.</p>
+            <p class="forum-kicker mb-1">Edition</p>
+            <h1 class="page-title mb-2">Modifier le sujet</h1>
+            <p class="page-subtitle mb-0">Mettez a jour votre publication puis enregistrez.</p>
         </div>
-        <a href="{{ path('dashboard_forum') }}" class="btn btn-outline-secondary">
-            ← Retour au forum
-        </a>
+        <a href="{{ path('app_admin_forum_show', {id: topic.id}) }}" class="btn btn-outline-secondary">Retour au sujet</a>
     </div>
 
-    <div class="card shadow-sm border-0">
-        <div class="card-body">
-            {{ form_start(form, {'attr': {'class': 'needs-validation', 'novalidate': ''}}) }}
-                {{ form_row(form.title, {
-                    'label': 'Titre',
-                    'attr': {'placeholder': 'Sujet clair et précis...', 'required': true}
-                }) }}
-                {{ form_row(form.content, {
-                    'label': 'Contenu',
-                    'attr': {'rows': 10, 'placeholder': 'Modifiez votre message ici...', 'required': true}
-                }) }}
-
-                <div class="d-flex justify-content-end gap-3 mt-4">
-                    <a href="{{ path('forum_show', {id: topic.id}) }}" class="btn btn-outline-secondary">Annuler</a>
-                    <button type="submit" class="btn btn-primary">Mettre à jour</button>
-                </div>
-            {{ form_end(form) }}
-        </div>
-    </div>
+    <section class="forum-form-card">
+        {{ form_start(form) }}
+            {{ form_row(form.title, {
+                'label': 'Titre',
+                'attr': {
+                    'class': 'form-control forum-input',
+                    'placeholder': 'Titre du sujet'
+                }
+            }) }}
+            {{ form_row(form.content, {
+                'label': 'Contenu',
+                'attr': {
+                    'rows': 10,
+                    'class': 'form-control forum-textarea',
+                    'placeholder': 'Mettez a jour les details du sujet...'
+                }
+            }) }}
+            <div class="d-flex justify-content-end gap-2">
+                <a href="{{ path('app_admin_forum_show', {id: topic.id}) }}" class="btn btn-outline-secondary">Annuler</a>
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-save me-2"></i>Enregistrer
+                </button>
+            </div>
+        {{ form_end(form) }}
+    </section>
 </div>
 {% endblock %}
+

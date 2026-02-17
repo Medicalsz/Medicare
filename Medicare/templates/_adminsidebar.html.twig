@@ -2,11 +2,19 @@
 <aside class="admin-sidebar" id="adminSidebar">
     <div class="admin-sidebar-content">
         <nav class="admin-nav">
+            {% set current_route = app.request.attributes.get('_route') %}
             <ul class="admin-nav-list">
                 <li class="admin-nav-item">
-                    <a href="#" class="admin-nav-link active">
+                    <a href="{{ path('app_admin_dashboard') }}" class="admin-nav-link {{ current_route == 'app_admin_dashboard' ? 'active' : '' }}">
                         <i class="bi bi-speedometer2"></i>
                         <span>Dashboard</span>
+                    </a>
+                </li>
+
+                <li class="admin-nav-item">
+                    <a href="{{ path('app_admin_forum_index') }}" class="admin-nav-link {{ current_route starts with 'app_admin_forum_' ? 'active' : '' }}">
+                        <i class="bi bi-chat-square-text"></i>
+                        <span>Forum</span>
                     </a>
                 </li>
 

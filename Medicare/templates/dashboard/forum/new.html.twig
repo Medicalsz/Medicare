@@ -1,91 +1,86 @@
-{% extends 'dashboard_base.html.twig' %}
+{% extends 'admin_base.html.twig' %}
 
 {% block title %}Nouveau sujet - Medicare{% endblock %}
 
 {% block stylesheets %}
     {{ parent() }}
-    <link rel="stylesheet" href="{{ asset('css/forum-new.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/css/forum-modern.css') }}">
 {% endblock %}
 
 {% block body %}
-<div class="dashboard-content container py-5">
-    <div class="row justify-content-center">
-        <div class="col-lg-9 col-xl-7">
-
-            <!-- En-tête -->
-            <div class="text-center mb-5">
-                <h1 class="display-5 fw-bold mb-3 text-primary-gradient">
-                    Nouveau sujet
-                </h1>
-                <p class="lead text-muted mb-4">
-                    Partagez votre question ou votre expérience avec la communauté.
-                </p>
-                <a href="{{ path('dashboard_forum') }}" class="btn btn-outline-primary btn-lg px-5 py-3 rounded-pill shadow transition-all">
-                    <i class="fas fa-arrow-left me-2"></i> Retour au forum
-                </a>
-            </div>
-
-            <!-- Carte formulaire -->
-            <div class="card border-0 shadow-2xl rounded-4 overflow-hidden bg-white bg-opacity-98 backdrop-blur-sm">
-                <div class="card-body p-5 p-lg-6">
-                    {{ form_start(form, {
-                        'attr': {
-                            'class': 'needs-validation',
-                            'novalidate': ''
-                        }
-                    }) }}
-
-                        <!-- Titre -->
-                        <div class="mb-5">
-                            {{ form_label(form.title, null, {
-                                'label_attr': {'class': 'form-label fs-4 fw-semibold text-dark mb-3'}
-                            }) }}
-                            {{ form_widget(form.title, {
-                                'attr': {
-                                    'class': 'form-control form-control-lg rounded-3 border-2 focus-ring-primary shadow-sm',
-                                    'placeholder': 'Sujet clair et précis...',
-                                    'required': true,
-                                    'autofocus': true
-                                }
-                            }) }}
-                            <div class="invalid-feedback mt-2">
-                                {{ form_errors(form.title) }}
-                            </div>
-                        </div>
-
-                        <!-- Contenu -->
-                        <div class="mb-5">
-                            {{ form_label(form.content, null, {
-                                'label_attr': {'class': 'form-label fs-4 fw-semibold text-dark mb-3'}
-                            }) }}
-                            {{ form_widget(form.content, {
-                                'attr': {
-                                    'class': 'form-control form-control-lg rounded-3 border-2 focus-ring-primary shadow-sm',
-                                    'rows': 14,
-                                    'placeholder': 'Votre message ici...\n(détaillé = meilleures réponses)',
-                                    'required': true
-                                }
-                            }) }}
-                            <div class="invalid-feedback mt-2">
-                                {{ form_errors(form.content) }}
-                            </div>
-                        </div>
-
-                        <!-- Boutons -->
-                        <div class="d-flex flex-column flex-sm-row justify-content-end gap-4 mt-5">
-                            <a href="{{ path('dashboard_forum') }}" class="btn btn-outline-secondary btn-lg px-5 py-3 rounded-pill transition-all">
-                                Annuler
-                            </a>
-                            <button type="submit" class="btn btn-primary btn-lg px-5 py-3 rounded-pill shadow-lg transition-all">
-                                <i class="fas fa-paper-plane me-2"></i> Publier
-                            </button>
-                        </div>
-
-                    {{ form_end(form) }}
-                </div>
-            </div>
-
+<div class="dashboard-content forum-modern forum-page forum-create-v2">
+    <div class="forum-create-glow" aria-hidden="true"></div>
+    <div class="forum-header forum-create-header d-flex flex-column flex-lg-row justify-content-between align-items-lg-center gap-3 mb-4">
+        <div>
+            <p class="forum-kicker mb-1">Forum Medicare</p>
+            <h1 class="page-title mb-2">Creer un sujet qui attire de bonnes reponses</h1>
+            <p class="page-subtitle mb-0">Un bon titre + un contexte clair = discussion utile pour toute la communaute.</p>
         </div>
+        <a href="{{ path('app_admin_forum_index') }}" class="btn btn-outline-secondary">Retour au forum</a>
+    </div>
+
+    <div class="forum-create-layout forum-create-layout-v2">
+        <section class="forum-form-card forum-create-form forum-editor-card">
+            <div class="forum-editor-head">
+                <span class="forum-editor-dot"></span>
+                <span class="forum-editor-dot"></span>
+                <span class="forum-editor-dot"></span>
+                <p class="mb-0">Nouvelle publication</p>
+            </div>
+
+            {{ form_start(form) }}
+                <div class="forum-field-block">
+                    {{ form_label(form.title, 'Titre du sujet', {'label_attr': {'class': 'forum-label'}}) }}
+                    <div class="forum-field-shell">
+                        <span class="forum-field-icon"><i class="fas fa-heading"></i></span>
+                        {{ form_widget(form.title, {
+                            'attr': {
+                                'class': 'form-control forum-input forum-input-lg forum-input-neo',
+                                'placeholder': 'Ex: Comment preparer un rendez-vous medical ?'
+                            }
+                        }) }}
+                    </div>
+                    <small class="forum-input-hint">Essayez de rester court et specifique.</small>
+                    <div class="forum-field-errors">{{ form_errors(form.title) }}</div>
+                </div>
+
+                <div class="forum-field-block">
+                    {{ form_label(form.content, 'Votre message', {'label_attr': {'class': 'forum-label'}}) }}
+                    <div class="forum-field-shell forum-field-shell-lg">
+                        <span class="forum-field-icon"><i class="fas fa-pen"></i></span>
+                        {{ form_widget(form.content, {
+                            'attr': {
+                                'rows': 10,
+                                'class': 'form-control forum-textarea forum-input-neo forum-textarea-neo',
+                                'placeholder': 'Ajoutez le contexte, les symptomes, les questions precises, et ce que vous avez deja tente.'
+                            }
+                        }) }}
+                    </div>
+                    <small class="forum-input-hint">Structure conseillee: contexte, probleme, question.</small>
+                    <div class="forum-field-errors">{{ form_errors(form.content) }}</div>
+                </div>
+
+                <div class="forum-submit-row">
+                    <a href="{{ path('app_admin_forum_index') }}" class="btn btn-outline-secondary">Annuler</a>
+                    <button type="submit" class="btn btn-primary forum-btn-publish">
+                        <i class="fas fa-paper-plane me-2"></i>Publier le sujet
+                    </button>
+                </div>
+            {{ form_end(form) }}
+        </section>
+
+        <aside class="forum-create-help forum-create-help-v2">
+            <h2>Checklist qualite</h2>
+            <ul class="forum-help-list forum-help-list-v2">
+                <li><i class="fas fa-check-circle"></i><span>Titre clair en une phrase.</span></li>
+                <li><i class="fas fa-check-circle"></i><span>Contexte medical utile ajoute.</span></li>
+                <li><i class="fas fa-check-circle"></i><span>Question finale bien explicite.</span></li>
+            </ul>
+            <div class="forum-help-note">
+                Les sujets bien rediges recoivent plus vite des reponses pertinentes.
+            </div>
+        </aside>
     </div>
 </div>
 {% endblock %}
+
