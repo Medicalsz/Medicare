@@ -22,58 +22,9 @@ class Disponibilite
     #[ORM\Column(type: 'time')]
     private ?\DateTimeInterface $heureFin = null;
 
-    #[ORM\ManyToOne]
+    #[ORM\ManyToOne(inversedBy: "disponibilites")]
     #[ORM\JoinColumn(nullable: false)]
     private ?Medecin $medecin = null;
 
-    // ================= GETTERS & SETTERS =================
-
-    public function getId(): ?int
-    {
-        return $this->id;
-    }
-
-    public function getJourSemaine(): ?JourSemaine
-    {
-        return $this->jourSemaine;
-    }
-
-    public function setJourSemaine(JourSemaine $jourSemaine): static
-    {
-        $this->jourSemaine = $jourSemaine;
-        return $this;
-    }
-
-    public function getHeureDebut(): ?\DateTimeInterface
-    {
-        return $this->heureDebut;
-    }
-
-    public function setHeureDebut(\DateTimeInterface $heureDebut): static
-    {
-        $this->heureDebut = $heureDebut;
-        return $this;
-    }
-
-    public function getHeureFin(): ?\DateTimeInterface
-    {
-        return $this->heureFin;
-    }
-
-    public function setHeureFin(\DateTimeInterface $heureFin): static
-    {
-        $this->heureFin = $heureFin;
-        return $this;
-    }
-
-    public function getMedecin(): ?Medecin
-    {
-        return $this->medecin;
-    }
-
-    public function setMedecin(Medecin $medecin): static
-    {
-        $this->medecin = $medecin;
-        return $this;
-    }
+    // getters setters ...
 }

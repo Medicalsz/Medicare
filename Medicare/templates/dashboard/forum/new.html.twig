@@ -2,26 +2,90 @@
 
 {% block title %}Nouveau sujet - Medicare{% endblock %}
 
+{% block stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet" href="{{ asset('css/forum-new.css') }}">
+{% endblock %}
+
 {% block body %}
-<div class="dashboard-content">
-    <div class="page-header">
-        <div>
-            <h1 class="page-title">Nouveau sujet</h1>
-            <p class="page-subtitle">Partagez votre question ou votre expérience.</p>
-        </div>
-        <a href="{{ path('dashboard_forum') }}" class="btn btn-secondary">Retour au forum</a>
-    </div>
+<div class="dashboard-content container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-9 col-xl-7">
 
-    <div class="card">
-        {{ form_start(form) }}
-            {{ form_row(form.title) }}
-            {{ form_row(form.content) }}
-
-            <div style="margin-top: 15px;">
-                <button class="btn btn-primary" type="submit">Publier</button>
-                <a href="{{ path('dashboard_forum') }}" class="btn btn-secondary" style="margin-left: 10px;">Annuler</a>
+            <!-- En-tête -->
+            <div class="text-center mb-5">
+                <h1 class="display-5 fw-bold mb-3 text-primary-gradient">
+                    Nouveau sujet
+                </h1>
+                <p class="lead text-muted mb-4">
+                    Partagez votre question ou votre expérience avec la communauté.
+                </p>
+                <a href="{{ path('dashboard_forum') }}" class="btn btn-outline-primary btn-lg px-5 py-3 rounded-pill shadow transition-all">
+                    <i class="fas fa-arrow-left me-2"></i> Retour au forum
+                </a>
             </div>
-        {{ form_end(form) }}
+
+            <!-- Carte formulaire -->
+            <div class="card border-0 shadow-2xl rounded-4 overflow-hidden bg-white bg-opacity-98 backdrop-blur-sm">
+                <div class="card-body p-5 p-lg-6">
+                    {{ form_start(form, {
+                        'attr': {
+                            'class': 'needs-validation',
+                            'novalidate': ''
+                        }
+                    }) }}
+
+                        <!-- Titre -->
+                        <div class="mb-5">
+                            {{ form_label(form.title, null, {
+                                'label_attr': {'class': 'form-label fs-4 fw-semibold text-dark mb-3'}
+                            }) }}
+                            {{ form_widget(form.title, {
+                                'attr': {
+                                    'class': 'form-control form-control-lg rounded-3 border-2 focus-ring-primary shadow-sm',
+                                    'placeholder': 'Sujet clair et précis...',
+                                    'required': true,
+                                    'autofocus': true
+                                }
+                            }) }}
+                            <div class="invalid-feedback mt-2">
+                                {{ form_errors(form.title) }}
+                            </div>
+                        </div>
+
+                        <!-- Contenu -->
+                        <div class="mb-5">
+                            {{ form_label(form.content, null, {
+                                'label_attr': {'class': 'form-label fs-4 fw-semibold text-dark mb-3'}
+                            }) }}
+                            {{ form_widget(form.content, {
+                                'attr': {
+                                    'class': 'form-control form-control-lg rounded-3 border-2 focus-ring-primary shadow-sm',
+                                    'rows': 14,
+                                    'placeholder': 'Votre message ici...\n(détaillé = meilleures réponses)',
+                                    'required': true
+                                }
+                            }) }}
+                            <div class="invalid-feedback mt-2">
+                                {{ form_errors(form.content) }}
+                            </div>
+                        </div>
+
+                        <!-- Boutons -->
+                        <div class="d-flex flex-column flex-sm-row justify-content-end gap-4 mt-5">
+                            <a href="{{ path('dashboard_forum') }}" class="btn btn-outline-secondary btn-lg px-5 py-3 rounded-pill transition-all">
+                                Annuler
+                            </a>
+                            <button type="submit" class="btn btn-primary btn-lg px-5 py-3 rounded-pill shadow-lg transition-all">
+                                <i class="fas fa-paper-plane me-2"></i> Publier
+                            </button>
+                        </div>
+
+                    {{ form_end(form) }}
+                </div>
+            </div>
+
+        </div>
     </div>
 </div>
 {% endblock %}

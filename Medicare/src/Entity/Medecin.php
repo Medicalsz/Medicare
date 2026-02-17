@@ -36,7 +36,6 @@ class Medecin
     #[ORM\OneToMany(mappedBy: "medecin", targetEntity: Disponibilite::class)]
     private Collection $disponibilites;
 
-    // ✅ CONSTRUCTEUR ICI
     public function __construct()
     {
         $this->rendezVous = new ArrayCollection();
@@ -44,54 +43,5 @@ class Medecin
         $this->disponibilites = new ArrayCollection();
     }
 
-    // ---------------- GETTERS & SETTERS ----------------
-
-    public function getId(): ?int
-    {
-        return $this->id;
-    }
-
-    public function getSpecialite(): ?string
-    {
-        return $this->specialite;
-    }
-
-    public function setSpecialite(string $specialite): static
-    {
-        $this->specialite = $specialite;
-        return $this;
-    }
-
-    public function getCabinet(): ?string
-    {
-        return $this->cabinet;
-    }
-
-    public function setCabinet(string $cabinet): static
-    {
-        $this->cabinet = $cabinet;
-        return $this;
-    }
-
-    public function getBio(): ?string
-    {
-        return $this->bio;
-    }
-
-    public function setBio(?string $bio): static
-    {
-        $this->bio = $bio;
-        return $this;
-    }
-
-    public function getUser(): ?User
-    {
-        return $this->user;
-    }
-
-    public function setUser(User $user): static
-    {
-        $this->user = $user;
-        return $this;
-    }
+    // Getters & Setters ...
 }

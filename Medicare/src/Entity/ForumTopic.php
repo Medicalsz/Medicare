@@ -7,6 +7,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use App\Entity\ForumComment;
+use App\Entity\User;
 
 #[ORM\Entity(repositoryClass: ForumTopicRepository::class)]
 class ForumTopic
@@ -22,7 +23,7 @@ class ForumTopic
     #[ORM\Column(type: 'text')]
     private ?string $content = null;
 
-    #[ORM\ManyToOne]
+    #[ORM\ManyToOne(targetEntity: User::class)]
     #[ORM\JoinColumn(nullable: false)]
     private ?User $author = null;
 
@@ -98,11 +99,8 @@ class ForumTopic
 
     public function removeComment(ForumComment $comment): self
     {
-        if ($this->comments->removeElement($comment)) {
-            if ($comment->getTopic() === $this) {
-                $comment->setTopic(null);
-            }
-        }
+        $this->comments->removeElement($comment);
+        // orphanRemoval: true supprime le commentaire en base, pas besoin de setTopic(null) (topic est non nullable)
 
         return $this;
     }

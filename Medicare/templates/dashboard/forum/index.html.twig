@@ -4,62 +4,60 @@
 
 {% block body %}
 <div class="dashboard-content">
-    <div class="page-header">
+    <div class="page-header d-flex justify-content-between align-items-center mb-4">
         <div>
             <h1 class="page-title">Forum</h1>
-            <p class="page-subtitle">Échangez avec la communauté Medicare</p>
+            <p class="page-subtitle text-muted">Échangez avec la communauté Medicare</p>
         </div>
-        <a href="{{ path('forum_new') }}" class="btn btn-primary"><i class="fas fa-plus"></i> Nouveau sujet</a>
+        <a href="{{ path('forum_new') }}" class="btn btn-primary">
+            <i class="fas fa-plus me-2"></i>Nouveau sujet
+        </a>
     </div>
 
-    <div class="card">
-        <div class="card-header">
-            <h3 class="card-title">Tous les sujets</h3>
+    <div class="card shadow-sm border-0">
+        <div class="card-header bg-light">
+            <h3 class="card-title mb-0">Tous les sujets</h3>
         </div>
-
-        {% if topics is empty %}
-            <p style="padding: 10px 5px; color: #666;">Aucun sujet pour le moment.</p>
-        {% else %}
-            <div class="table-wrapper">
-                <table class="forum-table">
-                    <thead>
-                        <tr>
-                            <th>Titre</th>
-                            <th>Auteur</th>
-                            <th>Créé le</th>
-                            <th style="width: 200px; text-align: right;">Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for t in topics %}
+        <div class="card-body p-0">
+            {% if topics is empty %}
+                <div class="text-center py-5 text-muted">
+                    <i class="fas fa-comments fa-3x mb-3 opacity-50"></i>
+                    <p>Aucun sujet pour le moment.</p>
+                </div>
+            {% else %}
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0 forum-table">
+                        <thead class="table-light">
                             <tr>
-                                <td>{{ t.title }}</td>
-                                <td>{{ t.author.prenom }} {{ t.author.nom }}</td>
-                                <td>{{ t.createdAt|date('d/m/Y H:i') }}</td>
-                                <td class="actions">
-                                    <a href="{{ path('forum_show', {id: t.id}) }}" class="btn btn-secondary btn-small">Voir</a>
-                                    <a href="{{ path('forum_edit', {id: t.id}) }}" class="btn btn-secondary btn-small">Modifier</a>
-                                    <form method="post" action="{{ path('forum_delete', {id: t.id}) }}" style="display:inline;" onsubmit="return confirm('Supprimer ce sujet ?');">
-                                        <input type="hidden" name="_token" value="{{ csrf_token('delete_topic_' ~ t.id) }}">
-                                        <button class="btn btn-secondary btn-small" type="submit">Supprimer</button>
-                                    </form>
+                                <th>Titre</th>
+                                <th>Auteur</th>
+                                <th>Créé le</th>
+                                <th class="text-end">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for topic in topics %}
+                            <tr>
+                                <td class="fw-medium">{{ topic.title }}</td>
+                                <td>{{ topic.author.prenom }} {{ topic.author.nom }}</td>
+                                <td>{{ topic.createdAt|date('d/m/Y H:i') }}</td>
+                                <td class="text-end">
+                                    <div class="btn-group btn-group-sm">
+                                        <a href="{{ path('forum_show', {id: topic.id}) }}" class="btn btn-outline-primary">Voir</a>
+                                        <a href="{{ path('forum_edit', {id: topic.id}) }}" class="btn btn-outline-secondary">Modifier</a>
+                                        <form method="post" action="{{ path('forum_delete', {id: topic.id}) }}" class="d-inline" onsubmit="return confirm('Supprimer ce sujet ?');">
+                                            <input type="hidden" name="_token" value="{{ csrf_token('delete_topic_' ~ topic.id) }}">
+                                            <button type="submit" class="btn btn-outline-danger">Supprimer</button>
+                                        </form>
+                                    </div>
                                 </td>
                             </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-            </div>
-        {% endif %}
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% endif %}
+        </div>
     </div>
 </div>
-
-<style>
-    .table-wrapper { overflow-x: auto; }
-    .forum-table { width: 100%; border-collapse: collapse; }
-    .forum-table th, .forum-table td { padding: 12px 10px; text-align: left; border-bottom: 1px solid #eee; }
-    .forum-table th { color: #666; font-weight: 600; }
-    .forum-table tr:hover { background: #f9fcff; }
-    .actions { text-align: right; white-space: nowrap; }
-    .btn-small { padding: 8px 12px; font-size: 13px; }
-</style>
 {% endblock %}

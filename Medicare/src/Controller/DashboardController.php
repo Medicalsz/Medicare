@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Repository\ForumTopicRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -9,20 +10,23 @@ use Symfony\Component\Routing\Annotation\Route;
 class DashboardController extends AbstractController
 {
     #[Route('/dashboard', name: 'app_dashboard')]
-    public function index(): Response
+    public function index(ForumTopicRepository $forumTopicRepository): Response
     {
-        // Vérifier que l'utilisateur est connecté
         $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
 
-        return $this->render('dashboard/index.html.twig');
+        // Récupérer tous les topics
+        $topics = $forumTopicRepository->findAll();
+
+        return $this->render('dashboard/index.html.twig', [
+            'topics' => $topics,
+        ]);
     }
 
     #[Route('/profile', name: 'app_profile')]
     public function profile(): Response
     {
         $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
-        
-        // TODO: Créer la page profil
+
         return new Response('Page profil - À développer');
     }
 
@@ -30,8 +34,7 @@ class DashboardController extends AbstractController
     public function settings(): Response
     {
         $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
-        
-        // TODO: Créer la page paramètres
+
         return new Response('Page paramètres - À développer');
     }
 
@@ -39,8 +42,7 @@ class DashboardController extends AbstractController
     public function appointments(): Response
     {
         $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
-        
-        // TODO: Créer la page rendez-vous
+
         return new Response('Page rendez-vous - À développer');
     }
 
@@ -48,8 +50,7 @@ class DashboardController extends AbstractController
     public function cabinets(): Response
     {
         $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
-        
-        // TODO: Créer la page cabinets
+
         return new Response('Page cabinets - À développer');
     }
 
@@ -57,8 +58,7 @@ class DashboardController extends AbstractController
     public function consultations(): Response
     {
         $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
-        
-        // TODO: Créer la page consultations
+
         return new Response('Page consultations - À développer');
     }
 
@@ -66,8 +66,7 @@ class DashboardController extends AbstractController
     public function demandeMedecin(): Response
     {
         $this->denyAccessUnlessGranted('ROLE_PATIENT');
-        
-        // TODO: Créer le formulaire de demande médecin
+
         return new Response('Formulaire demande médecin - À développer');
     }
 }

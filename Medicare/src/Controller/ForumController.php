@@ -11,6 +11,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 
 #[Route('/dashboard/forum')]
@@ -49,9 +50,14 @@ class ForumController extends AbstractController
     }
 
     #[Route('/{id}/edit', name: 'forum_edit', methods: ['GET', 'POST'])]
-    public function edit(ForumTopic $topic, Request $request, EntityManagerInterface $em): Response
+    public function edit(int $id, ForumTopicRepository $repo, Request $request, EntityManagerInterface $em): Response
     {
         $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
+
+        $topic = $repo->find($id);
+        if (!$topic) {
+            throw new NotFoundHttpException('Sujet introuvable.');
+        }
 
         $form = $this->createForm(ForumTopicType::class, $topic);
         $form->handleRequest($request);
@@ -70,9 +76,14 @@ class ForumController extends AbstractController
     }
 
     #[Route('/{id}/delete', name: 'forum_delete', methods: ['POST'])]
-    public function delete(ForumTopic $topic, Request $request, EntityManagerInterface $em): Response
+    public function delete(int $id, ForumTopicRepository $repo, Request $request, EntityManagerInterface $em): Response
     {
         $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
+
+        $topic = $repo->find($id);
+        if (!$topic) {
+            throw new NotFoundHttpException('Sujet introuvable.');
+        }
 
         if ($this->isCsrfTokenValid('delete_topic_' . $topic->getId(), $request->request->get('_token'))) {
             $em->remove($topic);
@@ -83,9 +94,14 @@ class ForumController extends AbstractController
     }
 
     #[Route('/{id}', name: 'forum_show', methods: ['GET', 'POST'])]
-    public function show(ForumTopic $topic, Request $request, EntityManagerInterface $em): Response
+    public function show(int $id, ForumTopicRepository $repo, Request $request, EntityManagerInterface $em): Response
     {
         $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
+
+        $topic = $repo->find($id);
+        if (!$topic) {
+            throw new NotFoundHttpException('Sujet introuvable.');
+        }
 
         $comment = new ForumComment();
         $form = $this->createForm(ForumCommentType::class, $comment);
