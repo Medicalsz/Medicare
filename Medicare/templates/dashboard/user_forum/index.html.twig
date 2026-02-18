@@ -1,4 +1,4 @@
-{% extends 'admin_base.html.twig' %}
+{% extends 'dashboard_base.html.twig' %}
 
 {% block title %}Forum - Medicare{% endblock %}
 
@@ -9,26 +9,26 @@
 
 {% block body %}
 <div class="dashboard-content forum-modern forum-page">
-    <div class="forum-header d-flex flex-column flex-lg-row justify-content-between align-items-lg-center gap-3 mb-4">
+    <div class="forum-header forum-user-index-header d-flex flex-column flex-lg-row justify-content-between align-items-lg-center gap-3 mb-4">
         <div>
             <p class="forum-kicker mb-1">Forum Medicare</p>
             <h1 class="page-title mb-2">Discussions de la communaute</h1>
-            <p class="page-subtitle mb-0">Posez une question, partagez une experience, aidez les autres.</p>
+            <p class="page-subtitle mb-0">Consultez les sujets existants, publiez vos questions et commentez.</p>
         </div>
-        <a href="{{ path('app_admin_forum_new') }}" class="btn btn-primary forum-cta">
+        <a href="{{ path('app_user_forum_new') }}" class="btn btn-primary forum-cta forum-user-new-btn">
             <i class="fas fa-plus me-2"></i>Nouveau sujet
         </a>
     </div>
 
     {% if topics is empty %}
-        <div class="forum-empty text-center py-5">
+        <div class="forum-empty forum-user-list-start text-center py-5">
             <div class="forum-empty-icon mb-3"><i class="fas fa-comments"></i></div>
             <h2 class="h4 mb-2">Aucun sujet pour le moment</h2>
-            <p class="text-muted mb-4">Demarrez la premiere discussion de la communaute.</p>
-            <a href="{{ path('app_admin_forum_new') }}" class="btn btn-primary">Creer un sujet</a>
+            <p class="text-muted mb-4">Soyez le premier a lancer une discussion.</p>
+            <a href="{{ path('app_user_forum_new') }}" class="btn btn-primary">Creer un sujet</a>
         </div>
     {% else %}
-        <div class="forum-topic-grid forum-showcase-grid">
+        <div class="forum-topic-grid forum-user-list-start forum-showcase-grid">
             {% for topic in topics %}
                 {% set commentsCount = topic.comments|length %}
                 {% set latestComment = commentsCount > 0 ? (topic.comments|last) : null %}
@@ -65,25 +65,17 @@
 
                     <div class="forum-showcase-footer">
                         <div class="forum-showcase-metrics">
-                            <span><i class="bi bi-eye-fill"></i>{{ viewsCount }}</span>
-                            <span><i class="bi bi-chat-left-text-fill"></i>{{ commentsCount }}</span>
+                            <span><i class="fas fa-eye"></i>{{ viewsCount }}</span>
+                            <span><i class="fas fa-comment-alt"></i>{{ commentsCount }}</span>
                         </div>
                         <div class="d-flex gap-2">
-                            <a href="{{ path('app_admin_forum_show', {id: topic.id}) }}" class="btn btn-sm btn-outline-secondary forum-btn-back">
-                                <i class="bi bi-eye-fill me-2"></i>Voir
+                            <a href="{{ path('app_user_forum_show', {id: topic.id}) }}" class="btn btn-sm btn-outline-secondary forum-btn-back">
+                                <i class="fas fa-eye me-2"></i>Voir
                             </a>
-                            <a href="{{ path('app_admin_forum_show', {id: topic.id}) }}" class="btn forum-comment-btn">
-                                <i class="bi bi-reply-fill me-2"></i>Commenter
+                            <a href="{{ path('app_user_forum_show', {id: topic.id}) }}" class="btn forum-comment-btn">
+                                <i class="fas fa-reply me-2"></i>Commenter
                             </a>
                         </div>
-                    </div>
-
-                    <div class="forum-admin-row">
-                        <a href="{{ path('app_admin_forum_edit', {id: topic.id}) }}" class="btn btn-sm btn-outline-secondary">Modifier</a>
-                        <form method="post" action="{{ path('app_admin_forum_delete', {id: topic.id}) }}" class="d-inline" onsubmit="return confirm('Supprimer ce sujet ?');">
-                            <input type="hidden" name="_token" value="{{ csrf_token('delete_topic_' ~ topic.id) }}">
-                            <button type="submit" class="btn btn-sm btn-outline-danger">Supprimer</button>
-                        </form>
                     </div>
                 </article>
             {% endfor %}
@@ -91,5 +83,4 @@
     {% endif %}
 </div>
 {% endblock %}
-
 

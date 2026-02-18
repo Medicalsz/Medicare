@@ -1,6 +1,6 @@
-{% extends 'admin_base.html.twig' %}
+{% extends 'dashboard_base.html.twig' %}
 
-{% block title %}Nouveau sujet - Medicare{% endblock %}
+{% block title %}Nouveau sujet - Forum{% endblock %}
 
 {% block stylesheets %}
     {{ parent() }}
@@ -13,14 +13,14 @@
     <div class="forum-header forum-create-header d-flex flex-column flex-lg-row justify-content-between align-items-lg-center gap-3 mb-4">
         <div>
             <p class="forum-kicker mb-1">Forum Medicare</p>
-            <h1 class="page-title mb-2">Creer un sujet qui attire de bonnes reponses</h1>
-            <p class="page-subtitle mb-0">Un bon titre + un contexte clair = discussion utile pour toute la communaute.</p>
+            <h1 class="page-title mb-2">Creer un nouveau sujet</h1>
+            <p class="page-subtitle mb-0">Partagez votre question avec la communaute.</p>
         </div>
-        <a href="{{ path('app_admin_forum_index') }}" class="btn btn-outline-secondary">Retour au forum</a>
+        <a href="{{ path('app_user_forum_index') }}" class="btn btn-outline-secondary forum-create-back-btn">Retour au forum</a>
     </div>
 
     <div class="forum-create-layout forum-create-layout-v2">
-        <section class="forum-form-card forum-create-form forum-editor-card">
+        <section class="forum-form-card forum-create-form forum-editor-card forum-user-new-form">
             <div class="forum-editor-head">
                 <span class="forum-editor-dot"></span>
                 <span class="forum-editor-dot"></span>
@@ -31,16 +31,16 @@
             {{ form_start(form) }}
                 <div class="forum-field-block">
                     {{ form_label(form.title, 'Titre du sujet', {'label_attr': {'class': 'forum-label'}}) }}
-                    <div class="forum-field-shell">
+                    <div class="forum-field-shell forum-title-shell">
                         <span class="forum-field-icon"><i class="fas fa-heading"></i></span>
                         {{ form_widget(form.title, {
                             'attr': {
-                                'class': 'form-control forum-input forum-input-lg forum-input-neo',
+                                'class': 'form-control forum-input forum-input-lg forum-input-neo forum-title-input',
                                 'placeholder': 'Ex: Comment preparer un rendez-vous medical ?'
                             }
                         }) }}
                     </div>
-                    <small class="forum-input-hint">Essayez de rester court et specifique.</small>
+                    <small class="forum-input-hint">Court, clair et precis.</small>
                     <div class="forum-field-errors">{{ form_errors(form.title) }}</div>
                 </div>
 
@@ -52,16 +52,15 @@
                             'attr': {
                                 'rows': 10,
                                 'class': 'form-control forum-textarea forum-input-neo forum-textarea-neo',
-                                'placeholder': 'Ajoutez le contexte, les symptomes, les questions precises, et ce que vous avez deja tente.'
+                                'placeholder': 'Donnez le contexte de votre question...'
                             }
                         }) }}
                     </div>
-                    <small class="forum-input-hint">Structure conseillee: contexte, probleme, question.</small>
                     <div class="forum-field-errors">{{ form_errors(form.content) }}</div>
                 </div>
 
                 <div class="forum-submit-row">
-                    <a href="{{ path('app_admin_forum_index') }}" class="btn btn-outline-secondary">Annuler</a>
+                    <a href="{{ path('app_user_forum_index') }}" class="btn btn-outline-secondary">Annuler</a>
                     <button type="submit" class="btn btn-primary forum-btn-publish">
                         <i class="fas fa-paper-plane me-2"></i>Publier le sujet
                     </button>
@@ -70,18 +69,17 @@
         </section>
 
         <aside class="forum-create-help forum-create-help-v2">
-            <h2>Checklist qualite</h2>
+            <h2>Conseils rapides</h2>
             <ul class="forum-help-list forum-help-list-v2">
-                <li><i class="fas fa-check-circle"></i><span>Titre clair en une phrase.</span></li>
-                <li><i class="fas fa-check-circle"></i><span>Contexte medical utile ajoute.</span></li>
-                <li><i class="fas fa-check-circle"></i><span>Question finale bien explicite.</span></li>
+                <li><i class="fas fa-check-circle"></i><span>Posez une seule question principale.</span></li>
+                <li><i class="fas fa-check-circle"></i><span>Ajoutez les details utiles.</span></li>
+                <li><i class="fas fa-check-circle"></i><span>Restez courtois et constructif.</span></li>
             </ul>
             <div class="forum-help-note">
-                Les sujets bien rediges recoivent plus vite des reponses pertinentes.
+                Plus le sujet est clair, plus les reponses seront pertinentes.
             </div>
         </aside>
     </div>
 </div>
 {% endblock %}
-
 

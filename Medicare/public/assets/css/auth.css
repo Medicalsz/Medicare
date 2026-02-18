@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&display=swap');
+
 /* Style d'authentification - Bleu Ciel & Blanc */
 * {
     margin: 0;
@@ -6,7 +8,7 @@
 }
 
 body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-family: 'Sora', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     background: linear-gradient(135deg, #87CEEB 0%, #ffffff 100%);
     min-height: 100vh;
     display: flex;
@@ -645,5 +647,126 @@ textarea.form-control {
         width: 47px;
         right: 8px;
         top: 38px;
+    }
+}
+
+/* Login Modern UI */
+.login-page {
+    max-width: 980px;
+    padding: 30px;
+}
+
+.login-split-card {
+    display: grid;
+    grid-template-columns: 1fr 1.05fr;
+    border-radius: 24px;
+    overflow: hidden;
+    background: rgba(255, 255, 255, 0.88);
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, 0.65);
+    box-shadow: 0 24px 50px rgba(24, 62, 104, 0.2);
+}
+
+.login-hero {
+    background: linear-gradient(155deg, #2563eb 0%, #4f9efc 52%, #7ec7ff 100%);
+    color: #fff;
+    padding: 42px 34px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 12px;
+}
+
+.login-kicker {
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    font-size: 0.75rem;
+    opacity: 0.95;
+    text-transform: uppercase;
+}
+
+.login-hero h1 {
+    font-size: clamp(1.9rem, 2.3vw, 2.5rem);
+    line-height: 1.15;
+    margin: 0;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    text-wrap: balance;
+}
+
+.login-hero p {
+    margin: 0;
+    opacity: 0.96;
+    line-height: 1.65;
+    font-size: 0.95rem;
+    max-width: 34ch;
+}
+
+.login-panel {
+    padding: 38px 32px;
+}
+
+.login-header {
+    text-align: left;
+    margin-bottom: 18px;
+}
+
+.login-header h2 {
+    margin: 0 0 6px;
+    font-size: clamp(1.45rem, 1.8vw, 1.85rem);
+    line-height: 1.2;
+    letter-spacing: -0.02em;
+    color: #13243c;
+}
+
+.login-header p {
+    margin: 0;
+    color: #4f627f;
+    line-height: 1.55;
+    font-size: 0.93rem;
+}
+
+.login-form-modern .form-group {
+    margin-bottom: 16px;
+}
+
+.login-form-modern .form-control {
+    min-height: 48px;
+    border-radius: 12px;
+    border: 1px solid #d4dfef;
+    background: #f8fbff;
+    font-size: 0.95rem;
+}
+
+.login-form-modern .form-control:focus {
+    border-color: #4f9efc;
+    box-shadow: 0 0 0 4px rgba(79, 158, 252, 0.15);
+}
+
+.login-submit-btn {
+    margin-top: 4px;
+    min-height: 50px;
+    border-radius: 12px;
+    text-transform: none;
+    font-size: 1rem;
+    letter-spacing: 0;
+    background: linear-gradient(135deg, #2a74e8, #5caeff);
+}
+
+.login-submit-btn:hover {
+    background: linear-gradient(135deg, #1f5dc0, #4897ef);
+}
+
+@media (max-width: 900px) {
+    .login-split-card {
+        grid-template-columns: 1fr;
+    }
+
+    .login-hero {
+        padding: 30px 24px;
+    }
+
+    .login-hero h1 {
+        font-size: 1.7rem;
     }
 }

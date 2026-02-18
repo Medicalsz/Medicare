@@ -36,6 +36,12 @@
             <span class="nav-text">Mes consultations</span>
         </a>
 
+        <!-- Forum -->
+        <a href="{{ path('app_user_forum_index') }}" class="nav-item {{ app.request.attributes.get('_route') starts with 'app_user_forum_' ? 'active' : '' }}">
+            <span class="nav-icon"><i class="fas fa-comments"></i></span>
+            <span class="nav-text">Forum</span>
+        </a>
+
         {% if 'ROLE_PATIENT' in app.user.roles and 'ROLE_MEDECIN' not in app.user.roles %}
         <div class="nav-divider"></div>
 

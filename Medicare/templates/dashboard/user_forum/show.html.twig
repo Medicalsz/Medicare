@@ -1,4 +1,4 @@
-{% extends 'admin_base.html.twig' %}
+{% extends 'dashboard_base.html.twig' %}
 
 {% block title %}{{ topic.title }} - Forum{% endblock %}
 
@@ -14,16 +14,9 @@
             <span class="forum-topic-label">SUJET</span>
             <h1 class="forum-topic-heading forum-title-emphasis">{{ topic.title }}</h1>
             <p class="forum-topic-submeta mb-0">Discussion ouverte par {{ topic.author.prenom }} {{ topic.author.nom }}</p>
-            <div class="d-flex flex-wrap gap-2 forum-topic-actions">
-                <a href="{{ path('app_admin_forum_index') }}" class="btn btn-outline-secondary forum-btn-back forum-btn-back-spacing">
-                    <i class="fas fa-arrow-left me-2"></i>Retour
-                </a>
-                <a href="{{ path('app_admin_forum_edit', {id: topic.id}) }}" class="btn btn-outline-secondary">Modifier</a>
-                <form method="post" action="{{ path('app_admin_forum_delete', {id: topic.id}) }}" class="d-inline" onsubmit="return confirm('Supprimer ce sujet ?');">
-                    <input type="hidden" name="_token" value="{{ csrf_token('delete_topic_' ~ topic.id) }}">
-                    <button type="submit" class="btn btn-outline-danger">Supprimer</button>
-                </form>
-            </div>
+            <a href="{{ path('app_user_forum_index') }}" class="btn btn-outline-secondary forum-btn-back forum-btn-back-spacing">
+                <i class="fas fa-arrow-left me-2"></i>Retour
+            </a>
         </div>
         <div class="forum-topic-badges forum-topic-badges-spaced mt-3">
             <span class="forum-meta-badge"><i class="fas fa-user-circle"></i>{{ topic.author.prenom }} {{ topic.author.nom }}</span>
@@ -80,6 +73,7 @@
                 <p class="mb-0 text-muted">Partagez une reponse claire et utile.</p>
             </div>
         </div>
+
         <div class="mt-3">
             {{ form_start(form, {'attr': {'class': 'forum-reply-form'}}) }}
                 <div class="forum-field-shell forum-field-shell-lg">
@@ -104,5 +98,4 @@
     </section>
 </div>
 {% endblock %}
-
 

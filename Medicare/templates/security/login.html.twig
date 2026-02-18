@@ -3,34 +3,65 @@
 {% block title %}Connexion{% endblock %}
 
 {% block body %}
-<h1>Connexion</h1>
+<a href="{{ path('app_home') }}" class="auth-page-back-btn">
+    <i>&larr;</i>
+    <span class="back-text">Retour</span>
+</a>
 
-{% if error %}
-    <div style="color:red;">
-        {{ error.messageKey|trans(error.messageData, 'security') }}
-    </div>
-{% endif %}
+<main class="auth-container login-page">
+    <section class="login-split-card">
+        <aside class="login-hero">
+            <p class="login-kicker">MEDICARE</p>
+            <h1>Votre espace sante, en un instant</h1>
+            <p>Connectez-vous pour retrouver vos informations, vos suivis et vos echanges.</p>
+        </aside>
 
-<form method="post">
+        <div class="login-panel">
+            <div class="auth-header login-header">
+                <h2>Connexion securisee</h2>
+                <p>Entrez vos identifiants pour continuer sur votre dashboard Medicare.</p>
+            </div>
 
-    <label>Email</label>
-    <input type="email"
-           name="email"
-           value="{{ last_username }}"
-           required
-           autofocus>
+            {% if error %}
+                <div class="alert alert-danger">
+                    {{ error.messageKey|trans(error.messageData, 'security') }}
+                </div>
+            {% endif %}
 
-    <label>Mot de passe</label>
-    <input type="password"
-           name="password"
-           required>
+            <form method="post" class="login-form login-form-modern">
+                <div class="form-group">
+                    <label for="login_email">Email</label>
+                    <input
+                        id="login_email"
+                        type="email"
+                        name="email"
+                        value="{{ last_username }}"
+                        class="form-control"
+                        placeholder="exemple@email.com"
+                        required
+                        autofocus
+                    >
+                </div>
 
-    <input type="hidden"
-           name="_csrf_token"
-           value="{{ csrf_token('authenticate') }}">
+                <div class="form-group">
+                    <label for="login_password">Mot de passe</label>
+                    <input
+                        id="login_password"
+                        type="password"
+                        name="password"
+                        class="form-control"
+                        placeholder="Votre mot de passe"
+                        required
+                    >
+                </div>
 
-    <button type="submit">
-        Se connecter
-    </button>
-</form>
+                <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
+
+                <button type="submit" class="btn-submit login-submit-btn">
+                    Se connecter
+                </button>
+            </form>
+        </div>
+    </section>
+</main>
 {% endblock %}
