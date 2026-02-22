@@ -18,3 +18,7 @@
 .phpunit.result.cache
 /phpunit.xml
 ###< symfony/phpunit-bridge ###
+
+# Python cache files (local AI summarizer)
+__pycache__/
+*.py[cod]
