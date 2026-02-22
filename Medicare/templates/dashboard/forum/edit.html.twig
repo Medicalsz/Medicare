@@ -7,6 +7,35 @@
     <link rel="stylesheet" href="{{ asset('assets/css/forum-modern.css') }}?v=20260218-1">
 {% endblock %}
 
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const typeInputs = document.querySelectorAll('input[name$="[type]"]');
+            const videoBlock = document.getElementById('video-url-block');
+            if (!typeInputs.length || !videoBlock) {
+                return;
+            }
+
+            const syncVideoBlock = function () {
+                let selectedValue = 'text';
+                typeInputs.forEach(function (input) {
+                    if (input.checked) {
+                        selectedValue = input.value;
+                    }
+                });
+                videoBlock.style.display = selectedValue === 'video' ? 'block' : 'none';
+            };
+
+            typeInputs.forEach(function (input) {
+                input.addEventListener('change', syncVideoBlock);
+            });
+
+            syncVideoBlock();
+        });
+    </script>
+{% endblock %}
+
 {% block body %}
 <div class="dashboard-content forum-modern forum-page">
     <div class="forum-header d-flex flex-column flex-lg-row justify-content-between align-items-lg-center gap-3 mb-4">
@@ -20,6 +49,10 @@
 
     <section class="forum-form-card">
         {{ form_start(form) }}
+            {{ form_row(form.type, {
+                'label': 'Type de sujet',
+                'attr': {'class': 'forum-type-choice'}
+            }) }}
             {{ form_row(form.title, {
                 'label': 'Titre',
                 'attr': {
@@ -27,6 +60,15 @@
                     'placeholder': 'Titre du sujet'
                 }
             }) }}
+            <div id="video-url-block">
+                {{ form_row(form.videoUrl, {
+                    'label': 'URL video',
+                    'attr': {
+                        'class': 'form-control forum-input',
+                        'placeholder': 'https://www.youtube.com/watch?v=...'
+                    }
+                }) }}
+            </div>
             {{ form_row(form.content, {
                 'label': 'Contenu',
                 'attr': {

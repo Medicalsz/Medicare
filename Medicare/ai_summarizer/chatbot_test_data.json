@@ -1,0 +1,14 @@
+[
+  {
+    "prompt": "Resumer en 2 lignes",
+    "text": "La prevention en sante permet de detecter plus tot les maladies, de reduire les complications et d'ameliorer la qualite de vie. Les bilans reguliers, l'activite physique et une alimentation equilibree jouent un role essentiel pour garder une bonne sante sur le long terme."
+  },
+  {
+    "prompt": "Donne un resume court",
+    "text": "La teleconsultation facilite l'acces aux soins pour les patients eloignes. Elle est utile pour le suivi, le renouvellement de traitement et les conseils rapides, mais elle ne remplace pas un examen clinique complet lorsque des symptomes graves apparaissent."
+  },
+  {
+    "prompt": "Resumer en 5 lignes",
+    "text": "Le forum medical rassemble des experiences de patients et d'experts. Certains messages decrivent des parcours de soins complexes, d'autres proposent des bonnes pratiques pour preparer une consultation. Les reponses mettent en avant l'importance des analyses, du suivi regulier et du dialogue avec le medecin traitant. Plusieurs commentaires insistent sur la prevention et l'hygiene de vie. Le consensus general est de consulter rapidement en cas de symptomes persistants."
+  }
+]

@@ -4,7 +4,45 @@
 
 {% block stylesheets %}
     {{ parent() }}
-    <link rel="stylesheet" href="{{ asset('assets/css/forum-modern.css') }}?v=20260218-1">
+    <link rel="stylesheet" href="{{ asset('assets/css/forum-modern.css') }}?v=20260221-2">
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const menuButtons = document.querySelectorAll('.forum-modern .forum-ellipsis-btn');
+
+            const closeAllMenus = function () {
+                document.querySelectorAll('.forum-modern .dropdown-menu.show').forEach(function (menu) {
+                    menu.classList.remove('show');
+                });
+            };
+
+            menuButtons.forEach(function (button) {
+                button.addEventListener('click', function (event) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                    const menu = button.parentElement.querySelector('.dropdown-menu');
+                    const isOpen = menu && menu.classList.contains('show');
+                    closeAllMenus();
+                    if (menu && !isOpen) {
+                        menu.classList.add('show');
+                    }
+                });
+            });
+
+            document.addEventListener('click', function () {
+                closeAllMenus();
+            });
+
+            document.addEventListener('keydown', function (event) {
+                if (event.key === 'Escape') {
+                    closeAllMenus();
+                }
+            });
+        });
+    </script>
 {% endblock %}
 
 {% block body %}
@@ -17,6 +55,14 @@
         </div>
         <a href="{{ path('app_admin_forum_new') }}" class="btn btn-primary forum-cta">
             <i class="fas fa-plus me-2"></i>Nouveau sujet
+        </a>
+    </div>
+    <div class="forum-kind-tabs mb-3">
+        <a href="{{ path('app_admin_forum_index', {kind: 'article'}) }}" class="forum-kind-tab {{ current_kind == 'article' ? 'active' : '' }}">
+            Articles
+        </a>
+        <a href="{{ path('app_admin_forum_index', {kind: 'video'}) }}" class="forum-kind-tab {{ current_kind == 'video' ? 'active' : '' }}">
+            Videos medicales
         </a>
     </div>
 
@@ -34,17 +80,50 @@
                 {% set latestComment = commentsCount > 0 ? (topic.comments|last) : null %}
                 {% set viewsCount = topic.content|length + (commentsCount * 17) %}
                 <article class="forum-topic-card forum-showcase-card">
+                    <div class="forum-topic-card-menu dropdown">
+                        <button class="btn btn-sm btn-light forum-ellipsis-btn" type="button" data-bs-toggle="dropdown" aria-expanded="false">...</button>
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            <li>
+                                <form method="post" action="{{ path('app_admin_forum_report_topic', {id: topic.id}) }}">
+                                    <input type="hidden" name="_token" value="{{ csrf_token('report_topic_' ~ topic.id) }}">
+                                    <input type="hidden" name="reason" value="Sujet signale par administrateur">
+                                    <button type="submit" class="dropdown-item">Signaler</button>
+                                </form>
+                            </li>
+                            <li>
+                                <form method="post" action="{{ path('app_admin_forum_hide', {id: topic.id}) }}">
+                                    <input type="hidden" name="_token" value="{{ csrf_token('hide_topic_' ~ topic.id) }}">
+                                    <button type="submit" class="dropdown-item">Masquer</button>
+                                </form>
+                            </li>
+                            <li>
+                                <form method="post" action="{{ path('app_admin_forum_delete', {id: topic.id}) }}" onsubmit="return confirm('Supprimer ce sujet ?');">
+                                    <input type="hidden" name="_token" value="{{ csrf_token('delete_topic_' ~ topic.id) }}">
+                                    <button type="submit" class="dropdown-item text-danger">Supprimer</button>
+                                </form>
+                            </li>
+                        </ul>
+                    </div>
+
                     <h3 class="forum-showcase-title">
                         {{ topic.title|slice(0, 56) }}{% if topic.title|length > 56 %}...{% endif %}
                     </h3>
+                    {% if topic.isVideoType %}
+                        <span class="forum-kind-badge mb-2"><i class="fas fa-play-circle me-1"></i>Video medicale</span>
+                        {% include 'dashboard/forum/_video_player.html.twig' with {topic: topic} %}
+                    {% endif %}
 
                     <p class="forum-showcase-excerpt">
-                        {{ topic.content|striptags|slice(0, 120) }}{% if topic.content|length > 120 %}...{% endif %}
+                        {% set preview = topic.summary ?: topic.content %}
+                        {{ preview|striptags|slice(0, 120) }}{% if preview|length > 120 %}...{% endif %}
                     </p>
 
                     <p class="forum-showcase-date">
                         Dernier commentaire : {{ (latestComment ? latestComment.createdAt : topic.createdAt)|date('d/m/Y') }}
                     </p>
+                    {% if topic.isHidden %}
+                        <span class="badge bg-secondary-subtle text-secondary-emphasis mb-2">Masque</span>
+                    {% endif %}
 
                     <div class="forum-showcase-avatars">
                         {% set shown = 0 %}
@@ -80,10 +159,6 @@
 
                     <div class="forum-admin-row">
                         <a href="{{ path('app_admin_forum_edit', {id: topic.id}) }}" class="btn btn-sm btn-outline-secondary">Modifier</a>
-                        <form method="post" action="{{ path('app_admin_forum_delete', {id: topic.id}) }}" class="d-inline" onsubmit="return confirm('Supprimer ce sujet ?');">
-                            <input type="hidden" name="_token" value="{{ csrf_token('delete_topic_' ~ topic.id) }}">
-                            <button type="submit" class="btn btn-sm btn-outline-danger">Supprimer</button>
-                        </form>
                     </div>
                 </article>
             {% endfor %}

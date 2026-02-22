@@ -42,6 +42,12 @@
             <span class="nav-text">Forum</span>
         </a>
 
+        <!-- Chat Resumeur -->
+        <a href="{{ path('app_chat_resume') }}" class="nav-item {{ app.request.attributes.get('_route') starts with 'app_chat_resume' ? 'active' : '' }}">
+            <span class="nav-icon"><i class="fas fa-robot"></i></span>
+            <span class="nav-text">Chat Resumeur</span>
+        </a>
+
         {% if 'ROLE_PATIENT' in app.user.roles and 'ROLE_MEDECIN' not in app.user.roles %}
         <div class="nav-divider"></div>
 

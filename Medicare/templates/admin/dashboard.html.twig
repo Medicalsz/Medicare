@@ -67,6 +67,186 @@
         </div>
     </div>
 
+    <div class="admin-page-header mt-4">
+        <h2 class="admin-page-title" style="font-size: 28px;">Stats Forum</h2>
+        <p class="admin-page-subtitle">Indicateurs analytiques de l'activite communautaire</p>
+    </div>
+
+    <div class="admin-stats-grid">
+        <div class="admin-stat-card">
+            <div class="admin-stat-icon primary">
+                <i class="bi bi-chat-square-text"></i>
+            </div>
+            <div class="admin-stat-content">
+                <div class="admin-stat-label">Total Sujets</div>
+                <div class="admin-stat-value">{{ forum_stats.total_topics }}</div>
+            </div>
+        </div>
+
+        <div class="admin-stat-card">
+            <div class="admin-stat-icon info">
+                <i class="bi bi-chat-left-text"></i>
+            </div>
+            <div class="admin-stat-content">
+                <div class="admin-stat-label">Total Commentaires</div>
+                <div class="admin-stat-value">{{ forum_stats.total_comments }}</div>
+            </div>
+        </div>
+
+        <div class="admin-stat-card">
+            <div class="admin-stat-icon success">
+                <i class="bi bi-calendar-plus"></i>
+            </div>
+            <div class="admin-stat-content">
+                <div class="admin-stat-label">Sujets Aujourd'hui</div>
+                <div class="admin-stat-value">+{{ forum_stats.topics_today }}</div>
+            </div>
+        </div>
+
+        <div class="admin-stat-card">
+            <div class="admin-stat-icon warning">
+                <i class="bi bi-chat-left-dots"></i>
+            </div>
+            <div class="admin-stat-content">
+                <div class="admin-stat-label">Commentaires Aujourd'hui</div>
+                <div class="admin-stat-value">+{{ forum_stats.comments_today }}</div>
+            </div>
+        </div>
+
+        <div class="admin-stat-card">
+            <div class="admin-stat-icon warning">
+                <i class="bi bi-flag"></i>
+            </div>
+            <div class="admin-stat-content">
+                <div class="admin-stat-label">Sujets Signales</div>
+                <div class="admin-stat-value">{{ forum_stats.reported_topics }}</div>
+            </div>
+        </div>
+
+        <div class="admin-stat-card">
+            <div class="admin-stat-icon danger">
+                <i class="bi bi-chat-left-text-fill"></i>
+            </div>
+            <div class="admin-stat-content">
+                <div class="admin-stat-label">Commentaires Signales</div>
+                <div class="admin-stat-value">{{ forum_stats.reported_comments }}</div>
+            </div>
+        </div>
+
+        <div class="admin-stat-card">
+            <div class="admin-stat-icon primary">
+                <i class="bi bi-stars"></i>
+            </div>
+            <div class="admin-stat-content">
+                <div class="admin-stat-label">Top Categorie</div>
+                <div class="admin-stat-value" style="font-size: 26px;">{{ forum_stats.top_category }}</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mt-4">
+        <div class="col-lg-8">
+            <div class="admin-card">
+                <div class="admin-card-header">
+                    <h3 class="admin-card-title">
+                        <i class="bi bi-graph-up-arrow"></i> Activite Forum (7 jours)
+                    </h3>
+                </div>
+                <div class="admin-card-body">
+                    <div class="admin-table-container">
+                        <table class="admin-table">
+                            <thead>
+                                <tr>
+                                    <th>Jour</th>
+                                    <th>Sujets</th>
+                                    <th>Commentaires</th>
+                                    <th>Tendance</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for row in forum_activity_rows %}
+                                    <tr>
+                                        <td>{{ row.day }}</td>
+                                        <td>{{ row.topics }}</td>
+                                        <td>{{ row.comments }}</td>
+                                        <td>
+                                            <div class="d-flex flex-column gap-1" style="min-width: 180px;">
+                                                <div class="progress" style="height: 8px;">
+                                                    <div class="progress-bar bg-primary" role="progressbar" style="width: {{ row.topic_pct }}%"></div>
+                                                </div>
+                                                <div class="progress" style="height: 8px;">
+                                                    <div class="progress-bar bg-info" role="progressbar" style="width: {{ row.comment_pct }}%"></div>
+                                                </div>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <div class="admin-card">
+                <div class="admin-card-header">
+                    <h3 class="admin-card-title">
+                        <i class="bi bi-shield-exclamation"></i> Moderation / Signalements
+                    </h3>
+                </div>
+                <div class="admin-card-body">
+                    <h6 class="mb-2">Sujets signales</h6>
+                    {% if reported_topics_list is empty %}
+                        <div class="alert alert-success py-2 mb-3">Aucun sujet signale.</div>
+                    {% else %}
+                        {% for topic in reported_topics_list %}
+                            <div class="border rounded p-2 mb-2">
+                                <div class="fw-semibold">{{ topic.title|slice(0, 40) }}{% if topic.title|length > 40 %}...{% endif %}</div>
+                                <div class="small text-muted mt-1">Raison: {{ topic.reportedReason ?: 'Non precisee' }}</div>
+                                <div class="moderation-actions mt-2">
+                                    <a href="{{ path('app_admin_forum_show', {id: topic.id}) }}" class="admin-btn admin-btn-secondary btn-sm">Voir</a>
+                                    <form method="post" action="{{ path('app_admin_forum_resolve_topic_report', {id: topic.id}) }}" class="d-inline">
+                                        <input type="hidden" name="_token" value="{{ csrf_token('resolve_topic_report_' ~ topic.id) }}">
+                                        <button class="admin-btn admin-btn-secondary btn-sm" type="submit">Masquer</button>
+                                    </form>
+                                    <form method="post" action="{{ path('app_admin_forum_delete', {id: topic.id}) }}" class="d-inline" onsubmit="return confirm('Supprimer ce sujet ?');">
+                                        <input type="hidden" name="_token" value="{{ csrf_token('delete_topic_' ~ topic.id) }}">
+                                        <button class="admin-btn admin-btn-secondary btn-sm" type="submit">Supprimer</button>
+                                    </form>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+
+                    <h6 class="mb-2 mt-3">Commentaires a verifier</h6>
+                    {% if reported_comments_list is empty %}
+                        <div class="alert alert-success py-2 mb-0">Aucun commentaire suspect.</div>
+                    {% else %}
+                        {% for comment in reported_comments_list %}
+                            <div class="border rounded p-2 mb-2">
+                                <div class="small text-muted">{{ comment.author.prenom }} {{ comment.author.nom }}</div>
+                                <div class="small text-muted">Raison: {{ comment.reportedReason ?: 'Non precisee' }}</div>
+                                <div>{{ comment.content|slice(0, 55) }}{% if comment.content|length > 55 %}...{% endif %}</div>
+                                <div class="moderation-actions mt-2">
+                                    <a href="{{ path('app_admin_forum_show', {id: comment.topic.id}) }}" class="admin-btn admin-btn-secondary btn-sm">Voir</a>
+                                    <form method="post" action="{{ path('app_admin_forum_resolve_comment_report', {id: comment.id}) }}" class="d-inline">
+                                        <input type="hidden" name="_token" value="{{ csrf_token('resolve_comment_report_' ~ comment.id) }}">
+                                        <button class="admin-btn admin-btn-secondary btn-sm" type="submit">Masquer</button>
+                                    </form>
+                                    <form method="post" action="{{ path('app_admin_forum_delete_comment', {id: comment.id}) }}" class="d-inline" onsubmit="return confirm('Supprimer ce commentaire ?');">
+                                        <input type="hidden" name="_token" value="{{ csrf_token('delete_comment_' ~ comment.id) }}">
+                                        <button class="admin-btn admin-btn-secondary btn-sm" type="submit">Supprimer</button>
+                                    </form>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div class="row">
         <div class="col-lg-8">
             <div class="admin-card">

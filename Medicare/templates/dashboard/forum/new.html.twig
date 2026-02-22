@@ -4,7 +4,36 @@
 
 {% block stylesheets %}
     {{ parent() }}
-    <link rel="stylesheet" href="{{ asset('assets/css/forum-modern.css') }}?v=20260218-1">
+    <link rel="stylesheet" href="{{ asset('assets/css/forum-modern.css') }}?v=20260220-2">
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const typeInputs = document.querySelectorAll('input[name$="[type]"]');
+            const videoBlock = document.getElementById('video-url-block');
+            if (!typeInputs.length || !videoBlock) {
+                return;
+            }
+
+            const syncVideoBlock = function () {
+                let selectedValue = 'text';
+                typeInputs.forEach(function (input) {
+                    if (input.checked) {
+                        selectedValue = input.value;
+                    }
+                });
+                videoBlock.style.display = selectedValue === 'video' ? 'block' : 'none';
+            };
+
+            typeInputs.forEach(function (input) {
+                input.addEventListener('change', syncVideoBlock);
+            });
+
+            syncVideoBlock();
+        });
+    </script>
 {% endblock %}
 
 {% block body %}
@@ -30,6 +59,14 @@
 
             {{ form_start(form) }}
                 <div class="forum-field-block">
+                    {{ form_label(form.type, 'Type de sujet', {'label_attr': {'class': 'forum-label'}}) }}
+                    <div class="forum-type-choice">
+                        {{ form_widget(form.type) }}
+                    </div>
+                    <div class="forum-field-errors">{{ form_errors(form.type) }}</div>
+                </div>
+
+                <div class="forum-field-block">
                     {{ form_label(form.title, 'Titre du sujet', {'label_attr': {'class': 'forum-label'}}) }}
                     <div class="forum-field-shell">
                         <span class="forum-field-icon"><i class="fas fa-heading"></i></span>
@@ -42,6 +79,21 @@
                     </div>
                     <small class="forum-input-hint">Essayez de rester court et specifique.</small>
                     <div class="forum-field-errors">{{ form_errors(form.title) }}</div>
+                </div>
+
+                <div class="forum-field-block" id="video-url-block">
+                    {{ form_label(form.videoUrl, 'URL video', {'label_attr': {'class': 'forum-label'}}) }}
+                    <div class="forum-field-shell">
+                        <span class="forum-field-icon"><i class="fas fa-link"></i></span>
+                        {{ form_widget(form.videoUrl, {
+                            'attr': {
+                                'class': 'form-control forum-input forum-input-neo',
+                                'placeholder': 'https://www.youtube.com/watch?v=...'
+                            }
+                        }) }}
+                    </div>
+                    <small class="forum-input-hint">YouTube, Vimeo ou lien direct mp4/webm/ogg.</small>
+                    <div class="forum-field-errors">{{ form_errors(form.videoUrl) }}</div>
                 </div>
 
                 <div class="forum-field-block">

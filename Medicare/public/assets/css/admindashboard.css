@@ -211,6 +211,19 @@
     background: #d0d0d0;
 }
 
+.moderation-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.moderation-actions .admin-btn {
+    padding: 8px 12px;
+    font-size: 13px;
+    line-height: 1.1;
+    white-space: nowrap;
+}
+
 /* Admin Table */
 .admin-table-container {
     background: white;

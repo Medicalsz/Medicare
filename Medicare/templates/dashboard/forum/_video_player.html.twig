@@ -1,0 +1,20 @@
+{% if topic.isVideoType and topic.videoEmbedUrl %}
+    <div class="forum-video-player mb-3">
+        {% if topic.videoProvider in ['youtube', 'vimeo'] %}
+            <div class="ratio ratio-16x9">
+                <iframe
+                    src="{{ topic.videoEmbedUrl }}"
+                    title="Video medicale"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                    allowfullscreen
+                    loading="lazy"
+                ></iframe>
+            </div>
+        {% elseif topic.videoProvider == 'html5' %}
+            <video controls preload="metadata" style="width:100%; border-radius: 10px;">
+                <source src="{{ topic.videoEmbedUrl }}">
+                Votre navigateur ne supporte pas la lecture video.
+            </video>
+        {% endif %}
+    </div>
+{% endif %}

@@ -1,0 +1,84 @@
+<article class="forum-comment-card forum-comment-card-modern forum-thread-item" style="--forum-thread-level: {{ level|default(0) }};">
+    <div class="forum-comment-avatar">
+        {{ (comment.author.prenom|first ~ comment.author.nom|first)|upper }}
+    </div>
+    <div class="forum-comment-content">
+        <div class="forum-comment-meta">
+            <strong>{{ comment.author.prenom }} {{ comment.author.nom }}</strong>
+            <span class="forum-comment-date">{{ comment.createdAt|date('d/m/Y H:i') }}</span>
+        </div>
+
+        <p class="mb-0">{{ comment.content }}</p>
+
+        {% set cReaction = comment_user_reaction_map[comment.id] ?? null %}
+        {% set cCounts = comment_reaction_counts[comment.id] ?? {'like': 0, 'love': 0, 'total': 0} %}
+
+        <div class="forum-comment-tools">
+            <div class="forum-reaction-bar comment-reaction-bar mt-2">
+                <form method="post" action="{{ path('app_user_forum_react_comment', {id: comment.id}) }}" class="d-inline">
+                    <input type="hidden" name="_token" value="{{ csrf_token('react_comment_' ~ comment.id) }}">
+                    <input type="hidden" name="type" value="like">
+                    <button type="submit" class="forum-react-btn comment-react-btn {{ cReaction == 'like' ? 'active' : '' }}">
+                        👍 J'aime <span class="count">{{ cCounts.like }}</span>
+                    </button>
+                </form>
+                <form method="post" action="{{ path('app_user_forum_react_comment', {id: comment.id}) }}" class="d-inline">
+                    <input type="hidden" name="_token" value="{{ csrf_token('react_comment_' ~ comment.id) }}">
+                    <input type="hidden" name="type" value="love">
+                    <button type="submit" class="forum-react-btn comment-react-btn love {{ cReaction == 'love' ? 'active' : '' }}">
+                        ❤️ J'adore <span class="count">{{ cCounts.love }}</span>
+                    </button>
+                </form>
+            </div>
+
+            <div class="forum-comment-actions-row">
+                <a href="{{ path('app_user_forum_show', {id: topic.id, replyTo: comment.id}) }}#comment-form" class="btn btn-sm btn-outline-secondary">
+                    Repondre
+                </a>
+
+                <div class="dropdown">
+                    <button class="btn btn-sm btn-light forum-ellipsis-btn" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Actions">⋯</button>
+                    <ul class="dropdown-menu dropdown-menu-end">
+                        <li>
+                            <form method="post" action="{{ path('app_user_forum_report_comment', {id: comment.id}) }}">
+                                <input type="hidden" name="_token" value="{{ csrf_token('report_comment_' ~ comment.id) }}">
+                                <input type="hidden" name="reason" value="Commentaire signale par utilisateur">
+                                <button type="submit" class="dropdown-item">Signaler</button>
+                            </form>
+                        </li>
+                        {% if app.user and (is_granted('ROLE_ADMIN') or app.user.id == comment.author.id) %}
+                            <li>
+                                <form method="post" action="{{ path('app_user_forum_hide_comment', {id: comment.id}) }}">
+                                    <input type="hidden" name="_token" value="{{ csrf_token('hide_comment_' ~ comment.id) }}">
+                                    <button type="submit" class="dropdown-item">Masquer</button>
+                                </form>
+                            </li>
+                            <li>
+                                <form method="post" action="{{ path('app_user_forum_delete_comment', {id: comment.id}) }}" onsubmit="return confirm('Supprimer ce commentaire ?');">
+                                    <input type="hidden" name="_token" value="{{ csrf_token('delete_comment_' ~ comment.id) }}">
+                                    <button type="submit" class="dropdown-item text-danger">Supprimer</button>
+                                </form>
+                            </li>
+                        {% endif %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</article>
+
+{% set children = comment_tree[comment.id] ?? [] %}
+{% if children is not empty %}
+    <div class="forum-thread-children">
+        {% for child in children %}
+            {% include 'dashboard/user_forum/_comment_item.html.twig' with {
+                topic: topic,
+                comment: child,
+                comment_tree: comment_tree,
+                comment_reaction_counts: comment_reaction_counts,
+                comment_user_reaction_map: comment_user_reaction_map,
+                level: (level|default(0)) + 1
+            } only %}
+        {% endfor %}
+    </div>
+{% endif %}

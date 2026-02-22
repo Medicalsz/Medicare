@@ -1,0 +1,65 @@
+<article class="forum-comment-card forum-comment-card-modern forum-thread-item {{ comment.isHidden ? 'is-hidden' : '' }}" style="--forum-thread-level: {{ level|default(0) }};">
+    <div class="forum-comment-avatar">
+        {{ (comment.author.prenom|first ~ comment.author.nom|first)|upper }}
+    </div>
+    <div class="forum-comment-content">
+        <div class="forum-comment-meta">
+            <strong>{{ comment.author.prenom }} {{ comment.author.nom }}</strong>
+            <span class="forum-comment-date">{{ comment.createdAt|date('d/m/Y H:i') }}</span>
+        </div>
+
+        {% if comment.isHidden %}
+            <p class="mb-0 text-muted fst-italic">Commentaire masque.</p>
+        {% else %}
+            <p class="mb-0">{{ comment.content }}</p>
+        {% endif %}
+
+        {% if comment.isReported %}
+            <span class="badge bg-danger-subtle text-danger-emphasis mt-2">Commentaire signale</span>
+        {% endif %}
+
+        <div class="forum-comment-actions-row mt-2">
+            <a href="{{ path('app_admin_forum_show', {id: topic.id, replyTo: comment.id}) }}#comment-form" class="btn btn-sm btn-outline-secondary">
+                Repondre
+            </a>
+            <div class="dropdown">
+                <button class="btn btn-sm btn-light forum-ellipsis-btn" type="button" data-bs-toggle="dropdown" aria-expanded="false">...</button>
+                <ul class="dropdown-menu dropdown-menu-end">
+                    <li>
+                        <form method="post" action="{{ path('app_admin_forum_report_comment', {id: comment.id}) }}">
+                            <input type="hidden" name="_token" value="{{ csrf_token('report_comment_' ~ comment.id) }}">
+                            <input type="hidden" name="reason" value="Commentaire signale par administrateur">
+                            <button type="submit" class="dropdown-item">Signaler</button>
+                        </form>
+                    </li>
+                    <li>
+                        <form method="post" action="{{ path('app_admin_forum_hide_comment', {id: comment.id}) }}">
+                            <input type="hidden" name="_token" value="{{ csrf_token('hide_comment_' ~ comment.id) }}">
+                            <button type="submit" class="dropdown-item">Masquer</button>
+                        </form>
+                    </li>
+                    <li>
+                        <form method="post" action="{{ path('app_admin_forum_delete_comment', {id: comment.id}) }}" onsubmit="return confirm('Supprimer ce commentaire ?');">
+                            <input type="hidden" name="_token" value="{{ csrf_token('delete_comment_' ~ comment.id) }}">
+                            <button type="submit" class="dropdown-item text-danger">Supprimer</button>
+                        </form>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</article>
+
+{% set children = comment_tree[comment.id] ?? [] %}
+{% if children is not empty %}
+    <div class="forum-thread-children">
+        {% for child in children %}
+            {% include 'dashboard/forum/_comment_item.html.twig' with {
+                topic: topic,
+                comment: child,
+                comment_tree: comment_tree,
+                level: (level|default(0)) + 1
+            } only %}
+        {% endfor %}
+    </div>
+{% endif %}
