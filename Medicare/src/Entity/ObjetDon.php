@@ -26,6 +26,9 @@ class ObjetDon
     #[ORM\JoinColumn(nullable: false)]
     private ?Don $don = null;
 
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $photo = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -72,6 +75,17 @@ class ObjetDon
     public function setDon(?Don $don): static
     {
         $this->don = $don;
+        return $this;
+    }
+
+    public function getPhoto(): ?string
+    {
+        return $this->photo;
+    }
+
+    public function setPhoto(?string $photo): static
+    {
+        $this->photo = $photo;
         return $this;
     }
 }

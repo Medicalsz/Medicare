@@ -159,7 +159,19 @@
         <div class="form-container" data-aos="fade-up">
           <h2 class="section-title">Faire un don pour : <br><span class="text-accent">{{ cause.titre }}</span></h2>
           
-          <form id="donationForm" method="POST" novalidate>
+          <form id="donationForm" method="POST" enctype="multipart/form-data" novalidate>
+            {% if errors is defined and errors|length > 0 %}
+              <div class="alert alert-danger mb-4">
+                <h5 class="alert-heading"><i class="bi bi-exclamation-triangle-fill me-2"></i>Erreur de validation</h5>
+                <ul class="mb-0">
+                  {% for key, error in errors %}
+                    <li>{{ error }}</li>
+                  {% endfor %}
+                </ul>
+              </div>
+            {% endif %}
+
+            <input type="hidden" name="verification_code" id="verification_code_hidden">
             <div class="mb-4">
               <label class="form-label fw-bold">Type de donation</label>
               {% if errors.donation_type is defined %}
@@ -192,9 +204,9 @@
                     <option value="{{ i }}" {% if old_data.material_count|default('1') == i %}selected{% endif %}>{{ i }}</option>
                   {% endfor %}
                 </select>
-                <div class="form-text">Vous pouvez donner jusqu'à 5 types d'objets différents.</div>
               </div>
 
+              <div class="form-text">Vous pouvez donner jusqu'à 5 types d'objets différents.</div>
               <div id="materialBoxes">
                 {# Généré dynamiquement par JS #}
               </div>
@@ -258,15 +270,95 @@
               <textarea class="form-control {% if errors.description is defined %}is-invalid{% endif %}" name="description" id="description" rows="4" placeholder="Ajoutez un message ou décrivez votre don...">{{ old_data.description|default('') }}</textarea>
             </div>
 
+            <!-- Champs cachés pour la géolocalisation -->
+            <input type="hidden" name="latitude" id="latitude">
+            <input type="hidden" name="longitude" id="longitude">
+
             <button type="submit" class="btn-submit-donation">Confirmer mon don</button>
           </form>
         </div>
       </div>
     </section>
+
+    <!-- Modal de vérification pour gros montants -->
+    <div class="modal fade" id="verificationModal" tabindex="-1" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header bg-warning text-dark">
+            <h5 class="modal-title"><i class="bi bi-exclamation-triangle-fill me-2"></i>Don important détecté</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <p>Votre don dépasse <strong>10 000 DT</strong>. Pour des raisons de sécurité, une vérification supplémentaire est requise.</p>
+            
+            <div id="step-send-code">
+              <p>Veuillez cliquer sur le bouton ci-dessous pour recevoir un code de vérification par email.</p>
+              <button type="button" class="btn btn-primary w-100" id="btnSendCode">
+                <i class="bi bi-envelope-paper me-2"></i>Envoyer un code par email
+              </button>
+            </div>
+
+            <div id="step-verify-code" style="display: none;" class="mt-3">
+              <div class="alert alert-success small" id="codeSentMessage">
+                <i class="bi bi-check-circle me-1"></i> Code envoyé ! Vérifiez votre boîte mail.
+              </div>
+              <label for="modal_verification_code" class="form-label fw-bold">Entrez le code reçu :</label>
+              <input type="text" class="form-control text-center fs-4 letter-spacing-2" id="modal_verification_code" placeholder="123456" maxlength="6">
+              <div class="invalid-feedback" id="codeErrorMsg"></div>
+            </div>
+
+            <div id="loading-spinner" class="text-center py-3" style="display: none;">
+              <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Chargement...</span>
+              </div>
+              <p class="small text-muted mt-2">Envoi en cours...</p>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+            <button type="button" class="btn btn-success" id="btnConfirmCode" disabled>Valider le don</button>
+          </div>
+        </div>
+      </div>
+    </div>
   </main>
 
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
   <script>
     document.addEventListener('DOMContentLoaded', function() {
+      // Script de géolocalisation automatique
+      if ("geolocation" in navigator) {
+          navigator.geolocation.getCurrentPosition(function(position) {
+              document.getElementById('latitude').value = position.coords.latitude;
+              document.getElementById('longitude').value = position.coords.longitude;
+              console.log("Localisation trouvée : " + position.coords.latitude + ", " + position.coords.longitude);
+          }, function(error) {
+              console.warn("Erreur de géolocalisation : " + error.message);
+              // Optionnel : On pourrait essayer de récupérer l'IP ici si le GPS échoue
+          });
+      } else {
+          console.log("La géolocalisation n'est pas supportée par ce navigateur.");
+      }
+
+      const form = document.getElementById('donationForm');
+      const verificationModalEl = document.getElementById('verificationModal');
+      // Check if Bootstrap is loaded, if not, we might need to handle modal manually or assume it is loaded in base template
+      // Assuming Bootstrap 5 is available as per class names
+      let verificationModal;
+      if (typeof bootstrap !== 'undefined') {
+          verificationModal = new bootstrap.Modal(verificationModalEl);
+      }
+
+      const btnSendCode = document.getElementById('btnSendCode');
+      const btnConfirmCode = document.getElementById('btnConfirmCode');
+      const stepSendCode = document.getElementById('step-send-code');
+      const stepVerifyCode = document.getElementById('step-verify-code');
+      const loadingSpinner = document.getElementById('loading-spinner');
+      const modalInputCode = document.getElementById('modal_verification_code');
+      const hiddenInputCode = document.getElementById('verification_code_hidden');
+      const codeSentMessage = document.getElementById('codeSentMessage');
+
+      // Elements du formulaire
       const typeMoney = document.getElementById('typeMoney');
       const typeMaterial = document.getElementById('typeMaterial');
       const moneyFields = document.getElementById('moneyFields');
@@ -276,6 +368,87 @@
       const cardInputs = document.querySelectorAll('input[name="card_type"]');
       const cardNumber = document.getElementById('card_number');
       const amount = document.getElementById('amount');
+
+      // Interception de la soumission du formulaire
+      form.addEventListener('submit', function(e) {
+        // Si c'est un don d'argent > 10000 et qu'on n'a pas encore de code vérifié
+        if (typeMoney.checked) {
+            const val = parseFloat(amount.value);
+            if (!isNaN(val) && val > 10000 && !hiddenInputCode.value) {
+                e.preventDefault();
+                // Reset modal state
+                stepSendCode.style.display = 'block';
+                stepVerifyCode.style.display = 'none';
+                loadingSpinner.style.display = 'none';
+                btnConfirmCode.disabled = true;
+                modalInputCode.value = '';
+                
+                if (verificationModal) {
+                    verificationModal.show();
+                } else {
+                    // Fallback if bootstrap object is not found (should be there usually)
+                    const bsModal = new bootstrap.Modal(verificationModalEl);
+                    bsModal.show();
+                    verificationModal = bsModal;
+                }
+                return false;
+            }
+        }
+      });
+
+      // Envoi du code par email
+      btnSendCode.addEventListener('click', function() {
+        stepSendCode.style.display = 'none';
+        loadingSpinner.style.display = 'block';
+
+        fetch('{{ path("app_donation_send_code") }}', {
+            method: 'POST',
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            loadingSpinner.style.display = 'none';
+            if (data.success) {
+                stepVerifyCode.style.display = 'block';
+                // Afficher le message (utile pour le dev/simulation si le code est renvoyé)
+                if (data.message.includes('Simulation')) {
+                     codeSentMessage.innerHTML = `<i class="bi bi-info-circle me-1"></i> ${data.message}`;
+                }
+                modalInputCode.focus();
+            } else {
+                stepSendCode.style.display = 'block';
+                alert('Erreur: ' + data.message);
+            }
+        })
+        .catch(error => {
+            loadingSpinner.style.display = 'none';
+            stepSendCode.style.display = 'block';
+            alert('Une erreur est survenue lors de l\'envoi du code.');
+            console.error(error);
+        });
+      });
+
+      // Validation de l'input code
+      modalInputCode.addEventListener('input', function() {
+        if (this.value.length === 6) {
+            btnConfirmCode.disabled = false;
+        } else {
+            btnConfirmCode.disabled = true;
+        }
+      });
+
+      // Confirmation du code
+      btnConfirmCode.addEventListener('click', function() {
+        const code = modalInputCode.value;
+        if (code.length === 6) {
+            hiddenInputCode.value = code;
+            verificationModal.hide();
+            form.submit();
+        }
+      });
+
 
       // Données précédentes en cas d'erreur (passées via Twig)
       const oldData = {{ old_data|json_encode|raw }};
@@ -287,7 +460,7 @@
 
         for (let i = 0; i < count; i++) {
           const box = document.createElement('div');
-          box.className = 'material-box';
+          box.className = 'card mb-3 p-3';
           
           const objName = oldData[`objet_nom_${i}`] || '';
           const objQty = oldData[`objet_qty_${i}`] || '1';
@@ -295,21 +468,26 @@
           const qtyError = errors[`objet_qty_${i}`] ? `<div class="text-danger small mt-1">${errors[`objet_qty_${i}`]}</div>` : '';
 
           box.innerHTML = `
-            <div class="material-box-title">
-              <span><i class="bi bi-box me-2"></i>Objet n°${i + 1}</span>
-            </div>
-            <div class="row">
-              <div class="col-md-8 mb-3">
-                <label class="form-label small fw-bold">Objet voulant donner</label>
+            <h6 class="card-title fw-bold text-primary">
+              <i class="bi bi-box me-2"></i>Objet n°${i + 1}
+            </h6>
+            <div class="row g-3">
+              <div class="col-md-6">
+                <label class="form-label small fw-bold">Nom de l'objet</label>
                 <input type="text" name="objet_nom_${i}" class="form-control ${errors[`objet_nom_${i}`] ? 'is-invalid' : ''}" 
                        placeholder="Ex: Fauteuil roulant, Médicaments..." value="${objName}">
                 ${nameError}
               </div>
-              <div class="col-md-4 mb-3">
-                <label class="form-label small fw-bold">Nombre d'objet</label>
+              <div class="col-md-2">
+                <label class="form-label small fw-bold">Quantité</label>
                 <input type="number" name="objet_qty_${i}" class="form-control ${errors[`objet_qty_${i}`] ? 'is-invalid' : ''}" 
                        min="1" value="${objQty}">
                 ${qtyError}
+              </div>
+              <div class="col-md-4">
+                <label class="form-label small fw-bold">Photo (Optionnel)</label>
+                <input type="file" name="objet_photo_${i}" class="form-control" accept="image/*">
+                <div class="form-text small">Format jpg, png.</div>
               </div>
             </div>
           `;

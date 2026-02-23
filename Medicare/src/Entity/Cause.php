@@ -25,6 +25,9 @@ class Cause
     #[ORM\Column(nullable: true)]
     private ?float $objectifMontant = null;
 
+    #[ORM\Column(nullable: true)]
+    private ?float $montantActuel = 0.0;
+
     #[ORM\Column(type: Types::DATE_IMMUTABLE)]
     private ?\DateTimeImmutable $dateDebut = null;
 
@@ -81,6 +84,17 @@ class Cause
     public function setObjectifMontant(?float $objectifMontant): static
     {
         $this->objectifMontant = $objectifMontant;
+        return $this;
+    }
+
+    public function getMontantActuel(): ?float
+    {
+        return $this->montantActuel;
+    }
+
+    public function setMontantActuel(?float $montantActuel): static
+    {
+        $this->montantActuel = $montantActuel;
         return $this;
     }
 

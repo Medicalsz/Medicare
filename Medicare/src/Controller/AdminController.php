@@ -17,6 +17,8 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\String\Slugger\SluggerInterface;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use App\Service\GeminiService;
 
 #[Route('/admin', name: 'app_admin_')]
 class AdminController extends AbstractController
@@ -27,6 +29,46 @@ class AdminController extends AbstractController
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
         
         return $this->render('admin/dashboard.html.twig');
+    }
+
+    #[Route('/donations/analyze-photo', name: 'analyze_photo', methods: ['POST'])]
+    public function analyzePhoto(Request $request, GeminiService $geminiService): JsonResponse
+    {
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
+
+        $data = json_decode($request->getContent(), true);
+        $photoUrl = $data['photoUrl'] ?? null;
+
+        if (!$photoUrl) {
+            return new JsonResponse(['error' => 'URL de la photo manquante.'], 400);
+        }
+
+        // Nettoyer l'URL pour obtenir le chemin relatif du fichier
+        // Ex: /uploads/donations/photo.jpg -> public/uploads/donations/photo.jpg
+        $projectDir = $this->getParameter('kernel.project_dir');
+        $relativePath = parse_url($photoUrl, PHP_URL_PATH);
+        
+        // Si l'app est dans un sous-dossier ou via un lien symbolique, il faut adapter.
+        // On suppose ici que l'URL contient 'uploads/donations/'
+        $parts = explode('/uploads/donations/', $relativePath);
+        if (count($parts) < 2) {
+            return new JsonResponse(['error' => 'Chemin de fichier invalide.'], 400);
+        }
+        
+        $filename = $parts[1];
+        $filePath = $projectDir . '/public/uploads/donations/' . $filename;
+
+        if (!file_exists($filePath)) {
+            return new JsonResponse(['error' => 'Fichier introuvable sur le serveur.'], 404);
+        }
+
+        $result = $geminiService->analyzeObjectCondition($filePath);
+
+        if (isset($result['error'])) {
+            return new JsonResponse(['error' => $result['error']], 500);
+        }
+
+        return new JsonResponse(['condition' => $result['condition']]);
     }
 
     #[Route('/donations', name: 'donations')]

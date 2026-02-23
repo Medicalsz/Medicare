@@ -54,7 +54,7 @@ class Don
     private ?Cause $cause = null;
 
     #[ORM\ManyToOne(inversedBy: 'dons')]
-    #[ORM\JoinColumn(nullable: false)]
+    #[ORM\JoinColumn(nullable: false, referencedColumnName: 'id_donnateur')]
     private ?Donateur $donateur = null;
 
     #[ORM\OneToMany(mappedBy: 'don', targetEntity: ObjetDon::class, orphanRemoval: true, cascade: ['persist'])]
@@ -66,6 +66,12 @@ class Don
         maxMessage: 'L\'adresse ne peut pas dépasser {{ limit }} caractères.'
     )]
     private ?string $adresse = null;
+
+    #[ORM\Column(nullable: true)]
+    private ?float $latitude = null;
+
+    #[ORM\Column(nullable: true)]
+    private ?float $longitude = null;
 
     #[ORM\Column(options: ['default' => false])]
     private ?bool $isPickupAddressConfirmed = false;
@@ -89,10 +95,35 @@ class Don
     public function setAdresse(?string $adresse): static
     {
         $this->adresse = $adresse;
+
         return $this;
     }
 
-    public function isPickupAddressConfirmed(): ?bool
+    public function getLatitude(): ?float
+    {
+        return $this->latitude;
+    }
+
+    public function setLatitude(?float $latitude): static
+    {
+        $this->latitude = $latitude;
+
+        return $this;
+    }
+
+    public function getLongitude(): ?float
+    {
+        return $this->longitude;
+    }
+
+    public function setLongitude(?float $longitude): static
+    {
+        $this->longitude = $longitude;
+
+        return $this;
+    }
+
+    public function isIsPickupAddressConfirmed(): ?bool
     {
         return $this->isPickupAddressConfirmed;
     }
@@ -100,6 +131,7 @@ class Don
     public function setIsPickupAddressConfirmed(bool $isPickupAddressConfirmed): static
     {
         $this->isPickupAddressConfirmed = $isPickupAddressConfirmed;
+
         return $this;
     }
 

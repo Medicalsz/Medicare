@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\Don;
 use App\Entity\Donateur;
 use App\Entity\Cause;
+use App\Entity\Badge;
 use App\Enum\TypeDon;
 use App\Enum\ModePaiement;
 use App\Enum\StatutDon;
@@ -13,13 +14,20 @@ use App\Entity\ObjetDon;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Annotation\Route;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\Mailer\MailerInterface;
+use Symfony\Component\Mime\Email;
 use Dompdf\Dompdf;
 use Dompdf\Options;
 
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\HttpFoundation\File\Exception\FileException;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
+
+use Psr\Log\LoggerInterface;
 
 class DonationController extends AbstractController
 {
@@ -152,6 +160,42 @@ class DonationController extends AbstractController
         return $this->json(['success' => true]);
     }
 
+    #[Route('/api/assistant/top-causes', name: 'api_assistant_top_causes', methods: ['GET'])]
+    public function getTopCauses(EntityManagerInterface $entityManager): JsonResponse
+    {
+        $causes = $entityManager->getRepository(Cause::class)->findAll();
+        
+        $causesData = [];
+        foreach ($causes as $cause) {
+            // On ne prend que les causes actives et non terminées
+            if ($cause->getStatut() === StatutCause::ACTIVE) {
+                $objectif = $cause->getObjectifMontant() ?? 0;
+                $actuel = $cause->getMontantActuel() ?? 0;
+                $manque = $objectif - $actuel;
+                
+                if ($manque > 0) {
+                    $causesData[] = [
+                        'id' => $cause->getId(),
+                        'titre' => $cause->getTitre(),
+                        'objectif' => $objectif,
+                        'actuel' => $actuel,
+                        'manque' => $manque
+                    ];
+                }
+            }
+        }
+        
+        // Trier par manque décroissant (les plus loin de l'objectif en premier)
+        usort($causesData, function ($a, $b) {
+            return $b['manque'] <=> $a['manque'];
+        });
+        
+        // Prendre les 3 premiers
+        $top3 = array_slice($causesData, 0, 3);
+        
+        return $this->json($top3);
+    }
+
     #[Route('/donnation', name: 'app_donation_index')]
     public function index(EntityManagerInterface $entityManager): Response
     {
@@ -164,7 +208,7 @@ class DonationController extends AbstractController
         ]);
     }
 
-    #[Route('/donnation/{id}', name: 'app_donation_show')]
+    #[Route('/donnation/{id}', name: 'app_donation_show', requirements: ['id' => '\d+'])]
     public function show(int $id, EntityManagerInterface $entityManager): Response
     {
         $cause = $entityManager->getRepository(Cause::class)->find($id);
@@ -173,33 +217,183 @@ class DonationController extends AbstractController
             throw $this->createNotFoundException('La cause demandée n\'existe pas.');
         }
 
-        // On s'assure que l'objectif est fixé à 10000 DT comme demandé
-        $objectif = 10000;
+        // On utilise l'objectif défini dans la cause, ou une valeur par défaut si non défini
+        $objectif = $cause->getObjectifMontant() ?? 10000;
         
-        // Calcul du montant total des dons d'argent confirmés (pour la barre de progression)
-        $montantCollecte = 0;
-        foreach ($cause->getDons() as $don) {
-            // Comparaison simplifiée au maximum par les valeurs brutes stockées en base
-            $statut = $don->getStatutDon();
-            $type = $don->getTypeDon();
-            
-            // On récupère la valeur string de l'enum pour éviter tout souci d'objet
-            $statutStr = ($statut instanceof \BackedEnum) ? $statut->value : (string)$statut;
-            $typeStr = ($type instanceof \BackedEnum) ? $type->value : (string)$type;
+        // On utilise le montant actuel stocké dans la cause
+        $montantCollecte = $cause->getMontantActuel() ?? 0.0;
+        
+        // Si le montant actuel n'est pas encore initialisé, on peut le recalculer pour être sûr (optionnel mais prudent)
+        if ($montantCollecte == 0) {
+            foreach ($cause->getDons() as $don) {
+                // Comparaison simplifiée au maximum par les valeurs brutes stockées en base
+                $statut = $don->getStatutDon();
+                $type = $don->getTypeDon();
+                
+                // On récupère la valeur string de l'enum pour éviter tout souci d'objet
+                $statutStr = ($statut instanceof \BackedEnum) ? $statut->value : (string)$statut;
+                $typeStr = ($type instanceof \BackedEnum) ? $type->value : (string)$type;
 
-            if ($statutStr === 'confirmé' && $typeStr === 'argent') {
-                $montantCollecte += (float)$don->getMontant();
+                if ($statutStr === 'confirmé' && $typeStr === 'argent') {
+                    $montantCollecte += (float)$don->getMontant();
+                }
+            }
+            // On sauvegarde le calcul si c'était 0
+            if ($montantCollecte > 0) {
+                $cause->setMontantActuel($montantCollecte);
+                $entityManager->flush();
             }
         }
 
         $pourcentage = ($objectif > 0) ? min(100, ($montantCollecte / $objectif) * 100) : 0;
+
+        // --- Logique Badge Utilisateur ---
+        $user = $this->getUser();
+        $userBadge = null;
+
+        if ($user) {
+            $donateurs = $user->getDonateurs();
+            $totalDonationsUser = 0;
+
+            // 1. Calculer la somme totale de tous les dons d'argent confirmés de l'utilisateur (tous ses profils donateur confondus)
+            foreach ($donateurs as $donateur) {
+                foreach ($donateur->getDons() as $don) {
+                    $type = $don->getTypeDon();
+                    $statut = $don->getStatutDon();
+                    
+                    $typeStr = ($type instanceof \BackedEnum) ? $type->value : (string)$type;
+                    $statutStr = ($statut instanceof \BackedEnum) ? $statut->value : (string)$statut;
+                    
+                    // On ne compte que les dons d'argent confirmés
+                    if ($typeStr === 'argent' && $statutStr === 'confirmé') {
+                        $totalDonationsUser += $don->getMontant();
+                    }
+                }
+            }
+
+            // 2. Déterminer le badge correspondant
+            $newBadge = null;
+            if ($totalDonationsUser >= 100000) {
+                $newBadge = 'diamond';
+            } elseif ($totalDonationsUser >= 50000) {
+                $newBadge = 'platine';
+            } elseif ($totalDonationsUser >= 10000) {
+                $newBadge = 'emeraude';
+            } elseif ($totalDonationsUser >= 5000) {
+                $newBadge = 'or';
+            } elseif ($totalDonationsUser >= 1000) {
+                $newBadge = 'argent';
+            } elseif ($totalDonationsUser >= 100) {
+                $newBadge = 'bronze';
+            }
+
+            // 3. Mettre à jour le badge pour tous les profils donateur de l'utilisateur
+            $badgeRepo = $entityManager->getRepository(Badge::class);
+            
+            if ($newBadge) {
+                $userBadge = $newBadge;
+                foreach ($donateurs as $donateur) {
+                    $badgeEntity = $badgeRepo->findOneBy(['donateur' => $donateur]);
+                    
+                    if (!$badgeEntity) {
+                        $badgeEntity = new Badge();
+                        $badgeEntity->setDonateur($donateur);
+                    }
+                    
+                    if ($badgeEntity->getBadge() !== $newBadge) {
+                        $badgeEntity->setBadge($newBadge);
+                        $entityManager->persist($badgeEntity);
+                    }
+                }
+                $entityManager->flush();
+            } else {
+                // Si pas de nouveau badge calculé (ex: < 100), on regarde s'il y en a un existant
+                foreach ($donateurs as $donateur) {
+                    $existingBadge = $badgeRepo->findOneBy(['donateur' => $donateur]);
+                    if ($existingBadge) {
+                        $userBadge = $existingBadge->getBadge();
+                        break;
+                    }
+                }
+            }
+        }
+
+        $badgeExtension = 'png'; // Default
+        if ($userBadge) {
+            $badgeExtensions = [
+                'bronze' => 'png',
+                'argent' => 'png',
+                'or' => 'png',
+                'emeraude' => 'jpg',
+                'platine' => 'jpg',
+                'diamond' => 'jpg',
+            ];
+            $badgeExtension = $badgeExtensions[$userBadge] ?? 'png';
+        }
 
         return $this->render('donation/show.html.twig', [
             'cause' => $cause,
             'objectif' => $objectif,
             'montantCollecte' => $montantCollecte,
             'pourcentage' => $pourcentage,
+            'userBadge' => $userBadge,
+            'badgeExtension' => $badgeExtension,
         ]);
+    }
+
+    #[Route('/donnation/send-code', name: 'app_donation_send_code', methods: ['POST'])]
+    public function sendVerificationCode(Request $request, MailerInterface $mailer, LoggerInterface $logger): JsonResponse
+    {
+        $user = $this->getUser();
+        if (!$user) {
+            return $this->json(['success' => false, 'message' => 'Vous devez être connecté.'], 403);
+        }
+
+        $email = $user->getEmail();
+        if (!$email) {
+            return $this->json(['success' => false, 'message' => 'Aucune adresse email trouvée pour ce compte.'], 400);
+        }
+
+        // Log via LoggerInterface
+        $dsn = $_SERVER['MAILER_DSN'] ?? getenv('MAILER_DSN') ?? 'Non défini';
+        $logger->critical("Tentative d'envoi de code à : " . $email);
+        $logger->critical("DSN utilisé : " . $dsn);
+
+        // Générer un code à 6 chiffres
+        $code = (string)random_int(100000, 999999);
+        
+        // Stocker en session
+        $session = $request->getSession();
+        $session->set('donation_verification_code', $code);
+        $session->set('donation_verification_expiry', time() + 600); // 10 minutes
+
+        try {
+            $emailMessage = (new Email())
+                ->from('samermfarrej@gmail.com')
+                ->to($email)
+                ->subject('Code de vérification - Don Medicare')
+                ->html("
+                    <div style='font-family: Arial, sans-serif; color: #333;'>
+                        <h2>Confirmation de votre don</h2>
+                        <p>Bonjour {$user->getPrenom()},</p>
+                        <p>Vous avez initié un don important. Pour confirmer cette transaction, veuillez utiliser le code ci-dessous :</p>
+                        <div style='background-color: #f8f9fa; padding: 15px; border-radius: 5px; text-align: center; margin: 20px 0;'>
+                            <span style='font-size: 24px; font-weight: bold; color: #0d6efd; letter-spacing: 2px;'>{$code}</span>
+                        </div>
+                        <p>Ce code est valable pendant 10 minutes.</p>
+                        <p>Merci pour votre générosité !</p>
+                        <hr>
+                        <small>Si vous n'êtes pas à l'origine de cette demande, veuillez ignorer cet email.</small>
+                    </div>
+                ");
+
+            $mailer->send($emailMessage);
+        } catch (\Throwable $e) {
+            // En cas d'erreur (ex: pas de config SMTP), on renvoie une erreur
+            return $this->json(['success' => false, 'message' => 'Erreur d\'envoi email: ' . $e->getMessage()], 500);
+        }
+
+        return $this->json(['success' => true, 'message' => 'Un code de vérification a été envoyé à ' . $email]);
     }
 
     #[Route('/donnation/{id}/faire-un-don', name: 'app_donation_form', methods: ['GET', 'POST'])]
@@ -224,6 +418,29 @@ class DonationController extends AbstractController
             
             // 1. Validation manuelle des champs spécifiques (Carte bancaire ou Matériel)
             if ($donationType === 'money') {
+                // --- Validation du code pour les gros montants ---
+                if ((float)$amount > 10000) {
+                    $userCode = $request->request->get('verification_code');
+                    $session = $request->getSession();
+                    $storedCode = $session->get('donation_verification_code');
+                    $expiry = $session->get('donation_verification_expiry');
+
+                    if (empty($userCode)) {
+                        $errors['verification_code'] = 'La vérification est requise pour les dons > 10 000 DT.';
+                    } elseif (!$storedCode) {
+                         // Session expirée ou code non généré
+                         $errors['verification_code'] = 'Session expirée ou code introuvable. Veuillez demander un nouveau code.';
+                    } elseif ($storedCode !== $userCode) {
+                        $errors['verification_code'] = 'Code de vérification incorrect. (Attendu: ' . $storedCode . ', Reçu: ' . $userCode . ')'; // Debug info added temporarily
+                    } elseif (time() > $expiry) {
+                        $errors['verification_code'] = 'Code expiré. Veuillez en demander un nouveau.';
+                    } else {
+                        // Code valide, on nettoie la session pour éviter la réutilisation
+                        $session->remove('donation_verification_code');
+                        $session->remove('donation_verification_expiry');
+                    }
+                }
+
                 $constraints = new Assert\Collection([
                     'card_number' => [
                         new Assert\NotBlank(['message' => 'Veuillez saisir votre numéro de carte bancaire.']),
@@ -302,6 +519,14 @@ class DonationController extends AbstractController
             $don->setDescription($description ?? '');
             $don->setDateDon(new \DateTimeImmutable());
             
+            // Récupération de la géolocalisation
+            $latitude = $request->request->get('latitude');
+            $longitude = $request->request->get('longitude');
+            if ($latitude && $longitude) {
+                $don->setLatitude((float)$latitude);
+                $don->setLongitude((float)$longitude);
+            }
+            
             if ($donationType === 'money') {
                 $don->setTypeDon(TypeDon::ARGENT);
                 $don->setMontant((float)$amount);
@@ -311,6 +536,10 @@ class DonationController extends AbstractController
                 // On met l'adresse à "pas d'adresse" par défaut pour l'argent
                 $don->setAdresse('pas d\'adresse');
                 $don->setIsPickupAddressConfirmed(true);
+
+                // Mise à jour du montant actuel de la cause
+                $newMontant = ($cause->getMontantActuel() ?? 0) + (float)$amount;
+                $cause->setMontantActuel($newMontant);
             } else {
                 $don->setTypeDon(TypeDon::MATERIEL);
                 
@@ -325,6 +554,26 @@ class DonationController extends AbstractController
                         $objet->setNomObjet($request->request->get("objet_nom_$i"));
                         $objet->setQuantite($qty);
                         $objet->setDescription("Objet de donation matériel");
+
+                        // Gestion de la photo par objet
+                        /** @var UploadedFile $photoFile */
+                        $photoFile = $request->files->get("objet_photo_$i");
+                        if ($photoFile) {
+                            $originalFilename = pathinfo($photoFile->getClientOriginalName(), PATHINFO_FILENAME);
+                            $safeFilename = preg_replace('/[^a-zA-Z0-9]/', '', $originalFilename);
+                            $newFilename = $safeFilename.'-'.uniqid().'.'.$photoFile->guessExtension();
+
+                            try {
+                                $photoFile->move(
+                                    $this->getParameter('kernel.project_dir') . '/public/uploads/donations',
+                                    $newFilename
+                                );
+                                $objet->setPhoto($newFilename);
+                            } catch (FileException $e) {
+                                $this->addFlash('error', 'Une erreur est survenue lors de l\'upload de la photo pour l\'objet ' . ($i+1));
+                            }
+                        }
+
                         $don->addObjet($objet);
                     }
                 }

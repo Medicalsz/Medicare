@@ -2,6 +2,69 @@
 
 {% block title %}Gestion des Donations{% endblock %}
 
+{% block javascripts %}
+    {{ parent() }}
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var map = null;
+            var modal = document.getElementById('leafletMapModal');
+            
+            modal.addEventListener('shown.bs.modal', function () {
+                if (!map) {
+                    // Initialiser la carte centrée sur la Tunisie
+                    map = L.map('leaflet-map').setView([33.8869, 9.5375], 6);
+
+                    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                        maxZoom: 19,
+                        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                    }).addTo(map);
+
+                    // Données réelles injectées via Twig
+                    var locations = [];
+                    
+                    {% for don in donsArgent %}
+                        {% if don.latitude is not null and don.longitude is not null %}
+                            locations.push({ 
+                                lat: {{ don.latitude|number_format(6, '.', '') }}, 
+                                lng: {{ don.longitude|number_format(6, '.', '') }}, 
+                                city: "{{ don.adresse|default('Donateur')|e('js') }}", 
+                                amount: "{{ don.montant|number_format(2, ',', ' ') }} DT", 
+                                donors: 1 
+                            });
+                        {% endif %}
+                    {% endfor %}
+
+                    locations.forEach(function(loc) {
+                        var marker = L.marker([loc.lat, loc.lng]).addTo(map);
+                        marker.bindPopup(`
+                            <div style="text-align: center;">
+                                <h6 style="margin: 0 0 5px 0; color: #067d87; font-weight: bold;">${loc.city}</h6>
+                                <p style="margin: 0; font-size: 0.9rem;">Montant: <strong>${loc.amount}</strong></p>
+                            </div>
+                        `);
+                    });
+                    
+                    // Forcer le redimensionnement après l'initialisation pour éviter la carte grise
+                    setTimeout(function() {
+                        map.invalidateSize();
+                    }, 200);
+
+                } else {
+                    setTimeout(function() {
+                        map.invalidateSize();
+                    }, 100);
+                }
+            });
+        });
+    </script>
+{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+{% endblock %}
+
 {% block body %}
     <div class="admin-page-header d-flex justify-content-between align-items-center flex-wrap gap-3">
         <div>
@@ -20,6 +83,12 @@
                         data-bs-target="#listCausesModal">
                     <i class="bi bi-list-ul"></i> Toutes les causes
                 </button>
+                <button type="button" class="btn btn-success shadow-sm d-flex align-items-center gap-2" 
+                        style="border-radius: 12px; padding: 10px 20px; font-weight: 600; background-color: #28a745; border-color: #28a745;"
+                        data-bs-toggle="modal" 
+                        data-bs-target="#leafletMapModal">
+                    <i class="bi bi-map-fill"></i> Leaflet
+                </button>
             </div>
         </div>
         <div class="search-container d-flex align-items-center gap-2" style="min-width: 400px;">
@@ -32,6 +101,27 @@
             <a href="{{ path('app_admin_donations_pdf') }}" class="btn btn-danger shadow-sm d-flex align-items-center gap-2" style="border-radius: 12px; padding: 8px 15px;">
                 <i class="bi bi-file-earmark-pdf-fill"></i> PDF
             </a>
+        </div>
+    </div>
+
+    <!-- Leaflet Map Modal -->
+    <div class="modal fade" id="leafletMapModal" tabindex="-1" aria-labelledby="leafletMapModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-xl modal-dialog-centered">
+            <div class="modal-content border-0 shadow-lg" style="border-radius: 20px; overflow: hidden;">
+                <div class="modal-header bg-success text-white border-0 py-3">
+                    <h5 class="modal-title fw-bold" id="leafletMapModalLabel">
+                        <i class="bi bi-map-fill me-2"></i> Carte des Donateurs
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body p-0">
+                    <div id="leaflet-map" style="width: 100%; height: 600px;"></div>
+                </div>
+                <div class="modal-footer bg-light border-0">
+                    <small class="text-muted me-auto"><i class="bi bi-info-circle"></i> Cette carte montre la répartition géographique des dons (Simulation).</small>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -140,6 +230,7 @@
                                 <th>Donateur</th>
                                 <th>Cause</th>
                                 <th>Matériels</th>
+                                <th>Photos</th>
                                 <th class="sortable" data-sort="quantity" style="cursor: pointer; user-select: none;">
                                     Quantité <i class="bi bi-arrow-down-up small ms-1 text-muted"></i>
                                 </th>
@@ -159,9 +250,29 @@
                                     <td>
                                         <ul class="list-unstyled mb-0 small">
                                             {% for objet in don.objets %}
-                                                <li><i class="bi bi-dot"></i> {{ objet.nomObjet }} (x{{ objet.quantite }})</li>
+                                                <li class="d-flex align-items-center mb-1">
+                                                    <i class="bi bi-dot me-1"></i> 
+                                                    {{ objet.nomObjet }} (x{{ objet.quantite }})
+                                                </li>
                                             {% endfor %}
                                         </ul>
+                                    </td>
+                                    <td>
+                                        <div class="d-flex flex-wrap gap-1">
+                                            {% for objet in don.objets %}
+                                                {% if objet.photo %}
+                                                    <img src="{{ asset('uploads/donations/' ~ objet.photo) }}" 
+                                                         class="img-thumbnail rounded shadow-sm donation-photo-thumb"
+                                                         alt="Photo de {{ objet.nomObjet }}"
+                                                         style="width: 40px; height: 40px; object-fit: cover; cursor: pointer; transition: transform 0.2s;"
+                                                         data-bs-toggle="modal" 
+                                                         data-bs-target="#photoZoomModal" 
+                                                         data-photo-src="{{ asset('uploads/donations/' ~ objet.photo) }}"
+                                                         data-photo-alt="Photo de {{ objet.nomObjet }}"
+                                                         onclick="this.style.transform = 'scale(0.95)'; setTimeout(() => this.style.transform = 'scale(1)', 150);">
+                                                {% endif %}
+                                            {% endfor %}
+                                        </div>
                                     </td>
                                     <td class="text-center fw-bold">{{ don.montant|round(0, 'floor') }}</td>
                                     <td>
@@ -472,6 +583,7 @@
                             <thead>
                                 <tr>
                                     <th>Cause</th>
+                                    <th>Objectif</th>
                                     <th>Montant Collecté</th>
                                     <th class="text-end">Actions</th>
                                 </tr>
@@ -482,6 +594,9 @@
                                         <td>
                                             <div class="fw-bold">{{ causeData.entity.titre }}</div>
                                             <small class="text-muted">{{ causeData.entity.description|slice(0, 50) }}...</small>
+                                        </td>
+                                        <td>
+                                            <span class="fw-bold text-primary">{{ (causeData.entity.objectifMontant|default(0))|number_format(0, '.', ' ') }} DT</span>
                                         </td>
                                         <td>
                                             <span class="fw-bold text-success">{{ causeData.montant|number_format(2, ',', ' ') }} DT</span>
@@ -511,4 +626,99 @@
             </div>
         </div>
     </div>
+
+    <!-- Modal pour zoom photo -->
+    <div class="modal fade" id="photoZoomModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content bg-transparent border-0">
+                <div class="modal-body p-0 text-center position-relative">
+                    <button type="button" class="btn-close btn-close-white position-absolute top-0 end-0 m-3 z-3 bg-white p-2 rounded-circle" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <img src="" id="zoomedPhoto" class="img-fluid rounded shadow-lg" style="max-height: 85vh; border: 4px solid white;" alt="Zoom photo">
+                    <div id="photoCaption" class="mt-2 text-white fw-bold text-shadow"></div>
+                    <div class="mt-3">
+                        <button type="button" id="analyzeBtn" class="btn btn-warning fw-bold shadow-sm" data-analyze-url="{{ path('app_admin_analyze_photo') }}">
+                            <i class="bi bi-magic"></i> Vérifier l'état
+                        </button>
+                        <div id="analysisResult" class="mt-2 badge bg-light text-dark fs-6 d-none p-2"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var photoModal = document.getElementById('photoZoomModal');
+            if (photoModal) {
+                var analyzeBtn = photoModal.querySelector('#analyzeBtn');
+                var analysisResult = photoModal.querySelector('#analysisResult');
+                var modalImg = photoModal.querySelector('#zoomedPhoto');
+
+                photoModal.addEventListener('show.bs.modal', function (event) {
+                    var button = event.relatedTarget;
+                    var photoSrc = button.getAttribute('data-photo-src');
+                    var photoAlt = button.getAttribute('data-photo-alt');
+                    
+                    var modalCaption = photoModal.querySelector('#photoCaption');
+                    
+                    modalImg.src = photoSrc;
+                    modalCaption.textContent = photoAlt;
+                    
+                    // Reset analysis
+                    analysisResult.classList.add('d-none');
+                    analysisResult.textContent = '';
+                    analyzeBtn.disabled = false;
+                    analyzeBtn.innerHTML = '<i class="bi bi-magic"></i> Vérifier l\'état';
+                });
+
+                analyzeBtn.addEventListener('click', function() {
+                    var photoUrl = modalImg.src;
+                    var analyzeUrl = this.getAttribute('data-analyze-url');
+
+                    this.disabled = true;
+                    this.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Analyse...';
+                    analysisResult.classList.add('d-none');
+
+                    fetch(analyzeUrl, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-Requested-With': 'XMLHttpRequest'
+                        },
+                        body: JSON.stringify({ photoUrl: photoUrl })
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        analysisResult.classList.remove('d-none');
+                        if (data.condition) {
+                            analysisResult.className = 'mt-2 badge fs-6 p-2';
+                            if (data.condition.includes('Mauvais')) {
+                                analysisResult.classList.add('bg-danger');
+                            } else if (data.condition.includes('Très bon')) {
+                                analysisResult.classList.add('bg-success');
+                            } else if (data.condition.includes('Bon')) {
+                                analysisResult.classList.add('bg-info');
+                            } else {
+                                analysisResult.classList.add('bg-warning', 'text-dark');
+                            }
+                            analysisResult.textContent = 'État détecté : ' + data.condition;
+                        } else if (data.error) {
+                            analysisResult.className = 'mt-2 badge bg-danger fs-6 p-2';
+                            analysisResult.textContent = 'Erreur : ' + data.error;
+                        }
+                    })
+                    .catch(error => {
+                        analysisResult.classList.remove('d-none');
+                        analysisResult.className = 'mt-2 badge bg-danger fs-6 p-2';
+                        analysisResult.textContent = 'Erreur de communication avec le serveur.';
+                        console.error('Error:', error);
+                    })
+                    .finally(() => {
+                        analyzeBtn.disabled = false;
+                        analyzeBtn.innerHTML = '<i class="bi bi-magic"></i> Vérifier l\'état';
+                    });
+                });
+            }
+        });
+    </script>
 {% endblock %}

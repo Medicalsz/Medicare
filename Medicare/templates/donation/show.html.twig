@@ -166,6 +166,17 @@
 
               <hr class="my-4">
 
+              {% if userBadge %}
+                <div class="user-badge mb-4 text-center">
+                    <h5 class="mb-3 fw-bold"><i class="bi bi-award me-2 text-warning"></i>Votre Badge Donateur</h5>
+                    <div class="badge-display p-3 border rounded bg-light">
+                        <img src="{{ asset('images/badges/' ~ userBadge ~ '.' ~ badgeExtension) }}" alt="Badge {{ userBadge }}" class="img-fluid mb-2" style="max-width: 100px; height: auto;">
+                        <div class="badge-name fw-bold text-uppercase" style="color: goldenrod; letter-spacing: 1px;">{{ userBadge }}</div>
+                    </div>
+                </div>
+                <hr class="my-4">
+              {% endif %}
+
               <div class="recent-donations">
                 <h5 class="mb-4 fw-bold"><i class="bi bi-clock-history me-2"></i>Dons récents</h5>
                 <div class="donation-list">
