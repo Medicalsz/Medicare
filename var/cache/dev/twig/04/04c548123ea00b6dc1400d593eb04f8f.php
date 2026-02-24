@@ -59,9 +59,6 @@ class __TwigTemplate_dc7710655c2b3be29a66470a4208d48f extends Template
     <style>
         * {
             font-family: 'Poppins', sans-serif;
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
         }
         body {
             min-height: 100vh;
@@ -149,10 +146,8 @@ class __TwigTemplate_dc7710655c2b3be29a66470a4208d48f extends Template
             border-radius: 8px;
             font-size: 1rem;
             font-weight: 600;
-            color: #fff;
             background: linear-gradient(135deg, #10b981 0%, #059669 100%);
             border: none;
-            cursor: pointer;
             transition: all 0.3s ease;
             margin-top: 0.5rem;
         }
@@ -169,20 +164,6 @@ class __TwigTemplate_dc7710655c2b3be29a66470a4208d48f extends Template
             padding: 0.75rem 1rem;
             margin-bottom: 1.25rem;
             font-size: 0.9rem;
-        }
-        .login-signup {
-            text-align: center;
-            margin-top: 1.5rem;
-            font-size: 0.9rem;
-            color: #6b7280;
-        }
-        .login-signup a {
-            color: #10b981;
-            text-decoration: none;
-            font-weight: 600;
-        }
-        .login-signup a:hover {
-            text-decoration: underline;
         }
         .login-footer {
             text-align: center;
@@ -238,16 +219,16 @@ class __TwigTemplate_dc7710655c2b3be29a66470a4208d48f extends Template
 
                 <div class=\"login-body\">
                     ";
-        // line 193
-        if ((($tmp = (isset($context["error"]) || array_key_exists("error", $context) ? $context["error"] : (function () { throw new RuntimeError('Variable "error" does not exist.', 193, $this->source); })())) && $tmp instanceof Markup ? (string) $tmp : $tmp)) {
-            // line 194
+        // line 174
+        if ((($tmp = (isset($context["error"]) || array_key_exists("error", $context) ? $context["error"] : (function () { throw new RuntimeError('Variable "error" does not exist.', 174, $this->source); })())) && $tmp instanceof Markup ? (string) $tmp : $tmp)) {
+            // line 175
             yield "                        <div class=\"alert alert-danger\" role=\"alert\">
                             <i class=\"bi bi-exclamation-circle\"></i>
                             wrong informations
                         </div>
                     ";
         }
-        // line 199
+        // line 180
         yield "
                     <form method=\"post\" class=\"login-form\">
                         <div class=\"form-group\">
@@ -255,8 +236,8 @@ class __TwigTemplate_dc7710655c2b3be29a66470a4208d48f extends Template
                             <div class=\"input-wrapper\">
                                 <i class=\"bi bi-person\"></i>
                                 <input type=\"text\" id=\"inputUsername\" name=\"_username\" value=\"";
-        // line 205
-        yield $this->env->getRuntime('Twig\Runtime\EscaperRuntime')->escape((isset($context["last_username"]) || array_key_exists("last_username", $context) ? $context["last_username"] : (function () { throw new RuntimeError('Variable "last_username" does not exist.', 205, $this->source); })()), "html", null, true);
+        // line 186
+        yield $this->env->getRuntime('Twig\Runtime\EscaperRuntime')->escape((isset($context["last_username"]) || array_key_exists("last_username", $context) ? $context["last_username"] : (function () { throw new RuntimeError('Variable "last_username" does not exist.', 186, $this->source); })()), "html", null, true);
         yield "\" required autofocus class=\"form-control\" placeholder=\"Enter email or username\">
                             </div>
                         </div>
@@ -270,25 +251,22 @@ class __TwigTemplate_dc7710655c2b3be29a66470a4208d48f extends Template
                         </div>
 
                         <input type=\"hidden\" name=\"_csrf_token\" value=\"";
-        // line 217
+        // line 198
         yield $this->env->getRuntime('Twig\Runtime\EscaperRuntime')->escape($this->env->getRuntime('Symfony\Component\Form\FormRenderer')->renderCsrfToken("authenticate"), "html", null, true);
+        yield "\">
+                        <input type=\"hidden\" name=\"_target_path\" value=\"";
+        // line 199
+        yield $this->extensions['Symfony\Bridge\Twig\Extension\RoutingExtension']->getPath("app_home");
         yield "\">
 
                         <button type=\"submit\" class=\"btn btn-primary btn-login\">Sign In</button>
                     </form>
 
-                    <div class=\"login-signup\">
-                        <p>Don't have an account? <a href=\"";
-        // line 223
-        yield $this->extensions['Symfony\Bridge\Twig\Extension\RoutingExtension']->getPath("app_register");
-        yield "\">Sign Up</a></p>
-                    </div>
-
                     <div class=\"login-footer\">
                         <p class=\"copyright\">&copy; 2025 Medicare. All rights reserved.</p>
                         <p class=\"developed-by\">Developed by <a href=\"#\">Nomade Team</a></p>
                         <p><a href=\"";
-        // line 229
+        // line 207
         yield $this->extensions['Symfony\Bridge\Twig\Extension\RoutingExtension']->getPath("app_home");
         yield "\">Back to Home</a></p>
                     </div>
@@ -329,7 +307,7 @@ class __TwigTemplate_dc7710655c2b3be29a66470a4208d48f extends Template
      */
     public function getDebugInfo(): array
     {
-        return array (  292 => 229,  283 => 223,  274 => 217,  259 => 205,  251 => 199,  244 => 194,  242 => 193,  48 => 1,);
+        return array (  270 => 207,  259 => 199,  255 => 198,  240 => 186,  232 => 180,  225 => 175,  223 => 174,  48 => 1,);
     }
 
     public function getSourceContext(): Source
@@ -348,9 +326,6 @@ class __TwigTemplate_dc7710655c2b3be29a66470a4208d48f extends Template
     <style>
         * {
             font-family: 'Poppins', sans-serif;
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
         }
         body {
             min-height: 100vh;
@@ -438,10 +413,8 @@ class __TwigTemplate_dc7710655c2b3be29a66470a4208d48f extends Template
             border-radius: 8px;
             font-size: 1rem;
             font-weight: 600;
-            color: #fff;
             background: linear-gradient(135deg, #10b981 0%, #059669 100%);
             border: none;
-            cursor: pointer;
             transition: all 0.3s ease;
             margin-top: 0.5rem;
         }
@@ -458,20 +431,6 @@ class __TwigTemplate_dc7710655c2b3be29a66470a4208d48f extends Template
             padding: 0.75rem 1rem;
             margin-bottom: 1.25rem;
             font-size: 0.9rem;
-        }
-        .login-signup {
-            text-align: center;
-            margin-top: 1.5rem;
-            font-size: 0.9rem;
-            color: #6b7280;
-        }
-        .login-signup a {
-            color: #10b981;
-            text-decoration: none;
-            font-weight: 600;
-        }
-        .login-signup a:hover {
-            text-decoration: underline;
         }
         .login-footer {
             text-align: center;
@@ -551,13 +510,10 @@ class __TwigTemplate_dc7710655c2b3be29a66470a4208d48f extends Template
                         </div>
 
                         <input type=\"hidden\" name=\"_csrf_token\" value=\"{{ csrf_token('authenticate') }}\">
+                        <input type=\"hidden\" name=\"_target_path\" value=\"{{ path('app_home') }}\">
 
                         <button type=\"submit\" class=\"btn btn-primary btn-login\">Sign In</button>
                     </form>
-
-                    <div class=\"login-signup\">
-                        <p>Don't have an account? <a href=\"{{ path('app_register') }}\">Sign Up</a></p>
-                    </div>
 
                     <div class=\"login-footer\">
                         <p class=\"copyright\">&copy; 2025 Medicare. All rights reserved.</p>

@@ -355,10 +355,7 @@ class __TwigTemplate_4c57cec3e2f4321e64557a7255f36f93 extends Template
                 // line 140
                 yield "                                        </p>
                                         <div class=\"doctor-actions\">
-                                            <a href=\"";
-                // line 142
-                yield $this->extensions['Symfony\Bridge\Twig\Extension\RoutingExtension']->getPath("app_appointment");
-                yield "\" class=\"btn btn-primary btn-sm\">
+                                            <a href=\"#\" class=\"btn btn-primary btn-sm\">
                                                 <i class=\"mdi mdi-calendar-check\"></i>
                                                 Prendre RDV
                                             </a>
@@ -696,7 +693,7 @@ class __TwigTemplate_4c57cec3e2f4321e64557a7255f36f93 extends Template
      */
     public function getDebugInfo(): array
     {
-        return array (  382 => 156,  378 => 154,  360 => 142,  356 => 140,  352 => 138,  346 => 136,  344 => 135,  339 => 132,  333 => 131,  329 => 130,  322 => 126,  316 => 123,  312 => 121,  304 => 119,  296 => 117,  294 => 116,  290 => 114,  286 => 113,  283 => 112,  275 => 106,  273 => 105,  266 => 101,  249 => 87,  238 => 78,  223 => 76,  219 => 75,  209 => 67,  194 => 65,  190 => 64,  177 => 54,  169 => 49,  158 => 40,  143 => 38,  139 => 37,  127 => 28,  118 => 22,  100 => 6,  87 => 5,  64 => 3,  41 => 1,);
+        return array (  379 => 156,  375 => 154,  356 => 140,  352 => 138,  346 => 136,  344 => 135,  339 => 132,  333 => 131,  329 => 130,  322 => 126,  316 => 123,  312 => 121,  304 => 119,  296 => 117,  294 => 116,  290 => 114,  286 => 113,  283 => 112,  275 => 106,  273 => 105,  266 => 101,  249 => 87,  238 => 78,  223 => 76,  219 => 75,  209 => 67,  194 => 65,  190 => 64,  177 => 54,  169 => 49,  158 => 40,  143 => 38,  139 => 37,  127 => 28,  118 => 22,  100 => 6,  87 => 5,  64 => 3,  41 => 1,);
     }
 
     public function getSourceContext(): Source
@@ -842,7 +839,7 @@ class __TwigTemplate_4c57cec3e2f4321e64557a7255f36f93 extends Template
                                             {% endif %}
                                         </p>
                                         <div class=\"doctor-actions\">
-                                            <a href=\"{{ path('app_appointment') }}\" class=\"btn btn-primary btn-sm\">
+                                            <a href=\"#\" class=\"btn btn-primary btn-sm\">
                                                 <i class=\"mdi mdi-calendar-check\"></i>
                                                 Prendre RDV
                                             </a>

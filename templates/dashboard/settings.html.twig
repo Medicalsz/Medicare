@@ -1,0 +1,153 @@
+{% extends "base_frontend.html.twig" %}
+
+{% block title %}Settings - Medicare{% endblock %}
+
+{% block body %}
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-md-8 offset-md-2">
+            <h1>Settings</h1>
+            <hr>
+            
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="bi bi-person-circle"></i> Account Settings</h5>
+                </div>
+                <div class="card-body">
+                    <p><strong>Email:</strong> {{ app.user.email }}</p>
+                    <p><strong>Name:</strong> 
+                        {% if app.user.prenom %}{{ app.user.prenom }}{% endif %}
+                        {% if app.user.nom %}{{ app.user.nom }}{% endif %}
+                    </p>
+                    <button class="btn btn-primary btn-sm">Change Password</button>
+                    <button class="btn btn-secondary btn-sm">Edit Profile</button>
+                </div>
+            </div>
+
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="bi bi-moon-stars"></i> Appearance</h5>
+                </div>
+                <div class="card-body">
+                    <div class="form-check form-switch">
+                        <input class="form-check-input" type="checkbox" id="darkModeSwitch">
+                        <label class="form-check-label" for="darkModeSwitch">
+                            Dark Mode (Night Mode)
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="bi bi-bell"></i> Notifications</h5>
+                </div>
+                <div class="card-body">
+                    <div class="form-check mb-2">
+                        <input class="form-check-input" type="checkbox" id="emailNotifications" checked>
+                        <label class="form-check-label" for="emailNotifications">
+                            Email Notifications
+                        </label>
+                    </div>
+                    <div class="form-check mb-2">
+                        <input class="form-check-input" type="checkbox" id="appointmentReminders" checked>
+                        <label class="form-check-label" for="appointmentReminders">
+                            Appointment Reminders
+                        </label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="newsUpdates" checked>
+                        <label class="form-check-label" for="newsUpdates">
+                            News and Updates
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="bi bi-shield-lock"></i> Privacy & Security</h5>
+                </div>
+                <div class="card-body">
+                    <p>
+                        <a href="#">View Login Activity</a>
+                    </p>
+                    <p>
+                        <a href="#">Manage Connected Apps</a>
+                    </p>
+                    <button class="btn btn-danger btn-sm">Delete Account</button>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="bi bi-info-circle"></i> About</h5>
+                </div>
+                <div class="card-body">
+                    <p><strong>Application:</strong> Medicare Healthcare System</p>
+                    <p><strong>Version:</strong> 1.0.0</p>
+                    <p>
+                        <a href="{{ path('app_privacy') }}">Privacy Policy</a> | 
+                        <a href="{{ path('app_terms') }}">Terms of Service</a>
+                    </p>
+                </div>
+            </div>
+
+            <div class="mt-4">
+                <a href="{{ path('app_dashboard') }}" class="btn btn-secondary">Back to Dashboard</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.card {
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.card-header {
+    background-color: #f9fafb;
+    border-bottom: 1px solid #e5e7eb;
+    padding: 1rem;
+}
+
+.card-header h5 {
+    color: #10b981;
+    margin-bottom: 0;
+}
+
+.form-check-label {
+    cursor: pointer;
+}
+
+a {
+    color: #10b981;
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const darkModeSwitch = document.getElementById('darkModeSwitch');
+    const currentTheme = localStorage.getItem('theme') || 'light';
+    
+    // Set checkbox state based on current theme
+    if (currentTheme === 'dark') {
+        darkModeSwitch.checked = true;
+    }
+    
+    // Toggle theme when checkbox changes
+    darkModeSwitch.addEventListener('change', function() {
+        const newTheme = this.checked ? 'dark' : 'light';
+        document.documentElement.setAttribute('data-theme', newTheme);
+        localStorage.setItem('theme', newTheme);
+    });
+});
+</script>
+{% endblock %}

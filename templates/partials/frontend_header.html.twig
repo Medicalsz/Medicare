@@ -1,0 +1,343 @@
+<header id="header" class="header d-flex align-items-center fixed-top">
+    <div class="container position-relative d-flex align-items-center justify-content-between">
+        <a href="{{ path('app_home') }}" class="logo d-flex align-items-center me-auto me-xl-0">
+            <h1 class="sitename">Medicare</h1>
+        </a>
+
+        <nav id="navmenu" class="navmenu">
+            <ul>
+                <li><a href="{{ path('app_home') }}" {% if app.request.attributes.get('_route') == 'app_home' %}class="active"{% endif %}>Home</a></li>
+                <li><a href="{{ path('app_about') }}">About</a></li>
+                <li><a href="{{ path('app_services') }}">Services</a></li>
+                <li><a href="{{ path('app_departments') }}">Departments</a></li>
+                <li><a href="{{ path('app_explore') }}" {% if app.request.attributes.get('_route') == 'app_explore' %}class="active"{% endif %}>Explore</a></li>
+                <li class="dropdown">
+                    <a href="#"><span>More Pages</span> <i class="bi bi-chevron-down toggle-dropdown"></i></a>
+                    <ul>
+                        <li><a href="{{ path('app_appointment') }}">Appointment</a></li>
+                        <li><a href="{{ path('app_testimonials') }}">Testimonials</a></li>
+                        <li><a href="{{ path('app_faq') }}">FAQ</a></li>
+                        <li><a href="{{ path('app_gallery') }}">Gallery</a></li>
+                    </ul>
+                </li>
+                <li><a href="{{ path('app_contact') }}">Contact</a></li>
+            </ul>
+            <i class="mobile-nav-toggle d-xl-none bi bi-list"></i>
+        </nav>
+
+        {% if app.user %}
+            {# Logged in user - show profile dropdown #}
+            <div class="user-profile-dropdown">
+                <div class="user-profile-trigger" id="userProfileDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                    <div class="user-avatar">
+                        {% if app.user.photo %}
+                            <img src="{{ app.user.photo }}" alt="{{ app.user.nom }}" class="user-avatar-img">
+                        {% elseif app.user.nom %}
+                            <span>{{ app.user.prenom|default(app.user.nom)|first|upper }}</span>
+                        {% elseif app.user.prenom %}
+                            <span>{{ app.user.prenom|first|upper }}</span>
+                        {% else %}
+                            <i class="bi bi-person-fill"></i>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userProfileDropdown">
+                    <li class="dropdown-header">
+                        <div class="user-info">
+                            <div class="user-avatar-large">
+                                {% if app.user.photo %}
+                                    <img src="{{ app.user.photo }}" alt="{{ app.user.nom }}" class="user-avatar-img-large">
+                                {% elseif app.user.nom %}
+                                    <span>{{ app.user.prenom|default(app.user.nom)|first|upper }}</span>
+                                {% elseif app.user.prenom %}
+                                    <span>{{ app.user.prenom|first|upper }}</span>
+                                {% else %}
+                                    <i class="bi bi-person-fill"></i>
+                                {% endif %}
+                            </div>
+                            <div class="user-details">
+                                <span class="user-name">
+                                    {% if app.user.nom and app.user.prenom %}
+                                        {{ app.user.prenom }} {{ app.user.nom }}
+                                    {% elseif app.user.prenom %}
+                                        {{ app.user.prenom }}
+                                    {% elseif app.user.nom %}
+                                        {{ app.user.nom }}
+                                    {% else %}
+                                        User
+                                    {% endif %}
+                                </span>
+                                <span class="user-email">{{ app.user.email }}</span>
+                            </div>
+                        </div>
+                    </li>
+                    <li><hr class="dropdown-divider"></li>
+                    <li>
+                        <a class="dropdown-item" href="{{ path('app_profile') }}">
+                            <i class="bi bi-person"></i>
+                            <span>My Profile</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a class="dropdown-item" href="{{ path('app_settings') }}">
+                            <i class="bi bi-gear"></i>
+                            <span>Settings</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a class="dropdown-item" href="{{ path('app_appointments') }}">
+                            <i class="bi bi-calendar-check"></i>
+                            <span>My Appointments</span>
+                        </a>
+                    </li>
+                    <li><hr class="dropdown-divider"></li>
+                    <li>
+                        <a class="dropdown-item text-danger" href="{{ path('app_logout') }}">
+                            <i class="bi bi-box-arrow-right"></i>
+                            <span>Logout</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        {% else %}
+            {# Not logged in - show user icon with Login/Register dropdown #}
+            <div class="guest-dropdown">
+                <div class="guest-trigger" id="guestUserDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                    <i class="bi bi-person-circle guest-icon"></i>
+                </div>
+
+                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="guestUserDropdown">
+                    <li>
+                        <a class="dropdown-item" href="{{ path('app_login') }}">
+                            <i class="bi bi-box-arrow-in-right"></i>
+                            <span>Login</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a class="dropdown-item" href="{{ path('app_register') }}">
+                            <i class="bi bi-person-plus"></i>
+                            <span>Register</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        {% endif %}
+    </div>
+</header>
+
+<style>
+/* Guest dropdown styles */
+.guest-dropdown {
+    position: relative;
+}
+
+.guest-dropdown .dropdown-menu {
+    display: none;
+}
+
+.guest-trigger {
+    cursor: pointer;
+    padding: 0.5rem;
+    border-radius: 8px;
+    transition: background-color 0.2s ease;
+}
+
+.guest-trigger:hover {
+    background-color: #f3f4f6;
+}
+
+.guest-icon {
+    font-size: 1.75rem;
+    color: #6b7280;
+    transition: color 0.2s ease;
+}
+
+.guest-trigger:hover .guest-icon {
+    color: #374151;
+}
+
+.guest-dropdown:hover .dropdown-menu {
+    display: block;
+    animation: fadeIn 0.2s ease;
+}
+
+/* Logged in user dropdown styles */
+.user-profile-dropdown {
+    position: relative;
+}
+
+.user-profile-dropdown .dropdown-menu {
+    display: none;
+}
+
+.user-profile-trigger {
+    cursor: pointer;
+    padding: 0;
+}
+
+.user-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: 600;
+    font-size: 1.1rem;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    overflow: hidden;
+}
+
+.user-avatar:hover {
+    transform: scale(1.05);
+    box-shadow: 0 4px 15px rgba(16, 185, 129, 0.4);
+}
+
+.user-avatar i {
+    font-size: 1.2rem;
+}
+
+.user-avatar-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.user-avatar-large {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: 600;
+    font-size: 1.25rem;
+    overflow: hidden;
+}
+
+.user-avatar-img-large {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.dropdown-menu {
+    border: none;
+    border-radius: 12px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+    padding: 0.5rem;
+    min-width: 220px;
+    margin-top: 0.5rem;
+    position: absolute;
+    top: 100%;
+    right: 0;
+    z-index: 1000;
+}
+
+.dropdown-header {
+    padding: 1rem;
+    background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+    border-radius: 8px;
+    margin-bottom: 0.5rem;
+}
+
+.user-info {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.user-details {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+}
+
+.user-name {
+    font-weight: 600;
+    color: #1f2937;
+    font-size: 0.95rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.user-email {
+    color: #6b7280;
+    font-size: 0.8rem;
+    margin-top: 0.15rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.dropdown-divider {
+    margin: 0.5rem 0;
+    border-color: #e5e7eb;
+}
+
+.dropdown-item {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.75rem 1rem;
+    border-radius: 8px;
+    color: #374151;
+    font-size: 0.9rem;
+    transition: all 0.2s ease;
+}
+
+.dropdown-item:hover {
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    color: white;
+}
+
+.dropdown-item i {
+    font-size: 1rem;
+    width: 20px;
+    text-align: center;
+}
+
+.dropdown-item.text-danger:hover {
+    background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+}
+
+/* Hover dropdown effect for user dropdown */
+.user-profile-dropdown:hover .dropdown-menu {
+    display: block;
+    animation: fadeIn 0.2s ease;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@media (max-width: 576px) {
+    .user-avatar {
+        width: 35px;
+        height: 35px;
+        font-size: 1rem;
+    }
+    
+    .dropdown-menu {
+        min-width: 200px;
+        margin-right: -1rem;
+    }
+    
+    .guest-icon {
+        font-size: 1.5rem;
+    }
+}
+</style>

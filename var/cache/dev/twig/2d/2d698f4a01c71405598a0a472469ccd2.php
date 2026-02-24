@@ -111,168 +111,93 @@ class __TwigTemplate_6769f67cc7f8bda0c1ec2160ad7d9937 extends Template
         // line 28
         yield $this->env->getRuntime('Twig\Runtime\EscaperRuntime')->escape($this->extensions['Symfony\Bridge\Twig\Extension\AssetExtension']->getAssetUrl("build/frontend/assets/css/main.css"), "html", null, true);
         yield "\" rel=\"stylesheet\">
-    
-    <!-- Cropper.js -->
-    <link rel=\"stylesheet\" href=\"https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css\">
-    <script src=\"https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js\"></script>
 
     ";
-        // line 34
+        // line 30
         yield from $this->unwrap()->yieldBlock('stylesheets', $context, $blocks);
-        // line 35
+        // line 31
         yield "</head>
 
 <body class=\"";
-        // line 37
+        // line 33
         yield from $this->unwrap()->yieldBlock('body_class', $context, $blocks);
         yield "\">
     ";
-        // line 38
-        if (((((CoreExtension::getAttribute($this->env, $this->source, (isset($context["app"]) || array_key_exists("app", $context) ? $context["app"] : (function () { throw new RuntimeError('Variable "app" does not exist.', 38, $this->source); })()), "user", [], "any", false, false, false, 38) && $this->extensions['Symfony\Bridge\Twig\Extension\SecurityExtension']->isGranted("ROLE_USER")) &&  !$this->extensions['Symfony\Bridge\Twig\Extension\SecurityExtension']->isGranted("ROLE_MEDECIN")) &&  !$this->extensions['Symfony\Bridge\Twig\Extension\SecurityExtension']->isGranted("ROLE_ADMIN")) &&  !CoreExtension::getAttribute($this->env, $this->source, CoreExtension::getAttribute($this->env, $this->source, (isset($context["app"]) || array_key_exists("app", $context) ? $context["app"] : (function () { throw new RuntimeError('Variable "app" does not exist.', 38, $this->source); })()), "user", [], "any", false, false, false, 38), "isVerified", [], "any", false, false, false, 38))) {
-            // line 39
-            yield "        <div class=\"verification-banner\" id=\"verificationBanner\">
-            <div class=\"container d-flex align-items-center justify-content-between\">
-                <div class=\"notice-content d-flex align-items-center\">
-                    <i class=\"bi bi-info-circle-fill me-2\"></i>
-                    <span>Votre compte n'est pas encore vérifié. Veuillez vérifier votre boîte de réception pour le lien de confirmation.</span>
-                </div>
-                <a href=\"";
-            // line 45
-            yield $this->extensions['Symfony\Bridge\Twig\Extension\RoutingExtension']->getPath("app_verify_choice");
-            yield "\" class=\"btn-resend\">Verify</a>
-            </div>
-        </div>
-
-        <style>
-            .verification-banner {
-                background: #e0f2fe;
-                color: #0369a1;
-                padding: 10px 0;
-                font-size: 14px;
-                border-bottom: 1px solid #bae6fd;
-                position: fixed;
-                top: 0;
-                left: 0;
-                width: 100%;
-                z-index: 1000;
-            }
-            .verification-banner .btn-resend {
-                background: #0ea5e9;
-                color: white;
-                padding: 4px 12px;
-                border-radius: 4px;
-                font-weight: 600;
-                text-decoration: none;
-                transition: background 0.2s;
-            }
-            .verification-banner .btn-resend:hover {
-                background: #0284c7;
-            }
-            .header.fixed-top {
-                top: 41px !important; /* Height of the banner */
-            }
-            .main {
-                padding-top: 121px !important; /* 80px header + 41px banner */
-            }
-        </style>
-    ";
-        }
-        // line 82
+        // line 34
+        $context["show_header"] = ((array_key_exists("show_header", $context)) ? (Twig\Extension\CoreExtension::default((isset($context["show_header"]) || array_key_exists("show_header", $context) ? $context["show_header"] : (function () { throw new RuntimeError('Variable "show_header" does not exist.', 34, $this->source); })()), true)) : (true));
+        // line 35
         yield "    ";
-        $context["show_header"] = ((array_key_exists("show_header", $context)) ? (Twig\Extension\CoreExtension::default((isset($context["show_header"]) || array_key_exists("show_header", $context) ? $context["show_header"] : (function () { throw new RuntimeError('Variable "show_header" does not exist.', 82, $this->source); })()), true)) : (true));
-        // line 83
+        $context["show_footer"] = ((array_key_exists("show_footer", $context)) ? (Twig\Extension\CoreExtension::default((isset($context["show_footer"]) || array_key_exists("show_footer", $context) ? $context["show_footer"] : (function () { throw new RuntimeError('Variable "show_footer" does not exist.', 35, $this->source); })()), true)) : (true));
+        // line 36
         yield "    ";
-        $context["show_footer"] = ((array_key_exists("show_footer", $context)) ? (Twig\Extension\CoreExtension::default((isset($context["show_footer"]) || array_key_exists("show_footer", $context) ? $context["show_footer"] : (function () { throw new RuntimeError('Variable "show_footer" does not exist.', 83, $this->source); })()), true)) : (true));
-        // line 84
-        yield "    ";
-        if ((($tmp = (isset($context["show_header"]) || array_key_exists("show_header", $context) ? $context["show_header"] : (function () { throw new RuntimeError('Variable "show_header" does not exist.', 84, $this->source); })())) && $tmp instanceof Markup ? (string) $tmp : $tmp)) {
-            // line 85
+        if ((($tmp = (isset($context["show_header"]) || array_key_exists("show_header", $context) ? $context["show_header"] : (function () { throw new RuntimeError('Variable "show_header" does not exist.', 36, $this->source); })())) && $tmp instanceof Markup ? (string) $tmp : $tmp)) {
+            // line 37
             yield "        ";
             yield from $this->unwrap()->yieldBlock('header', $context, $blocks);
-            // line 88
+            // line 40
             yield "    ";
         }
-        // line 89
+        // line 41
         yield "
     <main class=\"main\" style=\"padding-top: 80px;\">
         ";
-        // line 91
+        // line 43
         yield from $this->unwrap()->yieldBlock('flashes', $context, $blocks);
-        // line 133
-        yield "
-        ";
-        // line 134
+        // line 87
+        yield "        ";
         yield from $this->unwrap()->yieldBlock('body', $context, $blocks);
-        // line 135
+        // line 88
         yield "    </main>
 
     ";
-        // line 137
+        // line 90
         yield from $this->unwrap()->yieldBlock('footer', $context, $blocks);
-        // line 142
+        // line 95
         yield "
     <!-- Vendor JS Files -->
     <script src=\"";
-        // line 144
+        // line 97
         yield $this->env->getRuntime('Twig\Runtime\EscaperRuntime')->escape($this->extensions['Symfony\Bridge\Twig\Extension\AssetExtension']->getAssetUrl("build/frontend/assets/vendor/bootstrap/js/bootstrap.bundle.min.js"), "html", null, true);
         yield "\"></script>
     <script src=\"";
-        // line 145
+        // line 98
         yield $this->env->getRuntime('Twig\Runtime\EscaperRuntime')->escape($this->extensions['Symfony\Bridge\Twig\Extension\AssetExtension']->getAssetUrl("build/frontend/assets/vendor/aos/aos.js"), "html", null, true);
         yield "\"></script>
     <script src=\"";
-        // line 146
+        // line 99
         yield $this->env->getRuntime('Twig\Runtime\EscaperRuntime')->escape($this->extensions['Symfony\Bridge\Twig\Extension\AssetExtension']->getAssetUrl("build/frontend/assets/vendor/glightbox/js/glightbox.min.js"), "html", null, true);
         yield "\"></script>
     <script src=\"";
-        // line 147
+        // line 100
         yield $this->env->getRuntime('Twig\Runtime\EscaperRuntime')->escape($this->extensions['Symfony\Bridge\Twig\Extension\AssetExtension']->getAssetUrl("build/frontend/assets/vendor/purecounter/purecounter_vanilla.js"), "html", null, true);
         yield "\"></script>
     <script src=\"";
-        // line 148
+        // line 101
         yield $this->env->getRuntime('Twig\Runtime\EscaperRuntime')->escape($this->extensions['Symfony\Bridge\Twig\Extension\AssetExtension']->getAssetUrl("build/frontend/assets/vendor/imagesloaded/imagesloaded.pkgd.min.js"), "html", null, true);
         yield "\"></script>
     <script src=\"";
-        // line 149
+        // line 102
         yield $this->env->getRuntime('Twig\Runtime\EscaperRuntime')->escape($this->extensions['Symfony\Bridge\Twig\Extension\AssetExtension']->getAssetUrl("build/frontend/assets/vendor/isotope-layout/isotope.pkgd.js"), "html", null, true);
         yield "\"></script>
     <script src=\"";
-        // line 150
+        // line 103
         yield $this->env->getRuntime('Twig\Runtime\EscaperRuntime')->escape($this->extensions['Symfony\Bridge\Twig\Extension\AssetExtension']->getAssetUrl("build/frontend/assets/vendor/swiper/swiper-bundle.min.js"), "html", null, true);
         yield "\"></script>
     <script src=\"";
-        // line 151
+        // line 104
         yield $this->env->getRuntime('Twig\Runtime\EscaperRuntime')->escape($this->extensions['Symfony\Bridge\Twig\Extension\AssetExtension']->getAssetUrl("build/frontend/assets/vendor/php-email-form/validate.js"), "html", null, true);
         yield "\"></script>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // Check for success modal
-            var successEl = document.getElementById('successModal');
-            if (successEl) {
-                var successModal = new bootstrap.Modal(successEl);
-                successModal.show();
-            }
-
-            // Check for error modal
-            var errorEl = document.getElementById('errorModal');
-            if (errorEl) {
-                var errorModal = new bootstrap.Modal(errorEl);
-                errorModal.show();
-            }
-        });
-    </script>
-
     <!-- Main JS File -->
     <script src=\"";
-        // line 172
+        // line 107
         yield $this->env->getRuntime('Twig\Runtime\EscaperRuntime')->escape($this->extensions['Symfony\Bridge\Twig\Extension\AssetExtension']->getAssetUrl("build/frontend/assets/js/main.js"), "html", null, true);
         yield "\"></script>
 
     ";
-        // line 174
+        // line 109
         yield from $this->unwrap()->yieldBlock('javascripts', $context, $blocks);
-        // line 175
+        // line 110
         yield "</body>
 
 </html>";
@@ -308,7 +233,7 @@ class __TwigTemplate_6769f67cc7f8bda0c1ec2160ad7d9937 extends Template
         yield from [];
     }
 
-    // line 34
+    // line 30
     /**
      * @return iterable<null|scalar|\Stringable>
      */
@@ -330,7 +255,7 @@ class __TwigTemplate_6769f67cc7f8bda0c1ec2160ad7d9937 extends Template
         yield from [];
     }
 
-    // line 37
+    // line 33
     /**
      * @return iterable<null|scalar|\Stringable>
      */
@@ -353,7 +278,7 @@ class __TwigTemplate_6769f67cc7f8bda0c1ec2160ad7d9937 extends Template
         yield from [];
     }
 
-    // line 85
+    // line 37
     /**
      * @return iterable<null|scalar|\Stringable>
      */
@@ -366,10 +291,10 @@ class __TwigTemplate_6769f67cc7f8bda0c1ec2160ad7d9937 extends Template
         $__internal_6f47bbe9983af81f1e7450e9a3e3768f = $this->extensions["Symfony\\Bridge\\Twig\\Extension\\ProfilerExtension"];
         $__internal_6f47bbe9983af81f1e7450e9a3e3768f->enter($__internal_6f47bbe9983af81f1e7450e9a3e3768f_prof = new \Twig\Profiler\Profile($this->getTemplateName(), "block", "header"));
 
-        // line 86
+        // line 38
         yield "            ";
-        yield from $this->load("partials/frontend_header.html.twig", 86)->unwrap()->yield($context);
-        // line 87
+        yield from $this->load("partials/frontend_header.html.twig", 38)->unwrap()->yield($context);
+        // line 39
         yield "        ";
         
         $__internal_6f47bbe9983af81f1e7450e9a3e3768f->leave($__internal_6f47bbe9983af81f1e7450e9a3e3768f_prof);
@@ -380,7 +305,7 @@ class __TwigTemplate_6769f67cc7f8bda0c1ec2160ad7d9937 extends Template
         yield from [];
     }
 
-    // line 91
+    // line 43
     /**
      * @return iterable<null|scalar|\Stringable>
      */
@@ -393,71 +318,73 @@ class __TwigTemplate_6769f67cc7f8bda0c1ec2160ad7d9937 extends Template
         $__internal_6f47bbe9983af81f1e7450e9a3e3768f = $this->extensions["Symfony\\Bridge\\Twig\\Extension\\ProfilerExtension"];
         $__internal_6f47bbe9983af81f1e7450e9a3e3768f->enter($__internal_6f47bbe9983af81f1e7450e9a3e3768f_prof = new \Twig\Profiler\Profile($this->getTemplateName(), "block", "flashes"));
 
-        // line 92
+        // line 44
         yield "            ";
         $context['_parent'] = $context;
-        $context['_seq'] = CoreExtension::ensureTraversable(CoreExtension::getAttribute($this->env, $this->source, (isset($context["app"]) || array_key_exists("app", $context) ? $context["app"] : (function () { throw new RuntimeError('Variable "app" does not exist.', 92, $this->source); })()), "flashes", ["success"], "method", false, false, false, 92));
+        $context['_seq'] = CoreExtension::ensureTraversable(CoreExtension::getAttribute($this->env, $this->source, (isset($context["app"]) || array_key_exists("app", $context) ? $context["app"] : (function () { throw new RuntimeError('Variable "app" does not exist.', 44, $this->source); })()), "flashes", ["success"], "method", false, false, false, 44));
         foreach ($context['_seq'] as $context["_key"] => $context["flash_success"]) {
-            // line 93
-            yield "                <div class=\"modal fade\" id=\"successModal\" tabindex=\"-1\" aria-labelledby=\"successModalLabel\" aria-hidden=\"true\">
+            // line 45
+            yield "                <div class=\"modal fade show\" id=\"successModal\" tabindex=\"-1\" aria-labelledby=\"successModalLabel\" aria-modal=\"true\" style=\"display: block;\">
                     <div class=\"modal-dialog modal-dialog-centered\">
                         <div class=\"modal-content\">
-                            <div class=\"modal-header bg-success text-white border-0\">
+                            <div class=\"modal-header bg-success text-white\">
                                 <h5 class=\"modal-title\" id=\"successModalLabel\">
-                                    <i class=\"bi bi-check-circle me-2\"></i>Opération réussie
+                                    <i class=\"bi bi-check-circle me-2\"></i>Inscription réussie
                                 </h5>
-                                <button type=\"button\" class=\"btn-close btn-close-white shadow-none\" data-bs-dismiss=\"modal\" aria-label=\"Close\"></button>
+                                <button type=\"button\" class=\"btn-close btn-close-white\" data-bs-dismiss=\"modal\" aria-label=\"Close\" onclick=\"document.getElementById('successModal').style.display='none'\"></button>
                             </div>
-                            <div class=\"modal-body py-4\">
-                                <p class=\"mb-0 text-center lead\">";
-            // line 103
+                            <div class=\"modal-body\">
+                                <p class=\"mb-0\">";
+            // line 55
             yield $this->env->getRuntime('Twig\Runtime\EscaperRuntime')->escape($context["flash_success"], "html", null, true);
             yield "</p>
                             </div>
-                            <div class=\"modal-footer border-0\">
-                                <button type=\"button\" class=\"btn btn-success px-4 rounded-3\" data-bs-dismiss=\"modal\">D'accord</button>
+                            <div class=\"modal-footer\">
+                                <button type=\"button\" class=\"btn btn-success\" data-bs-dismiss=\"modal\" onclick=\"document.getElementById('successModal').style.display='none'\">OK</button>
                             </div>
                         </div>
                     </div>
                 </div>
+                <div class=\"modal-backdrop fade show\" onclick=\"document.getElementById('successModal').style.display='none'\"></div>
             ";
         }
         $_parent = $context['_parent'];
         unset($context['_seq'], $context['_key'], $context['flash_success'], $context['_parent']);
         $context = array_intersect_key($context, $_parent) + $_parent;
-        // line 112
+        // line 65
         yield "            ";
         $context['_parent'] = $context;
-        $context['_seq'] = CoreExtension::ensureTraversable(CoreExtension::getAttribute($this->env, $this->source, (isset($context["app"]) || array_key_exists("app", $context) ? $context["app"] : (function () { throw new RuntimeError('Variable "app" does not exist.', 112, $this->source); })()), "flashes", ["error"], "method", false, false, false, 112));
+        $context['_seq'] = CoreExtension::ensureTraversable(CoreExtension::getAttribute($this->env, $this->source, (isset($context["app"]) || array_key_exists("app", $context) ? $context["app"] : (function () { throw new RuntimeError('Variable "app" does not exist.', 65, $this->source); })()), "flashes", ["error"], "method", false, false, false, 65));
         foreach ($context['_seq'] as $context["_key"] => $context["flash_error"]) {
-            // line 113
-            yield "                <div class=\"modal fade\" id=\"errorModal\" tabindex=\"-1\" aria-labelledby=\"errorModalLabel\" aria-hidden=\"true\">
+            // line 66
+            yield "                <div class=\"modal fade show\" id=\"errorModal\" tabindex=\"-1\" aria-labelledby=\"errorModalLabel\" aria-modal=\"true\" style=\"display: block;\">
                     <div class=\"modal-dialog modal-dialog-centered\">
                         <div class=\"modal-content\">
-                            <div class=\"modal-header bg-danger text-white border-0\">
+                            <div class=\"modal-header bg-danger text-white\">
                                 <h5 class=\"modal-title\" id=\"errorModalLabel\">
-                                    <i class=\"bi bi-exclamation-circle me-2\"></i>Oups !
+                                    <i class=\"bi bi-exclamation-circle me-2\"></i>Erreur
                                 </h5>
-                                <button type=\"button\" class=\"btn-close btn-close-white shadow-none\" data-bs-dismiss=\"modal\" aria-label=\"Close\"></button>
+                                <button type=\"button\" class=\"btn-close btn-close-white\" data-bs-dismiss=\"modal\" aria-label=\"Close\" onclick=\"document.getElementById('errorModal').style.display='none'\"></button>
                             </div>
-                            <div class=\"modal-body py-4 text-center\">
-                                <p class=\"mb-0 lead text-danger\">";
-            // line 123
+                            <div class=\"modal-body\">
+                                <p class=\"mb-0\">";
+            // line 76
             yield $this->env->getRuntime('Twig\Runtime\EscaperRuntime')->escape($context["flash_error"], "html", null, true);
             yield "</p>
                             </div>
-                            <div class=\"modal-footer border-0\">
-                                <button type=\"button\" class=\"btn btn-secondary px-4 rounded-3\" data-bs-dismiss=\"modal\">Fermer</button>
+                            <div class=\"modal-footer\">
+                                <button type=\"button\" class=\"btn btn-danger\" data-bs-dismiss=\"modal\" onclick=\"document.getElementById('errorModal').style.display='none'\">OK</button>
                             </div>
                         </div>
                     </div>
                 </div>
+                <div class=\"modal-backdrop fade show\" onclick=\"document.getElementById('errorModal').style.display='none'\"></div>
             ";
         }
         $_parent = $context['_parent'];
         unset($context['_seq'], $context['_key'], $context['flash_error'], $context['_parent']);
         $context = array_intersect_key($context, $_parent) + $_parent;
-        // line 132
+        // line 86
         yield "        ";
         
         $__internal_6f47bbe9983af81f1e7450e9a3e3768f->leave($__internal_6f47bbe9983af81f1e7450e9a3e3768f_prof);
@@ -468,7 +395,7 @@ class __TwigTemplate_6769f67cc7f8bda0c1ec2160ad7d9937 extends Template
         yield from [];
     }
 
-    // line 134
+    // line 87
     /**
      * @return iterable<null|scalar|\Stringable>
      */
@@ -490,7 +417,7 @@ class __TwigTemplate_6769f67cc7f8bda0c1ec2160ad7d9937 extends Template
         yield from [];
     }
 
-    // line 137
+    // line 90
     /**
      * @return iterable<null|scalar|\Stringable>
      */
@@ -503,16 +430,16 @@ class __TwigTemplate_6769f67cc7f8bda0c1ec2160ad7d9937 extends Template
         $__internal_6f47bbe9983af81f1e7450e9a3e3768f = $this->extensions["Symfony\\Bridge\\Twig\\Extension\\ProfilerExtension"];
         $__internal_6f47bbe9983af81f1e7450e9a3e3768f->enter($__internal_6f47bbe9983af81f1e7450e9a3e3768f_prof = new \Twig\Profiler\Profile($this->getTemplateName(), "block", "footer"));
 
-        // line 138
+        // line 91
         yield "        ";
-        if ((($tmp = (isset($context["show_footer"]) || array_key_exists("show_footer", $context) ? $context["show_footer"] : (function () { throw new RuntimeError('Variable "show_footer" does not exist.', 138, $this->source); })())) && $tmp instanceof Markup ? (string) $tmp : $tmp)) {
-            // line 139
+        if ((($tmp = (isset($context["show_footer"]) || array_key_exists("show_footer", $context) ? $context["show_footer"] : (function () { throw new RuntimeError('Variable "show_footer" does not exist.', 91, $this->source); })())) && $tmp instanceof Markup ? (string) $tmp : $tmp)) {
+            // line 92
             yield "            ";
-            yield from $this->load("partials/frontend_footer.html.twig", 139)->unwrap()->yield($context);
-            // line 140
+            yield from $this->load("partials/frontend_footer.html.twig", 92)->unwrap()->yield($context);
+            // line 93
             yield "        ";
         }
-        // line 141
+        // line 94
         yield "    ";
         
         $__internal_6f47bbe9983af81f1e7450e9a3e3768f->leave($__internal_6f47bbe9983af81f1e7450e9a3e3768f_prof);
@@ -523,7 +450,7 @@ class __TwigTemplate_6769f67cc7f8bda0c1ec2160ad7d9937 extends Template
         yield from [];
     }
 
-    // line 174
+    // line 109
     /**
      * @return iterable<null|scalar|\Stringable>
      */
@@ -566,7 +493,7 @@ class __TwigTemplate_6769f67cc7f8bda0c1ec2160ad7d9937 extends Template
      */
     public function getDebugInfo(): array
     {
-        return array (  527 => 174,  516 => 141,  513 => 140,  510 => 139,  507 => 138,  494 => 137,  472 => 134,  461 => 132,  446 => 123,  434 => 113,  429 => 112,  414 => 103,  402 => 93,  397 => 92,  384 => 91,  373 => 87,  370 => 86,  357 => 85,  334 => 37,  312 => 34,  289 => 7,  276 => 175,  274 => 174,  269 => 172,  245 => 151,  241 => 150,  237 => 149,  233 => 148,  229 => 147,  225 => 146,  221 => 145,  217 => 144,  213 => 142,  211 => 137,  207 => 135,  205 => 134,  202 => 133,  200 => 91,  196 => 89,  193 => 88,  190 => 85,  187 => 84,  184 => 83,  181 => 82,  141 => 45,  133 => 39,  131 => 38,  127 => 37,  123 => 35,  121 => 34,  112 => 28,  106 => 25,  102 => 24,  98 => 23,  94 => 22,  90 => 21,  86 => 20,  75 => 12,  71 => 11,  64 => 7,  56 => 1,);
+        return array (  454 => 109,  443 => 94,  440 => 93,  437 => 92,  434 => 91,  421 => 90,  399 => 87,  388 => 86,  372 => 76,  360 => 66,  355 => 65,  339 => 55,  327 => 45,  322 => 44,  309 => 43,  298 => 39,  295 => 38,  282 => 37,  259 => 33,  237 => 30,  214 => 7,  201 => 110,  199 => 109,  194 => 107,  188 => 104,  184 => 103,  180 => 102,  176 => 101,  172 => 100,  168 => 99,  164 => 98,  160 => 97,  156 => 95,  154 => 90,  150 => 88,  147 => 87,  145 => 43,  141 => 41,  138 => 40,  135 => 37,  132 => 36,  129 => 35,  127 => 34,  123 => 33,  119 => 31,  117 => 30,  112 => 28,  106 => 25,  102 => 24,  98 => 23,  94 => 22,  90 => 21,  86 => 20,  75 => 12,  71 => 11,  64 => 7,  56 => 1,);
     }
 
     public function getSourceContext(): Source
@@ -599,59 +526,11 @@ class __TwigTemplate_6769f67cc7f8bda0c1ec2160ad7d9937 extends Template
 
     <!-- Main CSS File -->
     <link href=\"{{ asset('build/frontend/assets/css/main.css') }}\" rel=\"stylesheet\">
-    
-    <!-- Cropper.js -->
-    <link rel=\"stylesheet\" href=\"https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css\">
-    <script src=\"https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js\"></script>
 
     {% block stylesheets %}{% endblock %}
 </head>
 
 <body class=\"{% block body_class %}index-page{% endblock %}\">
-    {% if app.user and is_granted('ROLE_USER') and not is_granted('ROLE_MEDECIN') and not is_granted('ROLE_ADMIN') and not app.user.isVerified %}
-        <div class=\"verification-banner\" id=\"verificationBanner\">
-            <div class=\"container d-flex align-items-center justify-content-between\">
-                <div class=\"notice-content d-flex align-items-center\">
-                    <i class=\"bi bi-info-circle-fill me-2\"></i>
-                    <span>Votre compte n'est pas encore vérifié. Veuillez vérifier votre boîte de réception pour le lien de confirmation.</span>
-                </div>
-                <a href=\"{{ path('app_verify_choice') }}\" class=\"btn-resend\">Verify</a>
-            </div>
-        </div>
-
-        <style>
-            .verification-banner {
-                background: #e0f2fe;
-                color: #0369a1;
-                padding: 10px 0;
-                font-size: 14px;
-                border-bottom: 1px solid #bae6fd;
-                position: fixed;
-                top: 0;
-                left: 0;
-                width: 100%;
-                z-index: 1000;
-            }
-            .verification-banner .btn-resend {
-                background: #0ea5e9;
-                color: white;
-                padding: 4px 12px;
-                border-radius: 4px;
-                font-weight: 600;
-                text-decoration: none;
-                transition: background 0.2s;
-            }
-            .verification-banner .btn-resend:hover {
-                background: #0284c7;
-            }
-            .header.fixed-top {
-                top: 41px !important; /* Height of the banner */
-            }
-            .main {
-                padding-top: 121px !important; /* 80px header + 41px banner */
-            }
-        </style>
-    {% endif %}
     {% set show_header = show_header|default(true) %}
     {% set show_footer = show_footer|default(true) %}
     {% if show_header %}
@@ -663,47 +542,48 @@ class __TwigTemplate_6769f67cc7f8bda0c1ec2160ad7d9937 extends Template
     <main class=\"main\" style=\"padding-top: 80px;\">
         {% block flashes %}
             {% for flash_success in app.flashes('success') %}
-                <div class=\"modal fade\" id=\"successModal\" tabindex=\"-1\" aria-labelledby=\"successModalLabel\" aria-hidden=\"true\">
+                <div class=\"modal fade show\" id=\"successModal\" tabindex=\"-1\" aria-labelledby=\"successModalLabel\" aria-modal=\"true\" style=\"display: block;\">
                     <div class=\"modal-dialog modal-dialog-centered\">
                         <div class=\"modal-content\">
-                            <div class=\"modal-header bg-success text-white border-0\">
+                            <div class=\"modal-header bg-success text-white\">
                                 <h5 class=\"modal-title\" id=\"successModalLabel\">
-                                    <i class=\"bi bi-check-circle me-2\"></i>Opération réussie
+                                    <i class=\"bi bi-check-circle me-2\"></i>Inscription réussie
                                 </h5>
-                                <button type=\"button\" class=\"btn-close btn-close-white shadow-none\" data-bs-dismiss=\"modal\" aria-label=\"Close\"></button>
+                                <button type=\"button\" class=\"btn-close btn-close-white\" data-bs-dismiss=\"modal\" aria-label=\"Close\" onclick=\"document.getElementById('successModal').style.display='none'\"></button>
                             </div>
-                            <div class=\"modal-body py-4\">
-                                <p class=\"mb-0 text-center lead\">{{ flash_success }}</p>
+                            <div class=\"modal-body\">
+                                <p class=\"mb-0\">{{ flash_success }}</p>
                             </div>
-                            <div class=\"modal-footer border-0\">
-                                <button type=\"button\" class=\"btn btn-success px-4 rounded-3\" data-bs-dismiss=\"modal\">D'accord</button>
+                            <div class=\"modal-footer\">
+                                <button type=\"button\" class=\"btn btn-success\" data-bs-dismiss=\"modal\" onclick=\"document.getElementById('successModal').style.display='none'\">OK</button>
                             </div>
                         </div>
                     </div>
                 </div>
+                <div class=\"modal-backdrop fade show\" onclick=\"document.getElementById('successModal').style.display='none'\"></div>
             {% endfor %}
             {% for flash_error in app.flashes('error') %}
-                <div class=\"modal fade\" id=\"errorModal\" tabindex=\"-1\" aria-labelledby=\"errorModalLabel\" aria-hidden=\"true\">
+                <div class=\"modal fade show\" id=\"errorModal\" tabindex=\"-1\" aria-labelledby=\"errorModalLabel\" aria-modal=\"true\" style=\"display: block;\">
                     <div class=\"modal-dialog modal-dialog-centered\">
                         <div class=\"modal-content\">
-                            <div class=\"modal-header bg-danger text-white border-0\">
+                            <div class=\"modal-header bg-danger text-white\">
                                 <h5 class=\"modal-title\" id=\"errorModalLabel\">
-                                    <i class=\"bi bi-exclamation-circle me-2\"></i>Oups !
+                                    <i class=\"bi bi-exclamation-circle me-2\"></i>Erreur
                                 </h5>
-                                <button type=\"button\" class=\"btn-close btn-close-white shadow-none\" data-bs-dismiss=\"modal\" aria-label=\"Close\"></button>
+                                <button type=\"button\" class=\"btn-close btn-close-white\" data-bs-dismiss=\"modal\" aria-label=\"Close\" onclick=\"document.getElementById('errorModal').style.display='none'\"></button>
                             </div>
-                            <div class=\"modal-body py-4 text-center\">
-                                <p class=\"mb-0 lead text-danger\">{{ flash_error }}</p>
+                            <div class=\"modal-body\">
+                                <p class=\"mb-0\">{{ flash_error }}</p>
                             </div>
-                            <div class=\"modal-footer border-0\">
-                                <button type=\"button\" class=\"btn btn-secondary px-4 rounded-3\" data-bs-dismiss=\"modal\">Fermer</button>
+                            <div class=\"modal-footer\">
+                                <button type=\"button\" class=\"btn btn-danger\" data-bs-dismiss=\"modal\" onclick=\"document.getElementById('errorModal').style.display='none'\">OK</button>
                             </div>
                         </div>
                     </div>
                 </div>
+                <div class=\"modal-backdrop fade show\" onclick=\"document.getElementById('errorModal').style.display='none'\"></div>
             {% endfor %}
         {% endblock %}
-
         {% block body %}{% endblock %}
     </main>
 
@@ -722,24 +602,6 @@ class __TwigTemplate_6769f67cc7f8bda0c1ec2160ad7d9937 extends Template
     <script src=\"{{ asset('build/frontend/assets/vendor/isotope-layout/isotope.pkgd.js') }}\"></script>
     <script src=\"{{ asset('build/frontend/assets/vendor/swiper/swiper-bundle.min.js') }}\"></script>
     <script src=\"{{ asset('build/frontend/assets/vendor/php-email-form/validate.js') }}\"></script>
-
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // Check for success modal
-            var successEl = document.getElementById('successModal');
-            if (successEl) {
-                var successModal = new bootstrap.Modal(successEl);
-                successModal.show();
-            }
-
-            // Check for error modal
-            var errorEl = document.getElementById('errorModal');
-            if (errorEl) {
-                var errorModal = new bootstrap.Modal(errorEl);
-                errorModal.show();
-            }
-        });
-    </script>
 
     <!-- Main JS File -->
     <script src=\"{{ asset('build/frontend/assets/js/main.js') }}\"></script>

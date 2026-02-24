@@ -1,0 +1,49 @@
+{% extends "base_frontend.html.twig" %}
+
+{% block title %}Departments - Medicare{% endblock %}
+
+{% block body %}
+<main class="main">
+    <section class="breadcrumbs">
+        <div class="container">
+            <h2>Our Departments</h2>
+            <p>Explore our medical departments and specialties</p>
+        </div>
+    </section>
+
+    <section class="departments-section">
+        <div class="container">
+            <h1>Medical Departments</h1>
+            <div class="row">
+                <div class="col-md-4 mb-4">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">Cardiology</h5>
+                            <p class="card-text">Heart and cardiovascular system care.</p>
+                            <a href="{{ path('app_department_details', {id: 1}) }}" class="btn btn-sm btn-primary">Learn More</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">Neurology</h5>
+                            <p class="card-text">Brain and nervous system care.</p>
+                            <a href="{{ path('app_department_details', {id: 2}) }}" class="btn btn-sm btn-primary">Learn More</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">Orthopedics</h5>
+                            <p class="card-text">Bone and joint care.</p>
+                            <a href="{{ path('app_department_details', {id: 3}) }}" class="btn btn-sm btn-primary">Learn More</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</main>
+{% endblock %}

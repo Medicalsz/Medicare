@@ -1,0 +1,108 @@
+<nav class="navbar default-layout col-lg-12 col-12 p-0 fixed-top d-flex align-items-top flex-row">
+    <div class="text-center navbar-brand-wrapper d-flex align-items-center justify-content-start">
+        <div class="me-3">
+            <button class="navbar-toggler navbar-toggler align-self-center" type="button" data-bs-toggle="minimize">
+                <span class="icon-menu"></span>
+            </button>
+        </div>
+        <div>
+            <a class="navbar-brand brand-logo" href="{{ path('app_admin_dashboard') }}">
+                <img src="{{ asset('build/assets/backend/images/logo.svg') }}" alt="logo" />
+            </a>
+            <a class="navbar-brand brand-logo-mini" href="{{ path('app_admin_dashboard') }}">
+                <img src="{{ asset('build/assets/backend/images/logo-mini.svg') }}" alt="logo" />
+            </a>
+        </div>
+    </div>
+    <div class="navbar-menu-wrapper d-flex align-items-top">
+        <ul class="navbar-nav">
+            <li class="nav-item fw-semibold d-none d-lg-block ms-0">
+                <h1 class="welcome-text">Bonjour, <span class="text-black fw-bold">{{ app.user ? app.user.email : 'Admin' }}</span></h1>
+                <h3 class="welcome-sub-text">Tableau de bord Medicare </h3>
+            </li>
+        </ul>
+        <ul class="navbar-nav ms-auto">
+            <li class="nav-item dropdown d-none d-lg-block">
+                <a class="nav-link dropdown-bordered dropdown-toggle dropdown-toggle-split" id="messageDropdown" href="#" data-bs-toggle="dropdown" aria-expanded="false"> Langue </a>
+                <div class="dropdown-menu dropdown-menu-right navbar-dropdown preview-list pb-0" aria-labelledby="messageDropdown">
+                    <a class="dropdown-item py-3">
+                        <p class="mb-0 fw-medium float-start">Sélectionner la langue</p>
+                    </a>
+                    <div class="dropdown-divider"></div>
+                    <a class="dropdown-item preview-item">
+                        <div class="preview-item-content flex-grow py-2">
+                            <p class="preview-subject ellipsis fw-medium text-dark">Français</p>
+                        </div>
+                    </a>
+                    <a class="dropdown-item preview-item">
+                        <div class="preview-item-content flex-grow py-2">
+                            <p class="preview-subject ellipsis fw-medium text-dark">العربية</p>
+                        </div>
+                    </a>
+                    <a class="dropdown-item preview-item">
+                        <div class="preview-item-content flex-grow py-2">
+                            <p class="preview-subject ellipsis fw-medium text-dark">English</p>
+                        </div>
+                    </a>
+                </div>
+            </li>
+            <li class="nav-item d-none d-lg-block">
+                <div id="datepicker"></div>
+            </li>
+            <li class="nav-item dropdown d-none d-lg-block">
+                <a class="nav-link" id="appsDropdown" href="#" data-bs-toggle="dropdown">
+                    <i class="mdi mdi-apps"></i>
+                </a>
+                <div class="dropdown-menu dropdown-menu-right navbar-dropdown" aria-labelledby="appsDropdown">
+                    <div class="dropdown-header d-flex justify-content-between">
+                        <p class="dropdown-item-text">Applications</p>
+                    </div>
+                    <div class="dropdown-divider"></div>
+                    <a class="dropdown-item" href="{{ path('app_admin_dashboard') }}">
+                        <i class="mdi mdi-view-dashboard me-2"></i> Dashboard
+                    </a>
+                    <a class="dropdown-item" href="#">
+                        <i class="mdi mdi-account-multiple me-2"></i> Médecins
+                    </a>
+                    <a class="dropdown-item" href="#">
+                        <i class="mdi mdi-account-group me-2"></i> Patients
+                    </a>
+                    <a class="dropdown-item" href="#">
+                        <i class="mdi mdi-calendar-check me-2"></i> Rendez-vous
+                    </a>
+                </div>
+            </li>
+            <li class="nav-item navbar-dropdown-right dropdown">
+                <a class="nav-link" id="profileDropdown" href="#" data-bs-toggle="dropdown">
+                    <div class="navbar-profile">
+                        <img class="img-xs rounded-circle" src="{{ asset('build/assets/backend/images/faces/face1.jpg') }}" alt="">
+                        <p class="mb-0 d-none d-sm-block navbar-profile-name">{{ app.user ? app.user.email : 'Admin' }}</p>
+                        <i class="mdi mdi-menu-down d-none d-sm-block"></i>
+                    </div>
+                </a>
+                <div class="dropdown-menu dropdown-menu-right navbar-dropdown preview-list" aria-labelledby="profileDropdown">
+                    <h6 class="p-3 mb-0">Profil</h6>
+                    <div class="dropdown-divider"></div>
+                    <a class="dropdown-item preview-item">
+                        <div class="preview-item-content d-flex align-items-center flex-grow">
+                            <div class="flex-grow">
+                                <p class="p-0 mb-0 text-muted">Modifier le profil</p>
+                            </div>
+                        </div>
+                    </a>
+                    <div class="dropdown-divider"></div>
+                    <a class="dropdown-item preview-item" href="{{ path('app_admin_logout') }}">
+                        <div class="preview-item-content d-flex align-items-center flex-grow">
+                            <div class="flex-grow">
+                                <p class="p-0 mb-0 text-muted">Déconnexion</p>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+            </li>
+        </ul>
+        <button class="navbar-toggler navbar-toggler-right d-lg-none align-self-center" type="button" data-bs-toggle="offcanvas">
+            <span class="mdi mdi-menu"></span>
+        </button>
+    </div>
+</nav>

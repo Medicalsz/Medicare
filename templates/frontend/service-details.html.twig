@@ -1,0 +1,20 @@
+{% extends "base_frontend.html.twig" %}
+
+{% block title %}Service Details - Medicare{% endblock %}
+
+{% block body %}
+<main class="main">
+    <section class="breadcrumbs">
+        <div class="container">
+            <h2>Service Details</h2>
+        </div>
+    </section>
+
+    <section class="service-details">
+        <div class="container">
+            <h1>Service #{{ serviceId }}</h1>
+            <p>Detailed information about this service will be displayed here.</p>
+        </div>
+    </section>
+</main>
+{% endblock %}

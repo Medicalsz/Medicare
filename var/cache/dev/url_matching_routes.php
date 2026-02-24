@@ -38,10 +38,13 @@ return [
         '/privacy' => [[['_route' => 'app_privacy', '_controller' => 'App\\Controller\\FrontendController::privacy'], null, null, null, false, false, null]],
         '/' => [[['_route' => 'app_home', '_controller' => 'App\\Controller\\HomeController::index'], null, null, null, false, false, null]],
         '/profile' => [[['_route' => 'app_profile', '_controller' => 'App\\Controller\\ProfileController::index'], null, null, null, false, false, null]],
-        '/profile/edit' => [[['_route' => 'app_profile_edit', '_controller' => 'App\\Controller\\ProfileController::edit'], null, null, null, false, false, null]],
+        '/medecin/edit-profile' => [[['_route' => 'app_medecin_edit_profile', '_controller' => 'App\\Controller\\ProfileController::editProfile'], null, null, null, false, false, null]],
+        '/register' => [[['_route' => 'app_register', '_controller' => 'App\\Controller\\RegistrationController::register'], null, null, null, false, false, null]],
         '/medecin/register' => [[['_route' => 'app_medecin_register', '_controller' => 'App\\Controller\\RegistrationController::medecinRegister'], null, null, null, false, false, null]],
+        '/clear-registration-message' => [[['_route' => 'app_clear_registration_message', '_controller' => 'App\\Controller\\RegistrationController::clearRegistrationMessage'], null, null, null, false, false, null]],
         '/medecin/verification' => [[['_route' => 'app_medecin_verification', '_controller' => 'App\\Controller\\RegistrationController::medecinVerification'], null, null, null, false, false, null]],
-        '/verify/choice' => [[['_route' => 'app_verify_choice', '_controller' => 'App\\Controller\\VerificationController::choice'], null, null, null, false, false, null]],
+        '/login' => [[['_route' => 'app_login', '_controller' => 'App\\Controller\\SecurityController::login'], null, null, null, false, false, null]],
+        '/logout' => [[['_route' => 'app_logout', '_controller' => 'App\\Controller\\SecurityController::logout'], null, null, null, false, false, null]],
     ],
     [ // $regexpList
         0 => '{^(?'
@@ -70,13 +73,6 @@ return [
                 .')'
                 .'|/department/(\\d+)(*:310)'
                 .'|/service/(\\d+)(*:332)'
-                .'|/([^/]++)(*:349)'
-                .'|/register(*:366)'
-                .'|/clear\\-registration\\-message(*:403)'
-                .'|/log(?'
-                    .'|in(*:420)'
-                    .'|out(*:431)'
-                .')'
             .')/?$}sDu',
     ],
     [ // $dynamicRoutes
@@ -92,13 +88,8 @@ return [
         261 => [[['_route' => 'admin_medecins_unverify', '_controller' => 'App\\Controller\\Admin\\MedecinController::unverify'], ['id'], null, null, false, true, null]],
         284 => [[['_route' => 'admin_medecins_delete', '_controller' => 'App\\Controller\\Admin\\MedecinController::delete'], ['id'], null, null, false, true, null]],
         310 => [[['_route' => 'app_department_details', '_controller' => 'App\\Controller\\FrontendController::departmentDetails'], ['id'], null, null, false, true, null]],
-        332 => [[['_route' => 'app_service_details', '_controller' => 'App\\Controller\\FrontendController::serviceDetails'], ['id'], null, null, false, true, null]],
-        349 => [[['_route' => 'app_profile_public', '_controller' => 'App\\Controller\\ProfileController::showPublicProfile'], ['username'], null, null, false, true, null]],
-        366 => [[['_route' => 'app_register', '_controller' => 'App\\Controller\\RegistrationController::register'], [], null, null, false, false, null]],
-        403 => [[['_route' => 'app_clear_registration_message', '_controller' => 'App\\Controller\\RegistrationController::clearRegistrationMessage'], [], null, null, false, false, null]],
-        420 => [[['_route' => 'app_login', '_controller' => 'App\\Controller\\SecurityController::login'], [], null, null, false, false, null]],
-        431 => [
-            [['_route' => 'app_logout', '_controller' => 'App\\Controller\\SecurityController::logout'], [], null, null, false, false, null],
+        332 => [
+            [['_route' => 'app_service_details', '_controller' => 'App\\Controller\\FrontendController::serviceDetails'], ['id'], null, null, false, true, null],
             [null, null, null, null, false, false, 0],
         ],
     ],

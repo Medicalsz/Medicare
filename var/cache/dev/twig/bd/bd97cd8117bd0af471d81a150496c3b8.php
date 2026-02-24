@@ -170,88 +170,11 @@ class __TwigTemplate_b83ac3f4217fb3d60dae169f9c8437d2 extends Template
                 </div>
             </div>
 
-            ";
-        // line 67
-        $context['_parent'] = $context;
-        $context['_seq'] = CoreExtension::ensureTraversable(CoreExtension::getAttribute($this->env, $this->source, (isset($context["app"]) || array_key_exists("app", $context) ? $context["app"] : (function () { throw new RuntimeError('Variable "app" does not exist.', 67, $this->source); })()), "flashes", [], "any", false, false, false, 67));
-        foreach ($context['_seq'] as $context["label"] => $context["messages"]) {
-            // line 68
-            yield "                ";
-            $context['_parent'] = $context;
-            $context['_seq'] = CoreExtension::ensureTraversable($context["messages"]);
-            foreach ($context['_seq'] as $context["_key"] => $context["message"]) {
-                // line 69
-                yield "                    <div class=\"alert alert-";
-                yield $this->env->getRuntime('Twig\Runtime\EscaperRuntime')->escape($context["label"], "html", null, true);
-                yield " alert-dismissible fade show\" role=\"alert\">
-                        ";
-                // line 70
-                yield $this->env->getRuntime('Twig\Runtime\EscaperRuntime')->escape($context["message"], "html", null, true);
-                yield "
-                        <button type=\"button\" class=\"btn-close\" data-bs-dismiss=\"alert\" aria-label=\"Close\"></button>
-                    </div>
-                ";
-            }
-            $_parent = $context['_parent'];
-            unset($context['_seq'], $context['_key'], $context['message'], $context['_parent']);
-            $context = array_intersect_key($context, $_parent) + $_parent;
-            // line 74
-            yield "            ";
-        }
-        $_parent = $context['_parent'];
-        unset($context['_seq'], $context['label'], $context['messages'], $context['_parent']);
-        $context = array_intersect_key($context, $_parent) + $_parent;
-        // line 75
-        yield "
             <div class=\"card mb-4\">
                 <div class=\"card-header\">
                     <h5 class=\"mb-0\"><i class=\"bi bi-shield-lock\"></i> Privacy & Security</h5>
                 </div>
                 <div class=\"card-body\">
-                    ";
-        // line 81
-        yield         $this->env->getRuntime('Symfony\Component\Form\FormRenderer')->renderBlock((isset($context["privacyForm"]) || array_key_exists("privacyForm", $context) ? $context["privacyForm"] : (function () { throw new RuntimeError('Variable "privacyForm" does not exist.', 81, $this->source); })()), 'form_start');
-        yield "
-                        <div class=\"mb-3\">
-                            ";
-        // line 83
-        yield $this->env->getRuntime('Symfony\Component\Form\FormRenderer')->searchAndRenderBlock(CoreExtension::getAttribute($this->env, $this->source, (isset($context["privacyForm"]) || array_key_exists("privacyForm", $context) ? $context["privacyForm"] : (function () { throw new RuntimeError('Variable "privacyForm" does not exist.', 83, $this->source); })()), "emailPrivacy", [], "any", false, false, false, 83), 'label', ["label_attr" => ["class" => "form-label"]]);
-        yield "
-                            ";
-        // line 84
-        yield $this->env->getRuntime('Symfony\Component\Form\FormRenderer')->searchAndRenderBlock(CoreExtension::getAttribute($this->env, $this->source, (isset($context["privacyForm"]) || array_key_exists("privacyForm", $context) ? $context["privacyForm"] : (function () { throw new RuntimeError('Variable "privacyForm" does not exist.', 84, $this->source); })()), "emailPrivacy", [], "any", false, false, false, 84), 'widget');
-        yield "
-                            <div class=\"form-text\">Qui peut voir votre adresse email sur votre profil ?</div>
-                        </div>
-                        <div class=\"mb-3\">
-                            ";
-        // line 88
-        yield $this->env->getRuntime('Symfony\Component\Form\FormRenderer')->searchAndRenderBlock(CoreExtension::getAttribute($this->env, $this->source, (isset($context["privacyForm"]) || array_key_exists("privacyForm", $context) ? $context["privacyForm"] : (function () { throw new RuntimeError('Variable "privacyForm" does not exist.', 88, $this->source); })()), "phonePrivacy", [], "any", false, false, false, 88), 'label', ["label_attr" => ["class" => "form-label"]]);
-        yield "
-                            ";
-        // line 89
-        yield $this->env->getRuntime('Symfony\Component\Form\FormRenderer')->searchAndRenderBlock(CoreExtension::getAttribute($this->env, $this->source, (isset($context["privacyForm"]) || array_key_exists("privacyForm", $context) ? $context["privacyForm"] : (function () { throw new RuntimeError('Variable "privacyForm" does not exist.', 89, $this->source); })()), "phonePrivacy", [], "any", false, false, false, 89), 'widget');
-        yield "
-                            <div class=\"form-text\">Qui peut voir votre numéro de téléphone ?</div>
-                        </div>
-                        <div class=\"mb-3\">
-                            ";
-        // line 93
-        yield $this->env->getRuntime('Symfony\Component\Form\FormRenderer')->searchAndRenderBlock(CoreExtension::getAttribute($this->env, $this->source, (isset($context["privacyForm"]) || array_key_exists("privacyForm", $context) ? $context["privacyForm"] : (function () { throw new RuntimeError('Variable "privacyForm" does not exist.', 93, $this->source); })()), "addressPrivacy", [], "any", false, false, false, 93), 'label', ["label_attr" => ["class" => "form-label"]]);
-        yield "
-                            ";
-        // line 94
-        yield $this->env->getRuntime('Symfony\Component\Form\FormRenderer')->searchAndRenderBlock(CoreExtension::getAttribute($this->env, $this->source, (isset($context["privacyForm"]) || array_key_exists("privacyForm", $context) ? $context["privacyForm"] : (function () { throw new RuntimeError('Variable "privacyForm" does not exist.', 94, $this->source); })()), "addressPrivacy", [], "any", false, false, false, 94), 'widget');
-        yield "
-                            <div class=\"form-text\">Qui peut voir votre adresse ?</div>
-                        </div>
-                        <button type=\"submit\" class=\"btn btn-primary btn-sm\">Enregistrer la confidentialité</button>
-                    ";
-        // line 98
-        yield         $this->env->getRuntime('Symfony\Component\Form\FormRenderer')->renderBlock((isset($context["privacyForm"]) || array_key_exists("privacyForm", $context) ? $context["privacyForm"] : (function () { throw new RuntimeError('Variable "privacyForm" does not exist.', 98, $this->source); })()), 'form_end');
-        yield "
-                    
-                    <hr>
                     <p>
                         <a href=\"#\">View Login Activity</a>
                     </p>
@@ -271,11 +194,11 @@ class __TwigTemplate_b83ac3f4217fb3d60dae169f9c8437d2 extends Template
                     <p><strong>Version:</strong> 1.0.0</p>
                     <p>
                         <a href=\"";
-        // line 119
+        // line 90
         yield $this->extensions['Symfony\Bridge\Twig\Extension\RoutingExtension']->getPath("app_privacy");
         yield "\">Privacy Policy</a> | 
                         <a href=\"";
-        // line 120
+        // line 91
         yield $this->extensions['Symfony\Bridge\Twig\Extension\RoutingExtension']->getPath("app_terms");
         yield "\">Terms of Service</a>
                     </p>
@@ -284,7 +207,7 @@ class __TwigTemplate_b83ac3f4217fb3d60dae169f9c8437d2 extends Template
 
             <div class=\"mt-4\">
                 <a href=\"";
-        // line 126
+        // line 97
         yield $this->extensions['Symfony\Bridge\Twig\Extension\RoutingExtension']->getPath("app_dashboard");
         yield "\" class=\"btn btn-secondary\">Back to Dashboard</a>
             </div>
@@ -373,7 +296,7 @@ document.addEventListener('DOMContentLoaded', function() {
      */
     public function getDebugInfo(): array
     {
-        return array (  288 => 126,  279 => 120,  275 => 119,  251 => 98,  244 => 94,  240 => 93,  233 => 89,  229 => 88,  222 => 84,  218 => 83,  213 => 81,  205 => 75,  199 => 74,  189 => 70,  184 => 69,  179 => 68,  175 => 67,  127 => 21,  122 => 20,  118 => 19,  113 => 17,  100 => 6,  87 => 5,  64 => 3,  41 => 1,);
+        return array (  211 => 97,  202 => 91,  198 => 90,  127 => 21,  122 => 20,  118 => 19,  113 => 17,  100 => 6,  87 => 5,  64 => 3,  41 => 1,);
     }
 
     public function getSourceContext(): Source
@@ -444,40 +367,11 @@ document.addEventListener('DOMContentLoaded', function() {
                 </div>
             </div>
 
-            {% for label, messages in app.flashes %}
-                {% for message in messages %}
-                    <div class=\"alert alert-{{ label }} alert-dismissible fade show\" role=\"alert\">
-                        {{ message }}
-                        <button type=\"button\" class=\"btn-close\" data-bs-dismiss=\"alert\" aria-label=\"Close\"></button>
-                    </div>
-                {% endfor %}
-            {% endfor %}
-
             <div class=\"card mb-4\">
                 <div class=\"card-header\">
                     <h5 class=\"mb-0\"><i class=\"bi bi-shield-lock\"></i> Privacy & Security</h5>
                 </div>
                 <div class=\"card-body\">
-                    {{ form_start(privacyForm) }}
-                        <div class=\"mb-3\">
-                            {{ form_label(privacyForm.emailPrivacy, null, {'label_attr': {'class': 'form-label'}}) }}
-                            {{ form_widget(privacyForm.emailPrivacy) }}
-                            <div class=\"form-text\">Qui peut voir votre adresse email sur votre profil ?</div>
-                        </div>
-                        <div class=\"mb-3\">
-                            {{ form_label(privacyForm.phonePrivacy, null, {'label_attr': {'class': 'form-label'}}) }}
-                            {{ form_widget(privacyForm.phonePrivacy) }}
-                            <div class=\"form-text\">Qui peut voir votre numéro de téléphone ?</div>
-                        </div>
-                        <div class=\"mb-3\">
-                            {{ form_label(privacyForm.addressPrivacy, null, {'label_attr': {'class': 'form-label'}}) }}
-                            {{ form_widget(privacyForm.addressPrivacy) }}
-                            <div class=\"form-text\">Qui peut voir votre adresse ?</div>
-                        </div>
-                        <button type=\"submit\" class=\"btn btn-primary btn-sm\">Enregistrer la confidentialité</button>
-                    {{ form_end(privacyForm) }}
-                    
-                    <hr>
                     <p>
                         <a href=\"#\">View Login Activity</a>
                     </p>
