@@ -1,6 +1,8 @@
+{% set unreadCount = notifications_unread_count() %}
+{% set latestNotifications = notifications_latest(5) %}
+
 <nav class="topbar">
     <div class="topbar-left">
-        <!-- Toggle menu mobile -->
         <button class="menu-toggle" id="menuToggle">
             <i class="fas fa-bars"></i>
         </button>
@@ -12,55 +14,47 @@
     </div>
 
     <div class="topbar-right">
-        <!-- Notifications -->
         <div class="topbar-item notifications">
-            <button class="notification-btn" id="notificationBtn">
+            <button class="notification-btn" id="notificationBtn" type="button" aria-expanded="false" aria-controls="notificationsPanel">
                 <span class="icon"><i class="fas fa-bell"></i></span>
-                <span class="badge">3</span>
+                {% if unreadCount > 0 %}
+                    <span class="badge">{{ unreadCount > 99 ? '99+' : unreadCount }}</span>
+                {% endif %}
             </button>
 
-            <!-- Panel de notifications -->
             <div class="notifications-panel" id="notificationsPanel">
                 <div class="panel-header">
                     <h3>Notifications</h3>
-                    <button class="mark-all-read">Tout marquer lu</button>
+                    <form method="post" action="{{ path('app_notifications_read_all') }}">
+                        <input type="hidden" name="_token" value="{{ csrf_token('notifications_read_all') }}">
+                        <button class="mark-all-read" type="submit">Tout marquer lu</button>
+                    </form>
                 </div>
                 <div class="notifications-list">
-                    <div class="notification-item unread">
-                        <div class="notif-icon" style="background: #87CEEB;">
-                            <i class="fas fa-calendar-check"></i>
+                    {% if latestNotifications is empty %}
+                        <div class="notification-item">
+                            <div class="notif-content">
+                                <p class="notif-title">Aucune notification</p>
+                                <p class="notif-text">Vous etes a jour.</p>
+                            </div>
                         </div>
-                        <div class="notif-content">
-                            <p class="notif-title">Rendez-vous confirmé</p>
-                            <p class="notif-text">Votre RDV avec Dr. Martin est confirmé pour demain 10h</p>
-                            <span class="notif-time">Il y a 5 minutes</span>
-                        </div>
-                    </div>
-
-                    <div class="notification-item unread">
-                        <div class="notif-icon" style="background: #5FB7DB;">
-                            <i class="fas fa-user-md"></i>
-                        </div>
-                        <div class="notif-content">
-                            <p class="notif-title">Nouveau médecin disponible</p>
-                            <p class="notif-text">Dr. Dupont (Cardiologue) accepte maintenant des consultations</p>
-                            <span class="notif-time">Il y a 2 heures</span>
-                        </div>
-                    </div>
-
-                    <div class="notification-item">
-                        <div class="notif-icon" style="background: #4CAF50;">
-                            <i class="fas fa-check-circle"></i>
-                        </div>
-                        <div class="notif-content">
-                            <p class="notif-title">Consultation terminée</p>
-                            <p class="notif-text">Votre ordonnance est maintenant disponible</p>
-                            <span class="notif-time">Hier</span>
-                        </div>
-                    </div>
+                    {% else %}
+                        {% for notification in latestNotifications %}
+                            <a href="{{ notification.link }}" class="notification-item {{ not notification.isRead ? 'unread' : '' }}">
+                                <div class="notif-icon" style="background: {{ notification.type == 'NEW_TOPIC' ? '#5FB7DB' : '#87CEEB' }};">
+                                    <i class="fas {{ notification.type == 'NEW_TOPIC' ? 'fa-comment-medical' : 'fa-comments' }}"></i>
+                                </div>
+                                <div class="notif-content">
+                                    <p class="notif-title">{{ notification.authorName }}</p>
+                                    <p class="notif-text">{{ notification.message }}</p>
+                                    <span class="notif-time">{{ notification.createdAt|date('d/m/Y H:i') }}</span>
+                                </div>
+                            </a>
+                        {% endfor %}
+                    {% endif %}
                 </div>
                 <div class="panel-footer">
-                    <a href="#">Voir toutes les notifications</a>
+                    <a href="{{ path('app_notifications_index') }}">Voir toutes les notifications</a>
                 </div>
             </div>
         </div>
@@ -69,39 +63,29 @@
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    // Toggle notifications panel
     const notifBtn = document.getElementById('notificationBtn');
     const notifPanel = document.getElementById('notificationsPanel');
 
     if (notifBtn && notifPanel) {
         notifBtn.addEventListener('click', function(e) {
+            e.preventDefault();
             e.stopPropagation();
-            notifPanel.classList.toggle('show');
+            const isOpen = notifPanel.classList.toggle('show');
+            notifBtn.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
         });
 
-        // Close panel when clicking outside
+        notifPanel.addEventListener('click', function(e) {
+            e.stopPropagation();
+        });
+
         document.addEventListener('click', function(e) {
             if (!notifPanel.contains(e.target) && e.target !== notifBtn) {
                 notifPanel.classList.remove('show');
+                notifBtn.setAttribute('aria-expanded', 'false');
             }
         });
     }
 
-    // Mark all as read
-    const markAllReadBtn = document.querySelector('.mark-all-read');
-    if (markAllReadBtn) {
-        markAllReadBtn.addEventListener('click', function(e) {
-            e.preventDefault();
-            const unreadItems = document.querySelectorAll('.notification-item.unread');
-            unreadItems.forEach(item => {
-                item.classList.remove('unread');
-            });
-            const badge = document.querySelector('.badge');
-            if (badge) badge.remove();
-        });
-    }
-
-    // Toggle sidebar mobile
     const menuToggle = document.getElementById('menuToggle');
     const sidebar = document.querySelector('.sidebar');
     const sidebarOverlay = document.querySelector('.sidebar-overlay');
@@ -110,7 +94,6 @@ document.addEventListener('DOMContentLoaded', function() {
     if (menuToggle && sidebar && sidebarOverlay) {
         menuToggle.addEventListener('click', function(e) {
             e.preventDefault();
-            console.log('Menu toggle clicked');
             sidebar.classList.add('open');
             sidebarOverlay.classList.add('show');
         });
@@ -119,7 +102,6 @@ document.addEventListener('DOMContentLoaded', function() {
     if (closeSidebar && sidebar && sidebarOverlay) {
         closeSidebar.addEventListener('click', function(e) {
             e.preventDefault();
-            console.log('Close sidebar clicked');
             sidebar.classList.remove('open');
             sidebarOverlay.classList.remove('show');
         });
@@ -127,10 +109,10 @@ document.addEventListener('DOMContentLoaded', function() {
 
     if (sidebarOverlay && sidebar) {
         sidebarOverlay.addEventListener('click', function() {
-            console.log('Overlay clicked');
             sidebar.classList.remove('open');
             sidebarOverlay.classList.remove('show');
         });
     }
 });
 </script>
+

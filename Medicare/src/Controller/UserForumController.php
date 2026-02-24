@@ -14,7 +14,10 @@ use App\Repository\ForumCommentRepository;
 use App\Repository\ForumTopicReactionRepository;
 use App\Repository\ForumTopicRepository;
 use App\Service\ForumSummaryClient;
+use App\Service\NotificationService;
+use App\Service\RecommendationService;
 use Doctrine\ORM\EntityManagerInterface;
+use DateTimeImmutable;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -39,8 +42,27 @@ class UserForumController extends AbstractController
             $kind = 'article';
         }
 
+        $rawFrom = trim((string) $request->query->get('from', ''));
+        $rawTo = trim((string) $request->query->get('to', ''));
+        $sort = strtolower((string) $request->query->get('sort', 'desc'));
+        if (!in_array($sort, ['asc', 'desc'], true)) {
+            $sort = 'desc';
+        }
+
+        $from = $this->parseDateOnly($rawFrom);
+        $to = $this->parseDateOnly($rawTo);
+        if ($to !== null) {
+            $to = $to->setTime(23, 59, 59);
+        }
+
+        if ($from !== null && $to !== null && $from > $to) {
+            $tmp = $from;
+            $from = $to->setTime(0, 0, 0);
+            $to = $tmp->setTime(23, 59, 59);
+        }
+
         $topics = array_values(array_filter(
-            $repo->findBy([], ['createdAt' => 'DESC']),
+            $repo->findFiltered($from, $to, $sort),
             static fn (ForumTopic $topic): bool => !$topic->isHidden()
         ));
         $topics = array_values(array_filter(
@@ -54,13 +76,19 @@ class UserForumController extends AbstractController
         return $this->render('dashboard/user_forum/index.html.twig', [
             'topics' => $topics,
             'current_kind' => $kind,
+            'filters' => [
+                'from' => $from ? $from->format('Y-m-d') : ($rawFrom !== '' ? $rawFrom : ''),
+                'to' => $to ? $to->format('Y-m-d') : ($rawTo !== '' ? $rawTo : ''),
+                'sort' => $sort,
+            ],
+            'filter_summary' => $this->buildFilterSummary($from, $to, $sort),
             'reaction_counts' => $reactionCounts,
             'user_reaction_map' => $userReactionMap,
         ]);
     }
 
     #[Route('/new', name: 'new', methods: ['GET', 'POST'])]
-    public function new(Request $request, EntityManagerInterface $em, ForumSummaryClient $summaryClient): Response
+    public function new(Request $request, EntityManagerInterface $em, ForumSummaryClient $summaryClient, NotificationService $notificationService): Response
     {
         $this->denyAccessUnlessGranted('ROLE_USER');
 
@@ -76,6 +104,7 @@ class UserForumController extends AbstractController
             $topic->setSummary($summaryClient->summarize((string) $topic->getContent()));
             $em->persist($topic);
             $em->flush();
+            $notificationService->notifyNewTopic($topic);
 
             return $this->redirectToRoute('app_user_forum_index');
         }
@@ -86,7 +115,7 @@ class UserForumController extends AbstractController
     }
 
     #[Route('/{id}', name: 'show', methods: ['GET', 'POST'])]
-    public function show(int $id, ForumTopicRepository $repo, ForumTopicReactionRepository $reactionRepository, ForumCommentReactionRepository $commentReactionRepository, Request $request, EntityManagerInterface $em): Response
+    public function show(int $id, ForumTopicRepository $repo, ForumTopicReactionRepository $reactionRepository, ForumCommentReactionRepository $commentReactionRepository, RecommendationService $recommendationService, NotificationService $notificationService, Request $request, EntityManagerInterface $em): Response
     {
         $this->denyAccessUnlessGranted('ROLE_USER');
 
@@ -116,6 +145,7 @@ class UserForumController extends AbstractController
             }
             $em->persist($comment);
             $em->flush();
+            $notificationService->notifyNewComment($comment);
 
             return $this->redirectToRoute('app_user_forum_show', ['id' => $topic->getId()]);
         }
@@ -137,6 +167,7 @@ class UserForumController extends AbstractController
         $commentReactionCounts = $commentReactionRepository->getCountsByCommentIds($commentIds);
         $commentUserReactionMap = $commentReactionRepository->getUserReactionMap($user, $commentIds);
         $commentTree = $this->buildCommentTree($visibleComments);
+        $recommendationPayload = $recommendationService->recommendForTopic($topic, 5);
 
         return $this->render('dashboard/user_forum/show.html.twig', [
             'topic' => $topic,
@@ -148,6 +179,8 @@ class UserForumController extends AbstractController
             'comment_tree' => $commentTree,
             'visible_comments_count' => count($visibleComments),
             'reply_parent' => $replyParent,
+            'recommended_topics' => $recommendationPayload['items'],
+            'recommendations_fallback' => $recommendationPayload['is_fallback'],
         ]);
     }
 
@@ -443,5 +476,38 @@ class UserForumController extends AbstractController
         }
 
         return null;
+    }
+
+    private function parseDateOnly(string $value): ?DateTimeImmutable
+    {
+        if ($value === '') {
+            return null;
+        }
+
+        $date = DateTimeImmutable::createFromFormat('!Y-m-d', $value);
+        if ($date === false) {
+            return null;
+        }
+
+        return $date;
+    }
+
+    private function buildFilterSummary(?DateTimeImmutable $from, ?DateTimeImmutable $to, string $sort): ?string
+    {
+        if ($from === null && $to === null) {
+            return null;
+        }
+
+        $period = 'Periode ';
+        if ($from !== null && $to !== null) {
+            $period .= 'du ' . $from->format('d/m/Y') . ' au ' . $to->format('d/m/Y');
+        } elseif ($from !== null) {
+            $period .= 'a partir du ' . $from->format('d/m/Y');
+        } else {
+            $period .= 'jusqu\'au ' . $to->format('d/m/Y');
+        }
+
+        $sortLabel = $sort === 'asc' ? 'plus ancien' : 'plus recent';
+        return $period . ' (' . $sortLabel . ')';
     }
 }

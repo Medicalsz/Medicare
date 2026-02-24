@@ -1,4 +1,4 @@
-{% extends 'dashboard_base.html.twig' %}
+{% extends is_granted('ROLE_ADMIN') ? 'admin_base.html.twig' : 'dashboard_base.html.twig' %}
 
 {% block title %}Chat Resumeur - Medicare{% endblock %}
 

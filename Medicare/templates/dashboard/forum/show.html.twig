@@ -17,18 +17,29 @@
                 document.querySelectorAll('.forum-modern .dropdown-menu.show').forEach(function (menu) {
                     menu.classList.remove('show');
                 });
+                document.querySelectorAll('.forum-modern .forum-ellipsis-btn[aria-expanded="true"]').forEach(function (btn) {
+                    btn.setAttribute('aria-expanded', 'false');
+                });
             };
 
             menuButtons.forEach(function (button) {
                 button.addEventListener('click', function (event) {
                     event.preventDefault();
                     event.stopPropagation();
-                    const menu = button.parentElement.querySelector('.dropdown-menu');
+                    const dropdown = button.closest('.dropdown');
+                    const menu = dropdown ? dropdown.querySelector('.dropdown-menu') : null;
                     const isOpen = menu && menu.classList.contains('show');
                     closeAllMenus();
                     if (menu && !isOpen) {
                         menu.classList.add('show');
+                        button.setAttribute('aria-expanded', 'true');
                     }
+                });
+            });
+
+            document.querySelectorAll('.forum-modern .dropdown-menu').forEach(function (menu) {
+                menu.addEventListener('click', function (event) {
+                    event.stopPropagation();
                 });
             });
 
@@ -93,7 +104,7 @@
                     <i class="fas fa-robot me-2"></i>{{ topic.isVideoType ? 'Resumer la video' : 'Chatbot resume' }}
                 </a>
                 <div class="dropdown">
-                    <button class="btn btn-sm btn-light forum-ellipsis-btn" type="button" data-bs-toggle="dropdown" aria-expanded="false">...</button>
+                    <button class="btn btn-sm btn-light forum-ellipsis-btn" type="button" aria-expanded="false">...</button>
                     <ul class="dropdown-menu dropdown-menu-end">
                         <li>
                             <form method="post" action="{{ path('app_admin_forum_report_topic', {id: topic.id}) }}">
@@ -152,6 +163,47 @@
         <p class="forum-topic-main-content mt-2 mb-0 forum-ai-summary-text">
             {{ topic.summary ?: 'Le resume n\'est pas encore disponible pour ce sujet.' }}
         </p>
+    </section>
+
+    <section class="forum-comments mb-4">
+        <div class="forum-section-head forum-section-head-modern">
+            <h2 class="h4 mb-0 forum-section-title">
+                <i class="fas fa-lightbulb forum-heading-icon"></i>
+                <span class="forum-heading-text">Sujets recommandes pour vous</span>
+            </h2>
+            <span class="forum-pill">IA</span>
+        </div>
+
+        {% if recommended_topics is empty %}
+            <div class="forum-empty-sm mt-3">Aucune recommandation disponible pour le moment.</div>
+        {% else %}
+            <p class="text-muted mt-2 mb-3">
+                {{ recommendations_fallback ? 'Sujets populaires cette semaine.' : 'Recommande car similaire a ce sujet.' }}
+            </p>
+            <div class="forum-topic-grid forum-showcase-grid">
+                {% for item in recommended_topics %}
+                    {% set recommended = item.topic %}
+                    <article class="forum-topic-card forum-showcase-card">
+                        <div class="d-flex justify-content-between align-items-start mb-2">
+                            <span class="forum-meta-badge"><i class="fas fa-robot"></i>IA</span>
+                            {% if not item.is_fallback %}
+                                <span class="forum-meta-badge">Score {{ item.score }}</span>
+                            {% endif %}
+                        </div>
+                        <h3 class="forum-showcase-title mb-2">
+                            <a href="{{ path('app_admin_forum_show', {id: recommended.id}) }}" class="text-decoration-none">{{ recommended.title }}</a>
+                        </h3>
+                        <p class="forum-showcase-excerpt mb-2">
+                            {{ recommended.content|striptags|slice(0, 120) }}{% if recommended.content|length > 120 %}...{% endif %}
+                        </p>
+                        <p class="forum-showcase-date mb-2">
+                            {{ recommended.createdAt|date('d/m/Y H:i') }}
+                        </p>
+                        <a href="{{ path('app_admin_forum_show', {id: recommended.id}) }}" class="btn btn-sm btn-outline-secondary">Voir le sujet</a>
+                    </article>
+                {% endfor %}
+            </div>
+        {% endif %}
     </section>
 
     <section class="forum-comments mb-4">

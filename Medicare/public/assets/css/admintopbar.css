@@ -141,6 +141,93 @@
     transform: scale(1.05);
 }
 
+.admin-notification-wrap {
+    position: relative;
+}
+
+.admin-notifications-panel {
+    position: absolute;
+    top: calc(100% + 10px);
+    right: 0;
+    width: 360px;
+    max-height: 460px;
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 16px 35px rgba(0, 0, 0, 0.2);
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-8px);
+    transition: all 0.25s ease;
+    z-index: 1200;
+}
+
+.admin-notifications-panel.show {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+.admin-notifications-header,
+.admin-notifications-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 14px;
+    border-bottom: 1px solid #eceff5;
+}
+
+.admin-notifications-footer {
+    border-bottom: 0;
+    border-top: 1px solid #eceff5;
+}
+
+.admin-mark-all-read {
+    border: 0;
+    background: transparent;
+    color: #667eea;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.admin-notifications-list {
+    max-height: 320px;
+    overflow-y: auto;
+}
+
+.admin-notification-item {
+    display: block;
+    text-decoration: none;
+    color: #23314d;
+    padding: 12px 14px;
+    border-bottom: 1px solid #f0f3f8;
+}
+
+.admin-notification-item:hover {
+    background: #f7f9ff;
+    color: #1f2f4d;
+}
+
+.admin-notification-item.unread {
+    background: #f4f8ff;
+}
+
+.admin-notification-item .title {
+    font-weight: 700;
+    font-size: 13px;
+}
+
+.admin-notification-item .text {
+    font-size: 12px;
+    margin-top: 2px;
+}
+
+.admin-notification-item .time {
+    font-size: 11px;
+    color: #7484a0;
+    margin-top: 3px;
+}
+
 .admin-profile-dropdown {
     position: relative;
 }

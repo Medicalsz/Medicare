@@ -4,7 +4,7 @@
 
 {% block stylesheets %}
     {{ parent() }}
-    <link rel="stylesheet" href="{{ asset('assets/css/forum-modern.css') }}?v=20260221-2">
+    <link rel="stylesheet" href="{{ asset('assets/css/forum-modern.css') }}?v=20260223-1">
 {% endblock %}
 
 {% block javascripts %}
@@ -17,18 +17,29 @@
                 document.querySelectorAll('.forum-modern .dropdown-menu.show').forEach(function (menu) {
                     menu.classList.remove('show');
                 });
+                document.querySelectorAll('.forum-modern .forum-ellipsis-btn[aria-expanded=\"true\"]').forEach(function (btn) {
+                    btn.setAttribute('aria-expanded', 'false');
+                });
             };
 
             menuButtons.forEach(function (button) {
                 button.addEventListener('click', function (event) {
                     event.preventDefault();
                     event.stopPropagation();
-                    const menu = button.parentElement.querySelector('.dropdown-menu');
+                    const dropdown = button.closest('.dropdown');
+                    const menu = dropdown ? dropdown.querySelector('.dropdown-menu') : null;
                     const isOpen = menu && menu.classList.contains('show');
                     closeAllMenus();
                     if (menu && !isOpen) {
                         menu.classList.add('show');
+                        button.setAttribute('aria-expanded', 'true');
                     }
+                });
+            });
+
+            document.querySelectorAll('.forum-modern .dropdown-menu').forEach(function (menu) {
+                menu.addEventListener('click', function (event) {
+                    event.stopPropagation();
                 });
             });
 
@@ -47,13 +58,13 @@
 
 {% block body %}
 <div class="dashboard-content forum-modern forum-page">
-    <div class="forum-header forum-user-index-header d-flex flex-column flex-lg-row justify-content-between align-items-lg-center gap-3 mb-4">
+    <div class="forum-header d-flex flex-column flex-lg-row justify-content-between align-items-lg-center gap-3 mb-4">
         <div>
             <p class="forum-kicker mb-1">Forum Medicare</p>
             <h1 class="page-title mb-2">Discussions de la communaute</h1>
             <p class="page-subtitle mb-0">Consultez les sujets existants, publiez vos questions et commentez.</p>
         </div>
-        <a href="{{ path('app_user_forum_new') }}" class="btn btn-primary forum-cta forum-user-new-btn">
+        <a href="{{ path('app_user_forum_new') }}" class="btn btn-primary forum-cta">
             <i class="fas fa-plus me-2"></i>Nouveau sujet
         </a>
     </div>
@@ -65,16 +76,57 @@
             Videos medicales
         </a>
     </div>
+    <form method="get" action="{{ path('app_user_forum_index') }}" class="forum-filter-form forum-filter-form-user mb-3">
+        <input type="hidden" name="kind" value="{{ current_kind }}">
+        <div class="forum-filter-head">
+            <div class="forum-filter-title">
+                <i class="fas fa-filter"></i>
+                <span>Filtrer les sujets</span>
+            </div>
+            <small>Affinez la periode et l'ordre d'affichage</small>
+        </div>
+        <div class="forum-filter-grid">
+            <div class="forum-filter-field">
+                <label for="user-filter-from" class="form-label mb-1"><i class="far fa-calendar-alt me-1"></i>Date debut</label>
+                <input id="user-filter-from" type="date" name="from" class="form-control" value="{{ filters.from|default('') }}">
+            </div>
+            <div class="forum-filter-field">
+                <label for="user-filter-to" class="form-label mb-1"><i class="far fa-calendar-check me-1"></i>Date fin</label>
+                <input id="user-filter-to" type="date" name="to" class="form-control" value="{{ filters.to|default('') }}">
+            </div>
+            <div class="forum-filter-field">
+                <label for="user-filter-sort" class="form-label mb-1"><i class="fas fa-sort me-1"></i>Tri</label>
+                <select id="user-filter-sort" name="sort" class="form-select">
+                    <option value="desc" {{ (filters.sort|default('desc')) == 'desc' ? 'selected' : '' }}>Plus recent</option>
+                    <option value="asc" {{ (filters.sort|default('desc')) == 'asc' ? 'selected' : '' }}>Plus ancien</option>
+                </select>
+            </div>
+            <div class="forum-filter-actions forum-filter-actions-grid">
+                <button type="submit" class="btn btn-primary forum-filter-apply">
+                    <i class="fas fa-search me-1"></i>Filtrer
+                </button>
+                <a href="{{ path('app_user_forum_index', {kind: current_kind}) }}" class="btn btn-outline-secondary forum-filter-reset">
+                    <i class="fas fa-undo-alt me-1"></i>Reinitialiser
+                </a>
+            </div>
+        </div>
+    </form>
+    {% if filter_summary %}
+        <div class="forum-filter-summary mb-3">
+            <i class="fas fa-info-circle"></i>
+            <span>{{ filter_summary }}</span>
+        </div>
+    {% endif %}
 
     {% if topics is empty %}
-        <div class="forum-empty forum-user-list-start text-center py-5">
+        <div class="forum-empty text-center py-5">
             <div class="forum-empty-icon mb-3"><i class="fas fa-comments"></i></div>
-            <h2 class="h4 mb-2">Aucun sujet pour le moment</h2>
-            <p class="text-muted mb-4">Soyez le premier a lancer une discussion.</p>
+            <h2 class="h4 mb-2">Aucun sujet sur cette periode</h2>
+            <p class="text-muted mb-4">Essayez d'elargir la plage de dates ou reinitialisez le filtre.</p>
             <a href="{{ path('app_user_forum_new') }}" class="btn btn-primary">Creer un sujet</a>
         </div>
     {% else %}
-        <div class="forum-topic-grid forum-user-list-start forum-showcase-grid">
+        <div class="forum-topic-grid forum-showcase-grid">
             {% for topic in topics %}
                 {% set commentsCount = topic.comments|length %}
                 {% set latestComment = commentsCount > 0 ? (topic.comments|last) : null %}

@@ -48,4 +48,26 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     }
+
+    const notifBtn = document.getElementById('adminNotificationBtn');
+    const notifPanel = document.getElementById('adminNotificationsPanel');
+    const notifWrap = document.querySelector('.admin-notification-wrap');
+
+    if (notifBtn && notifPanel) {
+        notifBtn.addEventListener('click', function(event) {
+            event.preventDefault();
+            event.stopPropagation();
+            const isOpen = notifPanel.classList.toggle('show');
+            notifPanel.hidden = !isOpen;
+            notifBtn.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+        });
+
+        document.addEventListener('click', function(event) {
+            if (notifWrap && !notifWrap.contains(event.target)) {
+                notifPanel.classList.remove('show');
+                notifPanel.hidden = true;
+                notifBtn.setAttribute('aria-expanded', 'false');
+            }
+        });
+    }
 });

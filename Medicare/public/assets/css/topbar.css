@@ -163,6 +163,8 @@
     transition: background 0.2s;
     cursor: pointer;
     position: relative;
+    text-decoration: none;
+    color: inherit;
 }
 
 .notification-item:hover {

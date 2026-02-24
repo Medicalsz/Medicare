@@ -1,4 +1,4 @@
-<article class="forum-comment-card forum-comment-card-modern forum-thread-item" style="--forum-thread-level: {{ level|default(0) }};">
+<article id="comment-{{ comment.id }}" class="forum-comment-card forum-comment-card-modern forum-thread-item" style="--forum-thread-level: {{ level|default(0) }};">
     <div class="forum-comment-avatar">
         {{ (comment.author.prenom|first ~ comment.author.nom|first)|upper }}
     </div>

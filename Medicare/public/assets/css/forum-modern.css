@@ -355,6 +355,160 @@
     padding: 0.35rem;
 }
 
+.forum-filter-form {
+    background: linear-gradient(155deg, #f7fbff 0%, #eef5ff 65%, #f9fcff 100%);
+    border: 1px solid #cfe0f7;
+    border-radius: 16px;
+    padding: 0.95rem;
+    box-shadow: 0 10px 24px rgba(41, 85, 150, 0.1);
+}
+
+.forum-filter-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.65rem;
+    margin-bottom: 0.7rem;
+    padding-bottom: 0.55rem;
+    border-bottom: 1px dashed #c9d9f2;
+}
+
+.forum-filter-title {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    color: #1f5eb2;
+    font-weight: 800;
+    font-size: 0.95rem;
+}
+
+.forum-filter-head small {
+    color: #607898;
+    font-size: 0.78rem;
+}
+
+.forum-filter-form .form-label {
+    display: block;
+    margin-bottom: 0.4rem;
+    color: #35567f;
+    font-weight: 700;
+    font-size: 0.86rem;
+}
+
+.forum-filter-form .form-control,
+.forum-filter-form .form-select {
+    display: block;
+    width: 100%;
+    min-height: 46px;
+    padding: 0.6rem 0.9rem;
+    font-size: 1.02rem;
+    line-height: 1.2;
+    color: #16385f;
+    appearance: none;
+    border-radius: 10px;
+    border: 1px solid #cddbf1;
+    background: #fff;
+}
+
+.forum-filter-form .form-control:focus,
+.forum-filter-form .form-select:focus {
+    border-color: #70a7ef;
+    box-shadow: 0 0 0 0.2rem rgba(47, 121, 232, 0.12);
+}
+
+.forum-filter-actions .btn {
+    border-radius: 11px;
+    font-weight: 700;
+    min-width: 124px;
+}
+
+.forum-filter-apply {
+    box-shadow: 0 8px 18px rgba(47, 121, 232, 0.24);
+}
+
+.forum-filter-reset {
+    background: #f0f5ff !important;
+}
+
+.forum-filter-summary {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    padding: 0.38rem 0.72rem;
+    border-radius: 999px;
+    border: 1px solid #cfe0f7;
+    background: #f4f9ff;
+    color: #35577f;
+    font-size: 0.84rem;
+    font-weight: 600;
+}
+
+/* User dashboard: keep filter section aligned like admin even without Bootstrap grid */
+.forum-filter-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 0.75rem;
+    align-items: end;
+}
+
+.forum-filter-grid .forum-filter-field {
+    min-width: 0;
+}
+
+.forum-filter-actions-grid {
+    display: flex;
+    gap: 0.75rem;
+}
+
+.forum-filter-actions-grid .btn {
+    flex: 1 1 0;
+}
+
+.forum-filter-form-user {
+    padding: 1.15rem 1.2rem;
+    border-radius: 18px;
+    box-shadow: 0 14px 30px rgba(44, 93, 165, 0.12);
+}
+
+.forum-filter-form-user .forum-filter-title {
+    font-size: 1.06rem;
+    letter-spacing: 0.2px;
+}
+
+.forum-filter-form-user .forum-filter-head {
+    margin-bottom: 0.95rem;
+    padding-bottom: 0.75rem;
+}
+
+.forum-filter-form-user .forum-filter-head small {
+    font-size: 0.86rem;
+}
+
+.forum-filter-form-user .form-label {
+    font-size: 1.02rem;
+    color: #214f88;
+}
+
+.forum-filter-form-user .form-control,
+.forum-filter-form-user .form-select {
+    min-height: 48px;
+    border-radius: 14px;
+    border-color: #bfd4f1;
+    font-size: 1.05rem;
+    box-shadow: 0 2px 6px rgba(46, 98, 171, 0.06);
+}
+
+.forum-filter-form-user .forum-filter-actions-grid {
+    gap: 0.9rem;
+}
+
+.forum-filter-form-user .forum-filter-actions-grid .btn {
+    min-height: 48px;
+    font-size: 1.03rem;
+    border-radius: 14px;
+    padding: 0.55rem 1rem;
+}
+
 .forum-kind-tab {
     display: inline-flex;
     align-items: center;
@@ -730,6 +884,14 @@
 }
 
 .forum-modern .dropdown-menu.show {
+    display: block;
+}
+
+/* Fallback interaction if JS is delayed or blocked */
+.forum-modern .dropdown:hover > .dropdown-menu,
+.forum-modern .dropdown:focus-within > .dropdown-menu,
+.forum-modern .forum-topic-card-menu:hover .dropdown-menu,
+.forum-modern .forum-topic-card-menu:focus-within .dropdown-menu {
     display: block;
 }
 
@@ -1367,6 +1529,27 @@
     .forum-comment-btn {
         width: 100%;
         text-align: center;
+    }
+
+    .forum-filter-head {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .forum-filter-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .forum-filter-form-user {
+        padding: 0.95rem;
+    }
+
+    .forum-filter-actions {
+        width: 100%;
+    }
+
+    .forum-filter-actions .btn {
+        width: 100%;
     }
 }
 
