@@ -154,18 +154,30 @@
                 </div>
                 <div class="admin-card-body">
                     <div class="admin-table-container">
-                        <table class="admin-table">
+                        <table class="admin-table" id="forumActivityTable">
                             <thead>
                                 <tr>
-                                    <th>Jour</th>
-                                    <th>Sujets</th>
-                                    <th>Commentaires</th>
+                                    <th>
+                                        <button type="button" class="admin-activity-sort-btn admin-sort-btn" data-sort-key="day" aria-label="Trier par jour">
+                                            Jour <i class="bi bi-arrow-down-up ms-1"></i>
+                                        </button>
+                                    </th>
+                                    <th>
+                                        <button type="button" class="admin-activity-sort-btn admin-sort-btn" data-sort-key="topics" aria-label="Trier par sujets">
+                                            Sujets <i class="bi bi-arrow-down-up ms-1"></i>
+                                        </button>
+                                    </th>
+                                    <th>
+                                        <button type="button" class="admin-activity-sort-btn admin-sort-btn" data-sort-key="comments" aria-label="Trier par commentaires">
+                                            Commentaires <i class="bi bi-arrow-down-up ms-1"></i>
+                                        </button>
+                                    </th>
                                     <th>Tendance</th>
                                 </tr>
                             </thead>
-                            <tbody>
+                            <tbody id="forumActivityBody">
                                 {% for row in forum_activity_rows %}
-                                    <tr>
+                                    <tr data-day="{{ row.date_key }}" data-topics="{{ row.topics }}" data-comments="{{ row.comments }}">
                                         <td>{{ row.day }}</td>
                                         <td>{{ row.topics }}</td>
                                         <td>{{ row.comments }}</td>
@@ -196,48 +208,73 @@
                     </h3>
                 </div>
                 <div class="admin-card-body">
-                    <h6 class="mb-2">Sujets signales</h6>
-                    {% if reported_topics_list is empty %}
-                        <div class="alert alert-success py-2 mb-3">Aucun sujet signale.</div>
-                    {% else %}
-                        {% for topic in reported_topics_list %}
-                            <div class="border rounded p-2 mb-2">
-                                <div class="fw-semibold">{{ topic.title|slice(0, 40) }}{% if topic.title|length > 40 %}...{% endif %}</div>
-                                <div class="small text-muted mt-1">Raison: {{ topic.reportedReason ?: 'Non precisee' }}</div>
-                                <div class="moderation-actions mt-2">
-                                    <a href="{{ path('app_admin_forum_show', {id: topic.id}) }}" class="admin-btn admin-btn-secondary btn-sm">Voir</a>
-                                    <form method="post" action="{{ path('app_admin_forum_resolve_topic_report', {id: topic.id}) }}" class="d-inline">
-                                        <input type="hidden" name="_token" value="{{ csrf_token('resolve_topic_report_' ~ topic.id) }}">
-                                        <button class="admin-btn admin-btn-secondary btn-sm" type="submit">Masquer</button>
-                                    </form>
-                                    <form method="post" action="{{ path('app_admin_forum_delete', {id: topic.id}) }}" class="d-inline" onsubmit="return confirm('Supprimer ce sujet ?');">
-                                        <input type="hidden" name="_token" value="{{ csrf_token('delete_topic_' ~ topic.id) }}">
-                                        <button class="admin-btn admin-btn-secondary btn-sm" type="submit">Supprimer</button>
-                                    </form>
-                                </div>
-                            </div>
-                        {% endfor %}
-                    {% endif %}
+                    <form method="get" action="{{ path('app_admin_dashboard') }}" class="mb-3" id="moderationFiltersForm">
+                        <div class="btn-group w-100 mb-2" role="group" aria-label="Filtre signalements">
+                            <a class="btn btn-outline-primary btn-sm {% if moderation_filters.type == 'all' %}active{% endif %}" href="{{ path('app_admin_dashboard', {moderation_type: 'all', moderation_order: moderation_filters.order, moderation_search: moderation_filters.search}) }}">Tous</a>
+                            <a class="btn btn-outline-primary btn-sm {% if moderation_filters.type == 'topics' %}active{% endif %}" href="{{ path('app_admin_dashboard', {moderation_type: 'topics', moderation_order: moderation_filters.order, moderation_search: moderation_filters.search}) }}">Sujets signales</a>
+                            <a class="btn btn-outline-primary btn-sm {% if moderation_filters.type == 'comments' %}active{% endif %}" href="{{ path('app_admin_dashboard', {moderation_type: 'comments', moderation_order: moderation_filters.order, moderation_search: moderation_filters.search}) }}">Commentaires signales</a>
+                        </div>
+                        <div class="input-group input-group-sm mb-2">
+                            <span class="input-group-text bg-primary-subtle text-primary border-primary-subtle"><i class="bi bi-search"></i></span>
+                            <input
+                                type="search"
+                                class="form-control"
+                                name="moderation_search"
+                                id="moderationSearchInput"
+                                value="{{ moderation_filters.search }}"
+                                placeholder="Rechercher par utilisateur"
+                                maxlength="100"
+                            >
+                        </div>
+                        <div class="d-flex gap-2">
+                            <input type="hidden" name="moderation_type" value="{{ moderation_filters.type }}">
+                            <select class="form-select form-select-sm" name="moderation_order" id="moderationOrderSelect">
+                                <option value="desc" {% if moderation_filters.order == 'desc' %}selected{% endif %}>Date: plus recente</option>
+                                <option value="asc" {% if moderation_filters.order == 'asc' %}selected{% endif %}>Date: plus ancienne</option>
+                            </select>
+                            <button type="submit" class="btn btn-primary btn-sm">Filtrer</button>
+                        </div>
+                    </form>
 
-                    <h6 class="mb-2 mt-3">Commentaires a verifier</h6>
-                    {% if reported_comments_list is empty %}
-                        <div class="alert alert-success py-2 mb-0">Aucun commentaire suspect.</div>
+                    {% if moderation_items is empty %}
+                        <div class="alert alert-success py-2 mb-0">Aucun signalement pour ce filtre.</div>
                     {% else %}
-                        {% for comment in reported_comments_list %}
-                            <div class="border rounded p-2 mb-2">
-                                <div class="small text-muted">{{ comment.author.prenom }} {{ comment.author.nom }}</div>
-                                <div class="small text-muted">Raison: {{ comment.reportedReason ?: 'Non precisee' }}</div>
-                                <div>{{ comment.content|slice(0, 55) }}{% if comment.content|length > 55 %}...{% endif %}</div>
+                        <div class="alert alert-warning py-2 mb-2 d-none" id="moderationNoMatchAlert">Aucun resultat pour cette recherche.</div>
+                        {% for item in moderation_items %}
+                            <div class="border rounded p-2 mb-2 bg-primary-subtle js-moderation-item" style="--bs-bg-opacity: .22;" data-author="{{ item.author|lower }}">
+                                <div class="d-flex justify-content-between align-items-start gap-2">
+                                    <div>
+                                        <span class="badge text-bg-primary mb-1">{{ item.type == 'topic' ? 'Sujet' : 'Commentaire' }}</span>
+                                        <div class="fw-semibold">{{ item.title|slice(0, 38) }}{% if item.title|length > 38 %}...{% endif %}</div>
+                                        <div class="small text-muted">Par {{ item.author ?: 'Utilisateur inconnu' }}</div>
+                                        <div class="small text-muted">Raison: {{ item.reason }}</div>
+                                        <div class="small mt-1">{{ item.content_preview|slice(0, 70) }}{% if item.content_preview|length > 70 %}...{% endif %}</div>
+                                    </div>
+                                    <div class="small text-muted text-end">
+                                        {{ item.reported_at ? item.reported_at|date('d/m/Y H:i') : '-' }}
+                                    </div>
+                                </div>
                                 <div class="moderation-actions mt-2">
-                                    <a href="{{ path('app_admin_forum_show', {id: comment.topic.id}) }}" class="admin-btn admin-btn-secondary btn-sm">Voir</a>
-                                    <form method="post" action="{{ path('app_admin_forum_resolve_comment_report', {id: comment.id}) }}" class="d-inline">
-                                        <input type="hidden" name="_token" value="{{ csrf_token('resolve_comment_report_' ~ comment.id) }}">
-                                        <button class="admin-btn admin-btn-secondary btn-sm" type="submit">Masquer</button>
-                                    </form>
-                                    <form method="post" action="{{ path('app_admin_forum_delete_comment', {id: comment.id}) }}" class="d-inline" onsubmit="return confirm('Supprimer ce commentaire ?');">
-                                        <input type="hidden" name="_token" value="{{ csrf_token('delete_comment_' ~ comment.id) }}">
-                                        <button class="admin-btn admin-btn-secondary btn-sm" type="submit">Supprimer</button>
-                                    </form>
+                                    <a href="{{ path('app_admin_forum_show', {id: item.topic_id}) }}" class="admin-btn admin-btn-secondary btn-sm">Voir</a>
+                                    {% if item.type == 'topic' %}
+                                        <form method="post" action="{{ path('app_admin_forum_resolve_topic_report', {id: item.id}) }}" class="d-inline">
+                                            <input type="hidden" name="_token" value="{{ csrf_token('resolve_topic_report_' ~ item.id) }}">
+                                            <button class="admin-btn admin-btn-secondary btn-sm" type="submit">Masquer</button>
+                                        </form>
+                                        <form method="post" action="{{ path('app_admin_forum_delete', {id: item.id}) }}" class="d-inline" onsubmit="return confirm('Supprimer ce sujet ?');">
+                                            <input type="hidden" name="_token" value="{{ csrf_token('delete_topic_' ~ item.id) }}">
+                                            <button class="admin-btn admin-btn-secondary btn-sm" type="submit">Supprimer</button>
+                                        </form>
+                                    {% else %}
+                                        <form method="post" action="{{ path('app_admin_forum_resolve_comment_report', {id: item.id}) }}" class="d-inline">
+                                            <input type="hidden" name="_token" value="{{ csrf_token('resolve_comment_report_' ~ item.id) }}">
+                                            <button class="admin-btn admin-btn-secondary btn-sm" type="submit">Masquer</button>
+                                        </form>
+                                        <form method="post" action="{{ path('app_admin_forum_delete_comment', {id: item.id}) }}" class="d-inline" onsubmit="return confirm('Supprimer ce commentaire ?');">
+                                            <input type="hidden" name="_token" value="{{ csrf_token('delete_comment_' ~ item.id) }}">
+                                            <button class="admin-btn admin-btn-secondary btn-sm" type="submit">Supprimer</button>
+                                        </form>
+                                    {% endif %}
                                 </div>
                             </div>
                         {% endfor %}

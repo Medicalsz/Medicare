@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Repository\ForumCommentRepository;
 use App\Repository\ForumTopicRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
@@ -12,11 +13,28 @@ use Symfony\Component\Routing\Annotation\Route;
 class AdminController extends AbstractController
 {
     #[Route('/dashboard', name: 'dashboard')]
-    public function dashboard(ForumTopicRepository $topicRepository, ForumCommentRepository $commentRepository): Response
+    public function dashboard(
+        Request $request,
+        ForumTopicRepository $topicRepository,
+        ForumCommentRepository $commentRepository
+    ): Response
     {
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
 
         $today = new \DateTimeImmutable('today');
+        $moderationType = (string) $request->query->get('moderation_type', 'all');
+        $moderationSearch = trim((string) $request->query->get('moderation_search', ''));
+        $moderationOrder = strtolower((string) $request->query->get('moderation_order', 'desc'));
+
+        if (!in_array($moderationType, ['all', 'topics', 'comments'], true)) {
+            $moderationType = 'all';
+        }
+        if (!in_array($moderationOrder, ['asc', 'desc'], true)) {
+            $moderationOrder = 'desc';
+        }
+        if (mb_strlen($moderationSearch) > 100) {
+            $moderationSearch = mb_substr($moderationSearch, 0, 100);
+        }
 
         $totalTopics = $topicRepository->count([]);
         $totalComments = $commentRepository->count([]);
@@ -35,11 +53,16 @@ class AdminController extends AbstractController
 
         $allTopics = $topicRepository->findAll();
         $allComments = $commentRepository->findAll();
-        $reportedTopics = $topicRepository->findBy(['isReported' => true], ['reportedAt' => 'DESC'], 5);
-        $reportedComments = $commentRepository->findBy(['isReported' => true], ['reportedAt' => 'DESC'], 5);
+        $reportedTopics = $moderationType !== 'comments'
+            ? $topicRepository->findReportedForModeration($moderationSearch, 25)
+            : [];
+        $reportedComments = $moderationType !== 'topics'
+            ? $commentRepository->findReportedForModeration($moderationSearch, 25)
+            : [];
 
         $topCategory = $this->computeTopCategory($allTopics);
         $activityRows = $this->buildWeeklyActivity($allTopics, $allComments);
+        $moderationItems = $this->buildModerationItems($reportedTopics, $reportedComments, $moderationOrder);
 
         return $this->render('admin/dashboard.html.twig', [
             'forum_stats' => [
@@ -51,8 +74,12 @@ class AdminController extends AbstractController
                 'reported_comments' => $commentRepository->count(['isReported' => true]),
                 'top_category' => $topCategory,
             ],
-            'reported_topics_list' => $reportedTopics,
-            'reported_comments_list' => $reportedComments,
+            'moderation_items' => $moderationItems,
+            'moderation_filters' => [
+                'type' => $moderationType,
+                'order' => $moderationOrder,
+                'search' => $moderationSearch,
+            ],
             'forum_activity_rows' => $activityRows,
         ]);
     }
@@ -98,7 +125,7 @@ class AdminController extends AbstractController
     /**
      * @param array<int, \App\Entity\ForumTopic> $topics
      * @param array<int, \App\Entity\ForumComment> $comments
-     * @return array<int, array{day: string, topics: int, comments: int, topic_pct: int, comment_pct: int}>
+     * @return array<int, array{day: string, date_key: string, topics: int, comments: int, topic_pct: int, comment_pct: int}>
      */
     private function buildWeeklyActivity(array $topics, array $comments): array
     {
@@ -109,6 +136,7 @@ class AdminController extends AbstractController
             $key = $date->format('Y-m-d');
             $days[$key] = [
                 'day' => $date->format('d/m'),
+                'date_key' => $key,
                 'topics' => 0,
                 'comments' => 0,
             ];
@@ -141,5 +169,63 @@ class AdminController extends AbstractController
         unset($row);
 
         return array_values($days);
+    }
+
+    /**
+     * @param array<int, \App\Entity\ForumTopic> $topics
+     * @param array<int, \App\Entity\ForumComment> $comments
+     * @return array<int, array{
+     *   type: string,
+     *   id: int,
+     *   title: string,
+     *   author: string,
+     *   reason: string,
+     *   content_preview: string,
+     *   reported_at: ?\DateTimeImmutable,
+     *   topic_id: int
+     * }>
+     */
+    private function buildModerationItems(array $topics, array $comments, string $order = 'desc'): array
+    {
+        $items = [];
+
+        foreach ($topics as $topic) {
+            $items[] = [
+                'type' => 'topic',
+                'id' => (int) $topic->getId(),
+                'title' => (string) ($topic->getTitle() ?? 'Sujet sans titre'),
+                'author' => trim((string) (($topic->getAuthor()?->getPrenom() ?? '') . ' ' . ($topic->getAuthor()?->getNom() ?? ''))),
+                'reason' => (string) ($topic->getReportedReason() ?? 'Non precisee'),
+                'content_preview' => (string) ($topic->getContent() ?? ''),
+                'reported_at' => $topic->getReportedAt(),
+                'topic_id' => (int) $topic->getId(),
+            ];
+        }
+
+        foreach ($comments as $comment) {
+            $items[] = [
+                'type' => 'comment',
+                'id' => (int) $comment->getId(),
+                'title' => 'Commentaire sur: ' . (string) ($comment->getTopic()?->getTitle() ?? 'Sujet indisponible'),
+                'author' => trim((string) (($comment->getAuthor()?->getPrenom() ?? '') . ' ' . ($comment->getAuthor()?->getNom() ?? ''))),
+                'reason' => (string) ($comment->getReportedReason() ?? 'Non precisee'),
+                'content_preview' => (string) ($comment->getContent() ?? ''),
+                'reported_at' => $comment->getReportedAt(),
+                'topic_id' => (int) ($comment->getTopic()?->getId() ?? 0),
+            ];
+        }
+
+        usort($items, static function (array $a, array $b) use ($order): int {
+            $aTs = $a['reported_at'] instanceof \DateTimeInterface ? $a['reported_at']->getTimestamp() : 0;
+            $bTs = $b['reported_at'] instanceof \DateTimeInterface ? $b['reported_at']->getTimestamp() : 0;
+
+            if ($aTs === $bTs) {
+                return $a['id'] <=> $b['id'];
+            }
+
+            return $order === 'asc' ? $aTs <=> $bTs : $bTs <=> $aTs;
+        });
+
+        return $items;
     }
 }

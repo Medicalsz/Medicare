@@ -52,7 +52,7 @@
         async function sendMessage(prompt) {
             const userPrompt = (prompt || '').trim();
             if (!userPrompt) {
-                appendBubble(messagesEl, 'Veuillez saisir un message.', 'bot');
+                appendBubble(messagesEl, 'Veuillez saisir une demande de synthese.', 'bot');
                 return;
             }
 
@@ -77,12 +77,12 @@
 
                 const data = await response.json();
                 if (!response.ok) {
-                    appendBubble(messagesEl, data.error || 'Erreur lors du calcul du resume.', 'bot');
+                    appendBubble(messagesEl, data.error || 'Une erreur est survenue pendant la generation du resume professionnel.', 'bot');
                 } else {
-                    appendBubble(messagesEl, data.reply || 'Aucune reponse.', 'bot');
+                    appendBubble(messagesEl, data.reply || 'Aucune reponse generee.', 'bot');
                 }
             } catch (error) {
-                appendBubble(messagesEl, 'Erreur reseau. Reessayez.', 'bot');
+                appendBubble(messagesEl, 'Erreur reseau. Verifiez la connexion puis reessayez.', 'bot');
             } finally {
                 setLoading(loadingEl, sendButton, false);
             }

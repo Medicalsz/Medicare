@@ -4,9 +4,12 @@ namespace App\Controller;
 
 use App\Entity\ForumTopic;
 use App\Entity\ForumComment;
+use App\Entity\User;
 use App\Form\ForumTopicType;
 use App\Form\ForumCommentType;
+use App\Repository\ForumCommentReactionRepository;
 use App\Repository\ForumCommentRepository;
+use App\Repository\ForumTopicReactionRepository;
 use App\Repository\ForumTopicRepository;
 use App\Service\ForumSummaryClient;
 use App\Service\NotificationService;
@@ -23,7 +26,7 @@ use Symfony\Component\Routing\Annotation\Route;
 class ForumController extends AbstractController
 {
     #[Route('/', name: 'index', methods: ['GET'])]
-    public function index(Request $request, ForumTopicRepository $repo): Response
+    public function index(Request $request, ForumTopicRepository $repo, ForumTopicReactionRepository $reactionRepository): Response
     {
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
 
@@ -55,6 +58,13 @@ class ForumController extends AbstractController
             $topics,
             static fn (ForumTopic $topic): bool => $kind === 'video' ? $topic->isVideoType() : $topic->isTextType()
         ));
+        $topicIds = array_map(static fn (ForumTopic $topic): int => (int) $topic->getId(), $topics);
+        $reactionCounts = $reactionRepository->getCountsByTopicIds($topicIds);
+        $userReactionMap = [];
+        $user = $this->getUser();
+        if ($user instanceof User) {
+            $userReactionMap = $reactionRepository->getUserReactionMap($user, $topicIds);
+        }
 
         return $this->render('dashboard/forum/index.html.twig', [
             'topics' => $topics,
@@ -65,6 +75,8 @@ class ForumController extends AbstractController
                 'sort' => $sort,
             ],
             'filter_summary' => $this->buildFilterSummary($from, $to, $sort),
+            'reaction_counts' => $reactionCounts,
+            'user_reaction_map' => $userReactionMap,
         ]);
     }
 
@@ -144,7 +156,7 @@ class ForumController extends AbstractController
     }
 
     #[Route('/{id}', name: 'show', methods: ['GET', 'POST'])]
-    public function show(int $id, ForumTopicRepository $repo, RecommendationService $recommendationService, NotificationService $notificationService, Request $request, EntityManagerInterface $em): Response
+    public function show(int $id, ForumTopicRepository $repo, ForumTopicReactionRepository $reactionRepository, ForumCommentReactionRepository $commentReactionRepository, RecommendationService $recommendationService, NotificationService $notificationService, Request $request, EntityManagerInterface $em): Response
     {
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
 
@@ -181,18 +193,40 @@ class ForumController extends AbstractController
             $allComments[] = $commentItem;
         }
         $commentTree = $this->buildCommentTree($allComments);
+        $commentIds = [];
+        foreach ($allComments as $commentItem) {
+            if ($commentItem->getId() !== null) {
+                $commentIds[] = (int) $commentItem->getId();
+            }
+        }
         $visibleCount = 0;
         foreach ($allComments as $commentItem) {
             if (!$commentItem->isHidden()) {
                 $visibleCount++;
             }
         }
+        $counts = $reactionRepository->getCountsByTopicIds([(int) $topic->getId()]);
+        $userReaction = null;
+        $user = $this->getUser();
+        if ($user instanceof User) {
+            $userMap = $reactionRepository->getUserReactionMap($user, [(int) $topic->getId()]);
+            $userReaction = $userMap[(int) $topic->getId()] ?? null;
+        }
+        $commentReactionCounts = $commentReactionRepository->getCountsByCommentIds($commentIds);
+        $commentUserReactionMap = [];
+        if ($user instanceof User) {
+            $commentUserReactionMap = $commentReactionRepository->getUserReactionMap($user, $commentIds);
+        }
         $recommendationPayload = $recommendationService->recommendForTopic($topic, 5);
 
         return $this->render('dashboard/forum/show.html.twig', [
             'topic' => $topic,
             'form' => $form->createView(),
+            'reaction_counts' => $counts[(int) $topic->getId()] ?? ['like' => 0, 'love' => 0, 'total' => 0],
+            'user_reaction' => $userReaction,
             'comment_tree' => $commentTree,
+            'comment_reaction_counts' => $commentReactionCounts,
+            'comment_user_reaction_map' => $commentUserReactionMap,
             'visible_comments_count' => $visibleCount,
             'reply_parent' => $replyParent,
             'recommended_topics' => $recommendationPayload['items'],
@@ -239,30 +273,6 @@ class ForumController extends AbstractController
             $topic->setReportedReason($reason !== '' ? $reason : 'Signalement admin');
             $topic->setReportedAt(new \DateTimeImmutable());
             $topic->setReportedBy($this->getUser());
-            $em->flush();
-        }
-
-        $referer = (string) $request->headers->get('referer');
-        if ($referer !== '' && str_contains($referer, '/admin/forum')) {
-            return $this->redirect($referer);
-        }
-
-        return $this->redirectToRoute('app_admin_forum_show', ['id' => $topic->getId()]);
-    }
-
-    #[Route('/{id}/regenerate-summary', name: 'regenerate_summary', methods: ['POST'])]
-    public function regenerateSummary(int $id, ForumTopicRepository $repo, Request $request, EntityManagerInterface $em, ForumSummaryClient $summaryClient): Response
-    {
-        $this->denyAccessUnlessGranted('ROLE_ADMIN');
-
-        $topic = $repo->find($id);
-        if (!$topic) {
-            throw new NotFoundHttpException('Sujet introuvable.');
-        }
-
-        if ($this->isCsrfTokenValid('regenerate_summary_' . $topic->getId(), $request->request->get('_token'))) {
-            $topic->setSummary($summaryClient->summarize((string) $topic->getContent()));
-            $topic->setUpdatedAt(new \DateTimeImmutable());
             $em->flush();
         }
 

@@ -30,7 +30,7 @@ class UserForumController extends AbstractController
     #[Route('/', name: 'index', methods: ['GET'])]
     public function index(Request $request, ForumTopicRepository $repo, ForumTopicReactionRepository $reactionRepository): Response
     {
-        $this->denyAccessUnlessGranted('ROLE_USER');
+        $this->denyUnlessForumMember();
 
         $user = $this->getUser();
         if (!$user instanceof User) {
@@ -90,7 +90,7 @@ class UserForumController extends AbstractController
     #[Route('/new', name: 'new', methods: ['GET', 'POST'])]
     public function new(Request $request, EntityManagerInterface $em, ForumSummaryClient $summaryClient, NotificationService $notificationService): Response
     {
-        $this->denyAccessUnlessGranted('ROLE_USER');
+        $this->denyUnlessForumMember();
 
         $topic = new ForumTopic();
         $form = $this->createForm(ForumTopicType::class, $topic);
@@ -117,7 +117,7 @@ class UserForumController extends AbstractController
     #[Route('/{id}', name: 'show', methods: ['GET', 'POST'])]
     public function show(int $id, ForumTopicRepository $repo, ForumTopicReactionRepository $reactionRepository, ForumCommentReactionRepository $commentReactionRepository, RecommendationService $recommendationService, NotificationService $notificationService, Request $request, EntityManagerInterface $em): Response
     {
-        $this->denyAccessUnlessGranted('ROLE_USER');
+        $this->denyUnlessForumMember();
 
         $topic = $repo->find($id);
         if (!$topic) {
@@ -187,7 +187,7 @@ class UserForumController extends AbstractController
     #[Route('/{id}/react', name: 'react', methods: ['POST'])]
     public function react(int $id, ForumTopicRepository $repo, ForumTopicReactionRepository $reactionRepository, Request $request, EntityManagerInterface $em): Response
     {
-        $this->denyAccessUnlessGranted('ROLE_USER');
+        $this->denyUnlessForumMember();
 
         $topic = $repo->find($id);
         if (!$topic) {
@@ -223,7 +223,7 @@ class UserForumController extends AbstractController
         $em->flush();
 
         $referer = (string) $request->headers->get('referer');
-        if ($referer !== '' && str_contains($referer, '/dashboard/forum')) {
+        if ($referer !== '' && (str_contains($referer, '/dashboard/forum') || str_contains($referer, '/admin/forum'))) {
             return $this->redirect($referer);
         }
 
@@ -233,7 +233,7 @@ class UserForumController extends AbstractController
     #[Route('/comment/{id}/react', name: 'react_comment', methods: ['POST'])]
     public function reactComment(int $id, ForumCommentRepository $repo, ForumCommentReactionRepository $reactionRepository, Request $request, EntityManagerInterface $em): Response
     {
-        $this->denyAccessUnlessGranted('ROLE_USER');
+        $this->denyUnlessForumMember();
 
         $comment = $repo->find($id);
         if (!$comment) {
@@ -269,13 +269,18 @@ class UserForumController extends AbstractController
 
         $em->flush();
 
+        $referer = (string) $request->headers->get('referer');
+        if ($referer !== '' && (str_contains($referer, '/dashboard/forum') || str_contains($referer, '/admin/forum'))) {
+            return $this->redirect($referer);
+        }
+
         return $this->redirectToRoute('app_user_forum_show', ['id' => $comment->getTopic()?->getId()]);
     }
 
     #[Route('/{id}/report-topic', name: 'report_topic', methods: ['POST'])]
     public function reportTopic(int $id, ForumTopicRepository $repo, Request $request, EntityManagerInterface $em): Response
     {
-        $this->denyAccessUnlessGranted('ROLE_USER');
+        $this->denyUnlessForumMember();
 
         $topic = $repo->find($id);
         if (!$topic) {
@@ -297,7 +302,7 @@ class UserForumController extends AbstractController
     #[Route('/comment/{id}/report-comment', name: 'report_comment', methods: ['POST'])]
     public function reportComment(int $id, ForumCommentRepository $repo, Request $request, EntityManagerInterface $em): Response
     {
-        $this->denyAccessUnlessGranted('ROLE_USER');
+        $this->denyUnlessForumMember();
 
         $comment = $repo->find($id);
         if (!$comment) {
@@ -319,7 +324,7 @@ class UserForumController extends AbstractController
     #[Route('/{id}/hide-topic', name: 'hide_topic', methods: ['POST'])]
     public function hideTopic(int $id, ForumTopicRepository $repo, Request $request, EntityManagerInterface $em): Response
     {
-        $this->denyAccessUnlessGranted('ROLE_USER');
+        $this->denyUnlessForumMember();
 
         $topic = $repo->find($id);
         if (!$topic) {
@@ -340,7 +345,7 @@ class UserForumController extends AbstractController
     #[Route('/{id}/delete-topic', name: 'delete_topic', methods: ['POST'])]
     public function deleteTopic(int $id, ForumTopicRepository $repo, Request $request, EntityManagerInterface $em): Response
     {
-        $this->denyAccessUnlessGranted('ROLE_USER');
+        $this->denyUnlessForumMember();
 
         $topic = $repo->find($id);
         if (!$topic) {
@@ -361,7 +366,7 @@ class UserForumController extends AbstractController
     #[Route('/comment/{id}/hide-comment', name: 'hide_comment', methods: ['POST'])]
     public function hideComment(int $id, ForumCommentRepository $repo, Request $request, EntityManagerInterface $em): Response
     {
-        $this->denyAccessUnlessGranted('ROLE_USER');
+        $this->denyUnlessForumMember();
 
         $comment = $repo->find($id);
         if (!$comment) {
@@ -382,7 +387,7 @@ class UserForumController extends AbstractController
     #[Route('/comment/{id}/delete-comment', name: 'delete_comment', methods: ['POST'])]
     public function deleteComment(int $id, ForumCommentRepository $repo, Request $request, EntityManagerInterface $em): Response
     {
-        $this->denyAccessUnlessGranted('ROLE_USER');
+        $this->denyUnlessForumMember();
 
         $comment = $repo->find($id);
         if (!$comment) {
@@ -407,22 +412,19 @@ class UserForumController extends AbstractController
 
     private function canModerateTopic(ForumTopic $topic): bool
     {
-        if ($this->isGranted('ROLE_ADMIN')) {
-            return true;
-        }
-
-        $user = $this->getUser();
-        return $user instanceof User && $topic->getAuthor()?->getId() === $user->getId();
+        return $this->isGranted('ROLE_ADMIN');
     }
 
     private function canModerateComment(ForumComment $comment): bool
     {
-        if ($this->isGranted('ROLE_ADMIN')) {
-            return true;
-        }
+        return $this->isGranted('ROLE_ADMIN');
+    }
 
-        $user = $this->getUser();
-        return $user instanceof User && $comment->getAuthor()?->getId() === $user->getId();
+    private function denyUnlessForumMember(): void
+    {
+        if (!$this->isGranted('ROLE_USER') && !$this->isGranted('ROLE_ADMIN')) {
+            throw $this->createAccessDeniedException();
+        }
     }
 
     /**

@@ -263,7 +263,7 @@ class SummarizerService
 
         $lines = [];
         foreach ($picked as $item) {
-            $lines[] = '• ' . $this->ensureSentenceEnd((string) $item['text']);
+            $lines[] = '- ' . $this->ensureSentenceEnd((string) $item['text']);
         }
 
         return implode("\n", $lines);
@@ -422,3 +422,4 @@ class SummarizerService
         return $slice;
     }
 }
+

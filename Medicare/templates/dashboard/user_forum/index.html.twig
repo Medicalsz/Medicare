@@ -144,7 +144,7 @@
                                     <button type="submit" class="dropdown-item">Signaler</button>
                                 </form>
                             </li>
-                            {% if app.user and (is_granted('ROLE_ADMIN') or app.user.id == topic.author.id) %}
+                            {% if is_granted('ROLE_ADMIN') %}
                                 <li>
                                     <form method="post" action="{{ path('app_user_forum_hide_topic', {id: topic.id}) }}">
                                         <input type="hidden" name="_token" value="{{ csrf_token('hide_topic_' ~ topic.id) }}">

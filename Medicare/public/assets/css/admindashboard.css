@@ -251,6 +251,27 @@
     letter-spacing: 0.5px;
 }
 
+.admin-activity-sort-btn {
+    background: transparent;
+    border: 0;
+    color: #f8fbff;
+    font-weight: 700;
+    text-decoration: none;
+    cursor: pointer;
+    transition: color 0.2s ease, opacity 0.2s ease;
+}
+
+.admin-activity-sort-btn:hover,
+.admin-activity-sort-btn:focus-visible {
+    color: #ffffff;
+    opacity: 0.95;
+    outline: none;
+}
+
+.admin-activity-sort-btn i {
+    color: #dce9ff;
+}
+
 .admin-table tbody tr {
     border-bottom: 1px solid #f0f0f0;
     transition: background 0.2s ease;

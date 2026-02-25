@@ -4,7 +4,12 @@
     </div>
     <div class="forum-comment-content">
         <div class="forum-comment-meta">
-            <strong>{{ comment.author.prenom }} {{ comment.author.nom }}</strong>
+            <strong>
+                {{ comment.author.prenom }} {{ comment.author.nom }}
+                {% if comment.author and 'ROLE_ADMIN' in comment.author.roles %}
+                    <span class="badge bg-dark ms-1">Admin</span>
+                {% endif %}
+            </strong>
             <span class="forum-comment-date">{{ comment.createdAt|date('d/m/Y H:i') }}</span>
         </div>
 
@@ -46,7 +51,7 @@
                                 <button type="submit" class="dropdown-item">Signaler</button>
                             </form>
                         </li>
-                        {% if app.user and (is_granted('ROLE_ADMIN') or app.user.id == comment.author.id) %}
+                        {% if is_granted('ROLE_ADMIN') %}
                             <li>
                                 <form method="post" action="{{ path('app_user_forum_hide_comment', {id: comment.id}) }}">
                                     <input type="hidden" name="_token" value="{{ csrf_token('hide_comment_' ~ comment.id) }}">

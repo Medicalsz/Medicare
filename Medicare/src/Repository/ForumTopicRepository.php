@@ -108,6 +108,30 @@ class ForumTopicRepository extends ServiceEntityRepository
         return $qb->getQuery()->getResult();
     }
 
+    /**
+     * @return ForumTopic[]
+     */
+    public function findReportedForModeration(?string $authorSearch = null, int $limit = 25): array
+    {
+        $qb = $this->createQueryBuilder('t')
+            ->leftJoin('t.author', 'a')
+            ->addSelect('a')
+            ->andWhere('t.isReported = :reported')
+            ->setParameter('reported', true)
+            ->orderBy('t.reportedAt', 'DESC')
+            ->addOrderBy('t.id', 'DESC')
+            ->setMaxResults(max(1, $limit));
+
+        if ($authorSearch !== null && $authorSearch !== '') {
+            $normalized = '%' . mb_strtolower(trim($authorSearch)) . '%';
+            $qb
+                ->andWhere('LOWER(a.prenom) LIKE :search OR LOWER(a.nom) LIKE :search OR LOWER(CONCAT(a.prenom, \' \', a.nom)) LIKE :search')
+                ->setParameter('search', $normalized);
+        }
+
+        return $qb->getQuery()->getResult();
+    }
+
 //    /**
 //     * @return ForumTopic[] Returns an array of ForumTopic objects
 //     */

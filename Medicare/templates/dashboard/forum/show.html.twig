@@ -67,7 +67,7 @@
                     button.classList.toggle('active', isOpen);
                     button.innerHTML = isOpen
                         ? '<i class="fas fa-chevron-up me-2"></i>Masquer le resume'
-                        : '<i class="fas fa-wand-magic-sparkles me-2"></i>Resumer IA';
+                        : '<i class="fas fa-chevron-down me-2"></i>Afficher le resume';
 
                     if (isOpen) {
                         panel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
@@ -84,21 +84,20 @@
         <div class="forum-topic-header-stack">
             <span class="forum-topic-label">SUJET</span>
             <h1 class="forum-topic-heading forum-title-emphasis">{{ topic.title }}</h1>
-            <p class="forum-topic-submeta mb-0">Discussion ouverte par {{ topic.author.prenom }} {{ topic.author.nom }}</p>
+            <p class="forum-topic-submeta mb-0">
+                Discussion ouverte par {{ topic.author.prenom }} {{ topic.author.nom }}
+                {% if topic.author and 'ROLE_ADMIN' in topic.author.roles %}
+                    <span class="badge bg-dark ms-1">Admin</span>
+                {% endif %}
+            </p>
 
             <div class="d-flex flex-wrap gap-2 forum-topic-actions">
                 <a href="{{ path('app_admin_forum_index') }}" class="btn btn-outline-secondary forum-btn-back forum-btn-back-spacing">
                     <i class="fas fa-arrow-left me-2"></i>Retour
                 </a>
                 <a href="{{ path('app_admin_forum_edit', {id: topic.id}) }}" class="btn btn-outline-secondary">Modifier</a>
-                <form method="post" action="{{ path('app_admin_forum_regenerate_summary', {id: topic.id}) }}" class="d-inline">
-                    <input type="hidden" name="_token" value="{{ csrf_token('regenerate_summary_' ~ topic.id) }}">
-                    <button type="submit" class="btn btn-outline-secondary">
-                        <i class="fas fa-sync-alt me-2"></i>Regenerer le resume
-                    </button>
-                </form>
-                <button type="button" class="btn btn-outline-secondary forum-summary-toggle" data-summary-target="topic-summary-panel-admin" aria-expanded="false">
-                    <i class="fas fa-wand-magic-sparkles me-2"></i>Resumer IA
+                <button type="button" class="btn btn-outline-secondary forum-summary-toggle active" data-summary-target="topic-summary-panel-admin" aria-expanded="true">
+                    <i class="fas fa-chevron-up me-2"></i>Masquer le resume
                 </button>
                 <a href="{{ path('app_chat_resume', {topicId: topic.id}) }}" class="btn btn-outline-secondary">
                     <i class="fas fa-robot me-2"></i>{{ topic.isVideoType ? 'Resumer la video' : 'Chatbot resume' }}
@@ -131,7 +130,12 @@
         </div>
 
         <div class="forum-topic-badges forum-topic-badges-spaced mt-3">
-            <span class="forum-meta-badge"><i class="fas fa-user-circle"></i>{{ topic.author.prenom }} {{ topic.author.nom }}</span>
+            <span class="forum-meta-badge">
+                <i class="fas fa-user-circle"></i>{{ topic.author.prenom }} {{ topic.author.nom }}
+                {% if topic.author and 'ROLE_ADMIN' in topic.author.roles %}
+                    <span class="badge bg-dark ms-1">Admin</span>
+                {% endif %}
+            </span>
             <span class="forum-meta-badge"><i class="fas fa-clock"></i>{{ topic.createdAt|date('d/m/Y H:i') }}</span>
             <span class="forum-meta-badge"><i class="fas fa-comments"></i>{{ visible_comments_count }} commentaires</span>
             {% if topic.isVideoType %}
@@ -148,6 +152,26 @@
                 </span>
             {% endif %}
         </div>
+
+        <div class="forum-reaction-bar forum-reaction-bar-spaced mt-3">
+            <form method="post" action="{{ path('app_user_forum_react', {id: topic.id}) }}" class="d-inline">
+                <input type="hidden" name="_token" value="{{ csrf_token('react_topic_' ~ topic.id) }}">
+                <input type="hidden" name="type" value="like">
+                <button type="submit" class="forum-react-btn {{ user_reaction == 'like' ? 'active' : '' }}">
+                    👍 J'aime <span class="count">{{ reaction_counts.like }}</span>
+                </button>
+            </form>
+            <form method="post" action="{{ path('app_user_forum_react', {id: topic.id}) }}" class="d-inline">
+                <input type="hidden" name="_token" value="{{ csrf_token('react_topic_' ~ topic.id) }}">
+                <input type="hidden" name="type" value="love">
+                <button type="submit" class="forum-react-btn love {{ user_reaction == 'love' ? 'active' : '' }}">
+                    ❤️ J'adore <span class="count">{{ reaction_counts.love }}</span>
+                </button>
+            </form>
+            {% if user_reaction %}
+                <span class="badge bg-dark-subtle text-dark ms-2">Reaction admin</span>
+            {% endif %}
+        </div>
     </section>
 
     <article class="forum-topic-main mb-4">
@@ -155,7 +179,7 @@
         <p class="forum-topic-main-content">{{ topic.content|nl2br }}</p>
     </article>
 
-    <section class="forum-ai-summary-panel mb-4" id="topic-summary-panel-admin">
+    <section class="forum-ai-summary-panel is-open mb-4" id="topic-summary-panel-admin">
         <div class="forum-ai-summary-head">
             <span class="forum-ai-chip"><i class="fas fa-sparkles"></i>IA</span>
             <strong>Resume intelligent</strong>
@@ -224,6 +248,8 @@
                         topic: topic,
                         comment: comment,
                         comment_tree: comment_tree,
+                        comment_reaction_counts: comment_reaction_counts,
+                        comment_user_reaction_map: comment_user_reaction_map,
                         level: 0
                     } only %}
                 {% endfor %}

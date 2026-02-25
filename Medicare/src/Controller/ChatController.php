@@ -29,9 +29,9 @@ class ChatController extends AbstractController
             'topics' => $topics,
             'prefill_topic_id' => $prefillTopicId,
             'test_messages' => [
-                'Resumer en 2 lignes',
-                'Donne un resume court',
-                'Resumer tous les messages du sujet',
+                'Fais un resume professionnel en 3 points cles',
+                'Donne une synthese executive en 4 phrases',
+                'Resumer les messages avec recommandations pratiques',
             ],
         ]);
     }
@@ -95,7 +95,7 @@ class ChatController extends AbstractController
         // 3) Short content guard.
         if (mb_strlen($fullText) < 200) {
             return $this->json([
-                'reply' => 'Contenu trop court pour generer un resume pertinent.',
+                'reply' => "Analyse impossible: le contenu est trop court pour produire un resume professionnel fiable.\n\nAjoutez davantage de contexte (au moins un paragraphe detaille), puis relancez la demande.",
                 'sentences' => 0,
                 'source_label' => $sourceLabel,
                 'source_title' => $topicTitle !== '' ? $topicTitle : null,
@@ -161,9 +161,17 @@ class ChatController extends AbstractController
             $session->set('chat_resume_last_summary', $summary);
         }
 
+        $summary = $this->polishSummaryText($summary);
+        $reply = $this->buildProfessionalReply(
+            $summary,
+            $sentences,
+            $sourceLabel,
+            $topicTitle !== '' ? $topicTitle : null
+        );
+
         return $this->json([
             // 3) Always return generated summary, never raw full text.
-            'reply' => $summary,
+            'reply' => $reply,
             'sentences' => $sentences,
             'source_label' => $sourceLabel,
             'source_title' => $topicTitle !== '' ? $topicTitle : null,
@@ -310,5 +318,61 @@ class ChatController extends AbstractController
     private function normalizeForCompare(string $text): string
     {
         return mb_strtolower(trim(preg_replace('/\s+/u', ' ', $text) ?? ''));
+    }
+
+    private function polishSummaryText(string $text): string
+    {
+        $value = trim($text);
+        if ($value === '') {
+            return $value;
+        }
+
+        $value = str_replace(["\r\n", "\r"], "\n", $value);
+        $value = str_replace(['â€¢', '•', '* '], '- ', $value);
+        $value = preg_replace('/[ \t]+/u', ' ', $value) ?? $value;
+        $value = preg_replace("/\n{3,}/u", "\n\n", $value) ?? $value;
+
+        return trim($value);
+    }
+
+    private function buildProfessionalReply(string $summary, int $sentences, string $sourceLabel, ?string $topicTitle): string
+    {
+        $detail = 'niveau standard';
+        if ($sentences <= 2) {
+            $detail = 'niveau court';
+        } elseif ($sentences >= 5) {
+            $detail = 'niveau detaille';
+        }
+
+        $lines = [
+            'Resume professionnel',
+            'Source: ' . $sourceLabel,
+            'Niveau: ' . $detail,
+        ];
+
+        if ($topicTitle !== null && trim($topicTitle) !== '') {
+            $lines[] = 'Sujet: ' . trim($topicTitle);
+        }
+
+        $lines[] = '';
+        $lines[] = 'Synthese:';
+
+        if (preg_match('/^\s*-\s+/m', $summary) === 1) {
+            $lines[] = $summary;
+        } else {
+            $parts = preg_split('/(?<=[.!?])\s+/u', trim($summary)) ?: [];
+            $parts = array_values(array_filter(array_map('trim', $parts), static fn (string $p): bool => $p !== ''));
+            if ($parts === []) {
+                $parts = [trim($summary)];
+            }
+
+            $max = max(1, min(6, $sentences));
+            $parts = array_slice($parts, 0, $max);
+            foreach ($parts as $part) {
+                $lines[] = '- ' . $part;
+            }
+        }
+
+        return implode("\n", $lines);
     }
 }

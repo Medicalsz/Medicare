@@ -389,19 +389,19 @@
     <section class="chat-card chat-panel">
         <div class="chat-panel-head">
             <h2>Chatbot Resumeur IA</h2>
-            <p>Posez votre demande de resume, puis discutez avec l'assistant local.</p>
+            <p>Formulez votre demande: l'assistant fournit une synthese professionnelle et structuree.</p>
         </div>
 
         <div class="chat-toolbar">
-            <button class="quick-btn" type="button" data-quick-message="Resumer en 2 lignes">Resumer en 2 lignes</button>
-            <button class="quick-btn" type="button" data-quick-message="Resumer en 5 lignes">Resumer en 5 lignes</button>
+            <button class="quick-btn" type="button" data-quick-message="Fais un resume professionnel en 3 points cles">Resume professionnel</button>
+            <button class="quick-btn" type="button" data-quick-message="Donne une synthese executive en 4 phrases">Synthese executive</button>
         </div>
 
         <div class="chat-messages" id="chatMessages">
             <div class="chat-row bot">
                 <span class="chat-avatar bot">IA</span>
                 <div class="chat-bubble bot">
-                    Bonjour. Donnez une instruction de resume, puis choisissez un sujet du forum ou collez un texte.
+                    Bonjour. Je peux produire un resume professionnel, clair et actionnable a partir d'un sujet ou d'un texte libre.
                 </div>
             </div>
         </div>
@@ -416,7 +416,7 @@
                     type="text"
                     id="chatPromptInput"
                     class="form-control"
-                    placeholder="Ex: Resumer tous les messages du sujet en 3 phrases"
+                    placeholder="Ex: Donne une synthese executive en 4 phrases avec points cles"
                 >
                 <button class="btn btn-primary" id="chatSendButton" type="button">Envoyer</button>
             </div>
@@ -427,5 +427,5 @@
 
 {% block javascripts %}
     {{ parent() }}
-    <script src="{{ asset('assets/js/chat-resume.js') }}?v=20260222-1"></script>
+    <script src="{{ asset('assets/js/chat-resume.js') }}?v=20260225-1"></script>
 {% endblock %}
