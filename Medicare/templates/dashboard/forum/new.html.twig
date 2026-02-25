@@ -57,13 +57,13 @@
                 <p class="mb-0">Nouvelle publication</p>
             </div>
 
-            {{ form_start(form) }}
+            {{ form_start(form, {'attr': {'class': 'js-validate-form'}}) }}
                 <div class="forum-field-block">
                     {{ form_label(form.type, 'Type de sujet', {'label_attr': {'class': 'forum-label'}}) }}
                     <div class="forum-type-choice">
                         {{ form_widget(form.type) }}
                     </div>
-                    <div class="forum-field-errors">{{ form_errors(form.type) }}</div>
+                    {{ form_errors(form.type) }}
                 </div>
 
                 <div class="forum-field-block">
@@ -78,7 +78,7 @@
                         }) }}
                     </div>
                     <small class="forum-input-hint">Essayez de rester court et specifique.</small>
-                    <div class="forum-field-errors">{{ form_errors(form.title) }}</div>
+                    {{ form_errors(form.title) }}
                 </div>
 
                 <div class="forum-field-block" id="video-url-block">
@@ -93,7 +93,7 @@
                         }) }}
                     </div>
                     <small class="forum-input-hint">YouTube, Vimeo ou lien direct mp4/webm/ogg.</small>
-                    <div class="forum-field-errors">{{ form_errors(form.videoUrl) }}</div>
+                    {{ form_errors(form.videoUrl) }}
                 </div>
 
                 <div class="forum-field-block">
@@ -109,7 +109,7 @@
                         }) }}
                     </div>
                     <small class="forum-input-hint">Structure conseillee: contexte, probleme, question.</small>
-                    <div class="forum-field-errors">{{ form_errors(form.content) }}</div>
+                    {{ form_errors(form.content) }}
                 </div>
 
                 <div class="forum-submit-row">

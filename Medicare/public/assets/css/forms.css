@@ -1,0 +1,21 @@
+/* Global form validation styles (Symfony + Bootstrap-friendly) */
+.error-text,
+.invalid-feedback {
+    color: #dc3545;
+    font-size: 0.875rem;
+    margin-top: 0.35rem;
+}
+
+input.is-invalid,
+textarea.is-invalid,
+select.is-invalid {
+    border-color: #dc3545 !important;
+    background-color: #fff5f5;
+}
+
+input.is-invalid:focus,
+textarea.is-invalid:focus,
+select.is-invalid:focus {
+    border-color: #dc3545 !important;
+    box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.15);
+}

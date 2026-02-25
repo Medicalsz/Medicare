@@ -12,6 +12,7 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\Validator\Constraints\Url;
 
 class ForumTopicType extends AbstractType
@@ -29,10 +30,16 @@ class ForumTopicType extends AbstractType
             ])
             ->add('title', TextType::class, [
                 'label' => 'Titre',
+                'constraints' => [
+                    new NotBlank(['message' => 'Ce champ est obligatoire']),
+                ],
             ])
             ->add('content', TextareaType::class, [
                 'label' => 'Description / Contenu',
                 'attr' => ['rows' => 6],
+                'constraints' => [
+                    new NotBlank(['message' => 'Ce champ est obligatoire']),
+                ],
             ])
             ->add('videoUrl', TextType::class, [
                 'label' => 'URL video',

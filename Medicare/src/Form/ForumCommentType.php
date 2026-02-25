@@ -7,6 +7,7 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Validator\Constraints\NotBlank;
 
 class ForumCommentType extends AbstractType
 {
@@ -15,6 +16,9 @@ class ForumCommentType extends AbstractType
         $builder->add('content', TextareaType::class, [
             'label' => 'Votre commentaire',
             'attr' => ['rows' => 3],
+            'constraints' => [
+                new NotBlank(['message' => 'Ce champ est obligatoire']),
+            ],
         ]);
     }
 
