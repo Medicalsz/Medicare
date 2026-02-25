@@ -55,6 +55,35 @@
     }
 
     function validateField(form, field) {
+        if (field.type === 'radio') {
+            var radioGroup = form.querySelectorAll('input[type="radio"][name="' + CSS.escape(field.name) + '"]');
+            var required = false;
+            var hasChecked = false;
+
+            radioGroup.forEach(function (radio) {
+                if (isFieldRequired(radio)) {
+                    required = true;
+                }
+                if (radio.checked) {
+                    hasChecked = true;
+                }
+            });
+
+            if (!required) {
+                return true;
+            }
+
+            if (!hasChecked) {
+                setFieldError(form, field, 'Ce champ est obligatoire');
+                return false;
+            }
+
+            radioGroup.forEach(function (radio) {
+                clearFieldError(form, radio);
+            });
+            return true;
+        }
+
         if (!isFieldRequired(field)) {
             return true;
         }
