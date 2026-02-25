@@ -2,8 +2,12 @@
 framework:
     secret: '%env(APP_SECRET)%'
 
-    # Note that the session will be started ONLY if you read or write from it.
-    session: true
+    session:
+        handler_id: null
+        cookie_secure: auto
+        cookie_samesite: lax
+        # Use an absolute base path (e.g. /symfony/app) or enable "auto"
+        #save_path: "%kernel.project_dir%/var/sessions/%kernel.environment%"
 
     #esi: true
     #fragments: true

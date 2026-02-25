@@ -1,0 +1,74 @@
+{{ form_start(form, {'attr': {'class': 'needs-validation', 'novalidate': 'novalidate'}}) }}
+    <div class="row g-3">
+        <div class="col-md-6">
+            <div class="form-floating mb-3">
+                {{ form_widget(form.name, {'attr': {'class': 'form-control', 'placeholder': 'Nom du partenaire'}}) }}
+                {{ form_label(form.name) }}
+                <div class="invalid-feedback">{{ form_errors(form.name) }}</div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="form-floating mb-3">
+                {{ form_widget(form.email, {'attr': {'class': 'form-control', 'placeholder': 'Email'}}) }}
+                {{ form_label(form.email) }}
+                <div class="invalid-feedback">{{ form_errors(form.email) }}</div>
+            </div>
+        </div>
+        <div class="col-md-12">
+            <div class="form-floating mb-3">
+                {{ form_widget(form.adresse, {'attr': {'class': 'form-control', 'placeholder': 'Adresse'}}) }}
+                {{ form_label(form.adresse) }}
+                <div class="invalid-feedback">{{ form_errors(form.adresse) }}</div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="form-floating mb-3">
+                {{ form_widget(form.telephone, {'attr': {'class': 'form-control', 'placeholder': 'Téléphone'}}) }}
+                {{ form_label(form.telephone) }}
+                <div class="invalid-feedback">{{ form_errors(form.telephone) }}</div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="form-floating mb-3">
+                {{ form_widget(form.datePartenariat, {'attr': {'class': 'form-control'}}) }}
+                {{ form_label(form.datePartenariat) }}
+                <div class="invalid-feedback">{{ form_errors(form.datePartenariat) }}</div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="form-group mb-3">
+                {{ form_label(form.typePartenaire, null, {'label_attr': {'class': 'form-label small text-muted'}}) }}
+                {{ form_widget(form.typePartenaire, {'attr': {'class': 'form-select'}}) }}
+                <div class="invalid-feedback">{{ form_errors(form.typePartenaire) }}</div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="form-group mb-3">
+                {{ form_label(form.statut, null, {'label_attr': {'class': 'form-label small text-muted'}}) }}
+                {{ form_widget(form.statut, {'attr': {'class': 'form-select'}}) }}
+                <div class="invalid-feedback">{{ form_errors(form.statut) }}</div>
+            </div>
+        </div>
+        <div class="col-12">
+            <div class="card bg-light border-0 mb-3">
+                <div class="card-body">
+                    <label class="form-label d-block mb-3">Logo du partenaire</label>
+                    {% if partner is defined and partner.imageName %}
+                        <div class="mb-3">
+                            <img src="{{ vich_uploader_asset(partner, 'imageFile') }}" alt="{{ partner.name }}" class="img-thumbnail" style="height: 100px;">
+                        </div>
+                    {% endif %}
+                    {{ form_widget(form.imageFile) }}
+                    <small class="text-muted d-block mt-2">Format JPG, PNG ou WEBP. Max 2Mo.</small>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="d-flex justify-content-end gap-2 mt-4">
+        <a href="{{ path('app_partner_index') }}" class="btn btn-light px-4">Annuler</a>
+        <button type="submit" class="btn btn-primary px-4 shadow-sm">
+            <i class="bi bi-check-lg me-2"></i>{{ button_label|default('Enregistrer') }}
+        </button>
+    </div>
+{{ form_end(form) }}

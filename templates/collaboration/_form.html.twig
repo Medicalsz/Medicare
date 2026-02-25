@@ -1,0 +1,71 @@
+{{ form_start(form, {'attr': {'class': 'needs-validation', 'novalidate': 'novalidate'}}) }}
+    <div class="row g-3">
+        <div class="col-md-12">
+            <div class="form-floating mb-3">
+                {{ form_widget(form.titre, {'attr': {'class': 'form-control', 'placeholder': 'Titre de la collaboration'}}) }}
+                {{ form_label(form.titre) }}
+                <div class="invalid-feedback">{{ form_errors(form.titre) }}</div>
+            </div>
+        </div>
+        
+        <div class="col-md-12">
+            <div class="form-group mb-3">
+                {{ form_label(form.description, null, {'label_attr': {'class': 'form-label small text-muted'}}) }}
+                {{ form_widget(form.description, {'attr': {'class': 'form-control', 'rows': '4', 'placeholder': 'Décrivez les objectifs...'}}) }}
+                <div class="invalid-feedback">{{ form_errors(form.description) }}</div>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="form-floating mb-3">
+                {{ form_widget(form.dateDebut, {'attr': {'class': 'form-control'}}) }}
+                {{ form_label(form.dateDebut) }}
+                <div class="invalid-feedback">{{ form_errors(form.dateDebut) }}</div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="form-floating mb-3">
+                {{ form_widget(form.dateFin, {'attr': {'class': 'form-control'}}) }}
+                {{ form_label(form.dateFin) }}
+                <div class="invalid-feedback">{{ form_errors(form.dateFin) }}</div>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="form-group mb-3">
+                {{ form_label(form.statut, null, {'label_attr': {'class': 'form-label small text-muted'}}) }}
+                {{ form_widget(form.statut, {'attr': {'class': 'form-select'}}) }}
+                <div class="invalid-feedback">{{ form_errors(form.statut) }}</div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="form-group mb-3">
+                {{ form_label(form.partner, null, {'label_attr': {'class': 'form-label small text-muted'}}) }}
+                {{ form_widget(form.partner, {'attr': {'class': 'form-select'}}) }}
+                <div class="invalid-feedback">{{ form_errors(form.partner) }}</div>
+            </div>
+        </div>
+
+        <div class="col-12">
+            <div class="card bg-light border-0 mb-3">
+                <div class="card-body">
+                    <label class="form-label d-block mb-3">Image de la collaboration</label>
+                    {% if collaboration is defined and collaboration.imageName %}
+                        <div class="mb-3">
+                            <img src="{{ vich_uploader_asset(collaboration, 'imageFile') }}" alt="{{ collaboration.titre }}" class="img-thumbnail" style="height: 120px;">
+                        </div>
+                    {% endif %}
+                    {{ form_widget(form.imageFile) }}
+                    <small class="text-muted d-block mt-2">Format JPG, PNG ou WEBP. Max 2Mo.</small>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="d-flex justify-content-end gap-2 mt-4">
+        <a href="{{ path('app_collaboration_index') }}" class="btn btn-light px-4">Annuler</a>
+        <button type="submit" class="btn btn-success px-4 shadow-sm">
+            <i class="bi bi-check-lg me-2"></i>{{ button_label|default('Enregistrer') }}
+        </button>
+    </div>
+{{ form_end(form) }}

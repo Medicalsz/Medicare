@@ -16,6 +16,34 @@ return [
         'path' => './assets/app.js',
         'entrypoint' => true,
     ],
+    // JavaScript Files
+    'wow' => [
+        'path' => './public/assets/lib/wow/wow.min.js',
+    ],
+    'easing' => [
+        'path' => './public/assets/lib/easing/easing.min.js',
+    ],
+    'waypoints' => [
+        'path' => './public/assets/lib/waypoints/waypoints.min.js',
+    ],
+    'counterup' => [
+        'path' => './public/assets/lib/counterup/counterup.min.js',
+    ],
+    'owl-carousel-js' => [
+        'path' => './public/assets/lib/owlcarousel/owl.carousel.min.js',
+    ],
+    'moment' => [
+        'path' => './public/assets/lib/tempusdominus/js/moment.min.js',
+    ],
+    'moment-timezone' => [
+        'path' => './public/assets/lib/tempusdominus/js/moment-timezone.min.js',
+    ],
+    'tempusdominus-js' => [
+        'path' => './public/assets/lib/tempusdominus/js/tempusdominus-bootstrap-4.min.js',
+    ],
+    'main' => [
+        'path' => './public/assets/js/main.js',
+    ],
     '@hotwired/stimulus' => [
         'version' => '3.2.2',
     ],

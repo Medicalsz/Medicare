@@ -1,0 +1,100 @@
+{% extends 'admin_base.html.twig' %}
+
+{% block title %}Détails Collaboration{% endblock %}
+
+{% block body %}
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+            <div class="d-flex align-items-center mb-4">
+                <a href="{{ path('app_collaboration_index') }}" class="btn btn-outline-secondary btn-sm rounded-circle me-3">
+                    <i class="bi bi-arrow-left"></i>
+                </a>
+                <h1 class="h3 mb-0 text-gray-800">Détails de la Collaboration</h1>
+            </div>
+
+            <div class="card shadow-sm border-0 rounded-4 overflow-hidden mb-4">
+                <div class="position-relative" style="height: 300px; background-color: #f8f9fa;">
+                    {% if collaboration.imageName %}
+                        <img src="{{ vich_uploader_asset(collaboration, 'imageFile') }}" class="w-100 h-100 object-fit-cover" alt="{{ collaboration.titre }}">
+                    {% else %}
+                        <div class="d-flex align-items-center justify-content-center h-100 text-muted">
+                            <i class="bi bi-person-badge" style="font-size: 5rem;"></i>
+                        </div>
+                    {% endif %}
+                    <div class="position-absolute bottom-0 start-0 w-100 p-4" style="background: linear-gradient(transparent, rgba(0,0,0,0.7));">
+                        <h2 class="text-white fw-bold mb-0">{{ collaboration.titre }}</h2>
+                    </div>
+                </div>
+
+                <div class="card-body p-4">
+                    <div class="row g-4 mb-4">
+                        <div class="col-md-8">
+                            <h5 class="fw-bold mb-3">À propos de ce projet</h5>
+                            <p class="text-muted lh-lg">{{ collaboration.description|nl2br }}</p>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="bg-light rounded-4 p-4">
+                                <div class="mb-4">
+                                    <label class="text-muted small text-uppercase fw-bold d-block mb-2">Partenaire</label>
+                                    <div class="d-flex align-items-center">
+                                        <div class="bg-primary-subtle text-primary rounded-circle p-2 me-2">
+                                            <i class="bi bi-building"></i>
+                                        </div>
+                                        <a href="{{ path('app_partner_show', {'id': collaboration.partner.id}) }}" class="text-decoration-none fw-bold text-dark">
+                                            {{ collaboration.partner.name }}
+                                        </a>
+                                    </div>
+                                </div>
+
+                                <div class="mb-4">
+                                    <label class="text-muted small text-uppercase fw-bold d-block mb-2">Période</label>
+                                    <div class="small">
+                                        <div class="mb-1"><i class="bi bi-calendar-event me-2"></i>Du {{ collaboration.dateDebut|date('d/m/Y') }}</div>
+                                        <div><i class="bi bi-calendar-check me-2"></i>Au {{ collaboration.dateFin|date('d/m/Y') }}</div>
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <label class="text-muted small text-uppercase fw-bold d-block mb-2">Statut</label>
+                                    <span class="badge 
+                                        {% if collaboration.statut.value == 'EN_COURS' %}bg-info
+                                        {% elseif collaboration.statut.value == 'TERMINEE' %}bg-success
+                                        {% elseif collaboration.statut.value == 'EN_ATTENTE' %}bg-warning
+                                        {% else %}bg-danger{% endif %} w-100 py-2 fs-6 shadow-sm">
+                                        {{ collaboration.statut.value }}
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <hr class="my-4 opacity-25">
+
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div class="gap-2 d-flex">
+                            <a href="{{ path('app_collaboration_pdf', {'id': collaboration.id}) }}" class="btn btn-outline-dark px-4 shadow-sm">
+                                <i class="bi bi-file-pdf me-2"></i>Exporter PDF
+                            </a>
+                            <a href="{{ path('app_collaboration_csv', {'id': collaboration.id}) }}" class="btn btn-outline-secondary px-4 shadow-sm">
+                                <i class="bi bi-file-spreadsheet me-2"></i>Exporter CSV
+                            </a>
+                        </div>
+                        <div class="gap-2 d-flex">
+                            <a href="{{ path('app_collaboration_edit', {'id': collaboration.id}) }}" class="btn btn-success px-4 shadow-sm">
+                                <i class="bi bi-pencil me-2"></i>Modifier
+                            </a>
+                            {{ include('collaboration/_delete_form.html.twig', {'button_class': 'btn btn-outline-danger px-4'}) }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .object-fit-cover { object-fit: cover; }
+    .bg-primary-subtle { background-color: #cfe2ff; }
+</style>
+{% endblock %}

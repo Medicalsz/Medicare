@@ -1,0 +1,219 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ cause.titre }} - Medicare{% endblock %}
+
+{% block stylesheets %}
+  <style>
+    #header {
+      background-color: rgba(255, 255, 255, 0.95);
+      box-shadow: 0px 2px 15px rgba(0, 0, 0, 0.1);
+    }
+
+    .cause-detail-header {
+      padding: 120px 0 60px 0;
+      background: #f8fbfb;
+    }
+
+    .cause-main-img {
+      width: 100%;
+      border-radius: 15px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+      margin-bottom: 30px;
+    }
+
+    .donation-sidebar {
+      background: white;
+      padding: 30px;
+      border-radius: 15px;
+      box-shadow: 0 5px 25px rgba(0,0,0,0.05);
+      position: sticky;
+      top: 100px;
+    }
+
+    .progress-container {
+      margin: 25px 0;
+    }
+
+    .progress {
+      height: 12px;
+      border-radius: 10px;
+      background-color: #e9ecef;
+    }
+
+    .progress-bar {
+      background: linear-gradient(90deg, var(--accent-color), #067d87);
+      border-radius: 10px;
+    }
+
+    .stats-row {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 10px;
+      font-weight: 600;
+    }
+
+    .collected-amount {
+      font-size: 1.5rem;
+      color: var(--accent-color);
+    }
+
+    .target-amount {
+      font-size: 1.1rem;
+      color: var(--default-color);
+    }
+
+    .cause-title {
+      font-size: 2.5rem;
+      font-weight: 700;
+      color: var(--heading-color);
+      margin-bottom: 20px;
+    }
+
+    .cause-full-description {
+      font-size: 1.1rem;
+      line-height: 1.8;
+      color: var(--default-color);
+      white-space: pre-line;
+    }
+
+    .btn-donate-now {
+      background: var(--accent-color);
+      color: white;
+      border: none;
+      padding: 15px 30px;
+      border-radius: 50px;
+      font-weight: 700;
+      width: 100%;
+      font-size: 1.1rem;
+      transition: 0.3s;
+      display: inline-block;
+      text-align: center;
+    }
+
+    .btn-donate-now:hover {
+      background: #067d87;
+      color: white;
+      transform: translateY(-3px);
+      box-shadow: 0 10px 20px rgba(9, 154, 167, 0.2);
+    }
+  </style>
+{% endblock %}
+
+{% block body %}
+  <main class="main">
+
+    <section class="cause-detail-header">
+      <div class="container">
+        {% for message in app.flashes('success') %}
+          <div class="alert alert-success alert-dismissible fade show mb-4" role="alert">
+            <i class="bi bi-check-circle me-2"></i>
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+          </div>
+        {% endfor %}
+
+        <nav aria-label="breadcrumb">
+          <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{{ path('app_home') }}">Accueil</a></li>
+            <li class="breadcrumb-item"><a href="{{ path('app_donation_index') }}">Donnations</a></li>
+            <li class="breadcrumb-item active" aria-current="page">{{ cause.titre }}</li>
+          </ol>
+        </nav>
+
+        <div class="row mt-4">
+          <div class="col-lg-8">
+            <h1 class="cause-title" data-aos="fade-up">{{ cause.titre }}</h1>
+            
+            {% if cause.images|length > 0 %}
+              {% set image = cause.images[0] %}
+              {% if image.imageFile %}
+                <img src="{{ vich_uploader_asset(image, 'imageFile') }}" alt="{{ cause.titre }}" class="cause-main-img" data-aos="zoom-in">
+              {% else %}
+                <img src="{{ image.urlImage }}" alt="{{ cause.titre }}" class="cause-main-img" data-aos="zoom-in">
+              {% endif %}
+            {% else %}
+              <img src="{{ asset('assets/img/health/facilities-3.webp') }}" alt="Default Cause" class="cause-main-img" data-aos="zoom-in">
+            {% endif %}
+
+            <div class="cause-full-description" data-aos="fade-up">
+              <h3>À propos de cette cause</h3>
+              <p>{{ cause.description }}</p>
+            </div>
+          </div>
+
+          <div class="col-lg-4">
+            <div class="donation-sidebar" data-aos="fade-left">
+              <div class="stats-row">
+                <span class="collected-amount">{{ montantCollecte }} DT</span>
+                <span class="target-amount">Objectif : {{ objectif }} DT</span>
+              </div>
+
+              <div class="progress-container">
+                <div class="progress">
+                  <div class="progress-bar" role="progressbar" style="width: {{ pourcentage }}%" aria-valuenow="{{ pourcentage }}" aria-valuemin="0" aria-valuemax="100"></div>
+                </div>
+                <div class="text-end mt-2">
+                  <small class="text-muted">{{ pourcentage|round(0) }}% de l'objectif atteint</small>
+                </div>
+              </div>
+
+              <a href="{{ path('app_donation_form', {'id': cause.id}) }}" class="btn-donate-now">Faire un don maintenant</a>
+
+              <hr class="my-4">
+
+              <div class="secure-info d-flex align-items-center gap-3">
+                <i class="bi bi-shield-check text-success fs-2"></i>
+                <div>
+                  <h6 class="mb-0">Don sécurisé</h6>
+                  <small class="text-muted">Vos informations sont protégées</small>
+                </div>
+              </div>
+
+              <hr class="my-4">
+
+              <div class="recent-donations">
+                <h5 class="mb-4 fw-bold"><i class="bi bi-clock-history me-2"></i>Dons récents</h5>
+                <div class="donation-list">
+                  {% for don in cause.dons|reverse|slice(0, 5) %}
+                    <div class="donation-item mb-3 p-3 border rounded shadow-sm bg-light">
+                      <div class="d-flex justify-content-between align-items-center mb-2">
+                        <span class="fw-bold text-dark">
+                          <i class="bi bi-person-circle me-1 text-accent"></i>
+                          {{ don.donateur.prenom }} {{ don.donateur.nom|slice(0, 1) }}.
+                        </span>
+                        <small class="text-muted">{{ don.dateDon|date('d/m/Y') }}</small>
+                      </div>
+                      
+                      {% if don.typeDon.value == 'argent' %}
+                        <div class="donation-amount fw-bold text-success">
+                          <i class="bi bi-cash-stack me-1"></i>
+                          + {{ don.montant|number_format(2, ',', ' ') }} DT
+                        </div>
+                      {% else %}
+                        <div class="donation-materials">
+                          <div class="text-primary small fw-bold mb-1">
+                            <i class="bi bi-box-seam me-1"></i>Don matériel :
+                          </div>
+                          <ul class="list-unstyled mb-0 ps-3 border-start border-primary border-2">
+                            {% for objet in don.objets %}
+                              <li class="small text-muted">
+                                <i class="bi bi-dot"></i> {{ objet.nomObjet }} (x{{ objet.quantite }})
+                              </li>
+                            {% endfor %}
+                          </ul>
+                        </div>
+                      {% endif %}
+                    </div>
+                  {% else %}
+                    <p class="text-muted text-center small">Aucun don pour le moment. Soyez le premier !</p>
+                  {% endfor %}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+{% endblock %}

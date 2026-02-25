@@ -1,0 +1,251 @@
+{% extends 'admin_base.html.twig' %}
+
+{% block title %}Statistiques Partenariats{% endblock %}
+
+{% block body %}
+<div class="container-fluid py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1 class="h3 mb-0 text-gray-800">Analyses & Statistiques</h1>
+            <p class="text-muted small mb-0">Aperçu de la performance du réseau de partenaires et des collaborations</p>
+        </div>
+        <div class="d-flex gap-2">
+            <button class="btn btn-outline-primary btn-sm shadow-sm" onclick="window.print()">
+                <i class="bi bi-printer me-2"></i>Imprimer le rapport
+            </button>
+        </div>
+    </div>
+
+    <!-- Key Metrics -->
+    <div class="row g-4 mb-4">
+        <div class="col-md-6 col-xl-3">
+            <div class="card border-0 shadow-sm rounded-4 h-100">
+                <div class="card-body p-4">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <div class="bg-primary-subtle text-primary rounded-3 p-3">
+                            <i class="bi bi-building fs-4"></i>
+                        </div>
+                        <span class="badge bg-success-subtle text-success">+{{ totalPartners }} Total</span>
+                    </div>
+                    <h6 class="text-muted small text-uppercase fw-bold mb-1">Total Partenaires</h6>
+                    <h2 class="fw-bold mb-0">{{ totalPartners }}</h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 col-xl-3">
+            <div class="card border-0 shadow-sm rounded-4 h-100">
+                <div class="card-body p-4">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <div class="bg-success-subtle text-success rounded-3 p-3">
+                            <i class="bi bi-person-badge fs-4"></i>
+                        </div>
+                        <span class="badge bg-primary-subtle text-primary">Actif</span>
+                    </div>
+                    <h6 class="text-muted small text-uppercase fw-bold mb-1">Total Collaborations</h6>
+                    <h2 class="fw-bold mb-0">{{ totalCollabs }}</h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 col-xl-3">
+            <div class="card border-0 shadow-sm rounded-4 h-100">
+                <div class="card-body p-4">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <div class="bg-info-subtle text-info rounded-3 p-3">
+                            <i class="bi bi-people fs-4"></i>
+                        </div>
+                    </div>
+                    <h6 class="text-muted small text-uppercase fw-bold mb-1">Total Patients</h6>
+                    <h2 class="fw-bold mb-0">{{ totalPatients }}</h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 col-xl-3">
+            <div class="card border-0 shadow-sm rounded-4 h-100">
+                <div class="card-body p-4">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <div class="bg-warning-subtle text-warning rounded-3 p-3">
+                            <i class="bi bi-calendar-event fs-4"></i>
+                        </div>
+                    </div>
+                    <h6 class="text-muted small text-uppercase fw-bold mb-1">Total Rendez-vous</h6>
+                    <h2 class="fw-bold mb-0">{{ totalRendezvous }}</h2>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-4">
+        <!-- Charts -->
+        <div class="col-xl-8">
+            <div class="card border-0 shadow-sm rounded-4 mb-4">
+                <div class="card-header bg-white border-0 py-3">
+                    <h5 class="fw-bold mb-0">Répartition des Partenaires par Type</h5>
+                </div>
+                <div class="card-body p-4">
+                    <div style="height: 300px;">
+                        <canvas id="partnerTypeChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card border-0 shadow-sm rounded-4">
+                <div class="card-header bg-white border-0 py-3">
+                    <h5 class="fw-bold mb-0">Top 5 Partenaires les plus actifs</h5>
+                </div>
+                <div class="card-body p-4">
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle mb-0">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Partenaire</th>
+                                    <th class="text-center">Collaborations</th>
+                                    <th>Progression</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for name, count in topPartners %}
+                                    <tr>
+                                        <td class="fw-bold">{{ name }}</td>
+                                        <td class="text-center"><span class="badge bg-primary rounded-pill">{{ count }}</span></td>
+                                        <td style="width: 40%;">
+                                            {% set percent = (totalCollabs > 0) ? (count / totalCollabs * 100) : 0 %}
+                                            <div class="progress" style="height: 8px;">
+                                                <div class="progress-bar" role="progressbar" style="width: {{ percent }}%"></div>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-4">
+            <div class="card border-0 shadow-sm rounded-4 mb-4">
+                <div class="card-header bg-white border-0 py-3">
+                    <h5 class="fw-bold mb-0">Statut des Collaborations</h5>
+                </div>
+                <div class="card-body p-4 d-flex flex-column align-items-center justify-content-center">
+                    <div style="width: 100%; max-width: 250px;">
+                        <canvas id="collabStatusChart"></canvas>
+                    </div>
+                    <div class="mt-4 w-100">
+                        {% for status, count in collabsByStatus %}
+                            <div class="d-flex justify-content-between align-items-center mb-2 p-2 rounded bg-light">
+                                <span class="small fw-bold">{{ status }}</span>
+                                <span class="badge bg-dark">{{ count }}</span>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+
+            <div class="card border-0 shadow-sm rounded-4">
+                <div class="card-header bg-white border-0 py-3">
+                    <h5 class="fw-bold mb-0">Statut des Rendez-vous</h5>
+                </div>
+                <div class="card-body p-4">
+                    <div style="height: 250px;">
+                        <canvas id="rendezvousStatusChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block javascripts %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Partner Type Chart
+        const partnerLabels = {{ partnersByTypeLabels|json_encode|raw }};
+        const partnerData = {{ partnersByTypeData|json_encode|raw }};
+        
+        new Chart(document.getElementById('partnerTypeChart'), {
+            type: 'bar',
+            data: {
+                labels: partnerLabels,
+                datasets: [{
+                    label: 'Nombre de partenaires',
+                    data: partnerData,
+                    backgroundColor: '#2487ce',
+                    borderRadius: 10,
+                    barThickness: 40
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { display: false } },
+                scales: {
+                    y: { beginAtZero: true, grid: { display: false } },
+                    x: { grid: { display: false } }
+                }
+            }
+        });
+
+        // Collab Status Chart
+        const statusLabels = {{ collabsByStatusLabels|json_encode|raw }};
+        const statusData = {{ collabsByStatusData|json_encode|raw }};
+
+        new Chart(document.getElementById('collabStatusChart'), {
+            type: 'doughnut',
+            data: {
+                labels: statusLabels,
+                datasets: [{
+                    data: statusData,
+                    backgroundColor: ['#43a047', '#00acc1', '#ffb300', '#e53935'],
+                    borderWidth: 0
+                }]
+            },
+            options: {
+                responsive: true,
+                cutout: '70%',
+                plugins: {
+                    legend: { display: false }
+                }
+            }
+        });
+
+        // Rendezvous Status Chart
+        const rendezvousStatusLabels = {{ rendezvousByStatusLabels|json_encode|raw }};
+        const rendezvousStatusData = {{ rendezvousByStatusData|json_encode|raw }};
+
+        new Chart(document.getElementById('rendezvousStatusChart'), {
+            type: 'pie',
+            data: {
+                labels: rendezvousStatusLabels,
+                datasets: [{
+                    data: rendezvousStatusData,
+                    backgroundColor: ['#2487ce', '#43a047', '#e53935'],
+                    borderWidth: 0
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: { 
+                        position: 'bottom',
+                        labels: {
+                            boxWidth: 20,
+                            padding: 20
+                        }
+                    }
+                }
+            }
+        });
+    });
+</script>
+
+<style>
+    .bg-primary-subtle { background-color: #cfe2ff !important; }
+    .bg-success-subtle { background-color: #d1e7dd !important; }
+    .bg-info-subtle { background-color: #cff4fc !important; }
+    .bg-warning-subtle { background-color: #fff3cd !important; }
+</style>
+{% endblock %}

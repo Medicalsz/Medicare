@@ -1,0 +1,170 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Nos Partenaires - Medicare{% endblock %}
+
+{% block stylesheets %}
+  <style>
+    .partnership-header {
+      padding: 120px 0 60px 0;
+      background: linear-gradient(135deg, #2487ce 0%, #067d87 100%);
+      color: white;
+      text-align: center;
+    }
+
+    .partner-card {
+      background: white;
+      border-radius: 20px;
+      padding: 30px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+      transition: all 0.3s ease;
+      height: 100%;
+      text-align: center;
+      border: 1px solid rgba(0,0,0,0.02);
+    }
+
+    .partner-card:hover {
+      transform: translateY(-10px);
+      box-shadow: 0 15px 40px rgba(0, 0, 0, 0.1);
+    }
+
+    .partner-logo-container {
+      width: 120px;
+      height: 120px;
+      margin: 0 auto 20px auto;
+      background: #f8f9fa;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      box-shadow: inset 0 2px 10px rgba(0,0,0,0.05);
+    }
+
+    .partner-logo {
+      max-width: 80%;
+      max-height: 80%;
+      object-fit: contain;
+    }
+
+    .partner-type {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      font-weight: 700;
+      color: var(--accent-color);
+      margin-bottom: 10px;
+      display: block;
+    }
+
+    .partner-name {
+      font-size: 1.25rem;
+      font-weight: 700;
+      margin-bottom: 15px;
+      color: #1e1e2d;
+    }
+
+    .partner-info {
+      font-size: 0.9rem;
+      color: #6c757d;
+      margin-bottom: 5px;
+    }
+
+    .partner-info i {
+      margin-right: 8px;
+      color: #2487ce;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 100px 0;
+    }
+  </style>
+{% endblock %}
+
+{% block body %}
+  <main class="main">
+
+    <section class="partnership-header">
+      <div class="container">
+        <h1 data-aos="fade-up">Notre Réseau de Partenaires</h1>
+        <p data-aos="fade-up" data-aos-delay="100">Nous collaborons avec les meilleures institutions de santé pour vous offrir un service d'excellence.</p>
+      </div>
+    </section>
+
+    <section id="partners" class="partners section py-5">
+      <div class="container">
+
+        <div class="filter-form-container border-bottom pb-4 mb-5" data-aos="fade-up">
+          <form action="{{ path('app_front_partners') }}" method="get" class="row g-3 align-items-end">
+            <div class="col-md-6">
+              <label for="search" class="form-label">Rechercher</label>
+              <input type="text" id="search" name="search" class="form-control" placeholder="Nom du partenaire, mot-clé..." value="{{ searchTerm }}">
+            </div>
+            <div class="col-md-4">
+              <label for="type" class="form-label">Type de partenaire</label>
+              <select id="type" name="type" class="form-select">
+                <option value="">Tous les types</option>
+                {% for type in ['CLINIQUE', 'PHARMACIE', 'LABORATOIRE', 'ASSURANCE'] %}
+                  <option value="{{ type }}" {{ selectedType == type ? 'selected' : '' }}>{{ type|capitalize }}</option>
+                {% endfor %}
+              </select>
+            </div>
+            <div class="col-md-2 d-flex align-items-end">
+                <div class="d-grid w-100">
+                    <button type="submit" class="btn btn-primary">Filtrer</button>
+                </div>
+                <a href="{{ path('app_front_partners') }}" class="btn btn-link btn-sm ms-2 text-nowrap">Réinitialiser</a>
+            </div>
+          </form>
+        </div>
+
+        <div class="row gy-4">
+          {% for partner in partners %}
+            <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="{{ loop.index * 100 }}">
+              <div class="partner-card">
+                <span class="partner-type">
+                    {% set icon = 'bi-briefcase' %}
+                    {% if partner.typePartenaire.value == 'PHARMACIE' %}{% set icon = 'bi-capsule' %}
+                    {% elseif partner.typePartenaire.value == 'LABORATOIRE' %}{% set icon = 'bi-eyedropper' %}
+                    {% elseif partner.typePartenaire.value == 'ASSURANCE' %}{% set icon = 'bi-shield-check' %}
+                    {% elseif partner.typePartenaire.value == 'CLINIQUE' %}{% set icon = 'bi-hospital' %}{% endif %}
+                    <i class="bi {{ icon }} me-1"></i>{{ partner.typePartenaire.value }}
+                </span>
+                
+                <div class="partner-logo-container">
+                    {% if partner.imageName %}
+                        <img src="{{ vich_uploader_asset(partner, 'imageFile') }}" alt="{{ partner.name }}" class="partner-logo">
+                    {% else %}
+                        <i class="bi bi-building text-secondary" style="font-size: 3rem;"></i>
+                    {% endif %}
+                </div>
+
+                <h3 class="partner-name">{{ partner.name }}</h3>
+                
+                <div class="partner-info">
+                    <i class="bi bi-geo-alt"></i> {{ partner.adresse }}
+                </div>
+                <div class="partner-info">
+                    <i class="bi bi-telephone"></i> {{ partner.telephone }}
+                </div>
+                <div class="partner-info">
+                    <i class="bi bi-envelope"></i> {{ partner.email }}
+                </div>
+              </div>
+            </div>
+          {% else %}
+            <div class="col-12">
+              <div class="empty-state">
+                <i class="bi bi-building text-light-emphasis" style="font-size: 4rem;"></i>
+                <h3>Aucun partenaire actif pour le moment</h3>
+                <p>Revenez bientôt pour découvrir notre réseau en expansion.</p>
+                <a href="{{ path('app_home') }}" class="btn btn-outline-primary mt-3">Retour à l'accueil</a>
+              </div>
+            </div>
+          {% endfor %}
+        </div>
+      </div>
+    </section>
+
+  </main>
+{% endblock %}
