@@ -1,0 +1,1758 @@
+﻿<div id="medicareAssistantFab" class="assistant-fab" aria-label="Besoin d assistance">
+    <span class="assistant-fab-ring"></span>
+    <i class="fas fa-robot"></i>
+    <span class="assistant-fab-label">Besoin d assistance</span>
+</div>
+
+<aside id="medicareAssistantPanel" class="assistant-panel" aria-hidden="true">
+    <header class="assistant-header">
+        <div class="assistant-header-left">
+            <div class="assistant-avatar"><i class="fas fa-stethoscope"></i></div>
+            <div>
+                <h3>Assistant Medical</h3>
+                <p>Discussion intelligente locale, sans API externe</p>
+            </div>
+        </div>
+        <button type="button" id="assistantCloseBtn" class="assistant-icon-btn" aria-label="Fermer">
+            <i class="fas fa-times"></i>
+        </button>
+    </header>
+
+    <div id="assistantConversation" class="assistant-conversation"></div>
+    <div id="assistantQuickReplies" class="assistant-quick-replies" style="display:none;"></div>
+
+    <section class="assistant-composer">
+        <form id="assistantComposerForm" class="assistant-composer-form">
+            <input id="assistantComposerInput" type="text" placeholder="Ecrivez votre message..." autocomplete="off">
+            <button type="submit" class="assistant-send-btn" aria-label="Envoyer">
+                <i class="fas fa-paper-plane"></i>
+            </button>
+        </form>
+        <a href="{{ path('app_prendre_rdv') }}" class="assistant-manual-link">Prise de RDV manuelle</a>
+    </section>
+</aside>
+
+<style>
+    .assistant-fab {
+        position: fixed;
+        right: 22px;
+        bottom: 22px;
+        z-index: 15000;
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        cursor: pointer;
+        border-radius: 999px;
+        padding: 12px 16px;
+        background: linear-gradient(135deg, #06b6d4 0%, #0284c7 50%, #0369a1 100%);
+        color: #fff;
+        box-shadow: 0 14px 30px rgba(3, 105, 161, 0.35);
+        user-select: none;
+    }
+
+    .assistant-fab-ring {
+        position: absolute;
+        inset: -8px;
+        border-radius: 999px;
+        border: 2px solid rgba(6, 182, 212, 0.26);
+        animation: assistantPulse 2.6s infinite;
+        pointer-events: none;
+    }
+
+    @keyframes assistantPulse {
+        0% { transform: scale(0.95); opacity: 0.85; }
+        70% { transform: scale(1.09); opacity: 0; }
+        100% { transform: scale(1.09); opacity: 0; }
+    }
+
+    .assistant-fab i {
+        font-size: 17px;
+    }
+
+    .assistant-fab-label {
+        font-size: 13px;
+        font-weight: 800;
+        letter-spacing: 0.01em;
+    }
+
+    .assistant-panel {
+        position: fixed;
+        right: 22px;
+        bottom: 88px;
+        width: min(440px, calc(100vw - 24px));
+        max-height: min(84vh, 770px);
+        overflow: hidden;
+        border-radius: 18px;
+        background: #fff;
+        border: 1px solid #dbeafe;
+        box-shadow: 0 24px 55px rgba(2, 132, 199, 0.3);
+        z-index: 15001;
+        display: none;
+        grid-template-rows: auto 1fr auto auto;
+    }
+
+    .assistant-panel.open {
+        display: grid;
+    }
+
+    .assistant-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 12px;
+        padding: 12px 14px;
+        background: linear-gradient(120deg, #0ea5e9 0%, #0284c7 60%, #0369a1 100%);
+        color: #fff;
+    }
+
+    .assistant-header-left {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        min-width: 0;
+    }
+
+    .assistant-avatar {
+        width: 37px;
+        height: 37px;
+        border-radius: 11px;
+        display: grid;
+        place-items: center;
+        background: rgba(255, 255, 255, 0.19);
+        flex-shrink: 0;
+    }
+
+    .assistant-header h3 {
+        margin: 0;
+        font-size: 15px;
+        font-weight: 800;
+    }
+
+    .assistant-header p {
+        margin: 2px 0 0;
+        font-size: 12px;
+        opacity: 0.92;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .assistant-icon-btn {
+        width: 34px;
+        height: 34px;
+        border-radius: 10px;
+        border: 1px solid rgba(255, 255, 255, 0.35);
+        background: transparent;
+        color: #fff;
+        cursor: pointer;
+        flex-shrink: 0;
+    }
+
+    .assistant-conversation {
+        overflow: auto;
+        padding: 13px 12px 7px;
+        background:
+            radial-gradient(circle at 8% 0, rgba(14, 165, 233, 0.1), transparent 26%),
+            linear-gradient(180deg, #f8fbff 0%, #eef6ff 100%);
+    }
+
+    .assistant-msg {
+        max-width: 92%;
+        border-radius: 13px;
+        padding: 9px 11px;
+        margin-bottom: 9px;
+        font-size: 13px;
+        line-height: 1.45;
+        white-space: pre-wrap;
+    }
+
+    .assistant-msg.bot {
+        margin-right: auto;
+        border: 1px solid #dbeafe;
+        color: #0f172a;
+        background: #fff;
+    }
+
+    .assistant-msg.user {
+        margin-left: auto;
+        border: 1px solid #0284c7;
+        color: #fff;
+        background: linear-gradient(135deg, #06b6d4 0%, #0284c7 100%);
+    }
+
+    .assistant-meta {
+        font-size: 11px;
+        color: #64748b;
+        margin: -3px 0 9px;
+    }
+
+    .assistant-meta.user {
+        text-align: right;
+    }
+
+    .assistant-typing {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+    }
+
+    .assistant-typing span {
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background: #38bdf8;
+        animation: assistantTyping 1s infinite;
+    }
+
+    .assistant-typing span:nth-child(2) {
+        animation-delay: 0.15s;
+    }
+
+    .assistant-typing span:nth-child(3) {
+        animation-delay: 0.3s;
+    }
+
+    @keyframes assistantTyping {
+        0%, 80%, 100% { transform: translateY(0); opacity: 0.35; }
+        40% { transform: translateY(-4px); opacity: 1; }
+    }
+
+    .assistant-result {
+        border: 1px solid #dbeafe;
+        background: #fff;
+        border-radius: 12px;
+        padding: 10px;
+        margin-bottom: 9px;
+    }
+
+    .assistant-result-title {
+        font-size: 12px;
+        color: #0369a1;
+        font-weight: 800;
+        margin-bottom: 6px;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+    }
+
+    .assistant-urgency {
+        border-radius: 10px;
+        padding: 8px 9px;
+        font-size: 13px;
+        font-weight: 700;
+    }
+
+    .assistant-urgency.urgent {
+        background: #fee2e2;
+        color: #991b1b;
+    }
+
+    .assistant-urgency.prioritaire {
+        background: #fef3c7;
+        color: #92400e;
+    }
+
+    .assistant-urgency.normal {
+        background: #dcfce7;
+        color: #166534;
+    }
+
+    .assistant-chip-list {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 7px;
+    }
+
+    .assistant-chip {
+        border-radius: 999px;
+        border: 1px solid #bae6fd;
+        background: #e0f2fe;
+        color: #075985;
+        padding: 4px 9px;
+        font-size: 12px;
+        font-weight: 700;
+    }
+
+    .assistant-slot {
+        border: 1px solid #dbeafe;
+        background: #f8fbff;
+        border-radius: 10px;
+        padding: 8px 9px;
+        margin-top: 7px;
+    }
+
+    .assistant-slot-label {
+        font-size: 12px;
+        color: #0f172a;
+        font-weight: 700;
+        margin-bottom: 6px;
+    }
+
+    .assistant-book-btn {
+        width: 100%;
+        border: none;
+        border-radius: 9px;
+        background: #0f172a;
+        color: #fff;
+        font-size: 12px;
+        font-weight: 700;
+        padding: 8px 9px;
+        cursor: pointer;
+    }
+
+    .assistant-quick-replies {
+        border-top: 1px solid #dbeafe;
+        padding: 9px 10px;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        background: #fff;
+    }
+
+    .assistant-reply-btn {
+        border: 1px solid #dbeafe;
+        background: #f8fbff;
+        color: #0f172a;
+        border-radius: 999px;
+        padding: 6px 10px;
+        font-size: 12px;
+        font-weight: 700;
+        cursor: pointer;
+    }
+
+    .assistant-composer {
+        border-top: 1px solid #dbeafe;
+        padding: 9px 10px 10px;
+        background: #fff;
+        display: grid;
+        gap: 8px;
+    }
+
+    .assistant-composer-form {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .assistant-composer-form input {
+        flex: 1;
+        border: 1px solid #cbd5e1;
+        border-radius: 10px;
+        padding: 9px 10px;
+        font-size: 13px;
+        color: #0f172a;
+        outline: none;
+    }
+
+    .assistant-composer-form input:focus {
+        border-color: #7dd3fc;
+        box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.14);
+    }
+
+    .assistant-composer-form input:disabled,
+    .assistant-send-btn:disabled {
+        opacity: 0.55;
+        cursor: not-allowed;
+    }
+
+    .assistant-send-btn {
+        width: 38px;
+        height: 38px;
+        border: none;
+        border-radius: 10px;
+        background: #06b6d4;
+        color: #fff;
+        cursor: pointer;
+    }
+
+    .assistant-manual-link {
+        text-align: center;
+        border-radius: 10px;
+        text-decoration: none;
+        background: #e2e8f0;
+        color: #0f172a;
+        padding: 9px 10px;
+        font-size: 12px;
+        font-weight: 800;
+    }
+
+    @media (max-width: 768px) {
+        .assistant-fab {
+            right: 12px;
+            bottom: 12px;
+        }
+
+        .assistant-fab-label {
+            display: none;
+        }
+
+        .assistant-panel {
+            right: 10px;
+            left: 10px;
+            bottom: 70px;
+            width: auto;
+        }
+    }
+</style>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const triageUrl = "{{ path('app_assistant_triage') }}";
+        const bookUrl = "{{ path('app_assistant_book') }}";
+        const fallbackAppointmentsUrl = "{{ path('app_appointments') }}";
+        const manualRdvUrl = "{{ path('app_prendre_rdv') }}";
+
+        const fab = document.getElementById('medicareAssistantFab');
+        const panel = document.getElementById('medicareAssistantPanel');
+        const closeBtn = document.getElementById('assistantCloseBtn');
+        const conversation = document.getElementById('assistantConversation');
+        const quickReplies = document.getElementById('assistantQuickReplies');
+        const composerForm = document.getElementById('assistantComposerForm');
+        const composerInput = document.getElementById('assistantComposerInput');
+
+        if (!fab || !panel || !closeBtn || !conversation || !quickReplies || !composerForm || !composerInput) {
+            return;
+        }
+
+        const stepCatalog = {
+            symptoms: {
+                key: 'symptoms',
+                type: 'text',
+                minLength: 6,
+                question: 'Decrivez vos symptomes en detail pour que je puisse vous orienter.'
+            },
+            duration: {
+                key: 'duration',
+                type: 'choice',
+                question: 'Depuis combien de temps ces symptomes sont presents ?',
+                options: [
+                    { value: 'today', label: 'Depuis aujourd hui' },
+                    { value: '2_7d', label: 'Depuis 2 a 7 jours' },
+                    { value: 'more_7d', label: 'Plus de 7 jours' }
+                ]
+            },
+            pain_level: {
+                key: 'pain_level',
+                type: 'number',
+                question: 'Quel est le niveau de douleur (0 a 10) ?'
+            },
+            chest_pain: {
+                key: 'chest_pain',
+                type: 'yesno',
+                question: 'Avez-vous une douleur thoracique ?'
+            },
+            breathing_difficulty: {
+                key: 'breathing_difficulty',
+                type: 'yesno',
+                question: 'Avez-vous une difficulte respiratoire ?'
+            },
+            bleeding: {
+                key: 'bleeding',
+                type: 'yesno',
+                question: 'Avez-vous un saignement important ?'
+            },
+            high_fever: {
+                key: 'high_fever',
+                type: 'yesno',
+                question: 'Avez-vous une fievre elevee (>= 39) ?'
+            },
+            neurologic_alarm: {
+                key: 'neurologic_alarm',
+                type: 'yesno',
+                question: 'Avez-vous faiblesse d un cote, trouble de parole ou malaise ?'
+            },
+            limb_zone: {
+                key: 'limb_zone',
+                type: 'choice',
+                question: 'La douleur est localisee ou exactement ?',
+                options: [
+                    { value: 'hanche', label: 'Hanche' },
+                    { value: 'cuisse', label: 'Cuisse' },
+                    { value: 'genou', label: 'Genou' },
+                    { value: 'mollet', label: 'Mollet' },
+                    { value: 'cheville_pied', label: 'Cheville/Pied' },
+                    { value: 'jambe_diffuse', label: 'Toute la jambe' }
+                ]
+            },
+            limb_side: {
+                key: 'limb_side',
+                type: 'choice',
+                question: 'C est quelle jambe ?',
+                options: [
+                    { value: 'gauche', label: 'Gauche' },
+                    { value: 'droite', label: 'Droite' },
+                    { value: 'les_deux', label: 'Les deux' }
+                ]
+            },
+            limb_walk: {
+                key: 'limb_walk',
+                type: 'yesno',
+                question: 'Avez-vous du mal a marcher ou poser le pied ?'
+            },
+            limb_swelling: {
+                key: 'limb_swelling',
+                type: 'yesno',
+                question: 'Votre jambe est gonflee, rouge ou chaude ?'
+            },
+            limb_trauma: {
+                key: 'limb_trauma',
+                type: 'yesno',
+                question: 'Y a-t-il eu un choc, une chute ou un effort inhabituel recemment ?'
+            },
+            limb_hip_pain: {
+                key: 'limb_hip_pain',
+                type: 'yesno',
+                question: 'Avez-vous aussi une douleur a la hanche ?'
+            }
+        };
+
+        let flow = [stepCatalog.symptoms];
+        let contextFlags = {
+            cardio: false,
+            respiratory: false,
+            digestive: false,
+            neuro: false,
+            trauma: false,
+            fever: false,
+            bleeding: false,
+            lower_limb: false,
+            no_symptoms: false
+        };
+
+        let started = false;
+        let processing = false;
+        let stepIndex = 0;
+        let answers = createEmptyAnswers();
+
+        function setPanel(open) {
+            panel.classList.toggle('open', open);
+            panel.setAttribute('aria-hidden', open ? 'false' : 'true');
+            if (open) {
+                composerInput.focus();
+            }
+        }
+
+        function timeLabel() {
+            const now = new Date();
+            const hh = String(now.getHours()).padStart(2, '0');
+            const mm = String(now.getMinutes()).padStart(2, '0');
+            return hh + ':' + mm;
+        }
+
+        function scrollConversation() {
+            conversation.scrollTop = conversation.scrollHeight;
+        }
+
+        function addMessage(kind, text) {
+            const item = document.createElement('div');
+            item.className = 'assistant-msg ' + kind;
+            item.textContent = text;
+            conversation.appendChild(item);
+
+            const meta = document.createElement('div');
+            meta.className = 'assistant-meta ' + kind;
+            meta.textContent = timeLabel();
+            conversation.appendChild(meta);
+
+            scrollConversation();
+        }
+
+        function addTyping() {
+            const wrapper = document.createElement('div');
+            wrapper.className = 'assistant-msg bot';
+            wrapper.id = 'assistantTyping';
+            wrapper.innerHTML = '<span class="assistant-typing"><span></span><span></span><span></span></span>';
+            conversation.appendChild(wrapper);
+            scrollConversation();
+        }
+
+        function removeTyping() {
+            const typing = document.getElementById('assistantTyping');
+            if (typing) {
+                typing.remove();
+            }
+        }
+
+        function delay(ms) {
+            return new Promise(function (resolve) {
+                setTimeout(resolve, ms);
+            });
+        }
+
+        async function botSay(text, waitMs) {
+            addTyping();
+            await delay(typeof waitMs === 'number' ? waitMs : 420);
+            removeTyping();
+            addMessage('bot', text);
+        }
+
+        function createEmptyAnswers() {
+            return {
+                symptoms: '',
+                duration: null,
+                pain_level: null,
+                chest_pain: null,
+                breathing_difficulty: null,
+                bleeding: null,
+                high_fever: null,
+                neurologic_alarm: null,
+                limb_zone: null,
+                limb_side: null,
+                limb_walk: null,
+                limb_swelling: null,
+                limb_trauma: null,
+                limb_hip_pain: null,
+                no_symptoms: false,
+                general_alarm: 'no'
+            };
+        }
+
+        function resetConversationState() {
+            stepIndex = 0;
+            flow = [stepCatalog.symptoms];
+            answers = createEmptyAnswers();
+            contextFlags = {
+                cardio: false,
+                respiratory: false,
+                digestive: false,
+                neuro: false,
+                trauma: false,
+                fever: false,
+                bleeding: false,
+                lower_limb: false,
+                no_symptoms: false
+            };
+        }
+
+        function normalizeText(value) {
+            return String(value || '')
+                .toLowerCase()
+                .normalize('NFD')
+                .replace(/[\u0300-\u036f]/g, '')
+                .replace(/[^a-z0-9\s]/g, ' ')
+                .replace(/\s+/g, ' ')
+                .trim();
+        }
+
+        function containsAny(normalized, keywords) {
+            for (let i = 0; i < keywords.length; i += 1) {
+                if (normalized.includes(keywords[i])) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        function inferDurationFromText(text) {
+            const normalized = normalizeText(text);
+            if (normalized === '') {
+                return null;
+            }
+
+            if (/\b(aujourd hui|ce matin|ce soir)\b/.test(normalized)) {
+                return 'today';
+            }
+
+            const dayMatch = normalized.match(/depuis\s+(\d+)\s+jour/);
+            if (dayMatch && dayMatch[1]) {
+                const days = Number(dayMatch[1]);
+                if (days <= 1) {
+                    return 'today';
+                }
+                if (days <= 7) {
+                    return '2_7d';
+                }
+                return 'more_7d';
+            }
+
+            if (/\b(hier|avant hier|2 jours|3 jours|4 jours|5 jours|6 jours|7 jours)\b/.test(normalized)) {
+                return '2_7d';
+            }
+            if (/\b(semaine|semaines|mois|longtemps)\b/.test(normalized)) {
+                return 'more_7d';
+            }
+
+            return null;
+        }
+
+        function inferPainLevelFromText(text) {
+            const normalized = normalizeText(text);
+            if (normalized === '') {
+                return null;
+            }
+
+            const slashMatch = normalized.match(/\b(10|[0-9])\s*\/\s*10\b/);
+            if (slashMatch && slashMatch[1]) {
+                return Number(slashMatch[1]);
+            }
+
+            if (/\b(insupportable|tres forte|tres intense)\b/.test(normalized)) {
+                return 8;
+            }
+            if (/\b(forte|intense)\b/.test(normalized)) {
+                return 7;
+            }
+            if (/\b(moderee|moyenne)\b/.test(normalized)) {
+                return 5;
+            }
+            if (/\b(legere|faible)\b/.test(normalized)) {
+                return 3;
+            }
+
+            return null;
+        }
+
+        function uniqueStrings(values) {
+            const seen = {};
+            const result = [];
+            for (let i = 0; i < values.length; i += 1) {
+                const item = String(values[i] || '').trim();
+                if (item === '' || seen[item]) {
+                    continue;
+                }
+                seen[item] = true;
+                result.push(item);
+            }
+            return result;
+        }
+
+        function detectSymptomConcepts(text) {
+            const normalized = normalizeText(text);
+            if (normalized === '') {
+                return [];
+            }
+
+            const concepts = [];
+            const add = function (value) {
+                if (!concepts.includes(value)) {
+                    concepts.push(value);
+                }
+            };
+
+            if (
+                containsAny(normalized, ['mal de tete', 'migraine', 'cephale', 'cephalee']) ||
+                (/\bmal\b/.test(normalized) && containsAny(normalized, ['tete', 'crane']))
+            ) {
+                add('headache');
+            }
+            if (containsAny(normalized, ['fievre', 'temperature', 'frisson'])) {
+                add('fever');
+            }
+            if (containsAny(normalized, ['vom', 'nause'])) {
+                add('vomiting');
+            }
+            if (containsAny(normalized, ['diarrh', 'constipation', 'ventre', 'abdominal', 'estomac'])) {
+                add('digestive');
+            }
+            if (containsAny(normalized, ['toux', 'respir', 'essouff', 'souffle', 'gorge', 'nez'])) {
+                add('respiratory');
+            }
+            if (containsAny(normalized, ['poitrine', 'thorax', 'palpitation', 'coeur'])) {
+                add('cardio');
+            }
+            if (containsAny(normalized, ['saignement', 'sang', 'hemorrag'])) {
+                add('bleeding');
+            }
+            if (containsAny(normalized, ['faiblesse', 'engourdi', 'parole', 'malaise', 'convulsion'])) {
+                add('neuro_alarm');
+            }
+            if (containsAny(normalized, ['jambe', 'genou', 'hanche', 'mollet', 'cheville', 'pied'])) {
+                add('lower_limb');
+            }
+            if (containsAny(normalized, ['chute', 'choc', 'entorse', 'trauma', 'blessure'])) {
+                add('trauma');
+            }
+            if (containsAny(normalized, ['malade', 'symptome', 'souffre'])) {
+                add('general_unwell');
+            }
+            if (
+                containsAny(normalized, ['douleur', 'brulure', 'crampe']) ||
+                (/\bmal\b/.test(normalized) && !concepts.includes('headache'))
+            ) {
+                add('pain_generic');
+            }
+
+            if (inferDurationFromText(text)) {
+                add('duration_info');
+            }
+            if (inferPainLevelFromText(text) !== null) {
+                add('pain_intensity');
+            }
+
+            return uniqueStrings(concepts);
+        }
+
+        function formatConceptLabel(key) {
+            if (key === 'headache') {
+                return 'mal de tete';
+            }
+            if (key === 'fever') {
+                return 'fievre';
+            }
+            if (key === 'vomiting') {
+                return 'vomissements/nausees';
+            }
+            if (key === 'digestive') {
+                return 'signes digestifs';
+            }
+            if (key === 'respiratory') {
+                return 'signes respiratoires';
+            }
+            if (key === 'cardio') {
+                return 'signes thoraciques';
+            }
+            if (key === 'bleeding') {
+                return 'saignement';
+            }
+            if (key === 'neuro_alarm') {
+                return 'alerte neurologique';
+            }
+            if (key === 'lower_limb') {
+                return 'douleur membre inferieur';
+            }
+            if (key === 'trauma') {
+                return 'traumatisme';
+            }
+            if (key === 'duration_info') {
+                return 'duree';
+            }
+            if (key === 'pain_intensity') {
+                return 'intensite douleur';
+            }
+            if (key === 'general_unwell') {
+                return 'etat general';
+            }
+            return 'douleur';
+        }
+
+        function summarizeConcepts(text) {
+            const concepts = detectSymptomConcepts(text);
+            if (concepts.length === 0) {
+                return '';
+            }
+            return concepts.slice(0, 3).map(formatConceptLabel).join(', ');
+        }
+
+        function isLikelyMedicalSymptomText(text) {
+            if (hasNoSymptomIntent(text)) {
+                return true;
+            }
+            return detectSymptomConcepts(text).length > 0;
+        }
+
+        function mergeSymptomsText(currentValue, newValue) {
+            const current = String(currentValue || '').trim();
+            const incoming = String(newValue || '').trim();
+            if (incoming === '') {
+                return current;
+            }
+            if (current === '') {
+                return incoming;
+            }
+            if (hasNoSymptomIntent(incoming)) {
+                return incoming;
+            }
+            const normalizedCurrent = normalizeText(current);
+            const normalizedIncoming = normalizeText(incoming);
+            if (normalizedIncoming === '' || normalizedCurrent.includes(normalizedIncoming)) {
+                return current;
+            }
+            return (current + ' ' + incoming).trim();
+        }
+
+        function hasNoSymptomIntent(text) {
+            const normalized = normalizeText(text);
+            if (normalized === '') {
+                return false;
+            }
+
+            const strongPatterns = [
+                /\b(aucun|aucune)\s+symptome(s)?\b/,
+                /\bpas\s+de\s+symptome(s)?\b/,
+                /\bsans\s+symptome(s)?\b/,
+                /\b(?:j|je)\s*(?:n\s*)?ai\s+rien\b/,
+                /\brien\s+de\s+rien\b/,
+                /\brien\s+d\s+rien\b/,
+                /\brien\s+du\s+tout\b/,
+                /\bje\s+ne\s+souffre\s+pas\b/,
+                /\b(?:j|je)\s+souffre\s+pas\b/,
+                /\bje\s+vais\s+bien\b/,
+                /\btout\s+va\s+bien\b/
+            ];
+
+            for (let i = 0; i < strongPatterns.length; i += 1) {
+                if (strongPatterns[i].test(normalized)) {
+                    return true;
+                }
+            }
+
+            return normalized === 'rien' || normalized === 'aucun symptome' || normalized === 'pas malade';
+        }
+
+        function inferBinaryFromText(text, terms) {
+            const normalized = normalizeText(text);
+            if (normalized === '') {
+                return null;
+            }
+
+            function escapeRegExp(value) {
+                return String(value).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+            }
+
+            for (let i = 0; i < terms.length; i += 1) {
+                const term = terms[i];
+                const escapedTerm = escapeRegExp(term);
+                const negativePattern = new RegExp('\\b(?:pas de|pas d|sans|aucun|aucune)\\s+' + escapedTerm + '\\b');
+                if (negativePattern.test(normalized)) {
+                    return 'no';
+                }
+                if (normalized.includes(term)) {
+                    return 'yes';
+                }
+            }
+
+            return null;
+        }
+
+        function inferLimbZoneFromText(text) {
+            const normalized = normalizeText(text);
+            if (normalized === '') {
+                return null;
+            }
+
+            if (containsAny(normalized, ['hanche'])) {
+                return 'hanche';
+            }
+            if (containsAny(normalized, ['cuisse'])) {
+                return 'cuisse';
+            }
+            if (containsAny(normalized, ['genou'])) {
+                return 'genou';
+            }
+            if (containsAny(normalized, ['mollet'])) {
+                return 'mollet';
+            }
+            if (containsAny(normalized, ['cheville', 'pied', 'orteil', 'talon'])) {
+                return 'cheville_pied';
+            }
+            if (containsAny(normalized, ['jambe'])) {
+                return 'jambe_diffuse';
+            }
+
+            return null;
+        }
+
+        function inferLimbSideFromText(text) {
+            const normalized = normalizeText(text);
+            if (normalized === '') {
+                return null;
+            }
+            if (containsAny(normalized, ['les deux', 'deux jambes', 'bilateral'])) {
+                return 'les_deux';
+            }
+            if (containsAny(normalized, ['gauche'])) {
+                return 'gauche';
+            }
+            if (containsAny(normalized, ['droite'])) {
+                return 'droite';
+            }
+            return null;
+        }
+
+        function detectContextFromSymptoms(text) {
+            const normalized = normalizeText(text);
+            return {
+                cardio: containsAny(normalized, ['poitrine', 'thorax', 'coeur', 'palpitation']),
+                respiratory: containsAny(normalized, ['respir', 'essouff', 'souffle', 'toux', 'dyspnee']),
+                digestive: containsAny(normalized, ['ventre', 'abdominal', 'nause', 'vom', 'diarrh', 'estomac']),
+                neuro: containsAny(normalized, ['migraine', 'vertige', 'engourdi', 'faiblesse', 'parole', 'malaise']),
+                trauma: containsAny(normalized, ['chute', 'trauma', 'fracture', 'entorse', 'blessure', 'coup']),
+                fever: containsAny(normalized, ['fievre', 'frisson', 'temperature', 'grippe']),
+                bleeding: containsAny(normalized, ['saignement', 'sang', 'hemorrag']),
+                lower_limb: containsAny(normalized, ['jambe', 'genou', 'hanche', 'cuisse', 'mollet', 'cheville', 'pied'])
+            };
+        }
+
+        function prefillAnswersFromSymptoms(text) {
+            if (hasNoSymptomIntent(text)) {
+                answers.no_symptoms = true;
+                answers.duration = answers.duration || 'today';
+                if (answers.pain_level === null) {
+                    answers.pain_level = 0;
+                }
+                answers.chest_pain = answers.chest_pain || 'no';
+                answers.breathing_difficulty = answers.breathing_difficulty || 'no';
+                answers.bleeding = answers.bleeding || 'no';
+                answers.high_fever = answers.high_fever || 'no';
+                answers.limb_walk = answers.limb_walk || 'no';
+                answers.limb_swelling = answers.limb_swelling || 'no';
+                answers.limb_trauma = answers.limb_trauma || 'no';
+                answers.limb_hip_pain = answers.limb_hip_pain || 'no';
+                return;
+            }
+
+            answers.no_symptoms = false;
+            answers.duration = answers.duration || inferDurationFromText(text);
+            if (answers.pain_level === null) {
+                answers.pain_level = inferPainLevelFromText(text);
+            }
+            answers.chest_pain = answers.chest_pain || inferBinaryFromText(text, ['douleur thoracique', 'poitrine', 'thorax']);
+            answers.breathing_difficulty = answers.breathing_difficulty || inferBinaryFromText(text, ['difficulte respiratoire', 'essoufflement', 'respiration']);
+            answers.bleeding = answers.bleeding || inferBinaryFromText(text, ['saignement', 'sang', 'hemorragie']);
+            answers.high_fever = answers.high_fever || inferBinaryFromText(text, ['fievre', 'temperature', '39', '40']);
+            answers.limb_zone = answers.limb_zone || inferLimbZoneFromText(text);
+            answers.limb_side = answers.limb_side || inferLimbSideFromText(text);
+            answers.limb_walk = answers.limb_walk || inferBinaryFromText(text, ['mal a marcher', 'ne peut pas marcher', 'boiterie', 'poser le pied']);
+            answers.limb_swelling = answers.limb_swelling || inferBinaryFromText(text, ['gonflement', 'jambe gonflee', 'rougeur', 'chaleur']);
+            answers.limb_trauma = answers.limb_trauma || inferBinaryFromText(text, ['chute', 'choc', 'entorse', 'faux mouvement', 'blessure']);
+            answers.limb_hip_pain = answers.limb_hip_pain || inferBinaryFromText(text, ['douleur hanche', 'hanche']);
+        }
+
+        function buildAdaptiveFlowFromSymptoms(text) {
+            const detected = detectContextFromSymptoms(text);
+            const noSymptoms = hasNoSymptomIntent(text);
+            contextFlags = Object.assign({}, detected, { no_symptoms: noSymptoms });
+
+            if (noSymptoms) {
+                flow = [stepCatalog.symptoms];
+                return;
+            }
+
+            const adaptive = [stepCatalog.symptoms, stepCatalog.duration];
+
+            if (detected.cardio || detected.respiratory) {
+                adaptive.push(stepCatalog.chest_pain);
+                adaptive.push(stepCatalog.breathing_difficulty);
+            }
+            if (detected.trauma || detected.bleeding) {
+                adaptive.push(stepCatalog.bleeding);
+            }
+            if (detected.fever || detected.digestive || detected.respiratory) {
+                adaptive.push(stepCatalog.high_fever);
+            }
+            if (detected.neuro) {
+                adaptive.push(stepCatalog.neurologic_alarm);
+            }
+            if (detected.lower_limb) {
+                adaptive.push(stepCatalog.limb_zone);
+                adaptive.push(stepCatalog.limb_side);
+                adaptive.push(stepCatalog.limb_walk);
+                adaptive.push(stepCatalog.limb_swelling);
+                adaptive.push(stepCatalog.limb_trauma);
+                if (answers.limb_zone !== 'hanche') {
+                    adaptive.push(stepCatalog.limb_hip_pain);
+                }
+            }
+
+            adaptive.push(stepCatalog.pain_level);
+
+            flow = adaptive.filter(function (step, index, list) {
+                return list.findIndex(function (candidate) { return candidate.key === step.key; }) === index;
+            });
+        }
+
+        function isAnswered(key) {
+            const value = answers[key];
+            return value !== null && value !== undefined && value !== '';
+        }
+
+        function moveToNextUnansweredStep() {
+            while (stepIndex < flow.length && isAnswered(flow[stepIndex].key)) {
+                stepIndex += 1;
+            }
+        }
+
+        function setQuickRepliesItems(items) {
+            quickReplies.innerHTML = '';
+            if (!Array.isArray(items) || items.length === 0) {
+                quickReplies.style.display = 'none';
+                return;
+            }
+
+            items.forEach(function (item) {
+                const btn = document.createElement('button');
+                btn.type = 'button';
+                btn.className = 'assistant-reply-btn';
+                btn.textContent = String(item.label || '');
+                btn.addEventListener('click', function () {
+                    if (processing) {
+                        return;
+                    }
+                    if (typeof item.onClick === 'function') {
+                        item.onClick();
+                        return;
+                    }
+                    const value = String(item.value || item.label || '');
+                    handleUserAnswer(value, String(item.label || value), true);
+                });
+                quickReplies.appendChild(btn);
+            });
+
+            quickReplies.style.display = 'flex';
+        }
+
+        function currentStep() {
+            return flow[stepIndex] || null;
+        }
+
+        async function askCurrentStep() {
+            const step = currentStep();
+            if (!step) {
+                return;
+            }
+
+            await botSay('Question ' + (stepIndex + 1) + ' - ' + step.question, 350);
+
+            if (step.type === 'choice' && Array.isArray(step.options)) {
+                setQuickRepliesItems(
+                    step.options.map(function (option) {
+                        return { label: option.label, value: option.value };
+                    })
+                );
+                return;
+            }
+
+            if (step.type === 'yesno') {
+                setQuickRepliesItems([
+                    { label: 'Oui', value: 'yes' },
+                    { label: 'Non', value: 'no' }
+                ]);
+                return;
+            }
+
+            setQuickRepliesItems([]);
+        }
+
+        function parseChoice(text, options) {
+            const normalized = normalizeText(text);
+            if (normalized === '') {
+                return null;
+            }
+
+            for (let i = 0; i < options.length; i += 1) {
+                const option = options[i];
+                if (normalized === String(option.value)) {
+                    return option.value;
+                }
+                if (normalized === normalizeText(option.label)) {
+                    return option.value;
+                }
+                if (normalized === String(i + 1)) {
+                    return option.value;
+                }
+                if (normalized.includes(normalizeText(option.label)) || normalized.includes(normalizeText(String(option.value)))) {
+                    return option.value;
+                }
+            }
+
+            const inferredDuration = inferDurationFromText(text);
+            if (inferredDuration) {
+                return inferredDuration;
+            }
+
+            const inferredSide = inferLimbSideFromText(text);
+            if (inferredSide) {
+                return inferredSide;
+            }
+
+            return inferLimbZoneFromText(text);
+        }
+
+        function parseYesNo(text) {
+            const normalized = normalizeText(text);
+            if (normalized === '') {
+                return null;
+            }
+            if (/\b(oui|ouais|yes|yep|o)\b/.test(normalized)) {
+                return 'yes';
+            }
+            if (/\b(non|no|n)\b/.test(normalized)) {
+                return 'no';
+            }
+            return null;
+        }
+
+        function parsePainLevel(text) {
+            const parsed = parseInt(String(text).replace(/[^\d-]/g, ''), 10);
+            if (!Number.isFinite(parsed) || parsed < 0 || parsed > 10) {
+                return inferPainLevelFromText(text);
+            }
+            return parsed;
+        }
+
+        function contextIntroMessage() {
+            if (contextFlags.no_symptoms) {
+                return 'Vous indiquez ne pas avoir de symptomes actuellement. Je ne lance pas de triage medical.';
+            }
+            if (contextFlags.lower_limb) {
+                return 'Je vois une douleur au niveau de la jambe. Je vais poser des questions ciblees (zone, cote, marche, gonflement, hanche) pour mieux identifier le probleme.';
+            }
+            if (contextFlags.cardio || contextFlags.respiratory) {
+                return 'Je vois un contexte cardio-respiratoire. Je vais poser des questions de priorite.';
+            }
+            if (contextFlags.neuro) {
+                return 'Je vois des symptomes neurologiques. Je vais verifier rapidement les signaux d alerte.';
+            }
+            if (contextFlags.digestive) {
+                return 'Je vois des symptomes digestifs. Je vais cibler les points importants pour la priorite.';
+            }
+            if (contextFlags.trauma) {
+                return 'Je vois un contexte traumatique. Je vais verifier le risque de saignement.';
+            }
+            return 'Merci, je vais adapter mes questions a votre cas.';
+        }
+
+        function reactionForAnswer(stepKey, value) {
+            if (stepKey === 'pain_level' && typeof value === 'number') {
+                if (value >= 8) {
+                    return 'Douleur elevee notee, votre cas passe en priorite.';
+                }
+                if (value >= 5) {
+                    return 'Douleur moderee notee.';
+                }
+                return 'Douleur legere notee.';
+            }
+
+            if (stepKey === 'chest_pain' && value === 'yes') {
+                return 'Signal thoracique note.';
+            }
+            if (stepKey === 'breathing_difficulty' && value === 'yes') {
+                return 'Difficulte respiratoire notee.';
+            }
+            if (stepKey === 'bleeding' && value === 'yes') {
+                return 'Saignement note.';
+            }
+            if (stepKey === 'high_fever' && value === 'yes') {
+                return 'Fievre elevee notee.';
+            }
+            if (stepKey === 'neurologic_alarm' && value === 'yes') {
+                return 'Signal neurologique d alerte note.';
+            }
+            if (stepKey === 'limb_walk' && value === 'yes') {
+                return 'Difficulte de marche notee.';
+            }
+            if (stepKey === 'limb_swelling' && value === 'yes') {
+                return 'Gonflement/rougeur/chaleur note.';
+            }
+            if (stepKey === 'limb_trauma' && value === 'yes') {
+                return 'Contexte de traumatisme note.';
+            }
+            if (stepKey === 'limb_hip_pain' && value === 'yes') {
+                return 'Douleur de hanche associee notee.';
+            }
+            if (stepKey === 'limb_zone' && value) {
+                return 'Zone principale notee: ' + String(value).replace('_', '/');
+            }
+            if (stepKey === 'limb_side' && value) {
+                return 'Cote note: ' + String(value).replace('_', ' ');
+            }
+
+            return '';
+        }
+
+        function ensureCoreDefaults() {
+            if (answers.no_symptoms) {
+                answers.duration = answers.duration || 'today';
+                answers.pain_level = answers.pain_level === null ? 0 : answers.pain_level;
+                answers.chest_pain = answers.chest_pain || 'no';
+                answers.breathing_difficulty = answers.breathing_difficulty || 'no';
+                answers.bleeding = answers.bleeding || 'no';
+                answers.high_fever = answers.high_fever || 'no';
+                answers.limb_walk = answers.limb_walk || 'no';
+                answers.limb_swelling = answers.limb_swelling || 'no';
+                answers.limb_trauma = answers.limb_trauma || 'no';
+                answers.limb_hip_pain = answers.limb_hip_pain || 'no';
+                answers.general_alarm = 'no';
+                return;
+            }
+
+            if (!answers.duration) {
+                answers.duration = inferDurationFromText(answers.symptoms) || 'today';
+            }
+            if (answers.pain_level === null) {
+                const inferredPain = inferPainLevelFromText(answers.symptoms);
+                answers.pain_level = inferredPain === null ? 3 : inferredPain;
+            }
+            if (!answers.chest_pain) {
+                answers.chest_pain = inferBinaryFromText(answers.symptoms, ['douleur thoracique', 'poitrine', 'thorax']) || 'no';
+            }
+            if (!answers.breathing_difficulty) {
+                answers.breathing_difficulty = inferBinaryFromText(answers.symptoms, ['difficulte respiratoire', 'essoufflement', 'respiration']) || 'no';
+            }
+            if (!answers.bleeding) {
+                answers.bleeding = inferBinaryFromText(answers.symptoms, ['saignement', 'sang', 'hemorragie']) || 'no';
+            }
+            if (!answers.high_fever) {
+                answers.high_fever = inferBinaryFromText(answers.symptoms, ['fievre', 'temperature', '39', '40']) || 'no';
+            }
+            if (!answers.limb_zone) {
+                answers.limb_zone = inferLimbZoneFromText(answers.symptoms) || '';
+            }
+            if (!answers.limb_side) {
+                answers.limb_side = inferLimbSideFromText(answers.symptoms) || '';
+            }
+            if (!answers.limb_walk) {
+                answers.limb_walk = inferBinaryFromText(answers.symptoms, ['mal a marcher', 'ne peut pas marcher', 'boiterie', 'poser le pied']) || 'no';
+            }
+            if (!answers.limb_swelling) {
+                answers.limb_swelling = inferBinaryFromText(answers.symptoms, ['gonflement', 'jambe gonflee', 'rougeur', 'chaleur']) || 'no';
+            }
+            if (!answers.limb_trauma) {
+                answers.limb_trauma = inferBinaryFromText(answers.symptoms, ['chute', 'choc', 'entorse', 'faux mouvement', 'blessure']) || 'no';
+            }
+            if (!answers.limb_hip_pain) {
+                answers.limb_hip_pain = inferBinaryFromText(answers.symptoms, ['douleur hanche', 'hanche']) || 'no';
+            }
+            if (answers.neurologic_alarm === 'yes') {
+                answers.general_alarm = 'yes';
+            }
+            if (
+                answers.limb_walk === 'yes' ||
+                (answers.limb_swelling === 'yes' && answers.high_fever === 'yes') ||
+                (answers.limb_trauma === 'yes' && Number(answers.pain_level || 0) >= 8)
+            ) {
+                answers.general_alarm = 'yes';
+            }
+        }
+
+        function setComposerDisabled(disabled) {
+            composerInput.disabled = disabled;
+            const sendBtn = composerForm.querySelector('.assistant-send-btn');
+            if (sendBtn) {
+                sendBtn.disabled = disabled;
+            }
+        }
+
+        function renderAnalysis(payload) {
+            const wrapper = document.createElement('div');
+            wrapper.className = 'assistant-result';
+
+            const urgencyTitle = document.createElement('div');
+            urgencyTitle.className = 'assistant-result-title';
+            urgencyTitle.textContent = 'Niveau d urgence';
+            wrapper.appendChild(urgencyTitle);
+
+            const level = String(payload.urgency && payload.urgency.level ? payload.urgency.level : 'normal');
+            const message = String(payload.urgency && payload.urgency.message ? payload.urgency.message : '');
+            const urgency = document.createElement('div');
+            urgency.className = 'assistant-urgency ' + level;
+            urgency.textContent = message;
+            wrapper.appendChild(urgency);
+
+            const specialites = Array.isArray(payload.specialites) ? payload.specialites : [];
+            if (specialites.length > 0) {
+                const specTitle = document.createElement('div');
+                specTitle.className = 'assistant-result-title';
+                specTitle.style.marginTop = '10px';
+                specTitle.textContent = 'Specialites conseillees';
+                wrapper.appendChild(specTitle);
+
+                const chips = document.createElement('div');
+                chips.className = 'assistant-chip-list';
+                specialites.slice(0, 3).forEach(function (row) {
+                    const chip = document.createElement('span');
+                    chip.className = 'assistant-chip';
+                    chip.textContent = String(row.label || '');
+                    chips.appendChild(chip);
+                });
+                wrapper.appendChild(chips);
+            }
+
+            conversation.appendChild(wrapper);
+            scrollConversation();
+        }
+
+        async function reserveSlot(slot, autoMode) {
+            await botSay(
+                autoMode
+                    ? 'Je reserve automatiquement le creneau le plus proche adapte a votre niveau d urgence.'
+                    : 'Je reserve ce creneau maintenant.',
+                300
+            );
+
+            try {
+                const response = await fetch(bookUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'X-Requested-With': 'XMLHttpRequest' },
+                    body: JSON.stringify({
+                        medecin_id: Number(slot.medecin_id || 0),
+                        date_rdv: String(slot.date || ''),
+                        heure_rdv: String(slot.time || '')
+                    })
+                });
+
+                const payload = await response.json();
+                if (!response.ok) {
+                    await botSay(String(payload.error || 'Reservation impossible sur ce creneau.'), 260);
+                    return false;
+                }
+
+                await botSay('Rendez-vous reserve avec succes. Redirection vers vos rendez-vous...', 320);
+                setTimeout(function () {
+                    window.location.href = String(payload.redirect || fallbackAppointmentsUrl);
+                }, 1300);
+                return true;
+            } catch (error) {
+                await botSay('Une erreur technique est survenue pendant la reservation.', 260);
+                return false;
+            }
+        }
+
+        function renderAlternativeSlots(slots) {
+            if (!Array.isArray(slots) || slots.length === 0) {
+                return;
+            }
+
+            const box = document.createElement('div');
+            box.className = 'assistant-result';
+
+            const title = document.createElement('div');
+            title.className = 'assistant-result-title';
+            title.textContent = 'Autres creneaux';
+            box.appendChild(title);
+
+            slots.slice(0, 3).forEach(function (slot) {
+                const row = document.createElement('div');
+                row.className = 'assistant-slot';
+
+                const label = document.createElement('div');
+                label.className = 'assistant-slot-label';
+                label.textContent = String(slot.label || '');
+                row.appendChild(label);
+
+                const button = document.createElement('button');
+                button.type = 'button';
+                button.className = 'assistant-book-btn';
+                button.textContent = 'Choisir ce creneau';
+                button.addEventListener('click', async function () {
+                    if (processing) {
+                        return;
+                    }
+                    processing = true;
+                    setComposerDisabled(true);
+                    const ok = await reserveSlot(slot, false);
+                    if (!ok) {
+                        setComposerDisabled(false);
+                    }
+                    processing = false;
+                });
+
+                row.appendChild(button);
+                box.appendChild(row);
+            });
+
+            conversation.appendChild(box);
+            scrollConversation();
+        }
+
+        async function analyzeAndBook() {
+            processing = true;
+            setComposerDisabled(true);
+            setQuickRepliesItems([]);
+            ensureCoreDefaults();
+
+            if (answers.no_symptoms) {
+                await botSay('Aucun symptome detecte. Utilisez "Prise de RDV manuelle" pour un controle de routine.', 220);
+                setQuickRepliesItems([
+                    {
+                        label: 'Prise de RDV manuelle',
+                        onClick: function () {
+                            window.location.href = manualRdvUrl;
+                        }
+                    },
+                    { label: 'Recommencer', value: 'recommencer' }
+                ]);
+                setComposerDisabled(false);
+                processing = false;
+                return;
+            }
+
+            await botSay('Parfait. J analyse vos informations et je cherche le meilleur creneau...', 350);
+
+            const payload = {
+                symptoms: String(answers.symptoms || ''),
+                answers: {
+                    duration: String(answers.duration || ''),
+                    pain_level: Number(answers.pain_level || 0),
+                    chest_pain: String(answers.chest_pain || 'no'),
+                    breathing_difficulty: String(answers.breathing_difficulty || 'no'),
+                    bleeding: String(answers.bleeding || 'no'),
+                    high_fever: String(answers.high_fever || 'no'),
+                    neurologic_alarm: String(answers.neurologic_alarm || 'no'),
+                    limb_zone: String(answers.limb_zone || ''),
+                    limb_side: String(answers.limb_side || ''),
+                    limb_walk: String(answers.limb_walk || 'no'),
+                    limb_swelling: String(answers.limb_swelling || 'no'),
+                    limb_trauma: String(answers.limb_trauma || 'no'),
+                    limb_hip_pain: String(answers.limb_hip_pain || 'no'),
+                    general_alarm: String(answers.general_alarm || 'no')
+                }
+            };
+
+            try {
+                const response = await fetch(triageUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'X-Requested-With': 'XMLHttpRequest' },
+                    body: JSON.stringify(payload)
+                });
+
+                const data = await response.json();
+                if (!response.ok) {
+                    await botSay(String(data.error || 'Analyse indisponible pour le moment.'), 220);
+                    setComposerDisabled(false);
+                    processing = false;
+                    return;
+                }
+
+                renderAnalysis(data);
+
+                const slots = Array.isArray(data.slots) ? data.slots : [];
+                if (slots.length === 0) {
+                    await botSay('Je n ai pas trouve de creneau proche automatiquement. Utilisez "Prise de RDV manuelle".', 260);
+                    setComposerDisabled(false);
+                    processing = false;
+                    return;
+                }
+
+                const firstBooked = await reserveSlot(slots[0], true);
+                if (!firstBooked) {
+                    await botSay('Le premier creneau est indisponible. Je vous propose des alternatives.', 250);
+                    renderAlternativeSlots(slots.slice(1));
+                    setComposerDisabled(false);
+                }
+            } catch (error) {
+                await botSay('Erreur technique pendant l analyse. Veuillez reessayer.', 240);
+                setComposerDisabled(false);
+            } finally {
+                processing = false;
+            }
+        }
+
+        async function promptInvalid(step) {
+            if (!step) {
+                return;
+            }
+
+            if (step.type === 'text') {
+                if (step.key === 'symptoms') {
+                    await botSay('Je n ai pas reconnu un texte medical. Exemple: "j ai mal a la tete", "j ai de la fievre", "je vomis".', 200);
+                    return;
+                }
+                await botSay('Merci de decrire vos symptomes en quelques mots (minimum 6 caracteres).', 200);
+                return;
+            }
+
+            if (step.type === 'number') {
+                await botSay('Donnez un nombre entre 0 et 10.', 200);
+                return;
+            }
+
+            if (step.type === 'yesno') {
+                await botSay('Repondez par Oui ou Non.', 200);
+                setQuickRepliesItems([
+                    { label: 'Oui', value: 'yes' },
+                    { label: 'Non', value: 'no' }
+                ]);
+                return;
+            }
+
+            if (step.type === 'choice') {
+                await botSay('Choisissez une option parmi les boutons proposes.', 200);
+            }
+        }
+
+        async function handleUserAnswer(rawValue, displayText, fromQuickReply) {
+            if (processing) {
+                return;
+            }
+
+            const text = String(rawValue || '').trim();
+            if (text === '') {
+                return;
+            }
+
+            const normalizedInput = normalizeText(text);
+            if (['recommencer', 'restart', 'reset'].includes(normalizedInput)) {
+                await startConversation();
+                return;
+            }
+
+            addMessage('user', String(displayText || text));
+
+            const step = currentStep();
+            if (!step) {
+                return;
+            }
+
+            let parsedValue = null;
+            const noSymptomInput = step.key === 'symptoms' && hasNoSymptomIntent(text);
+            if (step.type === 'text') {
+                if (step.key === 'symptoms') {
+                    if (noSymptomInput || isLikelyMedicalSymptomText(text)) {
+                        parsedValue = text;
+                    }
+                } else if (text.length >= Number(step.minLength || 4)) {
+                    parsedValue = text;
+                }
+            } else if (step.type === 'choice') {
+                parsedValue = parseChoice(text, Array.isArray(step.options) ? step.options : []);
+            } else if (step.type === 'number') {
+                parsedValue = parsePainLevel(text);
+            } else if (step.type === 'yesno') {
+                parsedValue = parseYesNo(text);
+                if (parsedValue === null) {
+                    if (step.key === 'chest_pain') {
+                        parsedValue = inferBinaryFromText(text, ['douleur thoracique', 'poitrine', 'thorax']);
+                    } else if (step.key === 'breathing_difficulty') {
+                        parsedValue = inferBinaryFromText(text, ['difficulte respiratoire', 'essoufflement', 'respiration']);
+                    } else if (step.key === 'bleeding') {
+                        parsedValue = inferBinaryFromText(text, ['saignement', 'sang', 'hemorragie']);
+                    } else if (step.key === 'high_fever') {
+                        parsedValue = inferBinaryFromText(text, ['fievre', 'temperature', '39', '40']);
+                    } else if (step.key === 'neurologic_alarm') {
+                        parsedValue = inferBinaryFromText(text, ['faiblesse', 'parole', 'malaise', 'engourdissement']);
+                    } else if (step.key === 'limb_walk') {
+                        parsedValue = inferBinaryFromText(text, ['mal a marcher', 'ne peut pas marcher', 'boiterie', 'poser le pied']);
+                    } else if (step.key === 'limb_swelling') {
+                        parsedValue = inferBinaryFromText(text, ['gonflement', 'jambe gonflee', 'rougeur', 'chaleur']);
+                    } else if (step.key === 'limb_trauma') {
+                        parsedValue = inferBinaryFromText(text, ['chute', 'choc', 'entorse', 'faux mouvement', 'blessure']);
+                    } else if (step.key === 'limb_hip_pain') {
+                        parsedValue = inferBinaryFromText(text, ['douleur hanche', 'hanche']);
+                    }
+                }
+            }
+
+            if (parsedValue === null) {
+                if (step.key !== 'symptoms' && isLikelyMedicalSymptomText(text)) {
+                    answers.symptoms = mergeSymptomsText(answers.symptoms, text);
+                    prefillAnswersFromSymptoms(answers.symptoms);
+                    buildAdaptiveFlowFromSymptoms(answers.symptoms);
+                    const summary = summarizeConcepts(text);
+                    if (summary !== '') {
+                        await botSay('Information ajoutee: ' + summary + '.', 170);
+                    } else {
+                        await botSay('Information symptome ajoutee a votre dossier de conversation.', 170);
+                    }
+                    await botSay('Je garde cette info. Repondons maintenant a la question en cours.', 200);
+                    await askCurrentStep();
+                    if (!fromQuickReply) {
+                        composerInput.value = '';
+                    }
+                    return;
+                }
+
+                await promptInvalid(step);
+                if (!fromQuickReply) {
+                    composerInput.value = '';
+                }
+                return;
+            }
+
+            if (step.key === 'symptoms') {
+                answers.symptoms = mergeSymptomsText(answers.symptoms, String(parsedValue || ''));
+            } else {
+                answers[step.key] = parsedValue;
+            }
+
+            if (step.key === 'symptoms') {
+                prefillAnswersFromSymptoms(answers.symptoms);
+                buildAdaptiveFlowFromSymptoms(answers.symptoms);
+                await botSay(contextIntroMessage(), 220);
+
+                if (answers.no_symptoms) {
+                    await botSay('Si vous souhaitez un RDV de controle, utilisez le bouton ci-dessous. Sinon tapez "recommencer" pour decrire un symptome.', 220);
+                    setQuickRepliesItems([
+                        {
+                            label: 'Prise de RDV manuelle',
+                            onClick: function () {
+                                window.location.href = manualRdvUrl;
+                            }
+                        },
+                        { label: 'Recommencer', value: 'recommencer' }
+                    ]);
+                    if (!fromQuickReply) {
+                        composerInput.value = '';
+                    }
+                    return;
+                }
+
+                const conceptCount = detectSymptomConcepts(answers.symptoms).length;
+                if (conceptCount < 2) {
+                    const summary = summarizeConcepts(answers.symptoms);
+                    if (summary !== '') {
+                        await botSay('J ai note: ' + summary + '.', 180);
+                    }
+                    await botSay('Pour mieux vous orienter, ajoutez encore 1 ou 2 infos (autre symptome, duree, intensite).', 220);
+                    setQuickRepliesItems([
+                        { label: 'J ai de la fievre', value: 'J ai de la fievre' },
+                        { label: 'Je vomis', value: 'Je vomis' },
+                        { label: 'Depuis 2 jours', value: 'Depuis 2 jours' }
+                    ]);
+                    if (!fromQuickReply) {
+                        composerInput.value = '';
+                    }
+                    return;
+                }
+            } else {
+                prefillAnswersFromSymptoms(text);
+                const dynamicContext = detectContextFromSymptoms(text);
+                if (dynamicContext.lower_limb && !contextFlags.lower_limb) {
+                    answers.symptoms = mergeSymptomsText(answers.symptoms, text);
+                    buildAdaptiveFlowFromSymptoms(answers.symptoms);
+                }
+                const reaction = reactionForAnswer(step.key, parsedValue);
+                if (reaction) {
+                    await botSay(reaction, 180);
+                }
+                if (step.key === 'neurologic_alarm' && parsedValue === 'yes') {
+                    answers.general_alarm = 'yes';
+                }
+            }
+
+            stepIndex += 1;
+            moveToNextUnansweredStep();
+            setQuickRepliesItems([]);
+
+            if (stepIndex < flow.length) {
+                await askCurrentStep();
+            } else {
+                await analyzeAndBook();
+            }
+
+            if (!fromQuickReply) {
+                composerInput.value = '';
+            }
+        }
+
+        async function startConversation() {
+            started = true;
+            resetConversationState();
+            setComposerDisabled(false);
+            setQuickRepliesItems([]);
+            conversation.innerHTML = '';
+
+            await botSay(
+                'Bonjour, je suis votre assistant medical. Je vais analyser votre texte et adapter mes questions selon votre cas.',
+                360
+            );
+            await askCurrentStep();
+        }
+
+        composerForm.addEventListener('submit', async function (event) {
+            event.preventDefault();
+            await handleUserAnswer(composerInput.value, composerInput.value, false);
+        });
+
+        fab.addEventListener('click', function () {
+            const shouldOpen = !panel.classList.contains('open');
+            setPanel(shouldOpen);
+            if (shouldOpen && !started) {
+                startConversation();
+            }
+        });
+
+        closeBtn.addEventListener('click', function () {
+            setPanel(false);
+        });
+    });
+</script>

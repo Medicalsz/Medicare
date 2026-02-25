@@ -1,0 +1,142 @@
+/* ==================== DASHBOARD STYLES ==================== */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: #f5f7fa;
+    color: #333;
+}
+
+.dashboard-container {
+    margin-top: 70px; /* Hauteur de la topbar */
+    margin-left: 260px; /* Largeur de la sidebar */
+    padding: 30px;
+    min-height: calc(100vh - 70px);
+}
+
+/* ============ Dashboard Content ============ */
+.dashboard-content {
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+.page-header {
+    margin-bottom: 30px;
+}
+
+.page-title {
+    font-size: 32px;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 8px;
+}
+
+.page-subtitle {
+    font-size: 16px;
+    color: #666;
+}
+
+/* ============ Cards ============ */
+.dashboard-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 25px;
+    margin-bottom: 30px;
+}
+
+.card {
+    background: white;
+    border-radius: 16px;
+    padding: 25px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 5px 20px rgba(135, 206, 235, 0.2);
+}
+
+.card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.card-title {
+    font-size: 18px;
+    font-weight: 600;
+    color: #333;
+}
+
+.card-icon {
+    font-size: 28px;
+    color: #87CEEB;
+}
+
+.card-value {
+    font-size: 36px;
+    font-weight: 700;
+    color: #87CEEB;
+    margin-bottom: 8px;
+}
+
+.card-label {
+    font-size: 14px;
+    color: #666;
+}
+
+/* ============ Buttons ============ */
+.btn {
+    padding: 12px 24px;
+    border: none;
+    border-radius: 10px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s;
+    text-decoration: none;
+    display: inline-block;
+}
+
+.btn-primary {
+    background: #00BFFF;
+    color: white;
+}
+
+.btn-primary:hover {
+    background: #00A8E6;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0, 191, 255, 0.4);
+}
+
+.btn-secondary {
+    background: #e0e0e0;
+    color: #333;
+}
+
+.btn-secondary:hover {
+    background: #d0d0d0;
+}
+
+/* ============ Responsive ============ */
+@media (max-width: 768px) {
+    .dashboard-container {
+        margin-left: 0;
+        padding: 20px 15px;
+    }
+
+    .page-title {
+        font-size: 24px;
+    }
+
+    .dashboard-cards {
+        grid-template-columns: 1fr;
+    }
+}

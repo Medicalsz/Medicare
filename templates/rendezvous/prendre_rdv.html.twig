@@ -1,0 +1,924 @@
+{% extends 'rendezvous_base.html.twig' %}
+
+{% block title %}Prendre rendez-vous - Medicare{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <style>
+        .rdv-card {
+            background: #fff;
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 980px;
+            width: 100%;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+        }
+
+        .rdv-alert {
+            border-radius: 10px;
+            padding: 12px 14px;
+            margin-bottom: 14px;
+            font-weight: 600;
+        }
+
+        .rdv-alert.success {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .rdv-alert.error {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .stepper {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 40px;
+            position: relative;
+        }
+
+        .stepper::before {
+            content: '';
+            position: absolute;
+            top: 20px;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: #e0e0e0;
+            z-index: 0;
+        }
+
+        .step {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+            z-index: 1;
+            flex: 1;
+        }
+
+        .step-number {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #e0e0e0;
+            color: #999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            margin-bottom: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .step.active .step-number {
+            background: #00bfff;
+            color: #fff;
+            box-shadow: 0 0 0 4px rgba(0, 191, 255, 0.2);
+        }
+
+        .step.completed .step-number {
+            background: #4caf50;
+            color: #fff;
+        }
+
+        .step-label {
+            font-size: 13px;
+            color: #999;
+            text-align: center;
+            font-weight: 600;
+        }
+
+        .step.active .step-label {
+            color: #00bfff;
+        }
+
+        .step-content {
+            display: none;
+        }
+
+        .step-content.active {
+            display: block;
+        }
+
+        .step-title {
+            font-size: 28px;
+            color: #1a1a1a;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+
+        .step-description {
+            color: #666;
+            margin-bottom: 26px;
+            font-size: 15px;
+        }
+
+        .choice-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+            gap: 18px;
+        }
+
+        .choice-card,
+        .specialty-card,
+        .doctor-card,
+        .day-card,
+        .slot-card {
+            background: #fff;
+            border: 2px solid #e0e0e0;
+            border-radius: 14px;
+            padding: 16px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .choice-card:hover,
+        .specialty-card:hover,
+        .doctor-card:hover,
+        .day-card:hover,
+        .slot-card:hover {
+            border-color: #00bfff;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 18px rgba(0, 191, 255, 0.18);
+        }
+
+        .choice-card.selected,
+        .specialty-card.selected,
+        .doctor-card.selected,
+        .day-card.selected,
+        .slot-card.selected {
+            background: #e6f7ff;
+            border-color: #00bfff;
+            box-shadow: 0 6px 18px rgba(0, 191, 255, 0.24);
+        }
+
+        .choice-icon {
+            font-size: 44px;
+            margin-bottom: 10px;
+            color: #00bfff;
+        }
+
+        .choice-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #1a1a1a;
+            margin-bottom: 6px;
+        }
+
+        .choice-description {
+            font-size: 13px;
+            color: #666;
+        }
+
+        .specialties-grid,
+        .doctor-list-grid,
+        .days-grid,
+        .slots-grid {
+            display: grid;
+            gap: 14px;
+        }
+
+        .specialties-grid {
+            grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+        }
+
+        .doctor-list-grid {
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+        }
+
+        .days-grid {
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            margin-bottom: 20px;
+        }
+
+        .slots-grid {
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+        }
+
+        .specialty-icon {
+            font-size: 30px;
+            margin-bottom: 8px;
+            color: #00bfff;
+        }
+
+        .specialty-name,
+        .doctor-name {
+            font-size: 15px;
+            font-weight: 700;
+            color: #1a1a1a;
+            word-break: break-word;
+        }
+
+        .doctor-meta,
+        .day-meta {
+            font-size: 13px;
+            color: #5b6470;
+            margin-top: 6px;
+            text-align: left;
+        }
+
+        .placeholder-box {
+            text-align: center;
+            color: #999;
+            padding: 30px 12px;
+            border: 2px dashed #d8e6ef;
+            border-radius: 12px;
+            background: #fafcff;
+        }
+
+        .slot-card.unavailable {
+            border-color: #f1b4b4;
+            background: #fff5f5;
+            color: #af2b2b;
+            cursor: not-allowed;
+        }
+
+        .slot-card.available {
+            border-color: #b6e6c8;
+            background: #f2fff7;
+            color: #0b6e3b;
+        }
+
+        /* Etat selectionne bien visible pour les jours/heures disponibles */
+        .day-card.selected {
+            border-color: #166534;
+            background: #dcfce7;
+            color: #14532d;
+            box-shadow: 0 8px 20px rgba(22, 101, 52, 0.25);
+        }
+
+        .day-card.selected .doctor-name {
+            color: #14532d;
+        }
+
+        .slot-card.available.selected {
+            border-color: #14532d;
+            background: #166534;
+            color: #ffffff;
+            box-shadow: 0 8px 20px rgba(22, 101, 52, 0.32);
+        }
+
+        .slot-feedback {
+            margin-top: 10px;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .slot-feedback.error {
+            color: #b42318;
+        }
+
+        .slot-feedback.success {
+            color: #027a48;
+        }
+
+        .confirmation-box {
+            border: 1px solid #dbe8f0;
+            border-radius: 12px;
+            background: #f8fcff;
+            padding: 20px;
+            display: grid;
+            gap: 10px;
+        }
+
+        .confirmation-line {
+            display: flex;
+            justify-content: space-between;
+            gap: 16px;
+            border-bottom: 1px dashed #d4e4ee;
+            padding-bottom: 8px;
+        }
+
+        .confirmation-label {
+            color: #4b5563;
+            font-weight: 600;
+        }
+
+        .confirmation-value {
+            font-weight: 700;
+            color: #0f172a;
+            text-align: right;
+        }
+
+        .step-actions {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 32px;
+            gap: 15px;
+        }
+
+        .btn {
+            padding: 14px 30px;
+            border-radius: 10px;
+            font-weight: 600;
+            font-size: 15px;
+            border: none;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+        }
+
+        .btn-prev {
+            background: #f0f0f0;
+            color: #666;
+        }
+
+        .btn-prev:hover {
+            background: #e0e0e0;
+        }
+
+        .btn-next {
+            background: #00bfff;
+            color: #fff;
+            flex: 1;
+            justify-content: center;
+        }
+
+        .btn-next:hover {
+            background: #00a8e6;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 15px rgba(0, 191, 255, 0.4);
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        @media (max-width: 768px) {
+            .rdv-card {
+                padding: 24px 18px;
+            }
+
+            .step-label {
+                font-size: 11px;
+            }
+
+            .step-number {
+                width: 34px;
+                height: 34px;
+            }
+
+            .step-title {
+                font-size: 22px;
+            }
+
+            .choice-grid,
+            .specialties-grid,
+            .doctor-list-grid,
+            .days-grid,
+            .slots-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+<form class="rdv-card" id="appointmentForm" method="post" action="{{ path('app_prendre_rdv') }}">
+    {% for message in app.flashes('success') %}
+        <div class="rdv-alert success">{{ message }}</div>
+    {% endfor %}
+    {% for message in app.flashes('error') %}
+        <div class="rdv-alert error">{{ message }}</div>
+    {% endfor %}
+
+    <div class="stepper">
+        <div class="step active" data-step="1">
+            <div class="step-number">1</div>
+            <div class="step-label">Pour qui</div>
+        </div>
+        <div class="step" data-step="2">
+            <div class="step-number">2</div>
+            <div class="step-label">Specialite</div>
+        </div>
+        <div class="step" data-step="3">
+            <div class="step-number">3</div>
+            <div class="step-label">Docteur</div>
+        </div>
+        <div class="step" data-step="4">
+            <div class="step-number">4</div>
+            <div class="step-label">Date & Infos</div>
+        </div>
+        <div class="step" data-step="5">
+            <div class="step-number">5</div>
+            <div class="step-label">Confirmation</div>
+        </div>
+    </div>
+
+    <div class="step-content active" data-step="1">
+        <h2 class="step-title">Pour qui est ce rendez-vous ?</h2>
+        <p class="step-description">Selectionnez pour qui vous prenez rendez-vous.</p>
+
+        <div class="choice-grid">
+            <div class="choice-card" data-choice="me">
+                <div class="choice-icon"><i class="fas fa-user"></i></div>
+                <div class="choice-title">Pour moi</div>
+                <div class="choice-description">Mes informations seront utilisees.</div>
+            </div>
+
+            <div class="choice-card" data-choice="other">
+                <div class="choice-icon"><i class="fas fa-user-friends"></i></div>
+                <div class="choice-title">Pour un proche</div>
+                <div class="choice-description">Reservation pour un proche.</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="step-content" data-step="2">
+        <h2 class="step-title">Quelle specialite recherchez-vous ?</h2>
+        <p class="step-description">Les specialites ci-dessous viennent des medecins valides.</p>
+
+        <div class="specialties-grid">
+            {% if specialites is not empty %}
+                {% for specialite in specialites %}
+                    <div class="specialty-card" data-specialty="{{ specialite.key }}">
+                        <div class="specialty-icon"><i class="fas fa-stethoscope"></i></div>
+                        <div class="specialty-name">{{ specialite.label }}</div>
+                    </div>
+                {% endfor %}
+            {% else %}
+                <div class="placeholder-box" style="grid-column: 1 / -1;">
+                    Aucune specialite disponible pour le moment.
+                </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="step-content" data-step="3">
+        <h2 class="step-title">Choisissez votre medecin</h2>
+        <p class="step-description">Affichage filtre selon la specialite choisie.</p>
+
+        <div id="doctors-list">
+            <div class="placeholder-box">Selectionnez d'abord une specialite.</div>
+        </div>
+    </div>
+
+    <div class="step-content" data-step="4">
+        <h2 class="step-title">Date et informations</h2>
+        <p class="step-description">Choisissez un jour disponible puis une heure libre.</p>
+
+        <h4 style="margin-bottom: 10px;">Jours disponibles</h4>
+        <div id="days-list">
+            <div class="placeholder-box">Selectionnez d'abord un medecin.</div>
+        </div>
+
+        <h4 style="margin: 18px 0 10px;">Heures disponibles</h4>
+        <div id="slots-list">
+            <div class="placeholder-box">Selectionnez d'abord un jour.</div>
+        </div>
+
+        <div id="slotFeedback" class="slot-feedback" style="display: none;"></div>
+    </div>
+
+    <div class="step-content" data-step="5">
+        <h2 class="step-title">Confirmation</h2>
+        <p class="step-description">Verifiez les details avant validation.</p>
+
+        <div class="confirmation-box">
+            <div class="confirmation-line">
+                <div class="confirmation-label">Pour</div>
+                <div class="confirmation-value" id="summaryForWho">-</div>
+            </div>
+            <div class="confirmation-line">
+                <div class="confirmation-label">Specialite</div>
+                <div class="confirmation-value" id="summarySpecialty">-</div>
+            </div>
+            <div class="confirmation-line">
+                <div class="confirmation-label">Medecin</div>
+                <div class="confirmation-value" id="summaryDoctor">-</div>
+            </div>
+            <div class="confirmation-line">
+                <div class="confirmation-label">Date</div>
+                <div class="confirmation-value" id="summaryDate">-</div>
+            </div>
+            <div class="confirmation-line" style="border-bottom: none; padding-bottom: 0;">
+                <div class="confirmation-label">Heure</div>
+                <div class="confirmation-value" id="summaryTime">-</div>
+            </div>
+        </div>
+    </div>
+
+    <input type="hidden" name="medecin_id" id="medecinIdInput">
+    <input type="hidden" name="date_rdv" id="dateInput">
+    <input type="hidden" name="heure_rdv" id="heureInput">
+
+    <div class="step-actions">
+        <button type="button" class="btn btn-prev" id="prevBtn" style="display: none;">
+            <i class="fas fa-arrow-left"></i>
+            Precedent
+        </button>
+        <button type="button" class="btn btn-next" id="nextBtn" disabled>
+            Suivant
+            <i class="fas fa-arrow-right"></i>
+        </button>
+    </div>
+</form>
+{% endblock %}
+
+{% block javascripts %}
+<script>
+const medecinsBySpecialite = {{ medecinsBySpecialite|json_encode(constant('JSON_UNESCAPED_UNICODE'))|raw }};
+const daysApiTemplate = '{{ path('app_rdv_jours_disponibles', {'id': 0}) }}';
+const slotsApiTemplate = '{{ path('app_rdv_horaires', {'id': 0}) }}';
+
+let currentStep = 1;
+let formData = {
+    forWho: null,
+    specialty: null,
+    doctor: null,
+    date: null,
+    dateLabel: null,
+    time: null
+};
+
+const doctorsList = document.getElementById('doctors-list');
+const daysList = document.getElementById('days-list');
+const slotsList = document.getElementById('slots-list');
+const slotFeedback = document.getElementById('slotFeedback');
+const nextBtn = document.getElementById('nextBtn');
+const prevBtn = document.getElementById('prevBtn');
+const form = document.getElementById('appointmentForm');
+
+const medecinIdInput = document.getElementById('medecinIdInput');
+const dateInput = document.getElementById('dateInput');
+const heureInput = document.getElementById('heureInput');
+
+function buildApiUrl(template, doctorId) {
+    return template.replace(/\/0$/, '/' + doctorId);
+}
+
+function setSlotFeedback(type, message) {
+    if (!message) {
+        slotFeedback.style.display = 'none';
+        slotFeedback.textContent = '';
+        slotFeedback.classList.remove('error', 'success');
+        return;
+    }
+
+    slotFeedback.style.display = 'block';
+    slotFeedback.textContent = message;
+    slotFeedback.classList.remove('error', 'success');
+    slotFeedback.classList.add(type);
+}
+
+function renderDoctorsForSpecialty() {
+    if (!formData.specialty) {
+        doctorsList.innerHTML = '<div class="placeholder-box">Selectionnez d\'abord une specialite.</div>';
+        return;
+    }
+
+    const doctors = medecinsBySpecialite[formData.specialty] || [];
+    if (doctors.length === 0) {
+        formData.doctor = null;
+        doctorsList.innerHTML = '<div class="placeholder-box">Aucun medecin disponible pour cette specialite.</div>';
+        return;
+    }
+
+    const grid = document.createElement('div');
+    grid.className = 'doctor-list-grid';
+
+    doctors.forEach((doctor) => {
+        const card = document.createElement('div');
+        card.className = 'doctor-card';
+        card.dataset.doctorId = String(doctor.id);
+
+        if (formData.doctor && Number(formData.doctor.id) === Number(doctor.id)) {
+            card.classList.add('selected');
+        }
+
+        card.innerHTML = `
+            <div class="doctor-name">${doctor.nomComplet || 'Dr'}</div>
+            <div class="day-meta">Specialite: ${doctor.specialite || '-'}</div>
+            <div class="day-meta">Cabinet: ${doctor.cabinet || '-'}</div>
+        `;
+
+        grid.appendChild(card);
+    });
+
+    doctorsList.innerHTML = '';
+    doctorsList.appendChild(grid);
+}
+
+async function loadAvailableDays() {
+    if (!formData.doctor) {
+        daysList.innerHTML = '<div class="placeholder-box">Selectionnez d\'abord un medecin.</div>';
+        return;
+    }
+
+    daysList.innerHTML = '<div class="placeholder-box">Chargement des jours...</div>';
+    slotsList.innerHTML = '<div class="placeholder-box">Selectionnez d\'abord un jour.</div>';
+    setSlotFeedback('', '');
+
+    const url = buildApiUrl(daysApiTemplate, Number(formData.doctor.id));
+
+    try {
+        const response = await fetch(url, { headers: { 'X-Requested-With': 'XMLHttpRequest' } });
+        if (!response.ok) {
+            throw new Error('Erreur de chargement des jours.');
+        }
+
+        const payload = await response.json();
+        const days = Array.isArray(payload.jours) ? payload.jours : [];
+
+        if (days.length === 0) {
+            formData.date = null;
+            formData.dateLabel = null;
+            formData.time = null;
+            daysList.innerHTML = '<div class="placeholder-box">Aucun jour disponible pour ce medecin.</div>';
+            updateNextButton();
+            return;
+        }
+
+        const grid = document.createElement('div');
+        grid.className = 'days-grid';
+
+        days.forEach((day) => {
+            const card = document.createElement('div');
+            card.className = 'day-card';
+            card.dataset.date = day.date;
+            card.dataset.label = day.label;
+            card.innerHTML = `<div class="doctor-name">${day.label}</div>`;
+
+            if (formData.date === day.date) {
+                card.classList.add('selected');
+            }
+
+            grid.appendChild(card);
+        });
+
+        if (!days.some((day) => day.date === formData.date)) {
+            formData.date = null;
+            formData.dateLabel = null;
+            formData.time = null;
+        }
+
+        daysList.innerHTML = '';
+        daysList.appendChild(grid);
+        updateNextButton();
+    } catch (error) {
+        daysList.innerHTML = '<div class="placeholder-box">Impossible de charger les jours disponibles.</div>';
+        updateNextButton();
+    }
+}
+
+async function loadSlots(dateValue) {
+    if (!formData.doctor || !dateValue) {
+        return;
+    }
+
+    slotsList.innerHTML = '<div class="placeholder-box">Chargement des heures...</div>';
+    setSlotFeedback('', '');
+
+    const baseUrl = buildApiUrl(slotsApiTemplate, Number(formData.doctor.id));
+    const url = `${baseUrl}?date=${encodeURIComponent(dateValue)}`;
+
+    try {
+        const response = await fetch(url, { headers: { 'X-Requested-With': 'XMLHttpRequest' } });
+        if (!response.ok) {
+            throw new Error('Erreur de chargement des heures.');
+        }
+
+        const payload = await response.json();
+        const slots = Array.isArray(payload.slots) ? payload.slots : [];
+
+        if (slots.length === 0) {
+            formData.time = null;
+            slotsList.innerHTML = '<div class="placeholder-box">Aucune heure disponible ce jour.</div>';
+            updateNextButton();
+            return;
+        }
+
+        const grid = document.createElement('div');
+        grid.className = 'slots-grid';
+
+        slots.forEach((slot) => {
+            const card = document.createElement('div');
+            card.className = 'slot-card ' + (slot.available ? 'available' : 'unavailable');
+            card.dataset.time = slot.time;
+            card.dataset.available = slot.available ? '1' : '0';
+            card.dataset.message = slot.message || '';
+            card.textContent = slot.label || slot.time;
+
+            if (slot.available && formData.time === slot.time) {
+                card.classList.add('selected');
+            }
+
+            grid.appendChild(card);
+        });
+
+        if (!slots.some((slot) => slot.available && slot.time === formData.time)) {
+            formData.time = null;
+        }
+
+        slotsList.innerHTML = '';
+        slotsList.appendChild(grid);
+        updateNextButton();
+    } catch (error) {
+        formData.time = null;
+        slotsList.innerHTML = '<div class="placeholder-box">Impossible de charger les heures.</div>';
+        updateNextButton();
+    }
+}
+
+function renderConfirmation() {
+    const forWhoLabel = formData.forWho === 'other' ? 'Un proche' : 'Moi';
+    document.getElementById('summaryForWho').textContent = forWhoLabel;
+
+    const specialtyCard = document.querySelector(`.specialty-card[data-specialty="${formData.specialty}"] .specialty-name`);
+    document.getElementById('summarySpecialty').textContent = specialtyCard ? specialtyCard.textContent : '-';
+
+    document.getElementById('summaryDoctor').textContent = formData.doctor ? (formData.doctor.nomComplet || '-') : '-';
+    document.getElementById('summaryDate').textContent = formData.dateLabel || formData.date || '-';
+    document.getElementById('summaryTime').textContent = formData.time || '-';
+
+    medecinIdInput.value = formData.doctor ? String(formData.doctor.id) : '';
+    dateInput.value = formData.date || '';
+    heureInput.value = formData.time || '';
+}
+
+function updateStepDisplay() {
+    document.querySelectorAll('.step').forEach((step) => {
+        const stepNum = parseInt(step.dataset.step, 10);
+        step.classList.remove('active', 'completed');
+
+        if (stepNum === currentStep) {
+            step.classList.add('active');
+        } else if (stepNum < currentStep) {
+            step.classList.add('completed');
+        }
+    });
+
+    document.querySelectorAll('.step-content').forEach((content) => {
+        content.classList.remove('active');
+        if (parseInt(content.dataset.step, 10) === currentStep) {
+            content.classList.add('active');
+        }
+    });
+
+    prevBtn.style.display = currentStep > 1 ? 'flex' : 'none';
+
+    if (currentStep === 3) {
+        renderDoctorsForSpecialty();
+    }
+
+    if (currentStep === 4) {
+        loadAvailableDays();
+    }
+
+    if (currentStep === 5) {
+        renderConfirmation();
+    }
+
+    updateNextButton();
+}
+
+function updateNextButton() {
+    let canProceed = false;
+
+    if (currentStep === 5) {
+        nextBtn.innerHTML = 'Confirmer <i class="fas fa-check"></i>';
+    } else {
+        nextBtn.innerHTML = 'Suivant <i class="fas fa-arrow-right"></i>';
+    }
+
+    switch (currentStep) {
+        case 1:
+            canProceed = formData.forWho !== null;
+            break;
+        case 2:
+            canProceed = formData.specialty !== null;
+            break;
+        case 3:
+            canProceed = formData.doctor !== null;
+            break;
+        case 4:
+            canProceed = formData.date !== null && formData.time !== null;
+            break;
+        case 5:
+            canProceed = formData.doctor !== null && formData.date !== null && formData.time !== null;
+            break;
+    }
+
+    nextBtn.disabled = !canProceed;
+}
+
+function nextStep() {
+    if (currentStep < 5) {
+        currentStep += 1;
+        updateStepDisplay();
+        return;
+    }
+
+    renderConfirmation();
+    form.submit();
+}
+
+function prevStep() {
+    if (currentStep > 1) {
+        currentStep -= 1;
+        updateStepDisplay();
+    }
+}
+
+document.querySelectorAll('.choice-card').forEach((card) => {
+    card.addEventListener('click', function () {
+        document.querySelectorAll('.choice-card').forEach((item) => item.classList.remove('selected'));
+        this.classList.add('selected');
+        formData.forWho = this.dataset.choice;
+        updateNextButton();
+    });
+});
+
+document.querySelectorAll('.specialty-card').forEach((card) => {
+    card.addEventListener('click', function () {
+        document.querySelectorAll('.specialty-card').forEach((item) => item.classList.remove('selected'));
+        this.classList.add('selected');
+        formData.specialty = this.dataset.specialty;
+        formData.doctor = null;
+        formData.date = null;
+        formData.dateLabel = null;
+        formData.time = null;
+
+        if (currentStep === 3) {
+            renderDoctorsForSpecialty();
+        }
+
+        updateNextButton();
+    });
+});
+
+doctorsList.addEventListener('click', function (event) {
+    const card = event.target.closest('.doctor-card');
+    if (!card) {
+        return;
+    }
+
+    const doctors = medecinsBySpecialite[formData.specialty] || [];
+    const selectedDoctor = doctors.find((doctor) => Number(doctor.id) === Number(card.dataset.doctorId));
+    if (!selectedDoctor) {
+        return;
+    }
+
+    formData.doctor = selectedDoctor;
+    formData.date = null;
+    formData.dateLabel = null;
+    formData.time = null;
+
+    doctorsList.querySelectorAll('.doctor-card').forEach((item) => item.classList.remove('selected'));
+    card.classList.add('selected');
+    updateNextButton();
+});
+
+daysList.addEventListener('click', function (event) {
+    const card = event.target.closest('.day-card');
+    if (!card) {
+        return;
+    }
+
+    formData.date = card.dataset.date;
+    formData.dateLabel = card.dataset.label;
+    formData.time = null;
+
+    daysList.querySelectorAll('.day-card').forEach((item) => item.classList.remove('selected'));
+    card.classList.add('selected');
+
+    loadSlots(formData.date);
+    updateNextButton();
+});
+
+slotsList.addEventListener('click', function (event) {
+    const card = event.target.closest('.slot-card');
+    if (!card) {
+        return;
+    }
+
+    const isAvailable = card.dataset.available === '1';
+    if (!isAvailable) {
+        formData.time = null;
+        slotsList.querySelectorAll('.slot-card').forEach((item) => item.classList.remove('selected'));
+        setSlotFeedback('error', card.dataset.message || 'Le docteur a deja un rendez-vous a cette heure.');
+        updateNextButton();
+        return;
+    }
+
+    formData.time = card.dataset.time;
+    slotsList.querySelectorAll('.slot-card').forEach((item) => item.classList.remove('selected'));
+    card.classList.add('selected');
+    setSlotFeedback('success', 'Horaire disponible (en vert).');
+    updateNextButton();
+});
+
+nextBtn.addEventListener('click', nextStep);
+prevBtn.addEventListener('click', prevStep);
+updateStepDisplay();
+</script>
+{% endblock %}

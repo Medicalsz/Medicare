@@ -1,0 +1,101 @@
+{
+  "specialties": [
+    {
+      "label": "Cardiologie",
+      "keywords": [
+        {"term": "douleur poitrine", "weight": 5},
+        {"term": "palpitation", "weight": 4},
+        {"term": "coeur", "weight": 3},
+        {"term": "tachycardie", "weight": 4},
+        {"term": "oppression thoracique", "weight": 5}
+      ]
+    },
+    {
+      "label": "Pneumologie",
+      "keywords": [
+        {"term": "essoufflement", "weight": 5},
+        {"term": "toux", "weight": 3},
+        {"term": "respirer", "weight": 4},
+        {"term": "souffle court", "weight": 5},
+        {"term": "douleur pulmonaire", "weight": 4}
+      ]
+    },
+    {
+      "label": "Dermatologie",
+      "keywords": [
+        {"term": "eruption", "weight": 4},
+        {"term": "peau", "weight": 3},
+        {"term": "acne", "weight": 3},
+        {"term": "eczema", "weight": 4},
+        {"term": "demangeaison", "weight": 4}
+      ]
+    },
+    {
+      "label": "Neurologie",
+      "keywords": [
+        {"term": "migraine", "weight": 4},
+        {"term": "maux de tete", "weight": 3},
+        {"term": "vertige", "weight": 4},
+        {"term": "engourdissement", "weight": 5},
+        {"term": "convulsion", "weight": 5}
+      ]
+    },
+    {
+      "label": "Gastro-Enterologie",
+      "keywords": [
+        {"term": "douleur ventre", "weight": 4},
+        {"term": "nausee", "weight": 3},
+        {"term": "vomissement", "weight": 4},
+        {"term": "diarrhee", "weight": 4},
+        {"term": "constipation", "weight": 3}
+      ]
+    },
+    {
+      "label": "ORL",
+      "keywords": [
+        {"term": "gorge", "weight": 3},
+        {"term": "oreille", "weight": 4},
+        {"term": "sinusite", "weight": 4},
+        {"term": "nez bouche", "weight": 3},
+        {"term": "amygdale", "weight": 4}
+      ]
+    },
+    {
+      "label": "Ophtalmologie",
+      "keywords": [
+        {"term": "oeil", "weight": 4},
+        {"term": "vision floue", "weight": 5},
+        {"term": "douleur oculaire", "weight": 4},
+        {"term": "rougeur oeil", "weight": 4},
+        {"term": "sensibilite lumiere", "weight": 3}
+      ]
+    },
+    {
+      "label": "Orthopedie",
+      "keywords": [
+        {"term": "genou", "weight": 3},
+        {"term": "dos", "weight": 3},
+        {"term": "fracture", "weight": 5},
+        {"term": "entorse", "weight": 4},
+        {"term": "douleur articulaire", "weight": 4}
+      ]
+    },
+    {
+      "label": "Medecine Generale",
+      "keywords": [
+        {"term": "fatigue", "weight": 2},
+        {"term": "fievre", "weight": 3},
+        {"term": "infection", "weight": 2},
+        {"term": "douleur", "weight": 2},
+        {"term": "controle", "weight": 1}
+      ]
+    }
+  ],
+  "urgency_keywords": [
+    {"term": "douleur poitrine intense", "score": 6, "reason": "Douleur thoracique intense detectee"},
+    {"term": "perte de connaissance", "score": 7, "reason": "Perte de connaissance signalee"},
+    {"term": "paralysie", "score": 7, "reason": "Signe neurologique critique detecte"},
+    {"term": "hemorragie", "score": 6, "reason": "Saignement important detecte"},
+    {"term": "difficulte respirer", "score": 5, "reason": "Difficulte respiratoire detectee"}
+  ]
+}

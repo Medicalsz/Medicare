@@ -1,0 +1,257 @@
+{% extends 'dashboard_base.html.twig' %}
+
+{% block title %}Apercu ordonnance - Medicare{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <style>
+        .sidebar,
+        .sidebar-overlay {
+            display: none !important;
+        }
+
+        .dashboard-container {
+            margin-left: 0 !important;
+            width: 100% !important;
+            padding: 20px !important;
+        }
+
+        .ordo-preview-page {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 26px 20px 34px;
+        }
+
+        .ordo-preview-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-bottom: 14px;
+        }
+
+        .ordo-preview-back {
+            text-decoration: none;
+            color: #075985;
+            font-weight: 700;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 14px;
+            border-radius: 999px;
+            background: #e0f2fe;
+            border: 1px solid #bae6fd;
+        }
+
+        .ordo-preview-actions {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .ordo-icon-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            border: 1px solid #cbd5e1;
+            background: #fff;
+            color: #0f172a;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            cursor: pointer;
+            font-size: 15px;
+        }
+
+        .ordo-icon-btn.edit {
+            color: #0369a1;
+            border-color: #bae6fd;
+        }
+
+        .ordo-icon-btn.delete {
+            color: #b91c1c;
+            border-color: #fecaca;
+        }
+
+        .ordo-preview-card {
+            background: #fff;
+            border: 1px solid #dbeafe;
+            border-radius: 18px;
+            box-shadow: 0 16px 34px rgba(14, 165, 233, 0.11);
+            overflow: hidden;
+        }
+
+        .ordo-preview-head {
+            background: linear-gradient(115deg, #0ea5e9 0%, #0284c7 60%, #075985 100%);
+            color: #fff;
+            padding: 18px 20px;
+        }
+
+        .ordo-preview-title {
+            margin: 0;
+            font-size: 28px;
+            font-weight: 800;
+            letter-spacing: -0.01em;
+        }
+
+        .ordo-preview-sub {
+            margin: 5px 0 0;
+            font-size: 14px;
+            opacity: 0.95;
+        }
+
+        .ordo-preview-meta {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+            gap: 10px;
+            padding: 16px 20px 10px;
+        }
+
+        .meta-item {
+            background: #f8fbff;
+            border: 1px solid #dbeafe;
+            border-radius: 10px;
+            padding: 9px 11px;
+        }
+
+        .meta-label {
+            color: #64748b;
+            font-size: 12px;
+            margin-bottom: 3px;
+        }
+
+        .meta-value {
+            color: #0f172a;
+            font-size: 14px;
+            font-weight: 700;
+        }
+
+        .ordo-preview-section {
+            padding: 2px 20px 16px;
+        }
+
+        .ordo-preview-section h2 {
+            margin: 12px 0 7px;
+            font-size: 16px;
+            color: #0f172a;
+            font-weight: 800;
+        }
+
+        .ordo-preview-content {
+            border: 1px solid #e2e8f0;
+            border-radius: 10px;
+            background: #f8fafc;
+            padding: 11px 12px;
+            color: #334155;
+            font-size: 14px;
+            line-height: 1.6;
+            white-space: pre-line;
+        }
+
+        .alert-block {
+            margin-bottom: 12px;
+            border-radius: 10px;
+            padding: 10px 12px;
+            font-weight: 700;
+        }
+
+        .alert-error {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .alert-success {
+            background: #dcfce7;
+            color: #166534;
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+<div class="ordo-preview-page">
+    <div class="ordo-preview-top">
+        <a class="ordo-preview-back" href="{{ path('app_medecin_rendez_vous_show', {'id': rendezVous.id}) }}">
+            <i class="fas fa-arrow-left"></i>
+            Retour au rendez-vous
+        </a>
+        <div class="ordo-preview-actions">
+            <a
+                class="ordo-icon-btn edit"
+                href="{{ path('app_medecin_rendez_vous_ordonnance', {'id': rendezVous.id}) }}"
+                title="Modifier l ordonnance"
+            >
+                <i class="fas fa-pen"></i>
+            </a>
+            <form id="deleteOrdonnanceForm" method="post" action="{{ path('app_medecin_rendez_vous_ordonnance_delete', {'id': rendezVous.id}) }}">
+                <input type="hidden" name="_token" value="{{ csrf_token('medecin_delete_ordonnance_' ~ rendezVous.id) }}">
+                <button type="button" id="deleteOrdonnanceBtn" class="ordo-icon-btn delete" title="Supprimer l ordonnance">
+                    <i class="fas fa-trash"></i>
+                </button>
+            </form>
+        </div>
+    </div>
+
+    {% for message in app.flashes('error') %}
+        <div class="alert-block alert-error">{{ message }}</div>
+    {% endfor %}
+    {% for message in app.flashes('success') %}
+        <div class="alert-block alert-success">{{ message }}</div>
+    {% endfor %}
+
+    <article class="ordo-preview-card">
+        <header class="ordo-preview-head">
+            <h1 class="ordo-preview-title">Apercu de l ordonnance</h1>
+            <p class="ordo-preview-sub">
+                Patient: {{ rendezVous.patient.user.prenom }} {{ rendezVous.patient.user.nom }} |
+                RDV: {{ rendezVous.date|date('d/m/Y') }} a {{ rendezVous.heure|date('H:i') }}
+            </p>
+        </header>
+
+        <div class="ordo-preview-meta">
+            <div class="meta-item">
+                <div class="meta-label">Medecin</div>
+                <div class="meta-value">Dr {{ rendezVous.medecin.user.prenom }} {{ rendezVous.medecin.user.nom }}</div>
+            </div>
+            <div class="meta-item">
+                <div class="meta-label">Date consultation</div>
+                <div class="meta-value">{{ consultation.dateConsultation|date('d/m/Y H:i') }}</div>
+            </div>
+            <div class="meta-item">
+                <div class="meta-label">Cabinet</div>
+                <div class="meta-value">{{ rendezVous.medecin.cabinet ?: '-' }}</div>
+            </div>
+        </div>
+
+        <section class="ordo-preview-section">
+            <h2>Compte rendu medical</h2>
+            <div class="ordo-preview-content">{{ consultation.description }}</div>
+        </section>
+
+        <section class="ordo-preview-section">
+            <h2>Prescription</h2>
+            <div class="ordo-preview-content">{{ consultation.ordonnance ?: '-' }}</div>
+        </section>
+    </article>
+</div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const deleteBtn = document.getElementById('deleteOrdonnanceBtn');
+            const deleteForm = document.getElementById('deleteOrdonnanceForm');
+            if (!deleteBtn || !deleteForm) {
+                return;
+            }
+
+            deleteBtn.addEventListener('click', function () {
+                if (window.confirm('Confirmer la suppression de cette ordonnance ?')) {
+                    deleteForm.submit();
+                }
+            });
+        });
+    </script>
+{% endblock %}

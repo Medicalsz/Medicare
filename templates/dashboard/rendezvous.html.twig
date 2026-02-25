@@ -1,0 +1,717 @@
+{% extends 'dashboard_base.html.twig' %}
+
+{% block title %}Mes rendez-vous - Medicare{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <style>
+        .appointments-page {
+            padding: 30px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .page-header h1 {
+            font-size: 32px;
+            color: #1a1a1a;
+            font-weight: 700;
+            margin: 0;
+        }
+
+        .btn-new-appointment {
+            background: #00BFFF;
+            color: white;
+            padding: 14px 28px;
+            border-radius: 12px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 15px;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 191, 255, 0.4);
+        }
+
+        .btn-new-appointment:hover {
+            background: #00A8E6;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 191, 255, 0.6);
+        }
+
+        .btn-new-appointment i {
+            font-size: 18px;
+        }
+
+        .appointments-count {
+            color: #666;
+            font-size: 16px;
+            margin-bottom: 25px;
+        }
+
+        .appointments-filters {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: nowrap;
+            margin-bottom: 18px;
+        }
+
+        .filter-btn {
+            border: 1px solid #dbeafe;
+            background: #f8fbff;
+            color: #0f172a;
+            border-radius: 999px;
+            padding: 9px 14px;
+            font-size: 13px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .filter-btn:hover {
+            border-color: #93c5fd;
+            background: #eff6ff;
+        }
+
+        .filter-btn.active {
+            background: #00BFFF;
+            border-color: #00BFFF;
+            color: #fff;
+            box-shadow: 0 6px 14px rgba(0, 191, 255, 0.28);
+        }
+
+        .search-filter-input {
+            margin-left: auto;
+            width: 330px;
+            max-width: 100%;
+            border: 1px solid #dbeafe;
+            background: #fff;
+            color: #0f172a;
+            border-radius: 999px;
+            padding: 10px 14px;
+            font-size: 13px;
+            font-weight: 600;
+            outline: none;
+            transition: all 0.2s ease;
+        }
+
+        .search-filter-input:focus {
+            border-color: #7dd3fc;
+            box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.14);
+        }
+
+        .appointments-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+            gap: 25px;
+            margin-top: 25px;
+        }
+
+        .appointment-card {
+            background: white;
+            border-radius: 16px;
+            padding: 25px;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s ease;
+            border: 1px solid #f0f0f0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .appointment-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+        }
+
+        .appointment-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+        }
+
+        .doctor-info {
+            display: flex;
+            gap: 18px;
+            margin-bottom: 20px;
+        }
+
+        .doctor-avatar {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            overflow: hidden;
+            flex-shrink: 0;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 26px;
+            font-weight: 700;
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+        }
+
+        .doctor-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .doctor-avatar.has-image .avatar-fallback {
+            display: none;
+        }
+
+        .doctor-avatar.no-image img {
+            display: none;
+        }
+
+        .doctor-avatar.no-image {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #fff;
+        }
+
+        .doctor-avatar.no-image .avatar-fallback {
+            display: block;
+            width: 34px;
+            height: 34px;
+        }
+
+        .doctor-details {
+            flex: 1;
+        }
+
+        .doctor-name {
+            font-size: 20px;
+            font-weight: 700;
+            color: #1a1a1a;
+            margin-bottom: 5px;
+        }
+
+        .doctor-specialty {
+            color: #667eea;
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .appointment-info {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .info-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: #555;
+            font-size: 14px;
+        }
+
+        .info-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            background: #f8f9ff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #667eea;
+            font-size: 16px;
+            flex-shrink: 0;
+        }
+
+        .info-content {
+            flex: 1;
+        }
+
+        .info-label {
+            font-size: 12px;
+            color: #999;
+            margin-bottom: 2px;
+        }
+
+        .info-value {
+            font-weight: 600;
+            color: #333;
+        }
+
+        .appointment-status {
+            display: inline-block;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-bottom: 15px;
+        }
+
+        .status-confirme {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .status-en_attente {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .status-annule {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .card-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .btn-view {
+            flex: 1;
+            background: linear-gradient(135deg, #667eea  100%);
+            color: white;
+            padding: 12px 20px;
+            border-radius: 10px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn-view:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-ordonnance-card {
+            flex: 1;
+            background: #0f172a;
+            color: #fff;
+            padding: 12px 18px;
+            border-radius: 10px;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 13px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .filtered-empty-state {
+            display: none;
+            text-align: center;
+            margin-top: 30px;
+            padding: 8px 0;
+            color: #64748b;
+            font-size: 16px;
+            font-weight: 700;
+            letter-spacing: 0.01em;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 80px 20px;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+        }
+
+        .empty-state-icon {
+            font-size: 80px;
+            color: #e0e0e0;
+            margin-bottom: 25px;
+        }
+
+        .empty-state h2 {
+            font-size: 24px;
+            color: #333;
+            margin-bottom: 12px;
+        }
+
+        .empty-state p {
+            color: #666;
+            font-size: 16px;
+            margin-bottom: 30px;
+        }
+
+        .report-proposal-modal {
+            position: fixed;
+            inset: 0;
+            background: rgba(15, 23, 42, 0.55);
+            z-index: 20000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 16px;
+        }
+
+        .report-proposal-modal.show {
+            display: flex;
+        }
+
+        .report-proposal-card {
+            width: min(500px, 100%);
+            background: #fff;
+            border-radius: 18px;
+            padding: 24px 20px;
+            border: 1px solid #dce8f3;
+            box-shadow: 0 20px 40px rgba(2, 8, 23, 0.22);
+            text-align: center;
+        }
+
+        .report-proposal-title {
+            margin: 0 0 8px;
+            font-size: 22px;
+            font-weight: 800;
+            color: #0f172a;
+        }
+
+        .report-proposal-text {
+            margin: 0;
+            color: #475569;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        .report-proposal-reason {
+            margin-top: 12px;
+            padding: 10px 12px;
+            border-radius: 10px;
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            color: #334155;
+            font-size: 13px;
+            text-align: left;
+            word-break: break-word;
+        }
+
+        .report-proposal-actions {
+            margin-top: 18px;
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .report-proposal-btn {
+            border: none;
+            border-radius: 10px;
+            padding: 10px 14px;
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+            min-width: 170px;
+        }
+
+        .report-proposal-btn.accept {
+            background: #00bfff;
+            color: #fff;
+        }
+
+        .report-proposal-btn.reject {
+            background: #fee2e2;
+            color: #991b1b;
+            border: 1px solid #fecaca;
+        }
+
+        @media (max-width: 768px) {
+            .appointments-page {
+                padding: 20px;
+            }
+
+            .page-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .page-header h1 {
+                font-size: 26px;
+            }
+
+            .appointments-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .btn-new-appointment {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .appointments-filters {
+                flex-wrap: wrap;
+            }
+
+            .search-filter-input {
+                margin-left: 0;
+                width: 100%;
+            }
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+<div class="appointments-page">
+    <!-- En-tête avec titre et bouton -->
+    <div class="page-header">
+        <h1><i class="fas fa-calendar-check"></i> Mes rendez-vous</h1>
+        <a href="{{ path('app_prendre_rdv') }}" class="btn-new-appointment">
+            <i class="fas fa-plus"></i>
+            Prendre rendez-vous
+        </a>
+    </div>
+
+    {% if rendezVous is not empty %}
+        <div class="appointments-count">
+            <i class="fas fa-info-circle"></i> 
+            Vous avez <strong id="appointmentsCountValue">{{ rendezVous|length }}</strong> rendez-vous{% if rendezVous|length > 1 %}s{% endif %}
+        </div>
+
+        <div class="appointments-filters" role="group" aria-label="Filtrer les rendez-vous">
+            <button type="button" class="filter-btn active" data-filter="all">Tout</button>
+            <button type="button" class="filter-btn" data-filter="confirme">Confirmés</button>
+            <button type="button" class="filter-btn" data-filter="en_attente">En attente</button>
+            <button type="button" class="filter-btn" data-filter="annule">Annulés</button>
+            <input
+                type="search"
+                id="appointmentsSearchInput"
+                class="search-filter-input"
+                placeholder="Rechercher: docteur, specialite, cabinet"
+                aria-label="Rechercher un rendez-vous"
+            >
+        </div>
+
+        <!-- Grille de cards des rendez-vous -->
+        <div class="appointments-grid" id="appointmentsGrid">
+            {% for rdv in rendezVous %}
+                {% set consultation = consultationByRdv[rdv.id]|default(null) %}
+                <div
+                    class="appointment-card"
+                    data-status="{{ rdv.statut.value|lower }}"
+                    data-search="{{ ('dr ' ~ rdv.medecin.user.prenom ~ ' ' ~ rdv.medecin.user.nom ~ ' ' ~ rdv.medecin.specialite ~ ' ' ~ rdv.medecin.cabinet)|lower }}"
+                    data-datetime="{{ rdv.date|date('Y-m-d') }}T{{ rdv.heure|date('H:i') }}"
+                    data-id="{{ rdv.id }}"
+                >
+                    <!-- Statut -->
+                    <span class="appointment-status status-{{ rdv.statut.value|lower }}">
+                        {% if rdv.statut.value == 'CONFIRME' %}
+                            ✓ Confirmé
+                        {% elseif rdv.statut.value == 'EN_ATTENTE' %}
+                            ⏱ En attente
+                        {% elseif rdv.statut.value == 'ANNULE' %}
+                            ✗ Annulé
+                        {% endif %}
+                    </span>
+
+                    <!-- Informations du médecin -->
+                    <div class="doctor-info">
+                        <div class="doctor-avatar {{ rdv.medecin.user.photo ? 'has-image' : 'no-image' }}">
+                            {% if rdv.medecin.user.photo %}
+                                <img
+                                    src="{{ asset('uploads/doctors/' ~ rdv.medecin.user.photo) }}"
+                                    alt="Dr {{ rdv.medecin.user.nom }}"
+                                    onerror="this.closest('.doctor-avatar').classList.remove('has-image'); this.closest('.doctor-avatar').classList.add('no-image');"
+                                >
+                            {% endif %}
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" class="bi bi-person avatar-fallback" viewBox="0 0 16 16" aria-hidden="true">
+                                <path d="M8 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6"/>
+                                <path d="M8 9a5 5 0 0 0-5 5 .5.5 0 0 0 1 0 4 4 0 1 1 8 0 .5.5 0 0 0 1 0 5 5 0 0 0-5-5"/>
+                            </svg>
+                        </div>
+                        <div class="doctor-details">
+                            <div class="doctor-name">
+                                Dr {{ rdv.medecin.user.prenom }} {{ rdv.medecin.user.nom }}
+                            </div>
+                            <div class="doctor-specialty">
+                                <i class="fas fa-stethoscope"></i> {{ rdv.medecin.specialite }}
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Informations du rendez-vous -->
+                    <div class="appointment-info">
+                        <!-- Cabinet -->
+                        <div class="info-item">
+                            <div class="info-icon">
+                                <i class="fas fa-hospital"></i>
+                            </div>
+                            <div class="info-content">
+                                <div class="info-label">Cabinet</div>
+                                <div class="info-value">{{ rdv.medecin.cabinet }}</div>
+                            </div>
+                        </div>
+
+                        <!-- Date et heure -->
+                        <div class="info-item">
+                            <div class="info-icon">
+                                <i class="fas fa-calendar-day"></i>
+                            </div>
+                            <div class="info-content">
+                                <div class="info-label">Date et heure</div>
+                                <div class="info-value">
+                                    {{ rdv.date|date('d/m/Y') }} à {{ rdv.heure|date('H:i') }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Actions -->
+                    <div class="card-actions">
+                        <a href="{{ path('app_appointment_show', {'id': rdv.id}) }}" class="btn-view">
+                            <i class="fas fa-eye"></i>
+                            Voir les détails
+                        </a>
+                        {% if consultation %}
+                            <a href="{{ path('app_consultation_ordonnance_pdf', {'id': consultation.id}) }}" class="btn-ordonnance-card">
+                                <i class="fas fa-file-pdf"></i>
+                                Ordonnance PDF
+                            </a>
+                        {% endif %}
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+        <div id="filteredEmptyState" class="filtered-empty-state"></div>
+
+    {% else %}
+        <!-- État vide -->
+        <div class="empty-state">
+            <div class="empty-state-icon">
+                <i class="fas fa-calendar-times"></i>
+            </div>
+            <h2>Aucun rendez-vous</h2>
+            <p>Vous n'avez pas encore de rendez-vous médical.</p>
+        </div>
+    {% endif %}
+</div>
+{% if showReportProposalModal|default(false) and reportProposalRendezVous %}
+<div id="patientReportProposalModalAppointments" class="report-proposal-modal show" role="dialog" aria-modal="true" aria-labelledby="patientReportProposalTitleAppointments">
+    <div class="report-proposal-card">
+        <h2 id="patientReportProposalTitleAppointments" class="report-proposal-title">Le medecin propose un report</h2>
+        <p class="report-proposal-text">
+            Votre medecin a propose un changement de date pour ce rendez-vous.
+            Merci de choisir une decision pour continuer.
+        </p>
+        <div class="report-proposal-reason">
+            <strong>Medecin:</strong> Dr {{ reportProposalRendezVous.medecin.user.prenom }} {{ reportProposalRendezVous.medecin.user.nom }}<br>
+            <strong>Ancien rendez-vous:</strong> {{ reportProposalRendezVous.date|date('d/m/Y') }} a {{ reportProposalRendezVous.heure|date('H:i') }}<br>
+            <strong>Nouveau propose:</strong> {{ reportProposalRendezVous.proposedDate ? reportProposalRendezVous.proposedDate|date('d/m/Y') : '-' }} a {{ reportProposalRendezVous.proposedHeure ? reportProposalRendezVous.proposedHeure|date('H:i') : '-' }}
+        </div>
+        <div class="report-proposal-actions">
+            <form method="post" action="{{ path('app_appointment_report_accept', {'id': reportProposalRendezVous.id}) }}">
+                <input type="hidden" name="_token" value="{{ csrf_token('accept_report_' ~ reportProposalRendezVous.id) }}">
+                <button type="submit" class="report-proposal-btn accept">J accepte le report</button>
+            </form>
+            <form method="post" action="{{ path('app_appointment_report_reject', {'id': reportProposalRendezVous.id}) }}">
+                <input type="hidden" name="_token" value="{{ csrf_token('reject_report_' ~ reportProposalRendezVous.id) }}">
+                <button type="submit" class="report-proposal-btn reject">Non, je refuse</button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endif %}
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const filterButtons = document.querySelectorAll('.filter-btn');
+            const cards = document.querySelectorAll('.appointment-card');
+            const countValue = document.getElementById('appointmentsCountValue');
+            const filteredEmptyState = document.getElementById('filteredEmptyState');
+            const appointmentsGrid = document.getElementById('appointmentsGrid');
+            const searchInput = document.getElementById('appointmentsSearchInput');
+            let currentFilter = 'all';
+            const sortedCards = Array.from(cards).sort(function (a, b) {
+                const aId = Number(a.dataset.id || 0);
+                const bId = Number(b.dataset.id || 0);
+                return bId - aId;
+            });
+
+            if (!filterButtons.length || !cards.length) {
+                return;
+            }
+
+            function applyFilter() {
+                let visibleCount = 0;
+                const emptyMessages = {
+                    all: 'Aucun rendez-vous pour l instant.',
+                    confirme: 'Aucun rendez-vous confirme pour l instant.',
+                    en_attente: 'Aucun rendez-vous en attente pour l instant.',
+                    annule: 'Aucun rendez-vous annule pour l instant.'
+                };
+                const query = (searchInput ? searchInput.value : '').trim().toLowerCase();
+
+                sortedCards.forEach(function (card) {
+                    const status = (card.dataset.status || '').toLowerCase();
+                    const searchable = (card.dataset.search || '').toLowerCase();
+                    const matchFilter = currentFilter === 'all' || status === currentFilter;
+                    const matchSearch = query === '' || searchable.includes(query);
+                    const shouldShow = matchFilter && matchSearch;
+                    card.style.display = shouldShow ? '' : 'none';
+                    if (appointmentsGrid) {
+                        appointmentsGrid.appendChild(card);
+                    }
+                    if (shouldShow) {
+                        visibleCount += 1;
+                    }
+                });
+
+                if (countValue) {
+                    countValue.textContent = String(visibleCount);
+                }
+
+                if (filteredEmptyState && appointmentsGrid) {
+                    const hasResult = visibleCount > 0;
+                    filteredEmptyState.style.display = hasResult ? 'none' : 'block';
+                    appointmentsGrid.style.display = hasResult ? 'grid' : 'none';
+                    if (!hasResult) {
+                        filteredEmptyState.textContent = query !== ''
+                            ? 'Aucun résultat pour cette recherche.'
+                            : (emptyMessages[currentFilter] || emptyMessages.all);
+                    }
+                }
+            }
+
+            filterButtons.forEach(function (button) {
+                button.addEventListener('click', function () {
+                    filterButtons.forEach(function (btn) {
+                        btn.classList.remove('active');
+                    });
+                    button.classList.add('active');
+                    currentFilter = button.dataset.filter || 'all';
+                    applyFilter();
+                });
+            });
+
+            if (searchInput) {
+                searchInput.addEventListener('input', function () {
+                    applyFilter();
+                });
+            }
+        });
+    </script>
+{% endblock %}

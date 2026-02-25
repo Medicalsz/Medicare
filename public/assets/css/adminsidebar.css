@@ -1,0 +1,176 @@
+/* Admin Sidebar Styles */
+.admin-sidebar {
+    position: fixed;
+    top: 70px;
+    left: 0;
+    width: 280px;
+    height: calc(100vh - 70px);
+    background: #1e1e2d;
+    transition: all 0.3s ease;
+    z-index: 999;
+    overflow-y: auto;
+    box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+}
+
+.admin-sidebar::-webkit-scrollbar {
+    width: 6px;
+}
+
+.admin-sidebar::-webkit-scrollbar-track {
+    background: #1e1e2d;
+}
+
+.admin-sidebar::-webkit-scrollbar-thumb {
+    background: #667eea;
+    border-radius: 3px;
+}
+
+.admin-sidebar-content {
+    padding: 20px 0;
+    flex: 1;
+    overflow-y: auto;
+}
+
+.admin-nav-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.admin-nav-item {
+    margin: 5px 15px;
+}
+
+.admin-nav-link {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding: 14px 20px;
+    color: rgba(255, 255, 255, 0.7);
+    text-decoration: none;
+    border-radius: 12px;
+    transition: all 0.3s ease;
+    font-size: 15px;
+    font-weight: 500;
+}
+
+.admin-nav-link i {
+    font-size: 20px;
+    min-width: 24px;
+    transition: all 0.3s ease;
+}
+
+.admin-nav-link:hover {
+    background: rgba(102, 126, 234, 0.1);
+    color: #667eea;
+    transform: translateX(5px);
+}
+
+.admin-nav-link:hover i {
+    color: #667eea;
+}
+
+.admin-nav-link.active {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+}
+
+.admin-nav-link.active i {
+    color: white;
+}
+
+.admin-nav-divider {
+    height: 1px;
+    background: rgba(255, 255, 255, 0.1);
+    margin: 20px 30px;
+}
+
+/* Sidebar Overlay pour mobile */
+.admin-sidebar-overlay {
+    position: fixed;
+    top: 70px;
+    left: 0;
+    width: 100%;
+    height: calc(100vh - 70px);
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 998;
+    display: none;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.admin-sidebar-overlay.active {
+    display: block;
+    opacity: 1;
+}
+
+/* Sidebar fermée sur mobile */
+@media (max-width: 992px) {
+    .admin-sidebar {
+        transform: translateX(-100%);
+    }
+
+    .admin-sidebar.active {
+        transform: translateX(0);
+    }
+}
+
+/* Animation des icônes */
+@keyframes iconPulse {
+    0%, 100% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.1);
+    }
+}
+
+.admin-nav-link.active i {
+    animation: iconPulse 2s ease-in-out infinite;
+}
+
+/* États hover améliorés */
+.admin-nav-link {
+    position: relative;
+    overflow: hidden;
+}
+
+.admin-nav-link::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    height: 100%;
+    width: 4px;
+    background: #667eea;
+    transform: scaleY(0);
+    transition: transform 0.3s ease;
+}
+
+.admin-nav-link:hover::before {
+    transform: scaleY(1);
+}
+
+.admin-nav-link.active::before {
+    transform: scaleY(1);
+    background: white;
+}
+
+/* Responsive large screens */
+@media (min-width: 1400px) {
+    .admin-sidebar {
+        width: 300px;
+    }
+
+    .admin-nav-link {
+        font-size: 16px;
+        padding: 16px 22px;
+    }
+
+    .admin-nav-link i {
+        font-size: 22px;
+    }
+}

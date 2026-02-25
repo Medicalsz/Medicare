@@ -1,0 +1,267 @@
+{% extends 'dashboard_base.html.twig' %}
+
+{% block title %}Rediger ordonnance - Medicare{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <style>
+        .sidebar,
+        .sidebar-overlay {
+            display: none !important;
+        }
+
+        .dashboard-container {
+            margin-left: 0 !important;
+            width: 100% !important;
+            padding: 20px !important;
+        }
+
+        .ordo-page {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 28px 24px 34px;
+        }
+
+        .ordo-top {
+            display: flex;
+            justify-content: flex-start;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 18px;
+            flex-wrap: wrap;
+        }
+
+        .ordo-title-wrap {
+            margin-left: auto;
+            flex: 1;
+            display: flex;
+            justify-content: flex-end;
+        }
+
+        .ordo-title {
+            margin: 0;
+            font-size: 32px;
+            font-weight: 800;
+            color: #0f172a;
+            letter-spacing: -0.02em;
+            text-align: right;
+        }
+
+        .ordo-back {
+            text-decoration: none;
+            color: #075985;
+            font-weight: 700;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 14px;
+            border-radius: 999px;
+            background: #e0f2fe;
+            border: 1px solid #bae6fd;
+        }
+
+        .ordo-shell {
+            background: #fff;
+            border: 1px solid #dbeafe;
+            border-radius: 22px;
+            box-shadow: 0 20px 40px rgba(2, 132, 199, 0.12);
+            overflow: hidden;
+        }
+
+        .ordo-head {
+            background: linear-gradient(120deg, #0ea5e9 0%, #0284c7 55%, #0369a1 100%);
+            color: #fff;
+            padding: 18px 22px;
+        }
+
+        .ordo-head h2 {
+            margin: 0;
+            font-size: 22px;
+            font-weight: 800;
+        }
+
+        .ordo-head p {
+            margin: 6px 0 0;
+            opacity: 0.95;
+            font-size: 14px;
+        }
+
+        .ordo-meta {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+            gap: 10px;
+            padding: 18px 22px 8px;
+        }
+
+        .meta-item {
+            background: #f8fbff;
+            border: 1px solid #dbeafe;
+            border-radius: 12px;
+            padding: 10px 12px;
+        }
+
+        .meta-label {
+            color: #64748b;
+            font-size: 12px;
+            margin-bottom: 3px;
+        }
+
+        .meta-value {
+            color: #0f172a;
+            font-weight: 700;
+            font-size: 14px;
+        }
+
+        .ordo-form {
+            padding: 10px 22px 22px;
+        }
+
+        .form-field label {
+            display: block;
+            margin-bottom: 6px;
+            color: #334155;
+            font-size: 13px;
+            font-weight: 700;
+        }
+
+        .form-field select,
+        .form-field textarea {
+            width: 100%;
+            border: 1px solid #cbd5e1;
+            border-radius: 12px;
+            padding: 11px 12px;
+            font-size: 14px;
+            color: #0f172a;
+            outline: none;
+            background: #fff;
+        }
+
+        .form-field textarea {
+            min-height: 130px;
+            resize: vertical;
+        }
+
+        .form-field select:focus,
+        .form-field textarea:focus {
+            border-color: #0ea5e9;
+            box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.16);
+        }
+
+        .form-actions {
+            margin-top: 16px;
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .btn-ordo {
+            border: none;
+            border-radius: 12px;
+            padding: 11px 16px;
+            font-size: 14px;
+            font-weight: 800;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-ordo.save {
+            background: #00bfff;
+            color: #fff;
+            box-shadow: 0 10px 20px rgba(0, 191, 255, 0.3);
+        }
+
+        .btn-ordo.cancel {
+            background: #e2e8f0;
+            color: #0f172a;
+            border: 1px solid #cbd5e1;
+        }
+
+        .alert-block {
+            margin-bottom: 12px;
+            border-radius: 10px;
+            padding: 10px 12px;
+            font-weight: 700;
+        }
+
+        .alert-error {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .alert-success {
+            background: #dcfce7;
+            color: #166534;
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+<div class="ordo-page">
+    <div class="ordo-top">
+        <a class="ordo-back" href="{{ path('app_medecin_rendez_vous_show', {'id': rendezVous.id}) }}">
+            <i class="fas fa-arrow-left"></i>
+            Retour au rendez-vous
+        </a>
+        <div class="ordo-title-wrap">
+            <h1 class="ordo-title">Ordonnance patient</h1>
+        </div>
+    </div>
+
+    {% for message in app.flashes('error') %}
+        <div class="alert-block alert-error">{{ message }}</div>
+    {% endfor %}
+    <div class="ordo-shell">
+        <div class="ordo-head">
+            <h2>Dr {{ rendezVous.medecin.user.prenom }} {{ rendezVous.medecin.user.nom }}</h2>
+            <p>
+                Patient: {{ rendezVous.patient.user.prenom }} {{ rendezVous.patient.user.nom }}
+                | RDV du {{ rendezVous.date|date('d/m/Y') }} a {{ rendezVous.heure|date('H:i') }}
+            </p>
+        </div>
+
+        <div class="ordo-meta">
+            <div class="meta-item">
+                <div class="meta-label">Telephone patient</div>
+                <div class="meta-value">{{ rendezVous.patient.user.numero ?: '-' }}</div>
+            </div>
+            <div class="meta-item">
+                <div class="meta-label">Email patient</div>
+                <div class="meta-value">{{ rendezVous.patient.user.email }}</div>
+            </div>
+            <div class="meta-item">
+                <div class="meta-label">Cabinet</div>
+                <div class="meta-value">{{ rendezVous.medecin.cabinet ?: '-' }}</div>
+            </div>
+        </div>
+
+        <form class="ordo-form" method="post" action="{{ path('app_medecin_rendez_vous_ordonnance', {'id': rendezVous.id}) }}">
+            <input type="hidden" name="_token" value="{{ csrf_token('medecin_ordonnance_rdv_' ~ rendezVous.id) }}">
+
+            <div class="form-field">
+                <label for="descriptionField">Compte rendu medical</label>
+                <textarea id="descriptionField" name="description" required>{{ formData.description }}</textarea>
+            </div>
+
+            <div class="form-field" style="margin-top: 12px;">
+                <label for="ordonnanceField">Contenu de l ordonnance</label>
+                <textarea id="ordonnanceField" name="ordonnance" required>{{ formData.ordonnance }}</textarea>
+            </div>
+
+            <div class="form-actions">
+                <button type="submit" class="btn-ordo save">
+                    <i class="fas fa-save"></i>
+                    {{ consultation ? 'Mettre a jour l ordonnance' : 'Enregistrer l ordonnance' }}
+                </button>
+                <a class="btn-ordo cancel" href="{{ path('app_medecin_rendez_vous_show', {'id': rendezVous.id}) }}">
+                    <i class="fas fa-times"></i>
+                    Annuler
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

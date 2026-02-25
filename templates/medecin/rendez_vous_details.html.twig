@@ -1,0 +1,822 @@
+{% extends 'dashboard_base.html.twig' %}
+
+{% block title %}Detail rendez-vous medecin - Medicare{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <style>
+        .sidebar,
+        .sidebar-overlay {
+            display: none !important;
+        }
+
+        .dashboard-container {
+            margin-left: 0 !important;
+            width: 100% !important;
+            padding: 24px !important;
+        }
+
+        .rdv-detail-page {
+            padding: 10px 6px;
+            max-width: none;
+            width: 100%;
+            margin: 0 auto;
+        }
+
+        .rdv-detail-header {
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .rdv-detail-title {
+            margin: 0;
+            font-size: 30px;
+            color: #0f172a;
+            font-weight: 800;
+            width: 100%;
+            text-align: center;
+        }
+
+        .rdv-back {
+            text-decoration: none;
+            color: #075985;
+            font-weight: 700;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 14px;
+            border-radius: 999px;
+            background: #e0f2fe;
+            border: 1px solid #bae6fd;
+            box-shadow: 0 6px 16px rgba(14, 165, 233, 0.2);
+            transition: all 0.2s ease;
+        }
+
+        .rdv-back:hover {
+            background: #bae6fd;
+            color: #0c4a6e;
+            transform: translateY(-1px);
+        }
+
+        .rdv-card {
+            background: #fff;
+            border: 1px solid #e2e8f0;
+            border-radius: 14px;
+            box-shadow: 0 8px 22px rgba(15, 23, 42, 0.08);
+            padding: 20px;
+        }
+
+        .rdv-status {
+            display: inline-flex;
+            border-radius: 999px;
+            padding: 6px 12px;
+            font-size: 12px;
+            font-weight: 700;
+            margin-bottom: 14px;
+            text-transform: uppercase;
+        }
+
+        .status-en-attente {
+            background: #fff7d6;
+            color: #8a6500;
+        }
+
+        .status-confirme {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .status-annule {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .rdv-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 10px;
+        }
+
+        .rdv-item {
+            border: 1px solid #e2e8f0;
+            border-radius: 10px;
+            padding: 10px 12px;
+            background: #f8fafc;
+        }
+
+        .rdv-item-label {
+            color: #64748b;
+            font-size: 12px;
+            margin-bottom: 4px;
+        }
+
+        .rdv-item-value {
+            color: #0f172a;
+            font-weight: 700;
+        }
+
+        .rdv-section {
+            margin-top: 18px;
+            padding-top: 14px;
+            border-top: 1px solid #e2e8f0;
+        }
+
+        .rdv-section h2 {
+            margin: 0 0 11px;
+            font-size: 18px;
+            color: #0f172a;
+        }
+
+        .rdv-form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 10px;
+            margin-bottom: 12px;
+        }
+
+        .rdv-form-field label {
+            display: block;
+            font-size: 12px;
+            color: #475569;
+            margin-bottom: 5px;
+            font-weight: 600;
+        }
+
+        .rdv-form-field input {
+            width: 100%;
+            border: 1px solid #cbd5e1;
+            border-radius: 10px;
+            padding: 10px 11px;
+            font-size: 14px;
+        }
+
+        .rdv-actions {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: nowrap;
+            margin-top: 14px;
+        }
+
+        .rdv-action-form {
+            margin: 0;
+        }
+
+        .rdv-btn {
+            border: none;
+            border-radius: 10px;
+            padding: 10px 14px;
+            font-weight: 700;
+            font-size: 13px;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+        }
+
+        .rdv-btn.report {
+            background: #00bfff;
+            color: #fff;
+        }
+
+        .rdv-btn.cancel {
+            background: #fee2e2;
+            color: #991b1b;
+            border: 1px solid #fecaca;
+        }
+
+        .rdv-note {
+            margin-top: 10px;
+            border: 1px solid #fef3c7;
+            background: #fffbeb;
+            color: #92400e;
+            border-radius: 10px;
+            padding: 10px 12px;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .alert-block {
+            margin-bottom: 10px;
+            border-radius: 10px;
+            padding: 10px 12px;
+            font-weight: 600;
+        }
+
+        .alert-error {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .alert-success {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .rdv-ordonnance-wrap {
+            margin-top: 10px;
+            max-width: 470px;
+            position: relative;
+        }
+
+        .rdv-ordonnance-card {
+            width: 100%;
+            text-align: left;
+            border: 1px solid #cfe5ff;
+            border-radius: 14px;
+            background: linear-gradient(135deg, #f8fbff 0%, #edf6ff 100%);
+            padding: 14px;
+            color: #0f172a;
+            transition: all 0.2s ease;
+            box-shadow: 0 8px 20px rgba(14, 165, 233, 0.12);
+            cursor: pointer;
+        }
+
+        .rdv-ordonnance-card:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 12px 22px rgba(14, 165, 233, 0.18);
+        }
+
+        .rdv-ordonnance-head {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 8px;
+            padding-right: 82px;
+        }
+
+        .rdv-ordonnance-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            display: grid;
+            place-items: center;
+            background: #0ea5e9;
+            color: #fff;
+            font-size: 18px;
+            flex-shrink: 0;
+        }
+
+        .rdv-ordonnance-title {
+            margin: 0;
+            font-size: 16px;
+            font-weight: 800;
+            color: #0f172a;
+        }
+
+        .rdv-ordonnance-sub {
+            margin: 3px 0 0;
+            color: #475569;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .rdv-ordonnance-preview {
+            margin: 8px 0 0;
+            color: #334155;
+            font-size: 13px;
+            line-height: 1.5;
+            white-space: pre-line;
+            max-height: 64px;
+            overflow: hidden;
+        }
+
+        .rdv-ordonnance-tools {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            display: flex;
+            gap: 6px;
+        }
+
+        .rdv-ordonnance-tool {
+            width: 34px;
+            height: 34px;
+            border-radius: 9px;
+            border: 1px solid #dbeafe;
+            background: #fff;
+            color: #0f172a;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            cursor: pointer;
+            box-shadow: 0 4px 11px rgba(14, 165, 233, 0.14);
+        }
+
+        .rdv-ordonnance-tool.edit {
+            color: #0369a1;
+            border-color: #bae6fd;
+        }
+
+        .rdv-ordonnance-tool.delete {
+            color: #b91c1c;
+            border-color: #fecaca;
+        }
+
+        .rdv-ordonnance-create {
+            margin-top: 10px;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+            border-radius: 10px;
+            padding: 10px 14px;
+            font-size: 13px;
+            font-weight: 700;
+            background: #0f172a;
+            color: #fff;
+        }
+
+        .ordonnance-modal {
+            position: fixed;
+            inset: 0;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            background: rgba(15, 23, 42, 0.56);
+            z-index: 12000;
+            padding: 16px;
+        }
+
+        .ordonnance-modal.show {
+            display: flex;
+        }
+
+        .ordonnance-modal-card {
+            width: min(760px, 100%);
+            max-height: 90vh;
+            overflow: auto;
+            background: #fff;
+            border-radius: 16px;
+            border: 1px solid #dbeafe;
+            box-shadow: 0 24px 46px rgba(15, 23, 42, 0.28);
+        }
+
+        .ordonnance-modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 14px 16px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .ordonnance-modal-title {
+            margin: 0;
+            font-size: 19px;
+            color: #0f172a;
+            font-weight: 800;
+        }
+
+        .ordonnance-close-btn {
+            width: 34px;
+            height: 34px;
+            border: 1px solid #cbd5e1;
+            border-radius: 10px;
+            background: #fff;
+            color: #0f172a;
+            cursor: pointer;
+        }
+
+        .ordonnance-modal-body {
+            padding: 14px 16px 8px;
+        }
+
+        .ordonnance-preview-meta {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+            gap: 8px;
+        }
+
+        .ordonnance-meta-item {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 10px;
+            padding: 8px 10px;
+        }
+
+        .ordonnance-meta-label {
+            font-size: 12px;
+            color: #64748b;
+        }
+
+        .ordonnance-meta-value {
+            font-size: 13px;
+            color: #0f172a;
+            font-weight: 700;
+            margin-top: 2px;
+        }
+
+        .ordonnance-block-title {
+            margin: 11px 0 6px;
+            font-size: 14px;
+            color: #0f172a;
+            font-weight: 800;
+        }
+
+        .ordonnance-block-content {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 10px;
+            padding: 10px 11px;
+            color: #334155;
+            font-size: 13px;
+            line-height: 1.55;
+            white-space: pre-line;
+        }
+
+        .ordonnance-modal-footer {
+            padding: 12px 16px 16px;
+            display: flex;
+            justify-content: flex-end;
+        }
+
+        .ordonnance-download-btn {
+            border: none;
+            border-radius: 10px;
+            padding: 10px 14px;
+            font-size: 13px;
+            font-weight: 700;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: #0f172a;
+            color: #fff;
+        }
+
+        .action-modal {
+            position: fixed;
+            inset: 0;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            background: rgba(15, 23, 42, 0.54);
+            z-index: 12100;
+            padding: 16px;
+        }
+
+        .action-modal.show {
+            display: flex;
+        }
+
+        .action-modal-card {
+            width: min(420px, 100%);
+            background: #fff;
+            border-radius: 14px;
+            border: 1px solid #dbeafe;
+            box-shadow: 0 20px 40px rgba(15, 23, 42, 0.28);
+            padding: 18px 16px;
+        }
+
+        .action-modal-card h3 {
+            margin: 0 0 7px;
+            font-size: 21px;
+            color: #0f172a;
+            font-weight: 800;
+        }
+
+        .action-modal-card p {
+            margin: 0;
+            color: #475569;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        .action-modal-actions {
+            margin-top: 14px;
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+        }
+
+        .action-modal-btn {
+            border: none;
+            border-radius: 10px;
+            padding: 10px 13px;
+            font-size: 13px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .action-modal-btn.neutral {
+            background: #e2e8f0;
+            color: #0f172a;
+        }
+
+        .action-modal-btn.danger {
+            background: #b91c1c;
+            color: #fff;
+        }
+
+        @media (max-width: 768px) {
+            .rdv-actions {
+                flex-wrap: wrap;
+            }
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+{% set successMessages = app.flashes('success') %}
+{% set ordonnanceSuccessMessage = null %}
+{% for message in successMessages %}
+    {% if ordonnanceSuccessMessage is null and 'ordonnance' in message|lower %}
+        {% set ordonnanceSuccessMessage = message %}
+    {% endif %}
+{% endfor %}
+
+<div class="rdv-detail-page">
+    <div class="rdv-detail-header">
+        <a class="rdv-back" href="{{ path('app_medecin_demandes_rendez_vous') }}">
+            <i class="fas fa-arrow-left"></i>
+            Retour aux demandes
+        </a>
+        <h1 class="rdv-detail-title">Detail du rendez-vous</h1>
+    </div>
+
+    {% for message in app.flashes('error') %}
+        <div class="alert-block alert-error">{{ message }}</div>
+    {% endfor %}
+    {% for message in successMessages %}
+        {% if 'ordonnance' not in message|lower %}
+            <div class="alert-block alert-success">{{ message }}</div>
+        {% endif %}
+    {% endfor %}
+
+    {% set statut = rendezVous.statut.value %}
+    <div class="rdv-card">
+        <div class="rdv-status {% if statut == 'EN_ATTENTE' %}status-en-attente{% elseif statut == 'CONFIRME' %}status-confirme{% else %}status-annule{% endif %}">
+            {{ statut|replace({'_': ' '}) }}
+        </div>
+
+        <div class="rdv-grid">
+            <div class="rdv-item">
+                <div class="rdv-item-label">Patient</div>
+                <div class="rdv-item-value">{{ rendezVous.patient.user.prenom }} {{ rendezVous.patient.user.nom }}</div>
+            </div>
+            <div class="rdv-item">
+                <div class="rdv-item-label">Telephone</div>
+                <div class="rdv-item-value">{{ rendezVous.patient.user.numero ?: '-' }}</div>
+            </div>
+            <div class="rdv-item">
+                <div class="rdv-item-label">Email</div>
+                <div class="rdv-item-value">{{ rendezVous.patient.user.email }}</div>
+            </div>
+            <div class="rdv-item">
+                <div class="rdv-item-label">Date actuelle</div>
+                <div class="rdv-item-value">{{ rendezVous.date|date('d/m/Y') }}</div>
+            </div>
+            <div class="rdv-item">
+                <div class="rdv-item-label">Heure actuelle</div>
+                <div class="rdv-item-value">{{ rendezVous.heure|date('H:i') }}</div>
+            </div>
+        </div>
+
+        {% if rendezVous.reportPendingPatientResponse and rendezVous.proposedDate and rendezVous.proposedHeure %}
+            <div class="rdv-note">
+                Report en attente de reponse patient: propose pour le
+                {{ rendezVous.proposedDate|date('d/m/Y') }} a {{ rendezVous.proposedHeure|date('H:i') }}.
+            </div>
+        {% endif %}
+
+        {% if statut != 'ANNULE' %}
+            <div class="rdv-section">
+                <h2>Actions du rendez-vous</h2>
+                <form id="reportRdvForm" method="post" action="{{ path('app_medecin_report_rendez_vous', {'id': rendezVous.id}) }}">
+                    <input type="hidden" name="_token" value="{{ csrf_token('medecin_report_rdv_' ~ rendezVous.id) }}">
+                    <div class="rdv-form-grid">
+                        <div class="rdv-form-field">
+                            <label for="dateRdv">Nouvelle date</label>
+                            <input id="dateRdv" type="date" name="date_rdv" value="{{ rendezVous.proposedDate ? rendezVous.proposedDate|date('Y-m-d') : rendezVous.date|date('Y-m-d') }}" required>
+                        </div>
+                        <div class="rdv-form-field">
+                            <label for="heureRdv">Nouvelle heure</label>
+                            <input id="heureRdv" type="time" step="1800" name="heure_rdv" value="{{ rendezVous.proposedHeure ? rendezVous.proposedHeure|date('H:i') : rendezVous.heure|date('H:i') }}" required>
+                        </div>
+                    </div>
+                </form>
+
+                <div class="rdv-actions">
+                    <button type="submit" form="reportRdvForm" class="rdv-btn report">Reporter ce rendez-vous</button>
+                    <form class="rdv-action-form" method="post" action="{{ path('app_medecin_cancel_rendez_vous', {'id': rendezVous.id}) }}">
+                        <input type="hidden" name="_token" value="{{ csrf_token('medecin_cancel_rdv_' ~ rendezVous.id) }}">
+                        <button type="submit" class="rdv-btn cancel">Annuler le rendez-vous</button>
+                    </form>
+                </div>
+            </div>
+        {% endif %}
+
+        {% if consultation %}
+            <div class="rdv-section">
+                <h2>Ordonnance</h2>
+                <div class="rdv-ordonnance-wrap">
+                    <button type="button" id="openOrdonnancePreviewBtn" class="rdv-ordonnance-card">
+                        <div class="rdv-ordonnance-head">
+                            <div class="rdv-ordonnance-icon">
+                                <i class="fas fa-file-pdf"></i>
+                            </div>
+                            <div>
+                                <h3 class="rdv-ordonnance-title">Ordonnance enregistree</h3>
+                                <p class="rdv-ordonnance-sub">Cliquez sur la card PDF pour ouvrir l apercu.</p>
+                            </div>
+                        </div>
+                        <p class="rdv-ordonnance-preview">{{ consultation.ordonnance }}</p>
+                    </button>
+                    <div class="rdv-ordonnance-tools">
+                        <a
+                            class="rdv-ordonnance-tool edit"
+                            href="{{ path('app_medecin_rendez_vous_ordonnance', {'id': rendezVous.id}) }}"
+                            title="Modifier l ordonnance"
+                        >
+                            <i class="fas fa-pen"></i>
+                        </a>
+                        <button type="button" id="openDeleteOrdonnanceConfirmBtn" class="rdv-ordonnance-tool delete" title="Supprimer l ordonnance">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                    <form id="deleteOrdonnanceForm" method="post" action="{{ path('app_medecin_rendez_vous_ordonnance_delete', {'id': rendezVous.id}) }}" style="display: none;">
+                        <input type="hidden" name="_token" value="{{ csrf_token('medecin_delete_ordonnance_' ~ rendezVous.id) }}">
+                    </form>
+                </div>
+            </div>
+        {% elseif statut == 'CONFIRME' and canWriteOrdonnance %}
+            <div class="rdv-section">
+                <h2>Ordonnance</h2>
+                <a class="rdv-ordonnance-create" href="{{ path('app_medecin_rendez_vous_ordonnance', {'id': rendezVous.id}) }}">
+                    <i class="fas fa-plus-circle"></i>
+                    Rediger une ordonnance
+                </a>
+            </div>
+        {% elseif statut == 'CONFIRME' and not canWriteOrdonnance %}
+            <div class="rdv-note">
+                L ordonnance sera disponible quand ce rendez-vous sera termine.
+            </div>
+        {% endif %}
+    </div>
+</div>
+
+{% if consultation %}
+    <div id="ordonnancePreviewModal" class="ordonnance-modal" aria-hidden="true">
+        <div class="ordonnance-modal-card">
+            <div class="ordonnance-modal-header">
+                <h3 class="ordonnance-modal-title">Apercu ordonnance</h3>
+                <button type="button" id="closeOrdonnancePreviewBtn" class="ordonnance-close-btn" aria-label="Fermer">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="ordonnance-modal-body">
+                <div class="ordonnance-preview-meta">
+                    <div class="ordonnance-meta-item">
+                        <div class="ordonnance-meta-label">Patient</div>
+                        <div class="ordonnance-meta-value">{{ rendezVous.patient.user.prenom }} {{ rendezVous.patient.user.nom }}</div>
+                    </div>
+                    <div class="ordonnance-meta-item">
+                        <div class="ordonnance-meta-label">Date consultation</div>
+                        <div class="ordonnance-meta-value">{{ consultation.dateConsultation|date('d/m/Y H:i') }}</div>
+                    </div>
+                    <div class="ordonnance-meta-item">
+                        <div class="ordonnance-meta-label">Cabinet</div>
+                        <div class="ordonnance-meta-value">{{ rendezVous.medecin.cabinet ?: '-' }}</div>
+                    </div>
+                </div>
+                <h4 class="ordonnance-block-title">Compte rendu</h4>
+                <div class="ordonnance-block-content">{{ consultation.description }}</div>
+                <h4 class="ordonnance-block-title">Prescription</h4>
+                <div class="ordonnance-block-content">{{ consultation.ordonnance }}</div>
+            </div>
+            <div class="ordonnance-modal-footer">
+                <a class="ordonnance-download-btn" href="{{ path('app_consultation_ordonnance_pdf', {'id': consultation.id}) }}">
+                    <i class="fas fa-download"></i>
+                    Telecharger
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div id="deleteOrdonnanceConfirmModal" class="action-modal" aria-hidden="true">
+        <div class="action-modal-card">
+            <h3>Confirmer la suppression</h3>
+            <p>Voulez-vous vraiment supprimer cette ordonnance ?</p>
+            <div class="action-modal-actions">
+                <button type="button" id="deleteOrdonnanceCancelBtn" class="action-modal-btn neutral">Non</button>
+                <button type="button" id="deleteOrdonnanceConfirmBtn" class="action-modal-btn danger">Oui, supprimer</button>
+            </div>
+        </div>
+    </div>
+{% endif %}
+
+{% if ordonnanceSuccessMessage %}
+    <div id="ordonnanceSuccessModal" class="action-modal show" aria-hidden="false">
+        <div class="action-modal-card">
+            <h3>Action reussie</h3>
+            <p>{{ ordonnanceSuccessMessage }}</p>
+            <div class="action-modal-actions">
+                <button type="button" id="closeOrdonnanceSuccessBtn" class="action-modal-btn neutral">Fermer</button>
+            </div>
+        </div>
+    </div>
+{% endif %}
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const previewOpenBtn = document.getElementById('openOrdonnancePreviewBtn');
+            const previewModal = document.getElementById('ordonnancePreviewModal');
+            const previewCloseBtn = document.getElementById('closeOrdonnancePreviewBtn');
+            const deleteOpenBtn = document.getElementById('openDeleteOrdonnanceConfirmBtn');
+            const deleteConfirmModal = document.getElementById('deleteOrdonnanceConfirmModal');
+            const deleteCancelBtn = document.getElementById('deleteOrdonnanceCancelBtn');
+            const deleteConfirmBtn = document.getElementById('deleteOrdonnanceConfirmBtn');
+            const deleteForm = document.getElementById('deleteOrdonnanceForm');
+            const successModal = document.getElementById('ordonnanceSuccessModal');
+            const closeSuccessBtn = document.getElementById('closeOrdonnanceSuccessBtn');
+
+            function openModal(modal) {
+                if (!modal) {
+                    return;
+                }
+                modal.classList.add('show');
+                modal.setAttribute('aria-hidden', 'false');
+            }
+
+            function closeModal(modal) {
+                if (!modal) {
+                    return;
+                }
+                modal.classList.remove('show');
+                modal.setAttribute('aria-hidden', 'true');
+            }
+
+            if (previewOpenBtn) {
+                previewOpenBtn.addEventListener('click', function () {
+                    openModal(previewModal);
+                });
+            }
+
+            if (previewCloseBtn) {
+                previewCloseBtn.addEventListener('click', function () {
+                    closeModal(previewModal);
+                });
+            }
+
+            if (deleteOpenBtn) {
+                deleteOpenBtn.addEventListener('click', function () {
+                    openModal(deleteConfirmModal);
+                });
+            }
+
+            if (deleteCancelBtn) {
+                deleteCancelBtn.addEventListener('click', function () {
+                    closeModal(deleteConfirmModal);
+                });
+            }
+
+            if (deleteConfirmBtn && deleteForm) {
+                deleteConfirmBtn.addEventListener('click', function () {
+                    deleteForm.submit();
+                });
+            }
+
+            [previewModal, deleteConfirmModal, successModal].forEach(function (modal) {
+                if (!modal) {
+                    return;
+                }
+                modal.addEventListener('click', function (event) {
+                    if (event.target === modal) {
+                        closeModal(modal);
+                    }
+                });
+            });
+
+            document.addEventListener('keydown', function (event) {
+                if (event.key === 'Escape') {
+                    closeModal(previewModal);
+                    closeModal(deleteConfirmModal);
+                    closeModal(successModal);
+                }
+            });
+
+            if (closeSuccessBtn) {
+                closeSuccessBtn.addEventListener('click', function () {
+                    closeModal(successModal);
+                });
+            }
+
+            if (successModal) {
+                setTimeout(function () {
+                    closeModal(successModal);
+                }, 1900);
+            }
+        });
+    </script>
+{% endblock %}

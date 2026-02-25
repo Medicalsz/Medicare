@@ -1,0 +1,308 @@
+{% extends 'dashboard_base.html.twig' %}
+
+{% block title %}Tableau de bord - Medicare{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <style>
+        .doctor-approved-modal {
+            position: fixed;
+            inset: 0;
+            background: rgba(15, 23, 42, 0.55);
+            z-index: 20000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 16px;
+        }
+
+        .doctor-approved-modal.show {
+            display: flex;
+        }
+
+        .doctor-approved-card {
+            width: min(470px, 100%);
+            background: #fff;
+            border-radius: 18px;
+            padding: 24px 20px;
+            border: 1px solid #dce8f3;
+            box-shadow: 0 20px 40px rgba(2, 8, 23, 0.22);
+            text-align: center;
+        }
+
+        .doctor-approved-icon {
+            width: 64px;
+            height: 64px;
+            border-radius: 50%;
+            margin: 0 auto 14px;
+            display: grid;
+            place-items: center;
+            background: #fff4e5;
+            color: #c2410c;
+            font-size: 30px;
+        }
+
+        .doctor-approved-title {
+            margin: 0 0 8px;
+            font-size: 22px;
+            font-weight: 800;
+            color: #0f172a;
+        }
+
+        .doctor-approved-text {
+            margin: 0;
+            color: #475569;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        .doctor-approved-actions {
+            margin-top: 18px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .doctor-approved-btn {
+            border: none;
+            border-radius: 10px;
+            padding: 10px 16px;
+            font-size: 14px;
+            font-weight: 700;
+            text-decoration: none;
+            background: #00bfff;
+            color: #fff;
+            min-width: 180px;
+        }
+
+        .doctor-approved-card.danger .doctor-approved-icon {
+            background: #fff1f2;
+            color: #be123c;
+        }
+
+        .doctor-approved-btn.secondary {
+            background: #e2e8f0;
+            color: #334155;
+        }
+
+        .doctor-approved-reason {
+            margin-top: 12px;
+            padding: 10px 12px;
+            border-radius: 10px;
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            color: #334155;
+            font-size: 13px;
+            text-align: left;
+            word-break: break-word;
+        }
+
+        .report-proposal-actions {
+            margin-top: 18px;
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .report-proposal-btn {
+            border: none;
+            border-radius: 10px;
+            padding: 10px 14px;
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+            min-width: 170px;
+        }
+
+        .report-proposal-btn.accept {
+            background: #00bfff;
+            color: #fff;
+        }
+
+        .report-proposal-btn.reject {
+            background: #fee2e2;
+            color: #991b1b;
+            border: 1px solid #fecaca;
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+<div class="dashboard-content">
+    <div class="page-header">
+        <h1 class="page-title">Bienvenue, {{ app.user.prenom }} ! 👋</h1>
+        <p class="page-subtitle">Voici un aperçu de votre activité</p>
+    </div>
+
+    {# Cards statistiques #}
+    <div class="dashboard-cards">
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">Rendez-vous</h3>
+                <span class="card-icon"><i class="fas fa-calendar-check"></i></span>
+            </div>
+            <div class="card-value">3</div>
+            <p class="card-label">Rendez-vous à venir</p>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">Consultations</h3>
+                <span class="card-icon"><i class="fas fa-stethoscope"></i></span>
+            </div>
+            <div class="card-value">12</div>
+            <p class="card-label">Consultations effectuées</p>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">Médecins</h3>
+                <span class="card-icon"><i class="fas fa-user-md"></i></span>
+            </div>
+            <div class="card-value">5</div>
+            <p class="card-label">Médecins consultés</p>
+        </div>
+    </div>
+
+    {# Section Prochains RDV #}
+    <div class="card">
+        <div class="card-header">
+            <h3 class="card-title">Prochains rendez-vous</h3>
+            <a href="{{ path('app_appointments') }}" class="btn btn-primary">Prendre RDV</a>
+        </div>
+        <p style="color: #666; margin-top: 15px;">Vous n'avez aucun rendez-vous prévu pour le moment.</p>
+    </div>
+
+    {# Section Devenir médecin #}
+    {% if 'ROLE_PATIENT' in app.user.roles and 'ROLE_MEDECIN' not in app.user.roles %}
+    <div class="card" style="margin-top: 25px; border-left: 4px solid #87CEEB;">
+        <h3 class="card-title">Vous êtes professionnel de santé ?</h3>
+        <p style="color: #666; margin: 15px 0;">Déposez votre demande pour devenir médecin sur Medicare et gérer vos consultations en ligne.</p>
+        <a href="{{ path('app_demande_medecin') }}" class="btn btn-primary">Déposer une demande</a>
+    </div>
+    {% endif %}
+</div>
+{% if showApprovedReconnectModal|default(false) %}
+<div id="doctorApprovedModal" class="doctor-approved-modal show" role="dialog" aria-modal="true" aria-labelledby="doctorApprovedTitle">
+    <div class="doctor-approved-card">
+        <div class="doctor-approved-icon"><i class="fas fa-user-md"></i></div>
+        <h2 id="doctorApprovedTitle" class="doctor-approved-title">Demande approuvee</h2>
+        <p class="doctor-approved-text">Votre demande est approuvee. Veuillez vous reconnecter pour acceder a votre dashboard medecin.</p>
+        <div class="doctor-approved-actions">
+            <a href="{{ path('app_logout') }}" class="doctor-approved-btn">Se reconnecter</a>
+        </div>
+    </div>
+</div>
+{% endif %}
+{% if showRejectedModal|default(false) and rejectedDemande %}
+<div id="doctorRejectedModal" class="doctor-approved-modal show" role="dialog" aria-modal="true" aria-labelledby="doctorRejectedTitle">
+    <div class="doctor-approved-card danger">
+        <div class="doctor-approved-icon"><i class="fas fa-times"></i></div>
+        <h2 id="doctorRejectedTitle" class="doctor-approved-title">Demande rejetee</h2>
+        <p class="doctor-approved-text">Votre demande pour devenir medecin a ete rejetee. Vous pouvez preparer une nouvelle demande.</p>
+        {% if rejectedDemande.raisonRejet %}
+            <div class="doctor-approved-reason"><strong>Raison:</strong> {{ rejectedDemande.raisonRejet }}</div>
+        {% endif %}
+        <div class="doctor-approved-actions">
+            <button type="button" id="closeRejectedDashboardModalBtn" class="doctor-approved-btn secondary">Compris</button>
+        </div>
+    </div>
+</div>
+{% endif %}
+{% if showRendezVousStatusModal|default(false) and rendezVousStatusItem %}
+<div id="patientRdvStatusModal" class="doctor-approved-modal show" role="dialog" aria-modal="true" aria-labelledby="patientRdvStatusTitle">
+    <div class="doctor-approved-card {{ rendezVousStatusType == 'annule' ? 'danger' : '' }}">
+        <div class="doctor-approved-icon">
+            <i class="fas {{ rendezVousStatusType == 'annule' ? 'fa-times' : 'fa-check' }}"></i>
+        </div>
+        <h2 id="patientRdvStatusTitle" class="doctor-approved-title">
+            {{ rendezVousStatusType == 'annule' ? 'Rendez-vous rejete' : 'Rendez-vous accepte' }}
+        </h2>
+        <p class="doctor-approved-text">
+            {% if rendezVousStatusType == 'annule' %}
+                Desole, votre rendez-vous a ete rejete.
+            {% else %}
+                Votre rendez-vous a ete accepte. Veuillez etre a l heure.
+            {% endif %}
+        </p>
+        <div class="doctor-approved-reason">
+            <strong>Date:</strong> {{ rendezVousStatusItem.date|date('d/m/Y') }} a {{ rendezVousStatusItem.heure|date('H:i') }}<br>
+            <strong>Medecin:</strong> Dr {{ rendezVousStatusItem.medecin.user.prenom }} {{ rendezVousStatusItem.medecin.user.nom }}
+        </div>
+        <div class="doctor-approved-actions">
+            <button type="button" id="closeRdvStatusModalBtn" class="doctor-approved-btn secondary">Compris</button>
+        </div>
+    </div>
+</div>
+{% endif %}
+{% if showReportProposalModal|default(false) and reportProposalRendezVous %}
+<div id="patientReportProposalModal" class="doctor-approved-modal show" role="dialog" aria-modal="true" aria-labelledby="patientReportProposalTitle">
+    <div class="doctor-approved-card">
+        <div class="doctor-approved-icon"><i class="fas fa-calendar-day"></i></div>
+        <h2 id="patientReportProposalTitle" class="doctor-approved-title">Le medecin propose un report</h2>
+        <p class="doctor-approved-text">
+            Votre medecin a propose un changement de date pour ce rendez-vous.
+            Merci de choisir une decision pour continuer.
+        </p>
+        <div class="doctor-approved-reason">
+            <strong>Medecin:</strong> Dr {{ reportProposalRendezVous.medecin.user.prenom }} {{ reportProposalRendezVous.medecin.user.nom }}<br>
+            <strong>Ancien rendez-vous:</strong> {{ reportProposalRendezVous.date|date('d/m/Y') }} a {{ reportProposalRendezVous.heure|date('H:i') }}<br>
+            <strong>Nouveau propose:</strong> {{ reportProposalRendezVous.proposedDate ? reportProposalRendezVous.proposedDate|date('d/m/Y') : '-' }} a {{ reportProposalRendezVous.proposedHeure ? reportProposalRendezVous.proposedHeure|date('H:i') : '-' }}
+        </div>
+        <div class="report-proposal-actions">
+            <form method="post" action="{{ path('app_appointment_report_accept', {'id': reportProposalRendezVous.id}) }}">
+                <input type="hidden" name="_token" value="{{ csrf_token('accept_report_' ~ reportProposalRendezVous.id) }}">
+                <button type="submit" class="report-proposal-btn accept">J accepte le report</button>
+            </form>
+            <form method="post" action="{{ path('app_appointment_report_reject', {'id': reportProposalRendezVous.id}) }}">
+                <input type="hidden" name="_token" value="{{ csrf_token('reject_report_' ~ reportProposalRendezVous.id) }}">
+                <button type="submit" class="report-proposal-btn reject">Non, je refuse</button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endif %}
+{% if showOrdonnanceReadyModal|default(false) and latestOrdonnance %}
+<div id="patientOrdonnanceReadyModal" class="doctor-approved-modal show" role="dialog" aria-modal="true" aria-labelledby="patientOrdonnanceReadyTitle">
+    <div class="doctor-approved-card">
+        <div class="doctor-approved-icon"><i class="fas fa-file-prescription"></i></div>
+        <h2 id="patientOrdonnanceReadyTitle" class="doctor-approved-title">Ordonnance disponible</h2>
+        <p class="doctor-approved-text">
+            Votre medecin a publie une nouvelle ordonnance.
+        </p>
+        <div class="doctor-approved-reason">
+            <strong>Medecin:</strong> Dr {{ latestOrdonnance.medecin.user.prenom }} {{ latestOrdonnance.medecin.user.nom }}<br>
+            <strong>Date consultation:</strong> {{ latestOrdonnance.dateConsultation|date('d/m/Y H:i') }}
+        </div>
+        <div class="report-proposal-actions">
+            <a href="{{ path('app_consultation_ordonnance_pdf', {'id': latestOrdonnance.id}) }}" class="doctor-approved-btn">Telecharger PDF</a>
+            <a href="{{ path('app_consultations') }}" class="doctor-approved-btn secondary">Voir mes ordonnances</a>
+        </div>
+    </div>
+</div>
+{% endif %}
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const rejectedModal = document.getElementById('doctorRejectedModal');
+            const closeRejectedBtn = document.getElementById('closeRejectedDashboardModalBtn');
+            const rdvStatusModal = document.getElementById('patientRdvStatusModal');
+            const closeRdvStatusModalBtn = document.getElementById('closeRdvStatusModalBtn');
+
+            if (rejectedModal && closeRejectedBtn) {
+                closeRejectedBtn.addEventListener('click', function () {
+                    rejectedModal.classList.remove('show');
+                });
+            }
+
+            if (rdvStatusModal && closeRdvStatusModalBtn) {
+                closeRdvStatusModalBtn.addEventListener('click', function () {
+                    rdvStatusModal.classList.remove('show');
+                });
+            }
+        });
+    </script>
+{% endblock %}

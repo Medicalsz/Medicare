@@ -1,0 +1,84 @@
+{% extends 'admin_base.html.twig' %}
+
+{% block title %}Detail Utilisateur{% endblock %}
+
+{% block body %}
+<div class="admin-page-header d-flex flex-wrap align-items-center justify-content-between gap-3">
+    <div>
+        <h1 class="admin-page-title">Utilisateur #{{ user.id }}</h1>
+        <p class="admin-page-subtitle">Details et informations liees.</p>
+    </div>
+    <a href="{{ path('app_admin_users') }}" class="admin-btn admin-btn-secondary">
+        <i class="bi bi-arrow-left"></i> Retour Utilisateurs
+    </a>
+</div>
+
+{% for message in app.flashes('success') %}
+    <div class="alert alert-success">{{ message }}</div>
+{% endfor %}
+{% for message in app.flashes('error') %}
+    <div class="alert alert-danger">{{ message }}</div>
+{% endfor %}
+
+<div class="admin-card mb-4">
+    <div class="admin-card-header">
+        <h3 class="admin-card-title"><i class="bi bi-person-badge"></i> Informations utilisateur</h3>
+    </div>
+    <div class="admin-card-body">
+        <div class="row g-3">
+            <div class="col-md-6"><strong>Nom:</strong> {{ user.prenom }} {{ user.nom }}</div>
+            <div class="col-md-6"><strong>Email:</strong> {{ user.email }}</div>
+            <div class="col-md-6"><strong>Telephone:</strong> {{ user.numero ?: '-' }}</div>
+            <div class="col-md-6"><strong>Adresse:</strong> {{ user.adresse ?: '-' }}</div>
+            <div class="col-md-12">
+                <strong>Roles:</strong>
+                {% for role in user.roles %}
+                    <span class="admin-badge info" style="margin-right: 4px;">{{ role|replace({'ROLE_': ''}) }}</span>
+                {% else %}
+                    <span class="admin-badge secondary">-</span>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="admin-stats-grid mb-4">
+    <div class="admin-stat-card">
+        <div class="admin-stat-icon primary"><i class="bi bi-file-earmark-text"></i></div>
+        <div class="admin-stat-content">
+            <div class="admin-stat-label">Demandes Medecin</div>
+            <div class="admin-stat-value">{{ stats.demandesCount }}</div>
+        </div>
+    </div>
+    <div class="admin-stat-card">
+        <div class="admin-stat-icon success"><i class="bi bi-person-heart"></i></div>
+        <div class="admin-stat-content">
+            <div class="admin-stat-label">Profil Patient</div>
+            <div class="admin-stat-value">{{ patient ? 'Oui' : 'Non' }}</div>
+        </div>
+    </div>
+    <div class="admin-stat-card">
+        <div class="admin-stat-icon warning"><i class="bi bi-hospital"></i></div>
+        <div class="admin-stat-content">
+            <div class="admin-stat-label">Profil Medecin</div>
+            <div class="admin-stat-value">{{ medecin ? 'Oui' : 'Non' }}</div>
+        </div>
+    </div>
+</div>
+
+<div class="admin-card">
+    <div class="admin-card-header">
+        <h3 class="admin-card-title"><i class="bi bi-link-45deg"></i> Donnees liees</h3>
+    </div>
+    <div class="admin-card-body">
+        <div class="row g-3">
+            <div class="col-md-4"><strong>RDV patient:</strong> {{ stats.patientRendezVousCount }}</div>
+            <div class="col-md-4"><strong>Consultations patient:</strong> {{ stats.patientConsultationsCount }}</div>
+            <div class="col-md-4"><strong>RDV medecin:</strong> {{ stats.medecinRendezVousCount }}</div>
+            <div class="col-md-4"><strong>Consultations medecin:</strong> {{ stats.medecinConsultationsCount }}</div>
+            <div class="col-md-4"><strong>Disponibilites medecin:</strong> {{ stats.medecinDisponibilitesCount }}</div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+

@@ -1,0 +1,223 @@
+{% extends 'admin_base.html.twig' %}
+
+{% block title %}Medecins{% endblock %}
+
+{% block body %}
+<div class="admin-page-header d-flex flex-wrap align-items-center justify-content-between gap-3">
+    <div>
+        <h1 class="admin-page-title">Gestion des Medecins</h1>
+        <p class="admin-page-subtitle">Medecins valides et demandes envoyees</p>
+    </div>
+    <a href="{{ path('app_admin_specialites') }}" class="admin-btn admin-btn-secondary">
+        <i class="bi bi-tags"></i> Gerer les specialites
+    </a>
+</div>
+
+{% for message in app.flashes('success') %}
+    <div class="alert alert-success">{{ message }}</div>
+{% endfor %}
+{% for message in app.flashes('error') %}
+    <div class="alert alert-danger">{{ message }}</div>
+{% endfor %}
+{% for message in app.flashes('info') %}
+    <div class="alert alert-info">{{ message }}</div>
+{% endfor %}
+
+<div class="admin-stats-grid mb-4">
+    <div class="admin-stat-card">
+        <div class="admin-stat-icon warning">
+            <i class="bi bi-hospital"></i>
+        </div>
+        <div class="admin-stat-content">
+            <div class="admin-stat-label">Medecins valides</div>
+            <div class="admin-stat-value">{{ medecins|length > 0 ? medecins|length : demandesAcceptees|length }}</div>
+        </div>
+    </div>
+
+    <div class="admin-stat-card">
+        <div class="admin-stat-icon primary">
+            <i class="bi bi-send"></i>
+        </div>
+        <div class="admin-stat-content">
+            <div class="admin-stat-label">Demandes envoyees</div>
+            <div class="admin-stat-value">{{ demandes|length }}</div>
+        </div>
+    </div>
+
+    <div class="admin-stat-card">
+        <div class="admin-stat-icon info">
+            <i class="bi bi-hourglass-split"></i>
+        </div>
+        <div class="admin-stat-content">
+            <div class="admin-stat-label">En attente</div>
+            <div class="admin-stat-value">{{ demandes|filter(d => d.statut.value == 'en_attente')|length }}</div>
+        </div>
+    </div>
+</div>
+
+<div class="admin-card mb-4">
+    <div class="admin-card-header">
+        <h3 class="admin-card-title"><i class="bi bi-person-lines-fill"></i> Medecins valides</h3>
+    </div>
+    <div class="admin-card-body">
+        <div class="admin-table-container">
+            <table class="admin-table">
+                <thead>
+                    <tr>
+                        <th>Nom</th>
+                        <th>Email</th>
+                        <th>Telephone</th>
+                        <th>Specialite</th>
+                        <th>Cabinet</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% if medecins is not empty %}
+                        {% for medecin in medecins %}
+                            <tr>
+                                <td>{{ medecin.user.prenom }} {{ medecin.user.nom }}</td>
+                                <td>{{ medecin.user.email }}</td>
+                                <td>{{ medecin.user.numero }}</td>
+                                <td>{{ medecin.specialiteRef ? medecin.specialiteRef.nom : medecin.specialite }}</td>
+                                <td>{{ medecin.cabinet }}</td>
+                            </tr>
+                        {% endfor %}
+                    {% elseif demandesAcceptees is not empty %}
+                        {% for demande in demandesAcceptees %}
+                            <tr>
+                                <td>{{ demande.user.prenom }} {{ demande.user.nom }}</td>
+                                <td>{{ demande.user.email }}</td>
+                                <td>{{ demande.user.numero }}</td>
+                                <td>{{ demande.specialiteRef ? demande.specialiteRef.nom : demande.specialite }}</td>
+                                <td>{{ demande.cabinet }}</td>
+                            </tr>
+                        {% endfor %}
+                    {% else %}
+                        <tr>
+                            <td colspan="5">Aucun medecin valide pour le moment.</td>
+                        </tr>
+                    {% endif %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<div class="admin-card">
+    <div class="admin-card-header">
+        <h3 class="admin-card-title"><i class="bi bi-file-earmark-text"></i> Demandes envoyees</h3>
+    </div>
+    <div class="admin-card-body">
+        <div class="admin-table-container">
+            <table class="admin-table">
+                <thead>
+                    <tr>
+                        <th>Candidat</th>
+                        <th>Specialite</th>
+                        <th>Date demande</th>
+                        <th>Statut</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for demande in demandes %}
+                        <tr>
+                            <td>{{ demande.user.prenom }} {{ demande.user.nom }}</td>
+                            <td>{{ demande.specialiteRef ? demande.specialiteRef.nom : demande.specialite }}</td>
+                            <td>{{ demande.dateDemande ? demande.dateDemande|date('d/m/Y H:i') : '-' }}</td>
+                            <td>
+                                {% if demande.statut.value == 'acceptee' %}
+                                    <span class="admin-badge success">Acceptee</span>
+                                {% elseif demande.statut.value == 'rejetee' %}
+                                    <span class="admin-badge danger">Rejetee</span>
+                                {% else %}
+                                    <span class="admin-badge warning">En attente</span>
+                                {% endif %}
+                            </td>
+                            <td style="display:flex; gap:8px; flex-wrap:wrap;">
+                                <a href="{{ path('app_admin_show_demande_medecin', {'id': demande.id}) }}" class="admin-btn admin-btn-secondary btn-sm">
+                                    <i class="bi bi-eye"></i> Consulter
+                                </a>
+                                {% if demande.statut.value == 'en_attente' %}
+                                    <form method="post" action="{{ path('app_admin_approve_medecin', {'id': demande.id}) }}">
+                                        <input type="hidden" name="redirect_to" value="medecins">
+                                        <button type="submit" class="admin-btn admin-btn-success btn-sm">
+                                            <i class="bi bi-check2-circle"></i> Approuver
+                                        </button>
+                                    </form>
+                                    <button
+                                        type="button"
+                                        class="admin-btn admin-btn-danger btn-sm js-open-reject-modal"
+                                        data-reject-action="{{ path('app_admin_reject_medecin', {'id': demande.id}) }}"
+                                        data-candidat="{{ demande.user.prenom }} {{ demande.user.nom }}"
+                                    >
+                                        <i class="bi bi-x-circle"></i> Rejeter
+                                    </button>
+                                {% endif %}
+                            </td>
+                        </tr>
+                    {% else %}
+                        <tr>
+                            <td colspan="5">Aucune demande trouvee.</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="rejectFromListModal" tabindex="-1" aria-labelledby="rejectFromListTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <form id="rejectFromListForm" method="post" action="">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="rejectFromListTitle">Rejeter la demande</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
+                </div>
+                <div class="modal-body">
+                    <p id="rejectFromListSubtitle" class="mb-3 text-muted">Confirmez le rejet de cette demande.</p>
+                    <label for="rejectFromListReason" class="form-label"><strong>Raison du rejet (optionnel)</strong></label>
+                    <textarea id="rejectFromListReason" name="raison_rejet" class="form-control" rows="4" placeholder="Ex: document incomplet, informations incoherentes..."></textarea>
+                    <input type="hidden" name="redirect_to" value="medecins">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Annuler</button>
+                    <button type="submit" class="btn btn-danger">Confirmer le rejet</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const modalElement = document.getElementById('rejectFromListModal');
+            const form = document.getElementById('rejectFromListForm');
+            const subtitle = document.getElementById('rejectFromListSubtitle');
+            const reasonField = document.getElementById('rejectFromListReason');
+            const triggerButtons = document.querySelectorAll('.js-open-reject-modal');
+
+            if (!modalElement || !form || !subtitle || !reasonField || triggerButtons.length === 0) {
+                return;
+            }
+
+            const modal = new bootstrap.Modal(modalElement);
+
+            triggerButtons.forEach(function (button) {
+                button.addEventListener('click', function () {
+                    const action = button.getAttribute('data-reject-action') || '';
+                    const candidat = button.getAttribute('data-candidat') || 'ce candidat';
+
+                    form.setAttribute('action', action);
+                    reasonField.value = '';
+                    subtitle.textContent = 'Vous allez rejeter la demande de ' + candidat + '.';
+                    modal.show();
+                });
+            });
+        });
+    </script>
+{% endblock %}

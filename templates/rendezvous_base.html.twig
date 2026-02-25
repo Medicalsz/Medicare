@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Prendre rendez-vous - Medicare{% endblock %}</title>
+    <link rel="icon" href="{{ asset('assets/img/logomedicare.png') }}">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css">
+    
+    {% block stylesheets %}
+        <style>
+            * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+            }
+
+            body {
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+                background: #ffffff;
+                min-height: 100vh;
+                overflow-x: hidden;
+            }
+
+            .rdv-container {
+                width: 100%;
+                min-height: 100vh;
+                display: flex;
+                flex-direction: column;
+            }
+
+            /* Header minimaliste */
+            .rdv-header {
+                padding: 20px 30px;
+                background: #00BFFF;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                box-shadow: 0 2px 10px rgba(0, 191, 255, 0.2);
+            }
+
+            .rdv-logo {
+                display: flex;
+                align-items: center;
+                gap: 12px;
+                color: white;
+                text-decoration: none;
+                font-size: 20px;
+                font-weight: 700;
+            }
+
+            .rdv-logo img {
+                width: 40px;
+                height: 40px;
+                border-radius: 8px;
+            }
+
+            .btn-back {
+                background: rgba(255, 255, 255, 0.2);
+                color: white;
+                padding: 10px 20px;
+                border-radius: 10px;
+                text-decoration: none;
+                font-weight: 600;
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                transition: all 0.3s ease;
+                border: 1px solid rgba(255, 255, 255, 0.3);
+            }
+
+            .btn-back:hover {
+                background: rgba(255, 255, 255, 0.35);
+                transform: translateY(-2px);
+            }
+
+            /* Contenu principal */
+            .rdv-content {
+                flex: 1;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                padding: 40px 20px;
+            }
+
+            @media (max-width: 768px) {
+                .rdv-header {
+                    padding: 15px 20px;
+                }
+
+                .rdv-logo {
+                    font-size: 18px;
+                }
+
+                .rdv-logo img {
+                    width: 35px;
+                    height: 35px;
+                }
+
+                .btn-back span {
+                    display: none;
+                }
+
+                .rdv-content {
+                    padding: 20px 15px;
+                }
+            }
+        </style>
+    {% endblock %}
+</head>
+<body>
+    <div class="rdv-container">
+        <!-- Header minimaliste -->
+        <div class="rdv-header">
+            <a href="{{ path('app_appointments') }}" class="btn-back">
+                <i class="fas fa-arrow-left"></i>
+                <span>Retour</span>
+            </a>
+            <a href="{{ path('app_dashboard') }}" class="rdv-logo">
+                <img src="{{ asset('assets/img/logomedicare.png') }}" alt="Medicare">
+                <span>Medicare</span>
+            </a>
+        </div>
+
+        <!-- Contenu principal -->
+        <div class="rdv-content">
+            {% block body %}{% endblock %}
+        </div>
+    </div>
+
+    {% if app.user and 'ROLE_PATIENT' in app.user.roles %}
+        {{ include('components/_assistant_chatbot.html.twig') }}
+    {% endif %}
+
+    {% block javascripts %}{% endblock %}
+</body>
+</html>

@@ -1,0 +1,84 @@
+{% extends 'admin_base.html.twig' %}
+
+{% block title %}Utilisateurs{% endblock %}
+
+{% block body %}
+<div class="admin-page-header">
+    <h1 class="admin-page-title">Gestion des Utilisateurs</h1>
+    <p class="admin-page-subtitle">Liste complete des utilisateurs avec consultation et suppression.</p>
+</div>
+
+{% for message in app.flashes('success') %}
+    <div class="alert alert-success">{{ message }}</div>
+{% endfor %}
+{% for message in app.flashes('error') %}
+    <div class="alert alert-danger">{{ message }}</div>
+{% endfor %}
+
+<div class="admin-card">
+    <div class="admin-card-header">
+        <h3 class="admin-card-title"><i class="bi bi-people"></i> Utilisateurs</h3>
+    </div>
+    <div class="admin-card-body">
+        <div class="admin-table-container">
+            <table class="admin-table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Nom</th>
+                        <th>Email</th>
+                        <th>Telephone</th>
+                        <th>Roles</th>
+                        <th>Profils</th>
+                        <th>Demandes Medecin</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for user in users %}
+                        {% set meta = userMeta[user.id] ?? {} %}
+                        <tr>
+                            <td>{{ user.id }}</td>
+                            <td>{{ user.prenom }} {{ user.nom }}</td>
+                            <td>{{ user.email }}</td>
+                            <td>{{ user.numero ?: '-' }}</td>
+                            <td>
+                                {% for role in user.roles %}
+                                    <span class="admin-badge info" style="margin-right: 4px;">{{ role|replace({'ROLE_': ''}) }}</span>
+                                {% endfor %}
+                            </td>
+                            <td>
+                                {% if meta.isPatient %}
+                                    <span class="admin-badge success" style="margin-right: 4px;">Patient</span>
+                                {% endif %}
+                                {% if meta.isMedecin %}
+                                    <span class="admin-badge warning" style="margin-right: 4px;">Medecin</span>
+                                {% endif %}
+                                {% if not meta.isPatient and not meta.isMedecin %}
+                                    <span class="admin-badge secondary">-</span>
+                                {% endif %}
+                            </td>
+                            <td>{{ meta.demandesCount ?? 0 }}</td>
+                            <td style="display:flex; gap:8px; flex-wrap:wrap;">
+                                <a href="{{ path('app_admin_show_user', {'id': user.id}) }}" class="admin-btn admin-btn-secondary btn-sm">
+                                    <i class="bi bi-eye"></i> Voir
+                                </a>
+                                <form method="post" action="{{ path('app_admin_delete_user', {'id': user.id}) }}" onsubmit="return confirm('Supprimer cet utilisateur ?');">
+                                    <button type="submit" class="admin-btn admin-btn-danger btn-sm">
+                                        <i class="bi bi-trash"></i> Supp
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+                    {% else %}
+                        <tr>
+                            <td colspan="8">Aucun utilisateur trouve.</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}
+

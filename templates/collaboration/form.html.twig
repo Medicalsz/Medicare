@@ -1,0 +1,40 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ id ? 'Edit' : 'New' }} Collaboration - MediCare{% endblock %}
+
+{% block body %}
+<section class="container section">
+    <h2>{{ id ? 'Edit' : 'New' }} Collaboration</h2>
+    <form id="form">
+        <input type="hidden" id="id" value="{{ id ?: '' }}" />
+        <div class="mb-3"><label for="partner_id" class="form-label">Partner ID</label><input id="partner_id" class="form-control" value="{{ coll.partner_id|default('') }}" /></div>
+        <div class="mb-3"><label for="organization_id" class="form-label">Organization ID</label><input id="organization_id" class="form-control" value="{{ coll.organization_id|default('') }}" /></div>
+        <div class="mb-3"><label for="contract_start" class="form-label">Contract Start</label><input id="contract_start" type="date" class="form-control" value="{{ coll.contract_start|default('') }}" /></div>
+        <div class="mb-3"><label for="contract_end" class="form-label">Contract End</label><input id="contract_end" type="date" class="form-control" value="{{ coll.contract_end|default('') }}" /></div>
+        <div style="margin-top:8px"><button type="submit" class="btn btn-primary">Save</button> <a href="/home/collaborations" class="btn btn-secondary">Cancel</a></div>
+    </form>
+    <div id="msg" class="text-danger"></div>
+</section>
+{% endblock %}
+
+{% block scripts %}
+{{ parent() }}
+<script>
+document.getElementById('form').addEventListener('submit', async e=>{
+  e.preventDefault();
+  const id = document.getElementById('id').value;
+  const body = {
+    partner_id: document.getElementById('partner_id').value,
+    organization_id: document.getElementById('organization_id').value || null,
+    contract_start: document.getElementById('contract_start').value,
+    contract_end: document.getElementById('contract_end').value || null,
+  };
+  const url = id ? '/collaborations/' + id : '/collaborations/';
+  const method = id ? 'PUT' : 'POST';
+  const res = await fetch(url, {method, headers:{'Content-Type':'application/json','Accept':'application/json'}, body: JSON.stringify(body)});
+  const json = await res.json().catch(()=>null);
+  if(res.status >= 400) document.getElementById('msg').innerText = 'Error: '+(json?.error||res.status);
+  else location.href = '/home/collaborations';
+});
+</script>
+{% endblock %}

@@ -1,0 +1,197 @@
+{% extends 'dashboard_base.html.twig' %}
+
+{% block title %}Mes ordonnances - Medicare{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <style>
+        .ordo-list-page {
+            padding: 28px;
+        }
+
+        .ordo-list-head {
+            margin-bottom: 18px;
+        }
+
+        .ordo-list-title {
+            margin: 0;
+            font-size: 30px;
+            font-weight: 800;
+            color: #0f172a;
+        }
+
+        .ordo-list-subtitle {
+            margin: 6px 0 0;
+            color: #64748b;
+            font-size: 14px;
+        }
+
+        .ordo-list-grid {
+            display: grid;
+            gap: 14px;
+        }
+
+        .ordo-card {
+            background: #fff;
+            border: 1px solid #dbeafe;
+            border-radius: 16px;
+            box-shadow: 0 8px 20px rgba(14, 165, 233, 0.08);
+            padding: 16px;
+        }
+
+        .ordo-card-top {
+            display: flex;
+            justify-content: space-between;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .ordo-patient {
+            color: #0f172a;
+            font-size: 20px;
+            font-weight: 800;
+        }
+
+        .ordo-type {
+            border-radius: 999px;
+            padding: 6px 12px;
+            background: #e0f2fe;
+            border: 1px solid #bae6fd;
+            color: #075985;
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        .ordo-meta {
+            margin-top: 10px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 10px;
+        }
+
+        .ordo-item {
+            background: #f8fbff;
+            border: 1px solid #dbeafe;
+            border-radius: 10px;
+            padding: 9px 11px;
+        }
+
+        .ordo-label {
+            font-size: 12px;
+            color: #64748b;
+            margin-bottom: 3px;
+        }
+
+        .ordo-value {
+            color: #0f172a;
+            font-size: 14px;
+            font-weight: 700;
+        }
+
+        .ordo-description {
+            margin-top: 10px;
+            border: 1px solid #e2e8f0;
+            border-radius: 10px;
+            padding: 10px 12px;
+            background: #f8fafc;
+            color: #334155;
+            font-size: 13px;
+            line-height: 1.5;
+            white-space: pre-line;
+        }
+
+        .ordo-actions {
+            margin-top: 12px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .ordo-btn {
+            border: none;
+            border-radius: 10px;
+            padding: 10px 14px;
+            font-size: 13px;
+            font-weight: 700;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+        }
+
+        .ordo-btn.edit {
+            background: #00bfff;
+            color: #fff;
+        }
+
+        .ordo-btn.pdf {
+            background: #0f172a;
+            color: #fff;
+        }
+
+        .ordo-empty {
+            background: #fff;
+            border: 1px dashed #cbd5e1;
+            border-radius: 14px;
+            padding: 26px;
+            text-align: center;
+            color: #64748b;
+            font-weight: 700;
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+<div class="ordo-list-page">
+    <div class="ordo-list-head">
+        <h1 class="ordo-list-title">Mes ordonnances</h1>
+        <p class="ordo-list-subtitle">Toutes les ordonnances redigees pour vos patients.</p>
+    </div>
+
+    {% if consultations is empty %}
+        <div class="ordo-empty">Aucune ordonnance redigee pour le moment.</div>
+    {% else %}
+        <div class="ordo-list-grid">
+            {% for consultation in consultations %}
+                <div class="ordo-card">
+                    <div class="ordo-card-top">
+                        <div class="ordo-patient">{{ consultation.patient.user.prenom }} {{ consultation.patient.user.nom }}</div>
+                    </div>
+                    <div class="ordo-meta">
+                        <div class="ordo-item">
+                            <div class="ordo-label">Date consultation</div>
+                            <div class="ordo-value">{{ consultation.dateConsultation|date('d/m/Y H:i') }}</div>
+                        </div>
+                        <div class="ordo-item">
+                            <div class="ordo-label">Telephone</div>
+                            <div class="ordo-value">{{ consultation.patient.user.numero ?: '-' }}</div>
+                        </div>
+                        <div class="ordo-item">
+                            <div class="ordo-label">Rendez-vous</div>
+                            <div class="ordo-value">#{{ consultation.rendezVous.id }}</div>
+                        </div>
+                    </div>
+
+                    <div class="ordo-description">
+                        <strong>Ordonnance:</strong><br>
+                        {{ consultation.ordonnance }}
+                    </div>
+
+                    <div class="ordo-actions">
+                        <a class="ordo-btn edit" href="{{ path('app_medecin_rendez_vous_ordonnance', {'id': consultation.rendezVous.id}) }}">
+                            <i class="fas fa-pen"></i>
+                            Modifier
+                        </a>
+                        <a class="ordo-btn pdf" href="{{ path('app_consultation_ordonnance_pdf', {'id': consultation.id}) }}">
+                            <i class="fas fa-file-pdf"></i>
+                            PDF
+                        </a>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

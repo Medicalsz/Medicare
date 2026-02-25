@@ -1,0 +1,247 @@
+{% extends 'dashboard_base.html.twig' %}
+
+{% block title %}Mon Planning - Medicare{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <style>
+        .planning-page {
+            padding: 28px;
+        }
+
+        .planning-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 16px;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+        }
+
+        .planning-title {
+            margin: 0;
+            color: #1f2937;
+            font-size: 32px;
+            font-weight: 700;
+        }
+
+        .planning-subtitle {
+            margin: 4px 0 0;
+            color: #6b7280;
+        }
+
+        .planning-card {
+            background: #fff;
+            border-radius: 16px;
+            box-shadow: 0 8px 24px rgba(15, 23, 42, 0.08);
+            padding: 20px;
+            overflow: hidden;
+        }
+
+        .planning-table-wrap {
+            overflow-x: auto;
+        }
+
+        .planning-table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 980px;
+        }
+
+        .planning-table th,
+        .planning-table td {
+            border-bottom: 1px solid #e5e7eb;
+            padding: 12px;
+            text-align: left;
+            vertical-align: middle;
+            white-space: nowrap;
+        }
+
+        .planning-table th {
+            background: #f8fafc;
+            color: #374151;
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+
+        .day-label {
+            font-weight: 700;
+            color: #111827;
+        }
+
+        .time-input {
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
+            height: 40px;
+            padding: 0 10px;
+            background: #fff;
+            min-width: 108px;
+        }
+
+        .time-input:disabled {
+            background: #f3f4f6;
+            color: #9ca3af;
+            border-color: #e5e7eb;
+        }
+
+        .closed-toggle {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 600;
+            color: #374151;
+        }
+
+        .btn-save-planning {
+            background: #00bfff;
+            color: #fff;
+            border: none;
+            border-radius: 10px;
+            padding: 12px 20px;
+            font-weight: 700;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.2s ease;
+        }
+
+        .btn-save-planning:hover {
+            background: #00a8e6;
+            transform: translateY(-1px);
+        }
+
+        .alert-block {
+            margin-bottom: 14px;
+            border-radius: 10px;
+            padding: 12px 14px;
+        }
+
+        .alert-success {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .alert-error {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        @media (max-width: 768px) {
+            .planning-page {
+                padding: 18px;
+            }
+
+            .planning-title {
+                font-size: 26px;
+            }
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+<div class="planning-page">
+    <div class="planning-header">
+        <div>
+            <h1 class="planning-title">Mon planning</h1>
+            <p class="planning-subtitle">Definissez vos horaires de travail pour chaque jour de la semaine.</p>
+        </div>
+        <button type="submit" form="planningForm" class="btn-save-planning">
+            <i class="fas fa-calendar-check"></i>
+            Ajouter / Mettre a jour mon planning
+        </button>
+    </div>
+
+    {% for message in app.flashes('success') %}
+        <div class="alert-block alert-success">{{ message }}</div>
+    {% endfor %}
+    {% for message in app.flashes('error') %}
+        <div class="alert-block alert-error">{{ message }}</div>
+    {% endfor %}
+
+    <div class="planning-card">
+        <form id="planningForm" method="post">
+            <div class="planning-table-wrap">
+                <table class="planning-table">
+                    <thead>
+                    <tr>
+                        <th>Jour</th>
+                        <th>Ferme</th>
+                        <th>Matin debut</th>
+                        <th>Matin fin</th>
+                        <th>Pause debut</th>
+                        <th>Pause fin</th>
+                        <th>Apres-midi debut</th>
+                        <th>Apres-midi fin</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for row in planningRows %}
+                        <tr data-day-row>
+                            <td class="day-label">{{ row.label }}</td>
+                            <td>
+                                <label class="closed-toggle">
+                                    <input
+                                        type="checkbox"
+                                        name="planning[{{ row.dayKey }}][ferme]"
+                                        value="1"
+                                        {{ row.ferme ? 'checked' : '' }}
+                                        data-close-toggle
+                                    >
+                                    Ferme
+                                </label>
+                            </td>
+                            <td>
+                                <input type="time" step="1800" name="planning[{{ row.dayKey }}][matinDebut]" class="time-input" value="{{ row.matinDebut }}" required>
+                            </td>
+                            <td>
+                                <input type="time" step="1800" name="planning[{{ row.dayKey }}][matinFin]" class="time-input" value="{{ row.matinFin }}" required>
+                            </td>
+                            <td>
+                                <input type="time" step="1800" name="planning[{{ row.dayKey }}][pauseDebut]" class="time-input" value="{{ row.pauseDebut }}" required>
+                            </td>
+                            <td>
+                                <input type="time" step="1800" name="planning[{{ row.dayKey }}][pauseFin]" class="time-input" value="{{ row.pauseFin }}" required>
+                            </td>
+                            <td>
+                                <input type="time" step="1800" name="planning[{{ row.dayKey }}][apresMidiDebut]" class="time-input" value="{{ row.apresMidiDebut }}" required>
+                            </td>
+                            <td>
+                                <input type="time" step="1800" name="planning[{{ row.dayKey }}][apresMidiFin]" class="time-input" value="{{ row.apresMidiFin }}" required>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+        function applyRowState(row) {
+            const closeToggle = row.querySelector('[data-close-toggle]');
+            if (!closeToggle) {
+                return;
+            }
+
+            const isClosed = closeToggle.checked;
+            row.querySelectorAll('.time-input').forEach((input) => {
+                input.disabled = isClosed;
+            });
+        }
+
+        document.querySelectorAll('[data-day-row]').forEach((row) => {
+            applyRowState(row);
+            const closeToggle = row.querySelector('[data-close-toggle]');
+            if (closeToggle) {
+                closeToggle.addEventListener('change', () => applyRowState(row));
+            }
+        });
+    </script>
+{% endblock %}

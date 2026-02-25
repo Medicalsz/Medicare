@@ -1,0 +1,63 @@
+{# Admin Sidebar Component #}
+<aside class="admin-sidebar" id="adminSidebar">
+    <div class="admin-sidebar-content">
+        <nav class="admin-nav">
+            <ul class="admin-nav-list">
+                <li class="admin-nav-item">
+                    <a href="{{ path('app_admin_dashboard') }}" class="admin-nav-link {{ app.request.attributes.get('_route') == 'app_admin_dashboard' ? 'active' : '' }}">
+                        <i class="bi bi-speedometer2"></i>
+                        <span>Dashboard</span>
+                    </a>
+                </li>
+
+                <li class="admin-nav-item">
+                    <a href="{{ path('app_admin_users') }}" class="admin-nav-link {{ app.request.attributes.get('_route') in ['app_admin_users', 'app_admin_show_user'] ? 'active' : '' }}">
+                        <i class="bi bi-people"></i>
+                        <span>Utilisateurs</span>
+                    </a>
+                </li>
+
+                <li class="admin-nav-item">
+                    <a href="{{ path('app_admin_medecins') }}" class="admin-nav-link {{ app.request.attributes.get('_route') in ['app_admin_medecins', 'app_admin_show_demande_medecin'] ? 'active' : '' }}">
+                        <i class="bi bi-hospital"></i>
+                        <span>Medecins</span>
+                    </a>
+                </li>
+
+                <li class="admin-nav-item">
+                    <a href="{{ path('app_admin_rendez_vous') }}" class="admin-nav-link {{ app.request.attributes.get('_route') == 'app_admin_rendez_vous' ? 'active' : '' }}">
+                        <i class="bi bi-calendar-check"></i>
+                        <span>Rendez-vous</span>
+                    </a>
+                </li>
+
+                <li class="admin-nav-item">
+                    <a href="#" class="admin-nav-link">
+                        <i class="bi bi-person-badge"></i>
+                        <span>Collaborateurs</span>
+                    </a>
+                </li>
+
+                <li class="admin-nav-divider"></li>
+
+                <li class="admin-nav-item">
+                    <a href="#" class="admin-nav-link">
+                        <i class="bi bi-graph-up"></i>
+                        <span>Statistiques</span>
+                    </a>
+                </li>
+
+                <li class="admin-nav-item">
+                    <a href="#" class="admin-nav-link">
+                        <i class="bi bi-gear"></i>
+                        <span>Parametres</span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+
+    </div>
+</aside>
+
+{# Overlay pour mobile #}
+<div class="admin-sidebar-overlay" id="adminSidebarOverlay"></div>

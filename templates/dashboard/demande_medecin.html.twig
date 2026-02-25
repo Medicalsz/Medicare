@@ -1,0 +1,1330 @@
+{% extends 'base.html.twig' %}
+{% set requestSubmitted = app.request.query.get('submitted') == 'true' %}
+{% set canSubmitDemande = canSubmitDemande|default(true) %}
+{% set showPendingModal = showPendingModal|default(false) %}
+{% set showApprovedReconnectModal = showApprovedReconnectModal|default(false) %}
+{% set specialites = specialites|default([]) %}
+
+{% block title %}Demande Medecin - Medicare{% endblock %}
+
+{% block stylesheets %}
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #00bfff;
+            --primary-dark: #00a8e6;
+            --bg-soft: #f3f9fd;
+            --text: #1a1a1a;
+            --muted: #667085;
+            --card: #ffffff;
+            --border: #dce8f3;
+            --ok-bg: #e8f8ee;
+            --ok-text: #1f7a45;
+            --err-bg: #fdecec;
+            --err-text: #ad2e2e;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            color: var(--text);
+            background:
+                radial-gradient(circle at 10% 10%, rgba(0, 191, 255, 0.14), transparent 35%),
+                radial-gradient(circle at 90% 85%, rgba(0, 168, 230, 0.11), transparent 38%),
+                var(--bg-soft);
+            min-height: 100vh;
+        }
+
+        .page-wrap {
+            min-height: 100vh;
+            padding: 0;
+        }
+
+        .application-card {
+            width: 100%;
+            max-width: 100%;
+            min-height: 100vh;
+            background: var(--card);
+            border: 0;
+            border-radius: 0;
+            overflow: hidden;
+        }
+
+        .application-header {
+            background: linear-gradient(135deg, var(--primary), #44cffc);
+            padding: 22px 24px;
+            color: #fff;
+            display: flex;
+            justify-content: space-between;
+            gap: 16px;
+            align-items: center;
+            flex-wrap: wrap;
+            box-shadow: 0 2px 10px rgba(0, 191, 255, 0.2);
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 700;
+            font-size: 20px;
+        }
+
+        .brand img {
+            width: 34px;
+            height: 34px;
+            border-radius: 8px;
+        }
+
+        .btn-back {
+            text-decoration: none;
+            color: #fff;
+            border: 1px solid rgba(255, 255, 255, 0.45);
+            border-radius: 10px;
+            padding: 10px 14px;
+            font-weight: 600;
+            display: inline-flex;
+            gap: 8px;
+            align-items: center;
+            transition: all 0.2s ease;
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .btn-back:hover {
+            background: rgba(255, 255, 255, 0.22);
+            transform: translateY(-1px);
+        }
+
+        .application-content {
+            width: 100%;
+            padding: 28px clamp(14px, 2.5vw, 34px) 34px;
+        }
+
+        .title {
+            margin: 0 0 6px;
+            font-size: 30px;
+            font-weight: 800;
+            letter-spacing: -0.01em;
+        }
+
+        .subtitle {
+            margin: 0;
+            color: var(--muted);
+            font-size: 15px;
+        }
+
+        .alerts {
+            margin-top: 18px;
+            display: grid;
+            gap: 10px;
+        }
+
+        .alert {
+            border-radius: 10px;
+            padding: 11px 14px;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .alert-success {
+            background: var(--ok-bg);
+            color: var(--ok-text);
+        }
+
+        .alert-error {
+            background: var(--err-bg);
+            color: var(--err-text);
+        }
+
+        .status-box {
+            margin-top: 18px;
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 14px;
+            background: #f9fcff;
+        }
+
+        .status-title {
+            margin: 0 0 8px;
+            font-size: 15px;
+            font-weight: 700;
+        }
+
+        .status-line {
+            margin: 0;
+            color: #344054;
+            font-size: 14px;
+        }
+
+        .wizard {
+            margin-top: 22px;
+            display: grid;
+            gap: 18px;
+        }
+
+        .wizard-steps {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(120px, 1fr));
+            gap: 10px;
+        }
+
+        .wizard-step {
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 10px 12px;
+            background: #f8fbff;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            min-height: 62px;
+        }
+
+        .wizard-step .number {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            background: #dce8f3;
+            color: #46607a;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 13px;
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+
+        .wizard-step .label {
+            font-size: 13px;
+            font-weight: 700;
+            color: #46607a;
+        }
+
+        .wizard-step.active {
+            border-color: var(--primary);
+            background: #eaf9ff;
+        }
+
+        .wizard-step.active .number {
+            background: var(--primary);
+            color: #fff;
+        }
+
+        .wizard-step.active .label {
+            color: #0b4a67;
+        }
+
+        .wizard-step.done .number {
+            background: #38b000;
+            color: #fff;
+        }
+
+        .form-shell {
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            background: #fff;
+            padding: 16px;
+        }
+
+        .panel {
+            display: none;
+            gap: 14px;
+        }
+
+        .panel.active {
+            display: grid;
+        }
+
+        .panel-title {
+            margin: 0;
+            font-size: 18px;
+            font-weight: 800;
+            color: #111827;
+        }
+
+        .panel-subtitle {
+            margin: 0;
+            color: #6b7280;
+            font-size: 13px;
+        }
+
+        .two-col {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 14px;
+        }
+
+        .field {
+            display: grid;
+            gap: 6px;
+        }
+
+        .field label {
+            color: #334155;
+            font-size: 13px;
+            font-weight: 700;
+        }
+
+        .control {
+            width: 100%;
+            border: 1px solid #d0dbe7;
+            border-radius: 10px;
+            padding: 11px 12px;
+            font-size: 14px;
+            color: #1f2937;
+            background: #fff;
+            transition: border-color 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .control:focus {
+            border-color: var(--primary);
+            outline: none;
+            box-shadow: 0 0 0 4px rgba(0, 191, 255, 0.14);
+        }
+
+        .control.invalid {
+            border-color: #ef4444;
+            box-shadow: 0 0 0 4px rgba(239, 68, 68, 0.1);
+        }
+
+        textarea.control {
+            min-height: 110px;
+            resize: vertical;
+        }
+
+        .identity-box {
+            margin-top: 2px;
+            padding: 12px;
+            border: 1px dashed #b8d8ef;
+            border-radius: 12px;
+            background: #f5fbff;
+            display: grid;
+            gap: 12px;
+        }
+
+        .identity-title {
+            margin: 0;
+            font-size: 14px;
+            font-weight: 700;
+            color: #0f4c75;
+        }
+
+        .hint {
+            margin: 0;
+            font-size: 12px;
+            color: #667085;
+        }
+
+        .field-error {
+            margin: 0;
+            min-height: 16px;
+            font-size: 12px;
+            color: #dc2626;
+            font-weight: 600;
+        }
+
+        .file-preview-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+            gap: 10px;
+            margin-top: 8px;
+        }
+
+        .file-preview-empty {
+            margin-top: 6px;
+            font-size: 12px;
+            color: #7b8794;
+        }
+
+        .file-preview-card {
+            border: 1px solid #d6e4f0;
+            border-radius: 12px;
+            background: #f8fbff;
+            padding: 8px;
+            position: relative;
+            min-height: 110px;
+            display: grid;
+            gap: 6px;
+            align-content: start;
+        }
+
+        .file-remove-btn {
+            position: absolute;
+            top: 6px;
+            right: 6px;
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            border: none;
+            background: #ef4444;
+            color: #fff;
+            font-size: 13px;
+            font-weight: 700;
+            cursor: pointer;
+            line-height: 1;
+        }
+
+        .file-thumb {
+            width: 100%;
+            height: 72px;
+            border-radius: 8px;
+            object-fit: cover;
+            border: 1px solid #dbe7f3;
+            background: #fff;
+        }
+
+        .file-doc {
+            width: 100%;
+            height: 72px;
+            border-radius: 8px;
+            border: 1px solid #dbe7f3;
+            background: #fff;
+            display: grid;
+            place-items: center;
+            color: #dc2626;
+            font-size: 26px;
+        }
+
+        .file-name {
+            font-size: 11px;
+            color: #334155;
+            word-break: break-word;
+            line-height: 1.3;
+        }
+
+        .summary {
+            display: grid;
+            gap: 10px;
+        }
+
+        .summary-item {
+            border: 1px solid #e5edf5;
+            border-radius: 10px;
+            padding: 10px 12px;
+            background: #fbfdff;
+            font-size: 14px;
+        }
+
+        .summary-item strong {
+            color: #344054;
+            margin-right: 6px;
+        }
+
+        .wizard-error {
+            border: 1px solid #fecaca;
+            background: #fff1f2;
+            color: #b91c1c;
+            border-radius: 10px;
+            padding: 10px 12px;
+            font-size: 13px;
+            font-weight: 700;
+        }
+
+        .submission-modal {
+            position: fixed;
+            inset: 0;
+            background: rgba(15, 23, 42, 0.48);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+            padding: 16px;
+        }
+
+        .submission-modal.show {
+            display: flex;
+        }
+
+        .submission-card {
+            width: min(460px, 100%);
+            background: #fff;
+            border-radius: 18px;
+            border: 1px solid #dce8f3;
+            box-shadow: 0 20px 40px rgba(2, 8, 23, 0.2);
+            padding: 24px 20px;
+            text-align: center;
+        }
+
+        .submission-icon {
+            width: 64px;
+            height: 64px;
+            margin: 0 auto 14px;
+            border-radius: 50%;
+            display: grid;
+            place-items: center;
+            background: #e8f8ee;
+            color: #1f7a45;
+            font-size: 30px;
+        }
+
+        .submission-title {
+            margin: 0 0 8px;
+            font-size: 22px;
+            font-weight: 800;
+            color: #0f172a;
+        }
+
+        .submission-text {
+            margin: 0;
+            color: #475569;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        .submission-card.warning .submission-icon {
+            background: #fff4e5;
+            color: #c2410c;
+        }
+
+        .submission-card.danger .submission-icon {
+            background: #fff1f2;
+            color: #be123c;
+        }
+
+        .modal-actions {
+            margin-top: 18px;
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .modal-btn {
+            border: none;
+            border-radius: 10px;
+            padding: 10px 16px;
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--primary);
+            color: #fff;
+            min-width: 148px;
+        }
+
+        .modal-btn.secondary {
+            background: #e2e8f0;
+            color: #334155;
+        }
+
+        .modal-reason {
+            margin-top: 12px;
+            padding: 10px 12px;
+            border-radius: 10px;
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            color: #334155;
+            font-size: 13px;
+            text-align: left;
+            word-break: break-word;
+        }
+
+        .actions {
+            margin-top: 8px;
+            display: flex;
+            justify-content: space-between;
+            gap: 12px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .step-btn {
+            border: none;
+            border-radius: 10px;
+            padding: 12px 20px;
+            font-size: 15px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .step-btn.secondary {
+            background: #eef2f7;
+            color: #334155;
+        }
+
+        .step-btn.secondary:hover {
+            background: #dfe7f0;
+        }
+
+        .step-btn.primary {
+            background: var(--primary);
+            color: #fff;
+        }
+
+        .step-btn.primary:hover {
+            background: var(--primary-dark);
+            transform: translateY(-1px);
+            box-shadow: 0 8px 20px rgba(0, 191, 255, 0.25);
+        }
+
+        .step-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .meta-note {
+            font-size: 12px;
+            color: #667085;
+        }
+
+        @media (max-width: 920px) {
+            .wizard-steps {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .two-col {
+                grid-template-columns: 1fr;
+            }
+
+            .title {
+                font-size: 24px;
+            }
+
+            .btn-back span {
+                display: none;
+            }
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+<div class="page-wrap">
+    <section class="application-card">
+        <div class="application-header">
+            <a href="{{ path('app_dashboard') }}" class="btn-back">
+                <i class="fas fa-arrow-left"></i>
+                <span>Retour dashboard</span>
+            </a>
+
+            <div class="brand">
+                <img src="{{ asset('assets/img/logomedicare.png') }}" alt="Medicare">
+                <span>Medicare</span>
+            </div>
+        </div>
+
+        <div class="application-content">
+            <h1 class="title">Demande pour devenir medecin</h1>
+            <p class="subtitle">Formulaire en etapes. Completez chaque section pour envoyer votre dossier.</p>
+
+            <div class="alerts">
+                {% for message in app.flashes('success') %}
+                    <div class="alert alert-success">{{ message }}</div>
+                {% endfor %}
+                {% for message in app.flashes('error') %}
+                    <div class="alert alert-error">{{ message }}</div>
+                {% endfor %}
+            </div>
+
+            {% if statusDemande %}
+                <div class="status-box">
+                    <h3 class="status-title">Statut de votre derniere demande</h3>
+                    <p class="status-line">
+                        {% if statusDemande.statut.value == 'en_attente' %}
+                            <strong>En attente</strong> - Votre dossier est en cours de verification.
+                        {% elseif statusDemande.statut.value == 'acceptee' %}
+                            <strong>Acceptee</strong> - Votre compte medecin est valide.
+                        {% else %}
+                            <strong>Rejetee</strong>{% if statusDemande.raisonRejet %} - Raison: {{ statusDemande.raisonRejet }}{% endif %}
+                        {% endif %}
+                    </p>
+                </div>
+            {% endif %}
+
+            {% if showApprovedReconnectModal %}
+                <div class="status-box">
+                    <p class="status-line">Votre demande est approuvee. Veuillez vous reconnecter pour acceder a votre dashboard medecin.</p>
+                </div>
+            {% elseif showPendingModal %}
+                <div class="status-box">
+                    <p class="status-line">Vous avez deja une demande en cours. Veuillez attendre le traitement de l'administration.</p>
+                </div>
+            {% endif %}
+
+            {% if canSubmitDemande %}
+                <form id="medecinWizardForm" method="post" enctype="multipart/form-data" class="wizard" novalidate>
+                    <div class="wizard-steps">
+                        <div class="wizard-step active" data-step="1">
+                            <span class="number">1</span>
+                            <span class="label">Infos pro</span>
+                        </div>
+                        <div class="wizard-step" data-step="2">
+                            <span class="number">2</span>
+                            <span class="label">Certificats</span>
+                        </div>
+                        <div class="wizard-step" data-step="3">
+                            <span class="number">3</span>
+                            <span class="label">Identite</span>
+                        </div>
+                        <div class="wizard-step" data-step="4">
+                            <span class="number">4</span>
+                            <span class="label">Confirmation</span>
+                        </div>
+                    </div>
+
+                    <div id="wizardError" class="wizard-error" style="display:none;"></div>
+
+                    <div class="form-shell">
+                        <section class="panel active" data-panel="1">
+                            <h2 class="panel-title">Etape 1 - Informations professionnelles</h2>
+                            <p class="panel-subtitle">Renseignez votre specialite, votre cabinet et votre adresse.</p>
+
+                            <div class="two-col">
+                                <div class="field">
+                                    <label for="specialite">Specialite</label>
+                                    <select id="specialite" class="control" name="specialite_id" required>
+                                        <option value="">Choisissez une specialite</option>
+                                        {% for specialite in specialites %}
+                                            <option value="{{ specialite.id }}">{{ specialite.nom }}</option>
+                                        {% endfor %}
+                                    </select>
+                                    {% if specialites is empty %}
+                                        <p class="hint">Aucune specialite active. Contactez l'administration.</p>
+                                    {% endif %}
+                                    <p id="specialiteError" class="field-error"></p>
+                                </div>
+
+                                <div class="field">
+                                    <label for="cabinet">Cabinet</label>
+                                    <input id="cabinet" class="control" type="text" name="cabinet" required maxlength="120" minlength="2">
+                                    <p id="cabinetError" class="field-error"></p>
+                                </div>
+                            </div>
+
+                            <div class="field">
+                                <label for="adresse">Adresse</label>
+                                <input id="adresse" class="control" type="text" name="adresse" required maxlength="255" minlength="5">
+                                <p id="adresseError" class="field-error"></p>
+                            </div>
+
+                            <div class="field">
+                                <label for="bio">Bio (optionnel)</label>
+                                <textarea id="bio" class="control" name="bio" maxlength="1500"></textarea>
+                                <p id="bioError" class="field-error"></p>
+                            </div>
+                        </section>
+
+                        <section class="panel" data-panel="2">
+                            <h2 class="panel-title">Etape 2 - Certificats</h2>
+                            <p class="panel-subtitle">Ajoutez au moins un certificat (image ou PDF).</p>
+
+                            <div class="field">
+                                <label for="certificats">Certificats (obligatoire)</label>
+                                <input id="certificats" class="control" type="file" name="certificats[]" multiple accept=".pdf,.jpg,.jpeg,.png,.webp" required>
+                                <p class="hint">Formats acceptes: PDF, JPG, JPEG, PNG, WEBP.</p>
+                                <div id="certificatsPreview" class="file-preview-grid"></div>
+                                <p id="certificatsPreviewEmpty" class="file-preview-empty">Aucun fichier selectionne.</p>
+                                <p id="certificatsError" class="field-error"></p>
+                            </div>
+                        </section>
+
+                        <section class="panel" data-panel="3">
+                            <h2 class="panel-title">Etape 3 - Piece d'identite</h2>
+                            <p class="panel-subtitle">Ajoutez au moins un document: carte de service ou carte d'identite.</p>
+
+                            <div class="identity-box">
+                                <p class="identity-title">Section identite</p>
+                                <p class="hint">Au moins un des deux champs est requis.</p>
+
+                                <div class="two-col">
+                                    <div class="field">
+                                        <label for="carte_service">Carte de service</label>
+                                        <input id="carte_service" class="control" type="file" name="carte_service" accept=".pdf,.jpg,.jpeg,.png,.webp">
+                                        <div id="carteServicePreview" class="file-preview-grid"></div>
+                                        <p id="carteServicePreviewEmpty" class="file-preview-empty">Aucun fichier selectionne.</p>
+                                    </div>
+
+                                    <div class="field">
+                                        <label for="carte_identite">Carte d'identite</label>
+                                        <input id="carte_identite" class="control" type="file" name="carte_identite" accept=".pdf,.jpg,.jpeg,.png,.webp">
+                                        <div id="carteIdentitePreview" class="file-preview-grid"></div>
+                                        <p id="carteIdentitePreviewEmpty" class="file-preview-empty">Aucun fichier selectionne.</p>
+                                    </div>
+                                </div>
+                                <p id="identiteError" class="field-error"></p>
+                            </div>
+                        </section>
+
+                        <section class="panel" data-panel="4">
+                            <h2 class="panel-title">Etape 4 - Confirmation</h2>
+                            <p class="panel-subtitle">Verifiez le recapitulatif avant envoi.</p>
+
+                            <div class="summary">
+                                <div class="summary-item"><strong>Specialite:</strong> <span id="summarySpecialite">-</span></div>
+                                <div class="summary-item"><strong>Cabinet:</strong> <span id="summaryCabinet">-</span></div>
+                                <div class="summary-item"><strong>Adresse:</strong> <span id="summaryAdresse">-</span></div>
+                                <div class="summary-item"><strong>Certificats:</strong> <span id="summaryCertificats">0 fichier</span></div>
+                                <div class="summary-item"><strong>Identite:</strong> <span id="summaryIdentite">-</span></div>
+                            </div>
+                        </section>
+                    </div>
+
+                    <div class="actions">
+                        <span class="meta-note">Vos documents sont transmis pour verification.</span>
+                        <div style="display:flex; gap:10px;">
+                            <button type="button" id="prevBtn" class="step-btn secondary" style="display:none;">Precedent</button>
+                            <button type="button" id="nextBtn" class="step-btn primary">Suivant</button>
+                            <button type="submit" id="submitBtn" class="step-btn primary" style="display:none;">Envoyer la demande</button>
+                        </div>
+                    </div>
+                </form>
+            {% endif %}
+        </div>
+    </section>
+</div>
+{% if requestSubmitted %}
+<div id="submissionModal" class="submission-modal" role="dialog" aria-modal="true" aria-labelledby="submissionTitle">
+    <div class="submission-card">
+        <div class="submission-icon"><i class="fas fa-check"></i></div>
+        <h2 id="submissionTitle" class="submission-title">Demande envoyee</h2>
+        <p class="submission-text">Votre demande a ete envoyee. Elle sera verifiee par l'administration.</p>
+    </div>
+</div>
+{% endif %}
+{% if showPendingModal %}
+<div id="pendingDemandeModal" class="submission-modal" role="dialog" aria-modal="true" aria-labelledby="pendingTitle">
+    <div class="submission-card warning">
+        <div class="submission-icon"><i class="fas fa-hourglass-half"></i></div>
+        <h2 id="pendingTitle" class="submission-title">Demande deja en cours</h2>
+        <p class="submission-text">Vous avez deja une demande en cours, veuillez attendre la decision de l'administration.</p>
+        <div class="modal-actions">
+            <a href="{{ path('app_dashboard') }}" class="modal-btn secondary">Retour dashboard</a>
+            <button id="closePendingModalBtn" type="button" class="modal-btn">Compris</button>
+        </div>
+    </div>
+</div>
+{% endif %}
+{% endblock %}
+
+{% block javascripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const pendingModal = document.getElementById('pendingDemandeModal');
+
+        if (pendingModal) {
+            pendingModal.classList.add('show');
+            const closePendingModalBtn = document.getElementById('closePendingModalBtn');
+            if (closePendingModalBtn) {
+                closePendingModalBtn.addEventListener('click', function () {
+                    pendingModal.classList.remove('show');
+                });
+            }
+        }
+    });
+</script>
+{% if requestSubmitted %}
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const modal = document.getElementById('submissionModal');
+        if (!modal) {
+            return;
+        }
+
+        modal.classList.add('show');
+        setTimeout(function () {
+            window.location.href = '{{ path('app_dashboard') }}';
+        }, 2600);
+    });
+</script>
+{% endif %}
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const form = document.getElementById('medecinWizardForm');
+        if (!form) {
+            return;
+        }
+
+        const stepIndicators = Array.from(document.querySelectorAll('.wizard-step'));
+        const panels = Array.from(document.querySelectorAll('.panel'));
+        const prevBtn = document.getElementById('prevBtn');
+        const nextBtn = document.getElementById('nextBtn');
+        const submitBtn = document.getElementById('submitBtn');
+        const wizardError = document.getElementById('wizardError');
+
+        const specialite = document.getElementById('specialite');
+        const cabinet = document.getElementById('cabinet');
+        const adresse = document.getElementById('adresse');
+        const bio = document.getElementById('bio');
+        const certificats = document.getElementById('certificats');
+        const carteService = document.getElementById('carte_service');
+        const carteIdentite = document.getElementById('carte_identite');
+        const certificatsPreview = document.getElementById('certificatsPreview');
+        const certificatsPreviewEmpty = document.getElementById('certificatsPreviewEmpty');
+        const carteServicePreview = document.getElementById('carteServicePreview');
+        const carteServicePreviewEmpty = document.getElementById('carteServicePreviewEmpty');
+        const carteIdentitePreview = document.getElementById('carteIdentitePreview');
+        const carteIdentitePreviewEmpty = document.getElementById('carteIdentitePreviewEmpty');
+
+        const specialiteError = document.getElementById('specialiteError');
+        const cabinetError = document.getElementById('cabinetError');
+        const adresseError = document.getElementById('adresseError');
+        const bioError = document.getElementById('bioError');
+        const certificatsError = document.getElementById('certificatsError');
+        const identiteError = document.getElementById('identiteError');
+
+        let currentStep = 1;
+        const totalSteps = 4;
+        const allowedExtensions = ['pdf', 'jpg', 'jpeg', 'png', 'webp'];
+        const maxFileSizeBytes = 8 * 1024 * 1024;
+        let selectedCertificatFiles = [];
+
+        function showWizardError(message) {
+            if (!wizardError) {
+                return;
+            }
+            wizardError.textContent = message;
+            wizardError.style.display = 'block';
+        }
+
+        function clearWizardError() {
+            if (!wizardError) {
+                return;
+            }
+            wizardError.textContent = '';
+            wizardError.style.display = 'none';
+        }
+
+        function clearFieldError(field, errorEl) {
+            if (field) {
+                field.classList.remove('invalid');
+            }
+            if (errorEl) {
+                errorEl.textContent = '';
+            }
+        }
+
+        function getFileExtension(file) {
+            return getExtension(file.name || '');
+        }
+
+        function isImageFile(file) {
+            if (!file) {
+                return false;
+            }
+            if (file.type && file.type.startsWith('image/')) {
+                return true;
+            }
+            const extension = getFileExtension(file);
+            return ['jpg', 'jpeg', 'png', 'webp'].includes(extension);
+        }
+
+        function applyFilesToInput(input, filesArray) {
+            const transfer = new DataTransfer();
+            filesArray.forEach((file) => transfer.items.add(file));
+            input.files = transfer.files;
+        }
+
+        function createFilePreviewCard(file, onRemove) {
+            const card = document.createElement('div');
+            card.className = 'file-preview-card';
+
+            const removeBtn = document.createElement('button');
+            removeBtn.type = 'button';
+            removeBtn.className = 'file-remove-btn';
+            removeBtn.textContent = 'x';
+            removeBtn.title = 'Supprimer ce fichier';
+            removeBtn.addEventListener('click', onRemove);
+            card.appendChild(removeBtn);
+
+            if (isImageFile(file)) {
+                const thumb = document.createElement('img');
+                thumb.className = 'file-thumb';
+                thumb.src = URL.createObjectURL(file);
+                thumb.alt = file.name;
+                card.appendChild(thumb);
+            } else {
+                const doc = document.createElement('div');
+                doc.className = 'file-doc';
+                doc.innerHTML = '<i class=\"fas fa-file-pdf\"></i>';
+                card.appendChild(doc);
+            }
+
+            const name = document.createElement('div');
+            name.className = 'file-name';
+            name.textContent = file.name;
+            card.appendChild(name);
+
+            return card;
+        }
+
+        function renderCertificatsPreview() {
+            certificatsPreview.innerHTML = '';
+
+            if (selectedCertificatFiles.length === 0) {
+                certificatsPreviewEmpty.style.display = 'block';
+                return;
+            }
+
+            certificatsPreviewEmpty.style.display = 'none';
+
+            selectedCertificatFiles.forEach((file, index) => {
+                const card = createFilePreviewCard(file, function () {
+                    selectedCertificatFiles.splice(index, 1);
+                    applyFilesToInput(certificats, selectedCertificatFiles);
+                    renderCertificatsPreview();
+                    validateCertificats(false);
+                    clearWizardError();
+                });
+                certificatsPreview.appendChild(card);
+            });
+        }
+
+        function renderSingleFilePreview(input, previewContainer, emptyLabel, onClearAfter) {
+            previewContainer.innerHTML = '';
+            const file = input.files && input.files[0] ? input.files[0] : null;
+
+            if (!file) {
+                emptyLabel.style.display = 'block';
+                return;
+            }
+
+            emptyLabel.style.display = 'none';
+            const card = createFilePreviewCard(file, function () {
+                input.value = '';
+                renderSingleFilePreview(input, previewContainer, emptyLabel, onClearAfter);
+                if (typeof onClearAfter === 'function') {
+                    onClearAfter();
+                }
+            });
+            previewContainer.appendChild(card);
+        }
+
+        function setFieldError(field, errorEl, message) {
+            if (field) {
+                field.classList.add('invalid');
+            }
+            if (errorEl) {
+                errorEl.textContent = message;
+            }
+        }
+
+        function focusField(field) {
+            if (field && typeof field.focus === 'function') {
+                field.focus();
+            }
+        }
+
+                function validateSpecialite(focusOnError) {
+            clearFieldError(specialite, specialiteError);
+            const value = String(specialite.value || '').trim();
+
+            if (!value) {
+                setFieldError(specialite, specialiteError, 'La specialite est obligatoire.');
+                if (focusOnError) {
+                    focusField(specialite);
+                }
+                return false;
+            }
+
+            if (!/^\d+$/.test(value)) {
+                setFieldError(specialite, specialiteError, 'Selection de specialite invalide.');
+                if (focusOnError) {
+                    focusField(specialite);
+                }
+                return false;
+            }
+
+            return true;
+        }
+
+        function validateCabinet(focusOnError) {
+            clearFieldError(cabinet, cabinetError);
+            const value = cabinet.value.trim();
+
+            if (!value) {
+                setFieldError(cabinet, cabinetError, 'Le nom du cabinet est obligatoire.');
+                if (focusOnError) {
+                    focusField(cabinet);
+                }
+                return false;
+            }
+
+            if (value.length < 2 || value.length > 120) {
+                setFieldError(cabinet, cabinetError, 'Cabinet invalide (2 a 120 caracteres).');
+                if (focusOnError) {
+                    focusField(cabinet);
+                }
+                return false;
+            }
+
+            return true;
+        }
+
+        function validateAdresse(focusOnError) {
+            clearFieldError(adresse, adresseError);
+            const value = adresse.value.trim();
+
+            if (!value) {
+                setFieldError(adresse, adresseError, 'L adresse est obligatoire.');
+                if (focusOnError) {
+                    focusField(adresse);
+                }
+                return false;
+            }
+
+            if (value.length < 5 || value.length > 255) {
+                setFieldError(adresse, adresseError, 'Adresse invalide (5 a 255 caracteres).');
+                if (focusOnError) {
+                    focusField(adresse);
+                }
+                return false;
+            }
+
+            return true;
+        }
+
+        function validateBio(focusOnError) {
+            clearFieldError(bio, bioError);
+            const value = bio.value.trim();
+            if (value.length > 1500) {
+                setFieldError(bio, bioError, 'La bio depasse 1500 caracteres.');
+                if (focusOnError) {
+                    focusField(bio);
+                }
+                return false;
+            }
+
+            return true;
+        }
+
+        function getExtension(filename) {
+            const parts = filename.toLowerCase().split('.');
+            return parts.length > 1 ? parts.pop() : '';
+        }
+
+        function validateCertificats(focusOnError) {
+            clearFieldError(certificats, certificatsError);
+
+            if (!certificats.files || certificats.files.length === 0) {
+                setFieldError(certificats, certificatsError, 'Ajoutez au moins un certificat.');
+                if (focusOnError) {
+                    focusField(certificats);
+                }
+                return false;
+            }
+
+            if (certificats.files.length > 5) {
+                setFieldError(certificats, certificatsError, 'Maximum 5 certificats.');
+                if (focusOnError) {
+                    focusField(certificats);
+                }
+                return false;
+            }
+
+            for (const file of certificats.files) {
+                const extension = getFileExtension(file);
+                if (!allowedExtensions.includes(extension)) {
+                    setFieldError(certificats, certificatsError, 'Format invalide. Autorise: PDF, JPG, JPEG, PNG, WEBP.');
+                    if (focusOnError) {
+                        focusField(certificats);
+                    }
+                    return false;
+                }
+                if (file.size > maxFileSizeBytes) {
+                    setFieldError(certificats, certificatsError, 'Un fichier depasse 8 MB.');
+                    if (focusOnError) {
+                        focusField(certificats);
+                    }
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        function validateIdentite(focusOnError) {
+            clearFieldError(carteService, identiteError);
+            clearFieldError(carteIdentite, identiteError);
+
+            const serviceFiles = carteService.files || [];
+            const identiteFiles = carteIdentite.files || [];
+            const hasService = serviceFiles.length > 0;
+            const hasIdentite = identiteFiles.length > 0;
+
+            if (!hasService && !hasIdentite) {
+                setFieldError(carteIdentite, identiteError, 'Ajoutez au moins une piece: carte de service ou carte identite.');
+                if (focusOnError) {
+                    focusField(carteIdentite);
+                }
+                return false;
+            }
+
+            const allFiles = [...serviceFiles, ...identiteFiles];
+            for (const file of allFiles) {
+                const extension = getFileExtension(file);
+                if (!allowedExtensions.includes(extension)) {
+                    setFieldError(carteIdentite, identiteError, 'Format identite invalide (PDF/JPG/JPEG/PNG/WEBP).');
+                    if (focusOnError) {
+                        focusField(carteIdentite);
+                    }
+                    return false;
+                }
+                if (file.size > maxFileSizeBytes) {
+                    setFieldError(carteIdentite, identiteError, 'Un document identite depasse 8 MB.');
+                    if (focusOnError) {
+                        focusField(carteIdentite);
+                    }
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        function validateStep(step) {
+            if (step === 1) {
+                const s = validateSpecialite(true);
+                const c = s ? validateCabinet(true) : false;
+                const a = s && c ? validateAdresse(true) : false;
+                const b = s && c && a ? validateBio(true) : false;
+                if (!(s && c && a && b)) {
+                    showWizardError('Veuillez corriger les champs de l etape 1.');
+                } else {
+                    clearWizardError();
+                }
+                return s && c && a && b;
+            }
+
+            if (step === 2) {
+                const ok = validateCertificats(true);
+                if (!ok) {
+                    showWizardError('Veuillez ajouter des certificats valides (max 5, 8 MB/fichier).');
+                } else {
+                    clearWizardError();
+                }
+                return ok;
+            }
+
+            if (step === 3) {
+                const ok = validateIdentite(true);
+                if (!ok) {
+                    showWizardError('Ajoutez au moins une piece d identite valide.');
+                } else {
+                    clearWizardError();
+                }
+                return ok;
+            }
+
+            return true;
+        }
+
+        function updateSummary() {
+            const selectedOption = specialite.options[specialite.selectedIndex];
+            document.getElementById('summarySpecialite').textContent = selectedOption && selectedOption.value ? selectedOption.textContent.trim() : '-';
+            document.getElementById('summaryCabinet').textContent = cabinet.value.trim() || '-';
+            document.getElementById('summaryAdresse').textContent = adresse.value.trim() || '-';
+            document.getElementById('summaryCertificats').textContent = (selectedCertificatFiles ? selectedCertificatFiles.length : 0) + ' fichier(s)';
+
+            const hasService = carteService.files && carteService.files.length > 0;
+            const hasIdentite = carteIdentite.files && carteIdentite.files.length > 0;
+            let identiteLabel = '-';
+            if (hasService && hasIdentite) {
+                identiteLabel = 'Carte de service + Carte identite';
+            } else if (hasService) {
+                identiteLabel = 'Carte de service';
+            } else if (hasIdentite) {
+                identiteLabel = 'Carte identite';
+            }
+            document.getElementById('summaryIdentite').textContent = identiteLabel;
+        }
+
+        function updateUI() {
+            panels.forEach((panel) => {
+                panel.classList.toggle('active', Number(panel.dataset.panel) === currentStep);
+            });
+
+            stepIndicators.forEach((step) => {
+                const stepNumber = Number(step.dataset.step);
+                step.classList.toggle('active', stepNumber === currentStep);
+                step.classList.toggle('done', stepNumber < currentStep);
+            });
+
+            prevBtn.style.display = currentStep > 1 ? 'inline-flex' : 'none';
+
+            if (currentStep === totalSteps) {
+                nextBtn.style.display = 'none';
+                submitBtn.style.display = 'inline-flex';
+                updateSummary();
+            } else {
+                nextBtn.style.display = 'inline-flex';
+                submitBtn.style.display = 'none';
+            }
+        }
+
+        nextBtn.addEventListener('click', function () {
+            if (!validateStep(currentStep)) {
+                return;
+            }
+            clearWizardError();
+            if (currentStep < totalSteps) {
+                currentStep += 1;
+                updateUI();
+            }
+        });
+
+        prevBtn.addEventListener('click', function () {
+            if (currentStep > 1) {
+                currentStep -= 1;
+                updateUI();
+            }
+        });
+
+        form.addEventListener('submit', function (event) {
+            const step1Valid = validateSpecialite(false) && validateCabinet(false) && validateAdresse(false) && validateBio(false);
+            const step2Valid = step1Valid ? validateCertificats(false) : false;
+            const step3Valid = step1Valid && step2Valid ? validateIdentite(false) : false;
+
+            if (!step1Valid || !step2Valid || !step3Valid) {
+                event.preventDefault();
+                currentStep = !step1Valid ? 1 : (!step2Valid ? 2 : 3);
+                updateUI();
+                validateStep(currentStep);
+            } else {
+                clearWizardError();
+            }
+        });
+
+        specialite.addEventListener('change', function () { validateSpecialite(false); clearWizardError(); });
+        cabinet.addEventListener('input', function () { validateCabinet(false); clearWizardError(); });
+        adresse.addEventListener('input', function () { validateAdresse(false); clearWizardError(); });
+        bio.addEventListener('input', function () { validateBio(false); clearWizardError(); });
+        certificats.addEventListener('change', function () {
+            selectedCertificatFiles = Array.from(certificats.files || []);
+            applyFilesToInput(certificats, selectedCertificatFiles);
+            renderCertificatsPreview();
+            validateCertificats(false);
+            clearWizardError();
+        });
+        carteService.addEventListener('change', function () {
+            renderSingleFilePreview(carteService, carteServicePreview, carteServicePreviewEmpty, function () {
+                validateIdentite(false);
+                clearWizardError();
+            });
+            validateIdentite(false);
+            clearWizardError();
+        });
+        carteIdentite.addEventListener('change', function () {
+            renderSingleFilePreview(carteIdentite, carteIdentitePreview, carteIdentitePreviewEmpty, function () {
+                validateIdentite(false);
+                clearWizardError();
+            });
+            validateIdentite(false);
+            clearWizardError();
+        });
+
+        renderCertificatsPreview();
+        renderSingleFilePreview(carteService, carteServicePreview, carteServicePreviewEmpty, null);
+        renderSingleFilePreview(carteIdentite, carteIdentitePreview, carteIdentitePreviewEmpty, null);
+        updateUI();
+    });
+</script>
+{% endblock %}
+

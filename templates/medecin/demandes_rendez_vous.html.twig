@@ -1,0 +1,437 @@
+{% extends 'dashboard_base.html.twig' %}
+
+{% block title %}Demandes de Rendez-vous - Medicare{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <style>
+        .rdv-page {
+            padding: 28px;
+        }
+
+        .rdv-header {
+            margin-bottom: 18px;
+        }
+
+        .rdv-title {
+            font-size: 30px;
+            font-weight: 700;
+            color: #111827;
+            margin: 0;
+        }
+
+        .rdv-subtitle {
+            color: #6b7280;
+            margin-top: 4px;
+        }
+
+        .rdv-list {
+            display: grid;
+            gap: 14px;
+        }
+
+        .rdv-toolbar {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 14px;
+            flex-wrap: nowrap;
+        }
+
+        .rdv-filters {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .rdv-filter-btn {
+            border: 1px solid #dbeafe;
+            background: #f8fbff;
+            color: #0f172a;
+            border-radius: 999px;
+            padding: 9px 14px;
+            font-size: 13px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .rdv-filter-btn:hover {
+            border-color: #93c5fd;
+            background: #eff6ff;
+        }
+
+        .rdv-filter-btn.active {
+            background: #00bfff;
+            border-color: #00bfff;
+            color: #fff;
+            box-shadow: 0 6px 14px rgba(0, 191, 255, 0.28);
+        }
+
+        .rdv-search {
+            margin-left: auto;
+            width: 320px;
+            max-width: 100%;
+            border: 1px solid #dbeafe;
+            background: #fff;
+            color: #0f172a;
+            border-radius: 999px;
+            padding: 10px 14px;
+            font-size: 13px;
+            font-weight: 600;
+            outline: none;
+            transition: all 0.2s ease;
+        }
+
+        .rdv-search:focus {
+            border-color: #7dd3fc;
+            box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.14);
+        }
+
+        .rdv-card {
+            background: #fff;
+            border-radius: 14px;
+            border: 1px solid #e5e7eb;
+            box-shadow: 0 4px 14px rgba(15, 23, 42, 0.06);
+            padding: 16px 18px;
+        }
+
+        .rdv-top {
+            display: flex;
+            justify-content: space-between;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-bottom: 8px;
+        }
+
+        .rdv-patient {
+            font-size: 19px;
+            font-weight: 700;
+            color: #0f172a;
+        }
+
+        .rdv-status {
+            border-radius: 999px;
+            padding: 6px 12px;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .status-en-attente {
+            background: #fff7d6;
+            color: #8a6500;
+        }
+
+        .status-confirme {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .status-annule {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .rdv-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .rdv-item {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 10px;
+            padding: 10px 12px;
+        }
+
+        .rdv-item-label {
+            font-size: 12px;
+            color: #64748b;
+            margin-bottom: 4px;
+        }
+
+        .rdv-item-value {
+            font-weight: 700;
+            color: #0f172a;
+        }
+
+        .rdv-empty {
+            background: #fff;
+            border: 1px dashed #cbd5e1;
+            border-radius: 12px;
+            padding: 24px;
+            text-align: center;
+            color: #64748b;
+        }
+
+        .alert-block {
+            margin-bottom: 12px;
+            border-radius: 10px;
+            padding: 11px 13px;
+            font-weight: 600;
+        }
+
+        .alert-error {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .alert-success {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .rdv-actions {
+            margin-top: 12px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: nowrap;
+        }
+
+        .rdv-btn {
+            border: none;
+            border-radius: 10px;
+            padding: 9px 14px;
+            font-weight: 700;
+            font-size: 13px;
+            cursor: pointer;
+        }
+
+        .rdv-btn.accept {
+            background: #00bfff;
+            color: #fff;
+        }
+
+        .rdv-btn.reject {
+            background: #fee2e2;
+            color: #991b1b;
+            border: 1px solid #fecaca;
+        }
+
+        .rdv-btn.details {
+            background: #e0f2fe;
+            color: #075985;
+            border: 1px solid #bae6fd;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+        }
+
+        .rdv-note {
+            margin-top: 9px;
+            color: #92400e;
+            background: #fffbeb;
+            border: 1px solid #fef3c7;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 600;
+            padding: 8px 10px;
+        }
+
+        .rdv-filter-empty {
+            display: none;
+            text-align: center;
+            margin-top: 20px;
+            color: #64748b;
+            font-weight: 700;
+        }
+
+        @media (max-width: 768px) {
+            .rdv-page {
+                padding: 18px;
+            }
+
+            .rdv-actions {
+                flex-wrap: wrap;
+            }
+
+            .rdv-toolbar {
+                flex-wrap: wrap;
+            }
+
+            .rdv-search {
+                margin-left: 0;
+                width: 100%;
+            }
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+<div class="rdv-page">
+    <div class="rdv-header">
+        <h1 class="rdv-title">Mes demandes de rendez-vous</h1>
+        <p class="rdv-subtitle">Liste des rendez-vous recus depuis la prise de rendez-vous patient.</p>
+    </div>
+
+    {% for message in app.flashes('error') %}
+        <div class="alert-block alert-error">{{ message }}</div>
+    {% endfor %}
+    {% for message in app.flashes('success') %}
+        <div class="alert-block alert-success">{{ message }}</div>
+    {% endfor %}
+
+    {% if rendezVous is empty %}
+        <div class="rdv-empty">
+            Aucun rendez-vous pour le moment.
+        </div>
+    {% else %}
+        <div class="rdv-toolbar">
+            <div class="rdv-filters" role="group" aria-label="Filtrer les rendez-vous">
+                <button type="button" class="rdv-filter-btn active" data-filter="all">Tout</button>
+                <button type="button" class="rdv-filter-btn" data-filter="confirme">Acceptés</button>
+                <button type="button" class="rdv-filter-btn" data-filter="annule">Rejetés</button>
+            </div>
+            <input
+                type="search"
+                id="medecinRdvSearch"
+                class="rdv-search"
+                placeholder="Rechercher par patient ou numero"
+                aria-label="Rechercher un rendez-vous"
+            >
+        </div>
+        <div class="rdv-list">
+            {% for rdv in rendezVous %}
+                {% set statut = rdv.statut.value %}
+                <div
+                    class="rdv-card"
+                    data-status="{{ statut|lower }}"
+                    data-id="{{ rdv.id }}"
+                    data-search="{{ (rdv.patient.user.prenom ~ ' ' ~ rdv.patient.user.nom ~ ' ' ~ (rdv.patient.user.numero ?: ''))|lower }}"
+                >
+                    <div class="rdv-top">
+                        <div class="rdv-patient">
+                            {{ rdv.patient.user.prenom }} {{ rdv.patient.user.nom }}
+                        </div>
+                        <div class="rdv-status
+                            {% if statut == 'EN_ATTENTE' %}status-en-attente{% elseif statut == 'CONFIRME' %}status-confirme{% else %}status-annule{% endif %}">
+                            {{ statut|replace({'_': ' '}) }}
+                        </div>
+                    </div>
+
+                    <div class="rdv-grid">
+                        <div class="rdv-item">
+                            <div class="rdv-item-label">Date</div>
+                            <div class="rdv-item-value">{{ rdv.date|date('d/m/Y') }}</div>
+                        </div>
+                        <div class="rdv-item">
+                            <div class="rdv-item-label">Heure</div>
+                            <div class="rdv-item-value">{{ rdv.heure|date('H:i') }}</div>
+                        </div>
+                        <div class="rdv-item">
+                            <div class="rdv-item-label">Telephone</div>
+                            <div class="rdv-item-value">{{ rdv.patient.user.numero ?: '-' }}</div>
+                        </div>
+                        <div class="rdv-item">
+                            <div class="rdv-item-label">Email</div>
+                            <div class="rdv-item-value">{{ rdv.patient.user.email }}</div>
+                        </div>
+                    </div>
+
+                    <div class="rdv-actions">
+                        <a class="rdv-btn details" href="{{ path('app_medecin_rendez_vous_show', {'id': rdv.id}) }}">
+                            Voir details
+                        </a>
+                        {% if statut == 'EN_ATTENTE' and not rdv.reportPendingPatientResponse %}
+                            <form method="post" action="{{ path('app_medecin_accept_rendez_vous', {'id': rdv.id}) }}">
+                                <button type="submit" class="rdv-btn accept">Accepter</button>
+                            </form>
+                            <form method="post" action="{{ path('app_medecin_reject_rendez_vous', {'id': rdv.id}) }}">
+                                <button type="submit" class="rdv-btn reject">Rejeter</button>
+                            </form>
+                        {% endif %}
+                    </div>
+                    {% if rdv.reportPendingPatientResponse %}
+                        <div class="rdv-note">
+                            Report propose au patient: en attente de sa reponse.
+                        </div>
+                    {% endif %}
+                </div>
+            {% endfor %}
+        </div>
+        <div id="medecinFilterEmpty" class="rdv-filter-empty">Aucun rendez-vous pour ce filtre.</div>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const filterButtons = document.querySelectorAll('.rdv-filter-btn');
+            const cards = document.querySelectorAll('.rdv-card');
+            const list = document.querySelector('.rdv-list');
+            const searchInput = document.getElementById('medecinRdvSearch');
+            const emptyState = document.getElementById('medecinFilterEmpty');
+            let currentFilter = 'all';
+
+            if (!filterButtons.length || !cards.length || !list) {
+                return;
+            }
+
+            const sortedCards = Array.from(cards).sort(function (a, b) {
+                return Number(b.dataset.id || 0) - Number(a.dataset.id || 0);
+            });
+
+            function applyFilters() {
+                let visibleCount = 0;
+                const query = (searchInput ? searchInput.value : '').trim().toLowerCase();
+                const emptyMessages = {
+                    all: 'Aucun rendez-vous pour l instant.',
+                    confirme: 'Aucun rendez-vous accepté pour l instant.',
+                    annule: 'Aucun rendez-vous rejeté pour l instant.'
+                };
+
+                sortedCards.forEach(function (card) {
+                    const status = (card.dataset.status || '').toLowerCase();
+                    const searchable = (card.dataset.search || '').toLowerCase();
+                    const matchFilter = currentFilter === 'all' || status === currentFilter;
+                    const matchSearch = query === '' || searchable.includes(query);
+                    const shouldShow = matchFilter && matchSearch;
+
+                    card.style.display = shouldShow ? '' : 'none';
+                    list.appendChild(card);
+
+                    if (shouldShow) {
+                        visibleCount += 1;
+                    }
+                });
+
+                if (emptyState) {
+                    const hasResult = visibleCount > 0;
+                    emptyState.style.display = hasResult ? 'none' : 'block';
+                    if (!hasResult) {
+                        emptyState.textContent = query !== ''
+                            ? 'Aucun résultat pour cette recherche.'
+                            : (emptyMessages[currentFilter] || emptyMessages.all);
+                    }
+                }
+            }
+
+            filterButtons.forEach(function (button) {
+                button.addEventListener('click', function () {
+                    filterButtons.forEach(function (btn) {
+                        btn.classList.remove('active');
+                    });
+                    button.classList.add('active');
+                    currentFilter = button.dataset.filter || 'all';
+                    applyFilters();
+                });
+            });
+
+            if (searchInput) {
+                searchInput.addEventListener('input', function () {
+                    applyFilters();
+                });
+            }
+
+            applyFilters();
+        });
+    </script>
+{% endblock %}

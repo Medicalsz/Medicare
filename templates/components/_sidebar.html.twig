@@ -1,0 +1,99 @@
+<aside class="sidebar">
+    <!-- Header mobile avec logo + bouton fermer -->
+    <div class="sidebar-mobile-header">
+        <div class="sidebar-logo">
+            <img src="{{ asset('assets/img/logomedicare.png') }}" alt="Medicare">
+            <span>Medicare</span>
+        </div>
+        <button class="close-sidebar" id="closeSidebar">
+            <i class="fas fa-times"></i>
+        </button>
+    </div>
+
+    <nav class="sidebar-nav">
+        <!-- Dashboard -->
+        <a href="{{ 'ROLE_MEDECIN' in app.user.roles ? path('app_medecin_dashboard') : path('app_dashboard') }}" class="nav-item {{ app.request.attributes.get('_route') in ['app_dashboard', 'app_medecin_dashboard'] ? 'active' : '' }}">
+            <span class="nav-icon"><i class="fas fa-home"></i></span>
+            <span class="nav-text">Dashboard</span>
+        </a>
+
+        {% if 'ROLE_MEDECIN' in app.user.roles %}
+        <!-- Medecin: demandes de rendez-vous -->
+        <a href="{{ path('app_medecin_demandes_rendez_vous') }}" class="nav-item {{ app.request.attributes.get('_route') in ['app_medecin_demandes_rendez_vous', 'app_medecin_rendez_vous_show'] ? 'active' : '' }}">
+            <span class="nav-icon"><i class="fas fa-notes-medical"></i></span>
+            <span class="nav-text">Mes demandes de rendez-vous</span>
+        </a>
+
+        <!-- Medecin: planning -->
+        <a href="{{ path('app_medecin_planning') }}" class="nav-item {{ app.request.attributes.get('_route') == 'app_medecin_planning' ? 'active' : '' }}">
+            <span class="nav-icon"><i class="fas fa-calendar-check"></i></span>
+            <span class="nav-text">Mon planning</span>
+        </a>
+
+        {% else %}
+        <!-- Mes rendez-vous -->
+        <a href="{{ path('app_appointments') }}" class="nav-item {{ app.request.attributes.get('_route') in ['app_appointments', 'app_appointment_show'] ? 'active' : '' }}">
+            <span class="nav-icon"><i class="fas fa-calendar-alt"></i></span>
+            <span class="nav-text">Mes rendez-vous</span>
+        </a>
+
+        <!-- Cabinets -->
+        <a href="{{ path('app_cabinets') }}" class="nav-item {{ app.request.attributes.get('_route') == 'app_cabinets' ? 'active' : '' }}">
+            <span class="nav-icon"><i class="fas fa-hospital"></i></span>
+            <span class="nav-text">Cabinets</span>
+        </a>
+
+        <!-- Mes consultations -->
+        <a href="{{ path('app_consultations') }}" class="nav-item {{ app.request.attributes.get('_route') in ['app_consultations', 'app_consultation_ordonnance_pdf'] ? 'active' : '' }}">
+            <span class="nav-icon"><i class="fas fa-file-medical"></i></span>
+            <span class="nav-text">Mes ordonnances</span>
+        </a>
+
+        {% if 'ROLE_PATIENT' in app.user.roles and 'ROLE_MEDECIN' not in app.user.roles %}
+        <div class="nav-divider"></div>
+        <a href="{{ path('app_demande_medecin') }}" class="nav-item {{ app.request.attributes.get('_route') == 'app_demande_medecin' ? 'active' : '' }}">
+            <span class="nav-icon"><i class="fas fa-stethoscope"></i></span>
+            <span class="nav-text">Devenir medecin</span>
+        </a>
+        {% endif %}
+        {% endif %}
+
+        <div class="nav-divider"></div>
+
+        <!-- Mon profil -->
+        <a href="{{ path('app_profile') }}" class="nav-item {{ app.request.attributes.get('_route') == 'app_profile' ? 'active' : '' }}">
+            <span class="nav-icon"><i class="fas fa-user"></i></span>
+            <span class="nav-text">Mon profil</span>
+        </a>
+
+        <!-- Parametres -->
+        <a href="{{ path('app_settings') }}" class="nav-item {{ app.request.attributes.get('_route') == 'app_settings' ? 'active' : '' }}">
+            <span class="nav-icon"><i class="fas fa-cog"></i></span>
+            <span class="nav-text">Parametres</span>
+        </a>
+    </nav>
+
+    <!-- Footer avec profil utilisateur -->
+    <div class="sidebar-footer">
+        <div class="user-profile">
+            <div class="user-avatar">
+                <span>{{ app.user.prenom|first|upper }}{{ app.user.nom|first|upper }}</span>
+            </div>
+            <div class="user-details">
+                <div class="user-name">{{ app.user.prenom }} {{ app.user.nom }}</div>
+                <div class="user-role">
+                    {% if 'ROLE_ADMIN' in app.user.roles %}
+                        Administrateur
+                    {% elseif 'ROLE_MEDECIN' in app.user.roles %}
+                        Medecin
+                    {% else %}
+                        Patient
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        <a href="{{ path('app_logout') }}" class="logout-btn" title="Deconnexion">
+            <i class="fas fa-sign-out-alt"></i>
+        </a>
+    </div>
+</aside>

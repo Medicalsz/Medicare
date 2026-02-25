@@ -1,0 +1,21 @@
+{% extends 'dashboard_base.html.twig' %}
+
+{% block title %}Dashboard Medecin - Medicare{% endblock %}
+
+{% block body %}
+<div class="dashboard-content">
+    <div class="page-header">
+        <h1 class="page-title">Bienvenue Dr. {{ app.user.prenom }} {{ app.user.nom }}</h1>
+        <p class="page-subtitle">Espace medecin</p>
+    </div>
+
+    <div class="card">
+        <div class="card-header">
+            <h3 class="card-title">Dashboard medecin</h3>
+        </div>
+        <p style="color: #666; margin-top: 15px;">
+            Votre compte medecin est actif. Vous pouvez maintenant gerer vos consultations.
+        </p>
+    </div>
+</div>
+{% endblock %}

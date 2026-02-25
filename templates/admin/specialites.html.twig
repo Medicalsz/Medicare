@@ -1,0 +1,145 @@
+{% extends 'admin_base.html.twig' %}
+
+{% block title %}Specialites{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <style>
+        .admin-topbar,
+        .admin-sidebar,
+        .admin-sidebar-overlay {
+            display: none !important;
+        }
+
+        .admin-main-content {
+            margin-left: 0 !important;
+            margin-top: 0 !important;
+            min-height: 100vh;
+            padding: 24px;
+        }
+
+        .specialites-header {
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            gap: 16px;
+        }
+
+        .specialites-header .specialites-text {
+            min-width: 0;
+        }
+
+        @media (max-width: 768px) {
+            .admin-main-content {
+                padding: 14px;
+            }
+
+            .specialites-header {
+                flex-wrap: wrap;
+                align-items: flex-start;
+            }
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+<div class="admin-page-header specialites-header">
+    <a href="{{ path('app_admin_medecins') }}" class="admin-btn admin-btn-secondary">
+        <i class="bi bi-arrow-left"></i> Retour Medecins
+    </a>
+    <div class="specialites-text">
+        <h1 class="admin-page-title">Gestion des Specialites</h1>
+        <p class="admin-page-subtitle">Ajoutez, modifiez, activez ou desactivez les specialites medicales.</p>
+    </div>
+</div>
+
+{% for message in app.flashes('success') %}
+    <div class="alert alert-success">{{ message }}</div>
+{% endfor %}
+{% for message in app.flashes('error') %}
+    <div class="alert alert-danger">{{ message }}</div>
+{% endfor %}
+
+<div class="admin-card mb-4">
+    <div class="admin-card-header">
+        <h3 class="admin-card-title"><i class="bi bi-plus-circle"></i> Ajouter une specialite</h3>
+    </div>
+    <div class="admin-card-body">
+        <form method="post" action="{{ path('app_admin_add_specialite') }}" class="row g-3 align-items-end">
+            <div class="col-md-8">
+                <label for="nom_specialite" class="form-label"><strong>Nom</strong></label>
+                <input id="nom_specialite" type="text" name="nom" class="form-control" maxlength="120" minlength="2" required placeholder="Ex: Cardiologie">
+            </div>
+            <div class="col-md-4">
+                <button type="submit" class="admin-btn admin-btn-success w-100">
+                    <i class="bi bi-plus-lg"></i> Ajouter
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="admin-card">
+    <div class="admin-card-header">
+        <h3 class="admin-card-title"><i class="bi bi-list-ul"></i> Liste des specialites</h3>
+    </div>
+    <div class="admin-card-body">
+        <div class="admin-table-container">
+            <table class="admin-table">
+                <thead>
+                    <tr>
+                        <th>Nom</th>
+                        <th>Slug</th>
+                        <th>Statut</th>
+                        <th>Utilisation</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for specialite in specialites %}
+                        {% set usedCount = usageCounts[specialite.id] ?? 0 %}
+                        <tr>
+                            <td>
+                                <form method="post" action="{{ path('app_admin_edit_specialite', {'id': specialite.id}) }}" class="d-flex gap-2 align-items-center flex-wrap">
+                                    <input type="text" name="nom" class="form-control form-control-sm" value="{{ specialite.nom }}" required minlength="2" maxlength="120" style="max-width: 240px;">
+                                    <button type="submit" class="admin-btn admin-btn-secondary btn-sm">
+                                        <i class="bi bi-pencil-square"></i> Modifier
+                                    </button>
+                                </form>
+                            </td>
+                            <td><code>{{ specialite.slug }}</code></td>
+                            <td>
+                                {% if specialite.active %}
+                                    <span class="admin-badge success">Active</span>
+                                {% else %}
+                                    <span class="admin-badge secondary">Desactivee</span>
+                                {% endif %}
+                            </td>
+                            <td>{{ usedCount }}</td>
+                            <td>
+                                <div class="d-flex gap-2 flex-wrap">
+                                    <form method="post" action="{{ path('app_admin_toggle_specialite', {'id': specialite.id}) }}">
+                                        <button type="submit" class="admin-btn {{ specialite.active ? 'admin-btn-secondary' : 'admin-btn-success' }} btn-sm">
+                                            <i class="bi {{ specialite.active ? 'bi-pause-circle' : 'bi-play-circle' }}"></i>
+                                            {{ specialite.active ? 'Desactiver' : 'Activer' }}
+                                        </button>
+                                    </form>
+                                    <form method="post" action="{{ path('app_admin_delete_specialite', {'id': specialite.id}) }}" onsubmit="return confirm('Supprimer cette specialite ?');">
+                                        <button type="submit" class="admin-btn admin-btn-danger btn-sm">
+                                            <i class="bi bi-trash"></i> Supprimer
+                                        </button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                    {% else %}
+                        <tr>
+                            <td colspan="5">Aucune specialite disponible.</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

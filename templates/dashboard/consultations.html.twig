@@ -1,0 +1,431 @@
+{% extends 'dashboard_base.html.twig' %}
+
+{% block title %}Mes ordonnances - Medicare{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <style>
+        .patient-ordo-page {
+            max-width: 1250px;
+            margin: 0 auto;
+            padding: 30px 24px;
+        }
+
+        .patient-ordo-head {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-bottom: 14px;
+        }
+
+        .patient-ordo-title {
+            margin: 0;
+            font-size: 32px;
+            color: #0f172a;
+            font-weight: 800;
+            letter-spacing: -0.02em;
+        }
+
+        .patient-ordo-subtitle {
+            margin: 5px 0 0;
+            color: #64748b;
+            font-size: 14px;
+        }
+
+        .patient-ordo-toolbar {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: nowrap;
+            margin-bottom: 14px;
+        }
+
+        .patient-ordo-filters {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .patient-ordo-filter-btn {
+            border: 1px solid #dbeafe;
+            background: #f8fbff;
+            color: #0f172a;
+            border-radius: 999px;
+            padding: 9px 14px;
+            font-size: 13px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .patient-ordo-filter-btn:hover {
+            border-color: #93c5fd;
+            background: #eff6ff;
+        }
+
+        .patient-ordo-filter-btn.active {
+            background: #00bfff;
+            border-color: #00bfff;
+            color: #fff;
+            box-shadow: 0 6px 14px rgba(0, 191, 255, 0.28);
+        }
+
+        .patient-ordo-search {
+            margin-left: auto;
+            width: 330px;
+            max-width: 100%;
+            border: 1px solid #dbeafe;
+            border-radius: 999px;
+            padding: 10px 14px;
+            font-size: 13px;
+            font-weight: 600;
+            color: #0f172a;
+            outline: none;
+        }
+
+        .patient-ordo-search:focus {
+            border-color: #7dd3fc;
+            box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.15);
+        }
+
+        .patient-ordo-grid {
+            margin-top: 16px;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+            gap: 15px;
+        }
+
+        .patient-ordo-card {
+            background: #fff;
+            border: 1px solid #dbeafe;
+            border-radius: 16px;
+            box-shadow: 0 8px 20px rgba(14, 165, 233, 0.09);
+            padding: 16px;
+        }
+
+        .patient-ordo-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 10px;
+            margin-bottom: 8px;
+        }
+
+        .doctor-name {
+            margin: 0;
+            font-size: 21px;
+            color: #0f172a;
+            font-weight: 800;
+        }
+
+        .doctor-specialty {
+            margin-top: 3px;
+            color: #0369a1;
+            font-size: 13px;
+            font-weight: 700;
+        }
+
+        .ordo-type {
+            border-radius: 999px;
+            padding: 6px 10px;
+            font-size: 11px;
+            font-weight: 700;
+            color: #075985;
+            background: #e0f2fe;
+            border: 1px solid #bae6fd;
+        }
+
+        .patient-ordo-meta {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 10px;
+            margin-top: 8px;
+        }
+
+        .meta-box {
+            background: #f8fbff;
+            border: 1px solid #dbeafe;
+            border-radius: 10px;
+            padding: 8px 10px;
+        }
+
+        .meta-label {
+            font-size: 12px;
+            color: #64748b;
+            margin-bottom: 3px;
+        }
+
+        .meta-value {
+            font-size: 13px;
+            color: #0f172a;
+            font-weight: 700;
+        }
+
+        .ordo-text {
+            margin-top: 10px;
+            border: 1px solid #e2e8f0;
+            border-radius: 10px;
+            background: #f8fafc;
+            padding: 10px 12px;
+            color: #334155;
+            font-size: 13px;
+            line-height: 1.5;
+            max-height: 130px;
+            overflow: auto;
+            white-space: pre-line;
+        }
+
+        .patient-ordo-actions {
+            margin-top: 12px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .patient-ordo-btn {
+            border: none;
+            border-radius: 10px;
+            padding: 10px 14px;
+            font-size: 13px;
+            font-weight: 800;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: #0f172a;
+            color: #fff;
+        }
+
+        .patient-ordo-empty {
+            text-align: center;
+            margin-top: 26px;
+            color: #64748b;
+            font-weight: 700;
+        }
+
+        @media (max-width: 768px) {
+            .patient-ordo-toolbar {
+                flex-wrap: wrap;
+            }
+
+            .patient-ordo-search {
+                margin-left: 0;
+                width: 100%;
+            }
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+<div class="patient-ordo-page">
+    <div class="patient-ordo-head">
+        <div>
+            <h1 class="patient-ordo-title">Mes ordonnances</h1>
+            <p class="patient-ordo-subtitle">Telechargez vos ordonnances medicales en PDF.</p>
+        </div>
+    </div>
+
+    {% if consultations is empty %}
+        <div class="patient-ordo-empty">Aucune ordonnance disponible pour le moment.</div>
+    {% else %}
+        <div class="patient-ordo-toolbar">
+            <div class="patient-ordo-filters" role="group" aria-label="Filtrer les ordonnances">
+                <button type="button" class="patient-ordo-filter-btn active" data-filter="all">Tout</button>
+                <button type="button" class="patient-ordo-filter-btn" data-filter="today">Aujourd hui</button>
+                <button type="button" class="patient-ordo-filter-btn" data-filter="week">Cette semaine</button>
+                <button type="button" class="patient-ordo-filter-btn" data-filter="month">Ce mois</button>
+            </div>
+            <input
+                id="patientOrdonnanceSearch"
+                class="patient-ordo-search"
+                type="search"
+                placeholder="Rechercher par medecin, specialite ou cabinet"
+                aria-label="Rechercher une ordonnance"
+            >
+        </div>
+
+        <div class="patient-ordo-grid" id="patientOrdonnanceGrid">
+            {% for consultation in consultations %}
+                {% set medecin = consultation.medecin %}
+                <article
+                    class="patient-ordo-card"
+                    data-search="{{ ('dr ' ~ medecin.user.prenom ~ ' ' ~ medecin.user.nom ~ ' ' ~ medecin.specialite ~ ' ' ~ medecin.cabinet)|lower }}"
+                    data-date="{{ consultation.dateConsultation|date('Y-m-d') }}"
+                    data-ts="{{ consultation.dateConsultation|date('U') }}"
+                >
+                    <div class="patient-ordo-top">
+                        <div>
+                            <h2 class="doctor-name">Dr {{ medecin.user.prenom }} {{ medecin.user.nom }}</h2>
+                            <div class="doctor-specialty">{{ medecin.specialite }}</div>
+                        </div>
+                    </div>
+
+                    <div class="patient-ordo-meta">
+                        <div class="meta-box">
+                            <div class="meta-label">Date consultation</div>
+                            <div class="meta-value">{{ consultation.dateConsultation|date('d/m/Y H:i') }}</div>
+                        </div>
+                        <div class="meta-box">
+                            <div class="meta-label">Cabinet</div>
+                            <div class="meta-value">{{ medecin.cabinet ?: '-' }}</div>
+                        </div>
+                    </div>
+
+                    <div class="ordo-text">
+                        <strong>Traitement:</strong><br>
+                        {{ consultation.ordonnance }}
+                    </div>
+
+                    <div class="patient-ordo-actions">
+                        <a class="patient-ordo-btn" href="{{ path('app_consultation_ordonnance_pdf', {'id': consultation.id}) }}">
+                            <i class="fas fa-file-pdf"></i>
+                            Telecharger le PDF
+                        </a>
+                    </div>
+                </article>
+            {% endfor %}
+        </div>
+        <div id="patientOrdonnanceEmptyFiltered" class="patient-ordo-empty" style="display: none;">
+            Aucune ordonnance pour cette recherche.
+        </div>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const searchInput = document.getElementById('patientOrdonnanceSearch');
+            const grid = document.getElementById('patientOrdonnanceGrid');
+            const empty = document.getElementById('patientOrdonnanceEmptyFiltered');
+            const filterButtons = document.querySelectorAll('.patient-ordo-filter-btn');
+            const cards = grid ? Array.from(grid.querySelectorAll('.patient-ordo-card')) : [];
+            let currentFilter = 'all';
+
+            if (!searchInput || !grid || !cards.length || !filterButtons.length) {
+                return;
+            }
+
+            const sortedCards = cards.slice().sort(function (a, b) {
+                return Number(b.dataset.ts || 0) - Number(a.dataset.ts || 0);
+            });
+
+            function startOfDay(date) {
+                const value = new Date(date);
+                value.setHours(0, 0, 0, 0);
+                return value;
+            }
+
+            function endOfDay(date) {
+                const value = new Date(date);
+                value.setHours(23, 59, 59, 999);
+                return value;
+            }
+
+            function getCardDate(card) {
+                const dateValue = String(card.dataset.date || '');
+                return dateValue ? new Date(dateValue + 'T00:00:00') : null;
+            }
+
+            function isInCurrentWeek(cardDate, now) {
+                if (!cardDate) {
+                    return false;
+                }
+
+                const today = startOfDay(now);
+                const day = today.getDay();
+                const offset = day === 0 ? 6 : day - 1;
+                const weekStart = new Date(today);
+                weekStart.setDate(today.getDate() - offset);
+                const weekEnd = new Date(weekStart);
+                weekEnd.setDate(weekStart.getDate() + 6);
+
+                return cardDate >= weekStart && cardDate <= endOfDay(weekEnd);
+            }
+
+            function isInCurrentMonth(cardDate, now) {
+                if (!cardDate) {
+                    return false;
+                }
+
+                return cardDate.getFullYear() === now.getFullYear()
+                    && cardDate.getMonth() === now.getMonth();
+            }
+
+            function matchesFilter(card, now) {
+                if (currentFilter === 'all') {
+                    return true;
+                }
+
+                const cardDate = getCardDate(card);
+                if (!cardDate) {
+                    return false;
+                }
+
+                if (currentFilter === 'today') {
+                    return cardDate.getTime() === startOfDay(now).getTime();
+                }
+
+                if (currentFilter === 'week') {
+                    return isInCurrentWeek(cardDate, now);
+                }
+
+                if (currentFilter === 'month') {
+                    return isInCurrentMonth(cardDate, now);
+                }
+
+                return true;
+            }
+
+            function applyFilters() {
+                const query = searchInput.value.trim().toLowerCase();
+                let visible = 0;
+                const now = new Date();
+                const emptyMessages = {
+                    all: 'Aucune ordonnance disponible pour le moment.',
+                    today: 'Aucune ordonnance pour aujourd hui.',
+                    week: 'Aucune ordonnance pour cette semaine.',
+                    month: 'Aucune ordonnance pour ce mois.'
+                };
+
+                sortedCards.forEach(function (card) {
+                    const searchable = (card.dataset.search || '').toLowerCase();
+                    const matchSearch = query === '' || searchable.includes(query);
+                    const matchFilter = matchesFilter(card, now);
+                    const show = matchSearch && matchFilter;
+                    card.style.display = show ? '' : 'none';
+                    grid.appendChild(card);
+                    if (show) {
+                        visible += 1;
+                    }
+                });
+
+                if (empty) {
+                    empty.style.display = visible > 0 ? 'none' : 'block';
+                    if (visible === 0) {
+                        empty.textContent = query !== ''
+                            ? 'Aucun resultat pour cette recherche.'
+                            : (emptyMessages[currentFilter] || emptyMessages.all);
+                    }
+                }
+            }
+
+            filterButtons.forEach(function (button) {
+                button.addEventListener('click', function () {
+                    filterButtons.forEach(function (item) {
+                        item.classList.remove('active');
+                    });
+                    button.classList.add('active');
+                    currentFilter = button.dataset.filter || 'all';
+                    applyFilters();
+                });
+            });
+
+            searchInput.addEventListener('input', applyFilters);
+            applyFilters();
+        });
+    </script>
+{% endblock %}

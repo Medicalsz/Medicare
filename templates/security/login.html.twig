@@ -1,0 +1,159 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Connexion - Medicare{% endblock %}
+
+{% block body %}
+<a href="{{ path('app_home') }}" class="auth-page-back-btn">
+    <i class="bi bi-arrow-left"></i>
+    <span class="back-text">Retour à l'accueil</span>
+</a>
+
+<div class="auth-container">
+    <div class="auth-header">
+        <h1>Connexion</h1>
+        <p>Accédez à votre espace Medicare</p>
+    </div>
+
+    {% if error %}
+        <div class="alert alert-danger">
+            {% if error.messageKey == 'Invalid credentials.' %}
+                Email ou mot de passe incorrect. Veuillez réessayer.
+            {% else %}
+                {{ error.messageKey|trans(error.messageData, 'security') }}
+            {% endif %}
+        </div>
+    {% endif %}
+
+    {% if app.user %}
+        <div class="alert alert-success">
+            Vous êtes connecté en tant que {{ app.user.userIdentifier }}, 
+            <a href="{{ path('app_logout') }}">Se déconnecter</a>
+        </div>
+    {% endif %}
+
+    <form method="post" class="login-form" novalidate>
+        <div class="form-group">
+            <label for="inputEmail">Email</label>
+            <input type="email" 
+                   value="{{ last_username }}" 
+                   name="email" 
+                   id="inputEmail" 
+                   class="form-control{% if error %} is-invalid{% endif %}" 
+                   placeholder="votre.email@exemple.com"
+                   autocomplete="email" 
+                   pattern="[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}"
+                   required 
+                   autofocus>
+            <div class="invalid-feedback">
+                Veuillez saisir une adresse email valide
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="inputPassword">Mot de passe</label>
+            <input type="password" 
+                   name="password" 
+                   id="inputPassword" 
+                   class="form-control{% if error %} is-invalid{% endif %}" 
+                   placeholder="Votre mot de passe"
+                   autocomplete="current-password"
+                   minlength="6"
+                   required>
+            <div class="invalid-feedback">
+                Le mot de passe doit contenir au moins 6 caractères
+            </div>
+        </div>
+
+        <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
+
+        <button class="btn-submit" type="submit">Se connecter</button>
+    </form>
+
+    <div class="auth-footer">
+        <p>Pas encore de compte ? <a href="{{ path('app_register') }}">S'inscrire</a></p>
+    </div>
+</div>
+
+<!-- Modal de succès -->
+<div id="successModal" class="auth-success-modal">
+    <div class="modal-content-wrapper">
+        <div class="success-checkmark">
+            <div class="check-icon">
+                <span class="icon-line line-tip"></span>
+                <span class="icon-line line-long"></span>
+                <div class="icon-circle"></div>
+                <div class="icon-fix"></div>
+            </div>
+        </div>
+        <h2>Connexion réussie !</h2>
+        <p>Vous allez être redirigé vers votre dashboard...</p>
+    </div>
+</div>
+
+<script>
+// Validation du formulaire de connexion
+document.addEventListener('DOMContentLoaded', function() {
+    const loginForm = document.querySelector('.login-form');
+    const emailInput = document.getElementById('inputEmail');
+    const passwordInput = document.getElementById('inputPassword');
+
+    // Validation en temps réel
+    [emailInput, passwordInput].forEach(input => {
+        input.addEventListener('blur', function() {
+            validateField(this);
+        });
+
+        input.addEventListener('input', function() {
+            if (this.classList.contains('is-invalid')) {
+                validateField(this);
+            }
+        });
+    });
+
+    function validateField(field) {
+        if (field.validity.valid) {
+            field.classList.remove('is-invalid');
+            field.classList.add('is-valid');
+        } else {
+            field.classList.remove('is-valid');
+            field.classList.add('is-invalid');
+        }
+    }
+
+    // Validation à la soumission
+    loginForm.addEventListener('submit', function(event) {
+        let isValid = true;
+
+        [emailInput, passwordInput].forEach(input => {
+            validateField(input);
+            if (!input.validity.valid) {
+                isValid = false;
+            }
+        });
+
+        if (!isValid) {
+            event.preventDefault();
+            event.stopPropagation();
+        }
+
+        loginForm.classList.add('was-validated');
+    });
+
+    // Afficher le modal de succès si le paramètre success est présent
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('success') === 'true') {
+        showSuccessModal();
+    }
+});
+
+function showSuccessModal() {
+    const modal = document.getElementById('successModal');
+    modal.classList.add('show');
+    
+    // Rediriger après 2 secondes
+    setTimeout(function() {
+        window.location.href = '{{ path('app_home') }}';
+    }, 2000);
+}
+</script>
+{% endblock %}
