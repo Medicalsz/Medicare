@@ -1,0 +1,216 @@
+{% extends 'base_frontend.html.twig' %}
+
+{% block title %}Home - Medicare{% endblock %}
+
+{% block body %}
+<!-- Hero Section -->
+<section id="hero" class="hero section">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-5">
+                <div class="hero-image" data-aos="fade-right" data-aos-delay="100">
+                    <img src="{{ asset('build/frontend/assets/img/health/staff-8.webp') }}" alt="Healthcare Professional" class="img-fluid main-image">
+                    <div class="floating-card emergency-card" data-aos="fade-up" data-aos-delay="300">
+                        <div class="card-content">
+                            <i class="bi bi-telephone-fill"></i>
+                            <div class="text">
+                                <span class="label">24/7 Emergency</span>
+                                <span class="number">+1 (555) 911-2468</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="floating-card stats-card" data-aos="fade-up" data-aos-delay="400">
+                        <div class="stat-item">
+                            <span class="number">25K+</span>
+                            <span class="label">Patients Treated</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="number">98%</span>
+                            <span class="label">Satisfaction Rate</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-7">
+                <div class="hero-content" data-aos="fade-left" data-aos-delay="200">
+                    <div class="badge-container">
+                        <span class="hero-badge">Trusted Healthcare Provider</span>
+                    </div>
+
+                    <h1 class="hero-title">Welcome to Medicare</h1>
+                    <p class="hero-description">Your medical appointment management system. We provide world-class healthcare services with compassionate care and innovative treatments.</p>
+
+                    <div class="hero-stats">
+                        <div class="stat-group">
+                            <div class="stat">
+                                <i class="bi bi-award"></i>
+                                <div class="stat-text">
+                                    <span class="number">35+</span>
+                                    <span class="label">Years Experience</span>
+                                </div>
+                            </div>
+                            <div class="stat">
+                                <i class="bi bi-people"></i>
+                                <div class="stat-text">
+                                    <span class="number">150+</span>
+                                    <span class="label">Medical Specialists</span>
+                                </div>
+                            </div>
+                            <div class="stat">
+                                <i class="bi bi-geo-alt"></i>
+                                <div class="stat-text">
+                                    <span class="number">12</span>
+                                    <span class="label">Clinic Locations</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="cta-section">
+                        <div class="cta-buttons">
+                            {% if app.user %}
+                                <a href="{{ path('app_dashboard') }}" class="btn btn-primary">Go to Dashboard</a>
+                            {% else %}
+                                <a href="{{ path('app_login') }}" class="btn btn-primary">Login</a>
+                                <a href="{{ path('app_register') }}" class="btn btn-secondary">
+                                    <i class="bi bi-person-plus"></i>
+                                    Register
+                                </a>
+                            {% endif %}
+                        </div>
+
+                        <div class="quick-actions">
+                            <a href="{{ path('app_appointment') }}" class="action-link">
+                                <i class="bi bi-calendar-check"></i>
+                                <span>Book Appointment</span>
+                            </a>
+                            <a href="{{ path('app_doctors') }}" class="action-link">
+                                <i class="bi bi-doctor"></i>
+                                <span>Find Doctors</span>
+                            </a>
+                            <a href="{{ path('app_contact') }}" class="action-link">
+                                <i class="bi bi-chat-dots"></i>
+                                <span>Contact Us</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="background-elements">
+        <div class="bg-shape shape-1"></div>
+        <div class="bg-shape shape-2"></div>
+        <div class="bg-pattern"></div>
+    </div>
+</section>
+
+<!-- Stats Section -->
+<section id="stats" class="stats section">
+    <div class="container" data-aos="fade-up" data-aos-delay="100">
+        <div class="row gy-4">
+            <div class="col-lg-3 col-md-6">
+                <div class="stats-item">
+                    <i class="bi bi-hospital"></i>
+                    <span data-purecounter-start="0" data-purecounter-end="15" data-purecounter-duration="1" class="purecounter">15</span>
+                    <p>Hospitals</p>
+                </div>
+            </div>
+
+            <div class="col-lg-3 col-md-6">
+                <div class="stats-item">
+                    <i class="bi bi-people-fill"></i>
+                    <span data-purecounter-start="0" data-purecounter-end="150" data-purecounter-duration="1" class="purecounter">150</span>
+                    <p>Medical Staff</p>
+                </div>
+            </div>
+
+            <div class="col-lg-3 col-md-6">
+                <div class="stats-item">
+                    <i class="bi bi-person-hearts"></i>
+                    <span data-purecounter-start="0" data-purecounter-end="25000" data-purecounter-duration="1" class="purecounter">25000</span>
+                    <p>Happy Patients</p>
+                </div>
+            </div>
+
+            <div class="col-lg-3 col-md-6">
+                <div class="stats-item">
+                    <i class="bi bi-award"></i>
+                    <span data-purecounter-start="0" data-purecounter-end="35" data-purecounter-duration="1" class="purecounter">35</span>
+                    <p>Awards Won</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Services Section -->
+<section id="services" class="services section">
+    <div class="container section-title" data-aos="fade-up">
+        <h2>Our Services</h2>
+        <p>Comprehensive healthcare services tailored to your needs</p>
+    </div>
+
+    <div class="container">
+        <div class="row gy-4">
+            <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="100">
+                <div class="service-card">
+                    <div class="card-icon">
+                        <i class="bi bi-heart-pulse"></i>
+                    </div>
+                    <h3>Cardiology</h3>
+                    <p>Complete heart care services from prevention to treatment</p>
+                    <a href="{{ path('app_services') }}" class="read-more">
+                        <span>Learn More</span> <i class="bi bi-arrow-right"></i>
+                    </a>
+                </div>
+            </div>
+
+            <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="200">
+                <div class="service-card">
+                    <div class="card-icon">
+                        <i class="bi bi-brain"></i>
+                    </div>
+                    <h3>Neurology</h3>
+                    <p>Advanced neurological care and treatment options</p>
+                    <a href="{{ path('app_services') }}" class="read-more">
+                        <span>Learn More</span> <i class="bi bi-arrow-right"></i>
+                    </a>
+                </div>
+            </div>
+
+            <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="300">
+                <div class="service-card">
+                    <div class="card-icon">
+                        <i class="bi bi-hospital"></i>
+                    </div>
+                    <h3>Pediatrics</h3>
+                    <p>Specialized care for children and adolescents</p>
+                    <a href="{{ path('app_services') }}" class="read-more">
+                        <span>Learn More</span> <i class="bi bi-arrow-right"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- CTA Section -->
+<section id="cta" class="cta section">
+    <div class="container" data-aos="zoom-out" data-aos-delay="100">
+        <div class="row g-5">
+            <div class="col-lg-8 col-md-6 content d-flex flex-column justify-content-center order-last order-md-first">
+                <h3>Book Your Appointment Today</h3>
+                <p>Don't wait for your health concerns. Schedule an appointment with our experienced doctors and get the care you deserve.</p>
+                <a class="cta-btn align-self-start" href="{{ path('app_appointment') }}">Book Now</a>
+            </div>
+
+            <div class="col-lg-4 col-md-6 position-relative">
+                <div class="cta-bg" style="background-image: url('{{ asset('build/frontend/assets/img/health/facilities-6.webp') }}')"></div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

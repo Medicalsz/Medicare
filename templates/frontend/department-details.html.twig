@@ -1,0 +1,20 @@
+{% extends "base_frontend.html.twig" %}
+
+{% block title %}Department Details - Medicare{% endblock %}
+
+{% block body %}
+<main class="main">
+    <section class="breadcrumbs">
+        <div class="container">
+            <h2>Department Details</h2>
+        </div>
+    </section>
+
+    <section class="department-details">
+        <div class="container">
+            <h1>Department #{{ departmentId }}</h1>
+            <p>Detailed information about this department will be displayed here.</p>
+        </div>
+    </section>
+</main>
+{% endblock %}

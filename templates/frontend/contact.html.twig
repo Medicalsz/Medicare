@@ -1,0 +1,46 @@
+{% extends "base_frontend.html.twig" %}
+
+{% block title %}Contact - Medicare{% endblock %}
+
+{% block body %}
+<main class="main">
+    <section class="breadcrumbs">
+        <div class="container">
+            <h2>Contact Us</h2>
+        </div>
+    </section>
+
+    <section class="contact-section">
+        <div class="container">
+            <h1>Get in Touch</h1>
+            <div class="row">
+                <div class="col-md-6 mb-4">
+                    <h3>Contact Information</h3>
+                    <p><strong>Address:</strong> 123 Medical Street, Healthcare City</p>
+                    <p><strong>Phone:</strong> +1 (555) 123-4567</p>
+                    <p><strong>Email:</strong> info@medicare.com</p>
+                    <p><strong>Hours:</strong> Mon-Fri 9am-5pm, Sat 10am-2pm</p>
+                </div>
+                <div class="col-md-6 mb-4">
+                    <h3>Send us a Message</h3>
+                    <form method="post" class="contact-form">
+                        <div class="mb-3">
+                            <label for="name" class="form-label">Name</label>
+                            <input type="text" class="form-control" id="name" name="name" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="email" class="form-label">Email</label>
+                            <input type="email" class="form-control" id="email" name="email" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="message" class="form-label">Message</label>
+                            <textarea class="form-control" id="message" name="message" rows="4" required></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Send Message</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+</main>
+{% endblock %}
