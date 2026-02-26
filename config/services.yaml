@@ -4,6 +4,7 @@
 # Put parameters here that don't need to change on each machine where the app is deployed
 # https://symfony.com/doc/current/best_practices.html#use-parameters-for-application-configuration
 parameters:
+    app.google_calendar.token_path: '%kernel.project_dir%/var/google-calendar-token.json'
 
 services:
     # default configuration for services in *this* file
@@ -22,3 +23,23 @@ services:
 
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
+
+    App\Service\GoogleCalendarService:
+        arguments:
+            $clientId: '%env(string:GOOGLE_CLIENT_ID)%'
+            $clientSecret: '%env(string:GOOGLE_CLIENT_SECRET)%'
+            $redirectUri: '%env(string:GOOGLE_CALENDAR_REDIRECT_URI)%'
+            $calendarId: '%env(string:GOOGLE_CALENDAR_ID)%'
+            $timezone: '%env(string:GOOGLE_CALENDAR_TIMEZONE)%'
+            $tokenStoragePath: '%app.google_calendar.token_path%'
+
+    App\Service\SendGridService:
+        arguments:
+            $apiKey: '%env(string:SENDGRID_API_KEY)%'
+            $fromEmail: '%env(string:SENDGRID_FROM_EMAIL)%'
+            $fromName: '%env(string:SENDGRID_FROM_NAME)%'
+
+    App\Service\AppointmentMailer:
+        arguments:
+            $fromAddress: '%env(string:MAIL_FROM_ADDRESS)%'
+            $fromName: '%env(string:MAIL_FROM_NAME)%'

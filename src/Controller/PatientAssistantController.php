@@ -13,7 +13,9 @@ use App\Repository\DisponibiliteRepository;
 use App\Repository\MedecinRepository;
 use App\Repository\PatientRepository;
 use App\Repository\RendezVousRepository;
+use App\Service\GoogleCalendarService;
 use App\Service\PatientAssistantService;
+use App\Service\SendGridService;
 use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -107,7 +109,9 @@ class PatientAssistantController extends AbstractController
         PatientRepository $patientRepository,
         MedecinRepository $medecinRepository,
         DisponibiliteRepository $disponibiliteRepository,
-        RendezVousRepository $rendezVousRepository
+        RendezVousRepository $rendezVousRepository,
+        GoogleCalendarService $googleCalendarService,
+        SendGridService $sendGridService
     ): JsonResponse {
         $this->denyAccessUnlessGranted('ROLE_PATIENT');
 
@@ -182,12 +186,38 @@ class PatientAssistantController extends AbstractController
             return $this->json(['error' => 'Ce medecin a deja un rendez-vous a cette heure.'], 409);
         }
 
-        return $this->json([
+        $warnings = [];
+        $googleEventLink = null;
+
+        if ($googleCalendarService->isConfigured()) {
+            try {
+                $googleEventLink = $googleCalendarService->createEventForRendezVous($rendezVous);
+            } catch (\Throwable $exception) {
+                $warnings[] = 'Synchronisation Google Calendar echouee.';
+            }
+        } else {
+            $warnings[] = 'Google Calendar non configure.';
+        }
+
+        if ($sendGridService->isConfigured()) {
+            try {
+                $sendGridService->sendAppointmentConfirmation($rendezVous, $googleEventLink);
+            } catch (\Throwable $exception) {
+                $warnings[] = 'Email SendGrid non envoye.';
+            }
+        }
+
+        $response = [
             'success' => true,
             'message' => 'Rendez-vous reserve avec succes via assistant.',
             'redirect' => $this->generateUrl('app_appointments'),
             'rendez_vous_id' => $rendezVous->getId(),
-        ]);
+        ];
+        if ($warnings !== []) {
+            $response['warnings'] = $warnings;
+        }
+
+        return $this->json($response);
     }
 
     /**

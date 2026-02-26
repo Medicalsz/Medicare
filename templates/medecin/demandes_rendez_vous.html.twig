@@ -89,6 +89,93 @@
             box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.14);
         }
 
+        .rdv-advanced-toggle {
+            border: 1px solid #dbeafe;
+            background: #ffffff;
+            color: #0f172a;
+            border-radius: 999px;
+            padding: 9px 14px;
+            font-size: 13px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .rdv-advanced-toggle:hover {
+            border-color: #7dd3fc;
+            background: #f8fbff;
+        }
+
+        .rdv-advanced-toggle.open {
+            background: #e0f2fe;
+            border-color: #7dd3fc;
+            color: #0369a1;
+        }
+
+        .rdv-advanced-panel {
+            border: 1px solid #dbeafe;
+            border-radius: 14px;
+            background: #f8fbff;
+            padding: 14px;
+            margin-bottom: 14px;
+        }
+
+        .rdv-advanced-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+            gap: 12px;
+        }
+
+        .rdv-advanced-field {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            font-size: 12px;
+            font-weight: 700;
+            color: #334155;
+        }
+
+        .rdv-advanced-input {
+            border: 1px solid #dbeafe;
+            border-radius: 10px;
+            padding: 8px 10px;
+            font-size: 13px;
+            font-weight: 600;
+            color: #0f172a;
+            background: #fff;
+            outline: none;
+        }
+
+        .rdv-advanced-input:focus {
+            border-color: #7dd3fc;
+            box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.14);
+        }
+
+        .rdv-advanced-actions {
+            margin-top: 12px;
+            display: flex;
+            justify-content: flex-end;
+        }
+
+        .rdv-reset-advanced-btn {
+            border: 1px solid #cbd5e1;
+            border-radius: 10px;
+            padding: 7px 12px;
+            background: #fff;
+            color: #334155;
+            font-size: 12px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .rdv-reset-advanced-btn:hover {
+            border-color: #94a3b8;
+            background: #f8fafc;
+        }
+
         .rdv-card {
             background: #fff;
             border-radius: 14px;
@@ -223,6 +310,24 @@
             align-items: center;
         }
 
+        .rdv-btn.delete-icon {
+            width: 40px;
+            height: 40px;
+            padding: 0;
+            border: 1px solid #fecaca;
+            background: #fff1f2;
+            color: #be123c;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .rdv-btn.delete-icon:hover {
+            background: #ffe4e6;
+            color: #9f1239;
+        }
+
         .rdv-note {
             margin-top: 9px;
             color: #92400e;
@@ -242,6 +347,94 @@
             font-weight: 700;
         }
 
+        .medecin-rdv-modal {
+            position: fixed;
+            inset: 0;
+            background: rgba(15, 23, 42, 0.55);
+            z-index: 20000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 16px;
+        }
+
+        .medecin-rdv-modal.show {
+            display: flex;
+        }
+
+        .medecin-rdv-modal-card {
+            width: min(520px, 100%);
+            background: #fff;
+            border-radius: 18px;
+            padding: 24px 20px;
+            border: 1px solid #dce8f3;
+            box-shadow: 0 20px 40px rgba(2, 8, 23, 0.22);
+            text-align: center;
+        }
+
+        .medecin-rdv-modal-card.danger {
+            border-color: #fecaca;
+        }
+
+        .medecin-rdv-modal-card.danger .medecin-rdv-modal-title {
+            color: #991b1b;
+        }
+
+        .medecin-rdv-modal-title {
+            margin: 0 0 8px;
+            font-size: 22px;
+            font-weight: 800;
+            color: #0f172a;
+        }
+
+        .medecin-rdv-modal-text {
+            margin: 0;
+            color: #475569;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        .medecin-rdv-modal-reason {
+            margin-top: 12px;
+            padding: 10px 12px;
+            border-radius: 10px;
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            color: #334155;
+            font-size: 13px;
+            text-align: left;
+            word-break: break-word;
+        }
+
+        .medecin-rdv-modal-actions {
+            margin-top: 18px;
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .medecin-rdv-modal-btn {
+            border: none;
+            border-radius: 10px;
+            padding: 10px 14px;
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+            min-width: 170px;
+        }
+
+        .medecin-rdv-modal-btn.accept {
+            background: #00bfff;
+            color: #fff;
+        }
+
+        .medecin-rdv-modal-btn.reject {
+            background: #fee2e2;
+            color: #991b1b;
+            border: 1px solid #fecaca;
+        }
+
         @media (max-width: 768px) {
             .rdv-page {
                 padding: 18px;
@@ -258,6 +451,11 @@
             .rdv-search {
                 margin-left: 0;
                 width: 100%;
+            }
+
+            .rdv-advanced-toggle {
+                width: 100%;
+                justify-content: center;
             }
         }
     </style>
@@ -288,6 +486,15 @@
                 <button type="button" class="rdv-filter-btn" data-filter="confirme">Acceptés</button>
                 <button type="button" class="rdv-filter-btn" data-filter="annule">Rejetés</button>
             </div>
+            <button
+                type="button"
+                class="rdv-advanced-toggle"
+                id="medecinRdvAdvancedToggle"
+                aria-expanded="false"
+                aria-controls="medecinRdvAdvancedPanel"
+            >
+                Filtrer
+            </button>
             <input
                 type="search"
                 id="medecinRdvSearch"
@@ -295,6 +502,25 @@
                 placeholder="Rechercher par patient ou numero"
                 aria-label="Rechercher un rendez-vous"
             >
+        </div>
+        <div id="medecinRdvAdvancedPanel" class="rdv-advanced-panel" hidden>
+            <div class="rdv-advanced-grid">
+                <label class="rdv-advanced-field" for="medecinRdvFilterDate">
+                    Date
+                    <input type="date" id="medecinRdvFilterDate" class="rdv-advanced-input">
+                </label>
+                <label class="rdv-advanced-field" for="medecinRdvFilterMonth">
+                    Mois
+                    <input type="month" id="medecinRdvFilterMonth" class="rdv-advanced-input">
+                </label>
+                <label class="rdv-advanced-field" for="medecinRdvFilterHour">
+                    Heure
+                    <input type="time" id="medecinRdvFilterHour" class="rdv-advanced-input" step="60">
+                </label>
+            </div>
+            <div class="rdv-advanced-actions">
+                <button type="button" id="medecinRdvResetAdvancedFilters" class="rdv-reset-advanced-btn">Reinitialiser</button>
+            </div>
         </div>
         <div class="rdv-list">
             {% for rdv in rendezVous %}
@@ -304,6 +530,8 @@
                     data-status="{{ statut|lower }}"
                     data-id="{{ rdv.id }}"
                     data-search="{{ (rdv.patient.user.prenom ~ ' ' ~ rdv.patient.user.nom ~ ' ' ~ (rdv.patient.user.numero ?: ''))|lower }}"
+                    data-date="{{ rdv.date|date('Y-m-d') }}"
+                    data-hour="{{ rdv.heure|date('H:i') }}"
                 >
                     <div class="rdv-top">
                         <div class="rdv-patient">
@@ -338,7 +566,7 @@
                         <a class="rdv-btn details" href="{{ path('app_medecin_rendez_vous_show', {'id': rdv.id}) }}">
                             Voir details
                         </a>
-                        {% if statut == 'EN_ATTENTE' and not rdv.reportPendingPatientResponse %}
+                        {% if statut == 'EN_ATTENTE' and not rdv.reportPendingPatientResponse and not rdv.reportPendingMedecinResponse %}
                             <form method="post" action="{{ path('app_medecin_accept_rendez_vous', {'id': rdv.id}) }}">
                                 <button type="submit" class="rdv-btn accept">Accepter</button>
                             </form>
@@ -346,8 +574,26 @@
                                 <button type="submit" class="rdv-btn reject">Rejeter</button>
                             </form>
                         {% endif %}
+                        {% if statut in ['CONFIRME', 'ANNULE'] %}
+                            <form id="medecinDeleteCardForm{{ rdv.id }}" method="post" action="{{ path('app_medecin_delete_rendez_vous_from_list', {'id': rdv.id}) }}">
+                                <input type="hidden" name="_token" value="{{ csrf_token('medecin_delete_rdv_from_list_' ~ rdv.id) }}">
+                                <button
+                                    type="button"
+                                    class="rdv-btn delete-icon js-medecin-delete-card"
+                                    data-delete-form="medecinDeleteCardForm{{ rdv.id }}"
+                                    aria-label="Supprimer ce rendez-vous de ma liste"
+                                    title="Supprimer de ma liste"
+                                >
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </form>
+                        {% endif %}
                     </div>
-                    {% if rdv.reportPendingPatientResponse %}
+                    {% if rdv.reportPendingMedecinResponse and rdv.reportProposedByAdmin and rdv.proposedDate and rdv.proposedHeure %}
+                        <div class="rdv-note">
+                            Report admin en attente de votre decision: {{ rdv.proposedDate|date('d/m/Y') }} a {{ rdv.proposedHeure|date('H:i') }}.
+                        </div>
+                    {% elseif rdv.reportPendingPatientResponse %}
                         <div class="rdv-note">
                             Report propose au patient: en attente de sa reponse.
                         </div>
@@ -357,6 +603,65 @@
         </div>
         <div id="medecinFilterEmpty" class="rdv-filter-empty">Aucun rendez-vous pour ce filtre.</div>
     {% endif %}
+</div>
+{% if showMedecinStatusModal|default(false) and medecinStatusRendezVous %}
+<div id="medecinRdvStatusModal" class="medecin-rdv-modal show" role="dialog" aria-modal="true" aria-labelledby="medecinRdvStatusTitle">
+    <div class="medecin-rdv-modal-card {{ medecinStatusType == 'annule' ? 'danger' : '' }}">
+        {% set medecinResolvedTitle = medecinStatusTitle ?: (medecinStatusType == 'annule' ? 'Mise a jour rendez-vous' : 'Information rendez-vous') %}
+        {% set medecinResolvedMessage = medecinStatusMessage ?: 'Une mise a jour a ete enregistree sur ce rendez-vous.' %}
+        <h2 id="medecinRdvStatusTitle" class="medecin-rdv-modal-title">{{ medecinResolvedTitle }}</h2>
+        <p class="medecin-rdv-modal-text">{{ medecinResolvedMessage }}</p>
+        <div class="medecin-rdv-modal-reason">
+            <strong>Patient:</strong> {{ medecinStatusRendezVous.patient.user.prenom }} {{ medecinStatusRendezVous.patient.user.nom }}<br>
+            <strong>Date:</strong> {{ medecinStatusRendezVous.date|date('d/m/Y') }} a {{ medecinStatusRendezVous.heure|date('H:i') }}
+        </div>
+        <div class="medecin-rdv-modal-actions">
+            <form method="post" action="{{ path('app_medecin_ack_rendez_vous_notification', {'id': medecinStatusRendezVous.id}) }}">
+                <input type="hidden" name="_token" value="{{ csrf_token('ack_medecin_rdv_notification_' ~ medecinStatusRendezVous.id) }}">
+                <button type="submit" class="medecin-rdv-modal-btn {{ medecinStatusType == 'annule' ? 'reject' : 'accept' }}">
+                    Compris
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endif %}
+{% if showAdminReportProposalModal|default(false) and adminReportProposalRendezVous %}
+<div id="medecinAdminReportModal" class="medecin-rdv-modal show" role="dialog" aria-modal="true" aria-labelledby="medecinAdminReportTitle">
+    <div class="medecin-rdv-modal-card">
+        <h2 id="medecinAdminReportTitle" class="medecin-rdv-modal-title">L administration propose un report</h2>
+        <p class="medecin-rdv-modal-text">
+            Merci de confirmer ou refuser cette proposition. Si vous refusez, le rendez-vous sera annule.
+        </p>
+        <div class="medecin-rdv-modal-reason">
+            <strong>Patient:</strong> {{ adminReportProposalRendezVous.patient.user.prenom }} {{ adminReportProposalRendezVous.patient.user.nom }}<br>
+            <strong>Ancien rendez-vous:</strong> {{ adminReportProposalRendezVous.date|date('d/m/Y') }} a {{ adminReportProposalRendezVous.heure|date('H:i') }}<br>
+            <strong>Nouveau propose:</strong> {{ adminReportProposalRendezVous.proposedDate ? adminReportProposalRendezVous.proposedDate|date('d/m/Y') : '-' }} a {{ adminReportProposalRendezVous.proposedHeure ? adminReportProposalRendezVous.proposedHeure|date('H:i') : '-' }}
+        </div>
+        <div class="medecin-rdv-modal-actions">
+            <form method="post" action="{{ path('app_medecin_accept_admin_report_rendez_vous', {'id': adminReportProposalRendezVous.id}) }}">
+                <input type="hidden" name="_token" value="{{ csrf_token('medecin_accept_admin_report_rdv_' ~ adminReportProposalRendezVous.id) }}">
+                <button type="submit" class="medecin-rdv-modal-btn accept">J accepte le report</button>
+            </form>
+            <form method="post" action="{{ path('app_medecin_reject_admin_report_rendez_vous', {'id': adminReportProposalRendezVous.id}) }}">
+                <input type="hidden" name="_token" value="{{ csrf_token('medecin_reject_admin_report_rdv_' ~ adminReportProposalRendezVous.id) }}">
+                <button type="submit" class="medecin-rdv-modal-btn reject">Je refuse</button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endif %}
+<div id="medecinDeleteCardConfirmModal" class="medecin-rdv-modal" role="dialog" aria-modal="true" aria-labelledby="medecinDeleteCardConfirmTitle">
+    <div class="medecin-rdv-modal-card danger">
+        <h2 id="medecinDeleteCardConfirmTitle" class="medecin-rdv-modal-title">Confirmer la suppression</h2>
+        <p class="medecin-rdv-modal-text">
+            Ce rendez-vous sera retire uniquement de votre liste. Cette action n affecte pas le patient.
+        </p>
+        <div class="medecin-rdv-modal-actions">
+            <button type="button" id="medecinDeleteCardCancelBtn" class="medecin-rdv-modal-btn accept">Annuler</button>
+            <button type="button" id="medecinDeleteCardConfirmBtn" class="medecin-rdv-modal-btn reject">Oui, supprimer</button>
+        </div>
+    </div>
 </div>
 {% endblock %}
 
@@ -369,6 +674,17 @@
             const list = document.querySelector('.rdv-list');
             const searchInput = document.getElementById('medecinRdvSearch');
             const emptyState = document.getElementById('medecinFilterEmpty');
+            const advancedToggle = document.getElementById('medecinRdvAdvancedToggle');
+            const advancedPanel = document.getElementById('medecinRdvAdvancedPanel');
+            const filterDateInput = document.getElementById('medecinRdvFilterDate');
+            const filterMonthInput = document.getElementById('medecinRdvFilterMonth');
+            const filterHourInput = document.getElementById('medecinRdvFilterHour');
+            const resetAdvancedFiltersButton = document.getElementById('medecinRdvResetAdvancedFilters');
+            const deleteCardButtons = document.querySelectorAll('.js-medecin-delete-card');
+            const deleteConfirmModal = document.getElementById('medecinDeleteCardConfirmModal');
+            const deleteCancelBtn = document.getElementById('medecinDeleteCardCancelBtn');
+            const deleteConfirmBtn = document.getElementById('medecinDeleteCardConfirmBtn');
+            let activeDeleteForm = null;
             let currentFilter = 'all';
 
             if (!filterButtons.length || !cards.length || !list) {
@@ -382,6 +698,9 @@
             function applyFilters() {
                 let visibleCount = 0;
                 const query = (searchInput ? searchInput.value : '').trim().toLowerCase();
+                const filterDate = filterDateInput ? filterDateInput.value : '';
+                const filterMonth = filterMonthInput ? filterMonthInput.value : '';
+                const filterHour = filterHourInput ? filterHourInput.value : '';
                 const emptyMessages = {
                     all: 'Aucun rendez-vous pour l instant.',
                     confirme: 'Aucun rendez-vous accepté pour l instant.',
@@ -391,9 +710,14 @@
                 sortedCards.forEach(function (card) {
                     const status = (card.dataset.status || '').toLowerCase();
                     const searchable = (card.dataset.search || '').toLowerCase();
+                    const cardDate = card.dataset.date || '';
+                    const cardHour = card.dataset.hour || '';
                     const matchFilter = currentFilter === 'all' || status === currentFilter;
                     const matchSearch = query === '' || searchable.includes(query);
-                    const shouldShow = matchFilter && matchSearch;
+                    const matchDate = filterDate === '' || cardDate === filterDate;
+                    const matchMonth = filterMonth === '' || (cardDate && cardDate.slice(0, 7) === filterMonth);
+                    const matchHour = filterHour === '' || cardHour === filterHour;
+                    const shouldShow = matchFilter && matchSearch && matchDate && matchMonth && matchHour;
 
                     card.style.display = shouldShow ? '' : 'none';
                     list.appendChild(card);
@@ -427,6 +751,112 @@
 
             if (searchInput) {
                 searchInput.addEventListener('input', function () {
+                    applyFilters();
+                });
+            }
+
+            function openDeleteModal() {
+                if (!deleteConfirmModal) {
+                    return;
+                }
+                deleteConfirmModal.classList.add('show');
+            }
+
+            function closeDeleteModal() {
+                if (!deleteConfirmModal) {
+                    return;
+                }
+                deleteConfirmModal.classList.remove('show');
+                activeDeleteForm = null;
+            }
+
+            deleteCardButtons.forEach(function (button) {
+                button.addEventListener('click', function () {
+                    const formId = button.getAttribute('data-delete-form');
+                    activeDeleteForm = formId ? document.getElementById(formId) : null;
+                    if (!activeDeleteForm) {
+                        return;
+                    }
+                    openDeleteModal();
+                });
+            });
+
+            if (deleteCancelBtn) {
+                deleteCancelBtn.addEventListener('click', function () {
+                    closeDeleteModal();
+                });
+            }
+
+            if (deleteConfirmBtn) {
+                deleteConfirmBtn.addEventListener('click', function () {
+                    if (activeDeleteForm) {
+                        activeDeleteForm.submit();
+                    }
+                });
+            }
+
+            if (advancedToggle && advancedPanel) {
+                advancedToggle.addEventListener('click', function () {
+                    const willOpen = advancedPanel.hasAttribute('hidden');
+                    if (willOpen) {
+                        advancedPanel.removeAttribute('hidden');
+                    } else {
+                        advancedPanel.setAttribute('hidden', '');
+                    }
+                    advancedToggle.classList.toggle('open', willOpen);
+                    advancedToggle.setAttribute('aria-expanded', willOpen ? 'true' : 'false');
+                });
+            }
+
+            document.addEventListener('keydown', function (event) {
+                if (event.key !== 'Escape') {
+                    return;
+                }
+
+                if (advancedPanel && !advancedPanel.hasAttribute('hidden')) {
+                    advancedPanel.setAttribute('hidden', '');
+                    if (advancedToggle) {
+                        advancedToggle.classList.remove('open');
+                        advancedToggle.setAttribute('aria-expanded', 'false');
+                    }
+                }
+
+                if (deleteConfirmModal && deleteConfirmModal.classList.contains('show')) {
+                    closeDeleteModal();
+                }
+            });
+
+            if (deleteConfirmModal) {
+                deleteConfirmModal.addEventListener('click', function (event) {
+                    if (event.target === deleteConfirmModal) {
+                        closeDeleteModal();
+                    }
+                });
+            }
+
+            [filterDateInput, filterMonthInput, filterHourInput].forEach(function (input) {
+                if (!input) {
+                    return;
+                }
+                input.addEventListener('input', function () {
+                    applyFilters();
+                });
+                input.addEventListener('change', function () {
+                    applyFilters();
+                });
+            });
+
+            if (resetAdvancedFiltersButton) {
+                resetAdvancedFiltersButton.addEventListener('click', function () {
+                    if (filterDateInput) {
+                        filterDateInput.value = '';
+                    }
+                    if (filterMonthInput) {
+                        filterMonthInput.value = '';
+                    }
+                    if (filterHourInput) {
+                        filterHourInput.value = '';
+                    }
                     applyFilters();
                 });
             }

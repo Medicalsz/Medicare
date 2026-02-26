@@ -209,59 +209,6 @@
     </div>
 </div>
 {% endif %}
-{% if showRendezVousStatusModal|default(false) and rendezVousStatusItem %}
-<div id="patientRdvStatusModal" class="doctor-approved-modal show" role="dialog" aria-modal="true" aria-labelledby="patientRdvStatusTitle">
-    <div class="doctor-approved-card {{ rendezVousStatusType == 'annule' ? 'danger' : '' }}">
-        <div class="doctor-approved-icon">
-            <i class="fas {{ rendezVousStatusType == 'annule' ? 'fa-times' : 'fa-check' }}"></i>
-        </div>
-        <h2 id="patientRdvStatusTitle" class="doctor-approved-title">
-            {{ rendezVousStatusType == 'annule' ? 'Rendez-vous rejete' : 'Rendez-vous accepte' }}
-        </h2>
-        <p class="doctor-approved-text">
-            {% if rendezVousStatusType == 'annule' %}
-                Desole, votre rendez-vous a ete rejete.
-            {% else %}
-                Votre rendez-vous a ete accepte. Veuillez etre a l heure.
-            {% endif %}
-        </p>
-        <div class="doctor-approved-reason">
-            <strong>Date:</strong> {{ rendezVousStatusItem.date|date('d/m/Y') }} a {{ rendezVousStatusItem.heure|date('H:i') }}<br>
-            <strong>Medecin:</strong> Dr {{ rendezVousStatusItem.medecin.user.prenom }} {{ rendezVousStatusItem.medecin.user.nom }}
-        </div>
-        <div class="doctor-approved-actions">
-            <button type="button" id="closeRdvStatusModalBtn" class="doctor-approved-btn secondary">Compris</button>
-        </div>
-    </div>
-</div>
-{% endif %}
-{% if showReportProposalModal|default(false) and reportProposalRendezVous %}
-<div id="patientReportProposalModal" class="doctor-approved-modal show" role="dialog" aria-modal="true" aria-labelledby="patientReportProposalTitle">
-    <div class="doctor-approved-card">
-        <div class="doctor-approved-icon"><i class="fas fa-calendar-day"></i></div>
-        <h2 id="patientReportProposalTitle" class="doctor-approved-title">Le medecin propose un report</h2>
-        <p class="doctor-approved-text">
-            Votre medecin a propose un changement de date pour ce rendez-vous.
-            Merci de choisir une decision pour continuer.
-        </p>
-        <div class="doctor-approved-reason">
-            <strong>Medecin:</strong> Dr {{ reportProposalRendezVous.medecin.user.prenom }} {{ reportProposalRendezVous.medecin.user.nom }}<br>
-            <strong>Ancien rendez-vous:</strong> {{ reportProposalRendezVous.date|date('d/m/Y') }} a {{ reportProposalRendezVous.heure|date('H:i') }}<br>
-            <strong>Nouveau propose:</strong> {{ reportProposalRendezVous.proposedDate ? reportProposalRendezVous.proposedDate|date('d/m/Y') : '-' }} a {{ reportProposalRendezVous.proposedHeure ? reportProposalRendezVous.proposedHeure|date('H:i') : '-' }}
-        </div>
-        <div class="report-proposal-actions">
-            <form method="post" action="{{ path('app_appointment_report_accept', {'id': reportProposalRendezVous.id}) }}">
-                <input type="hidden" name="_token" value="{{ csrf_token('accept_report_' ~ reportProposalRendezVous.id) }}">
-                <button type="submit" class="report-proposal-btn accept">J accepte le report</button>
-            </form>
-            <form method="post" action="{{ path('app_appointment_report_reject', {'id': reportProposalRendezVous.id}) }}">
-                <input type="hidden" name="_token" value="{{ csrf_token('reject_report_' ~ reportProposalRendezVous.id) }}">
-                <button type="submit" class="report-proposal-btn reject">Non, je refuse</button>
-            </form>
-        </div>
-    </div>
-</div>
-{% endif %}
 {% if showOrdonnanceReadyModal|default(false) and latestOrdonnance %}
 <div id="patientOrdonnanceReadyModal" class="doctor-approved-modal show" role="dialog" aria-modal="true" aria-labelledby="patientOrdonnanceReadyTitle">
     <div class="doctor-approved-card">
@@ -289,18 +236,10 @@
         document.addEventListener('DOMContentLoaded', function () {
             const rejectedModal = document.getElementById('doctorRejectedModal');
             const closeRejectedBtn = document.getElementById('closeRejectedDashboardModalBtn');
-            const rdvStatusModal = document.getElementById('patientRdvStatusModal');
-            const closeRdvStatusModalBtn = document.getElementById('closeRdvStatusModalBtn');
 
             if (rejectedModal && closeRejectedBtn) {
                 closeRejectedBtn.addEventListener('click', function () {
                     rejectedModal.classList.remove('show');
-                });
-            }
-
-            if (rdvStatusModal && closeRdvStatusModalBtn) {
-                closeRdvStatusModalBtn.addEventListener('click', function () {
-                    rdvStatusModal.classList.remove('show');
                 });
             }
         });

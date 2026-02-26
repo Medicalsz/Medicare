@@ -12,6 +12,33 @@
             margin: 0 auto;
         }
 
+        .rdv-alert {
+            border-radius: 12px;
+            padding: 12px 14px;
+            margin-bottom: 12px;
+            font-weight: 700;
+        }
+
+        .rdv-alert.success {
+            background: #dcfce7;
+            color: #14532d;
+        }
+
+        .rdv-alert.error {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .rdv-alert.warning {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .rdv-alert.info {
+            background: #dbeafe;
+            color: #1e3a8a;
+        }
+
         .page-header {
             display: flex;
             justify-content: space-between;
@@ -111,6 +138,93 @@
             box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.14);
         }
 
+        .appointments-advanced-toggle {
+            border: 1px solid #dbeafe;
+            background: #ffffff;
+            color: #0f172a;
+            border-radius: 999px;
+            padding: 9px 14px;
+            font-size: 13px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .appointments-advanced-toggle:hover {
+            border-color: #7dd3fc;
+            background: #f8fbff;
+        }
+
+        .appointments-advanced-toggle.open {
+            background: #e0f2fe;
+            border-color: #7dd3fc;
+            color: #0369a1;
+        }
+
+        .appointments-advanced-panel {
+            border: 1px solid #dbeafe;
+            border-radius: 14px;
+            background: #f8fbff;
+            padding: 14px;
+            margin-bottom: 14px;
+        }
+
+        .appointments-advanced-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+            gap: 12px;
+        }
+
+        .appointments-advanced-field {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            font-size: 12px;
+            font-weight: 700;
+            color: #334155;
+        }
+
+        .appointments-advanced-input {
+            border: 1px solid #dbeafe;
+            border-radius: 10px;
+            padding: 8px 10px;
+            font-size: 13px;
+            font-weight: 600;
+            color: #0f172a;
+            background: #fff;
+            outline: none;
+        }
+
+        .appointments-advanced-input:focus {
+            border-color: #7dd3fc;
+            box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.14);
+        }
+
+        .appointments-advanced-actions {
+            margin-top: 12px;
+            display: flex;
+            justify-content: flex-end;
+        }
+
+        .appointments-reset-advanced-btn {
+            border: 1px solid #cbd5e1;
+            border-radius: 10px;
+            padding: 7px 12px;
+            background: #fff;
+            color: #334155;
+            font-size: 12px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .appointments-reset-advanced-btn:hover {
+            border-color: #94a3b8;
+            background: #f8fafc;
+        }
+
         .appointments-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
@@ -127,6 +241,17 @@
             border: 1px solid #f0f0f0;
             position: relative;
             overflow: hidden;
+        }
+
+        .appointment-card-delete-wrap {
+            position: absolute;
+            top: 14px;
+            right: 14px;
+            z-index: 2;
+        }
+
+        .appointment-card-delete-wrap form {
+            margin: 0;
         }
 
         .appointment-card::before {
@@ -320,6 +445,25 @@
             gap: 8px;
         }
 
+        .btn-delete-card {
+            width: 44px;
+            height: 44px;
+            border-radius: 10px;
+            border: 1px solid #fecaca;
+            background: #fff1f2;
+            color: #be123c;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            flex-shrink: 0;
+        }
+
+        .btn-delete-card:hover {
+            background: #ffe4e6;
+            color: #9f1239;
+        }
+
         .filtered-empty-state {
             display: none;
             text-align: center;
@@ -380,6 +524,14 @@
             border: 1px solid #dce8f3;
             box-shadow: 0 20px 40px rgba(2, 8, 23, 0.22);
             text-align: center;
+        }
+
+        .report-proposal-card.danger {
+            border-color: #fecaca;
+        }
+
+        .report-proposal-card.danger .report-proposal-title {
+            color: #991b1b;
         }
 
         .report-proposal-title {
@@ -468,12 +620,34 @@
                 margin-left: 0;
                 width: 100%;
             }
+
+            .appointments-advanced-toggle {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .appointment-card-delete-wrap {
+                top: 12px;
+                right: 12px;
+            }
         }
     </style>
 {% endblock %}
 
 {% block body %}
 <div class="appointments-page">
+    {% for message in app.flashes('success') %}
+        <div class="rdv-alert success">{{ message }}</div>
+    {% endfor %}
+    {% for message in app.flashes('error') %}
+        <div class="rdv-alert error">{{ message }}</div>
+    {% endfor %}
+    {% for message in app.flashes('warning') %}
+        <div class="rdv-alert warning">{{ message }}</div>
+    {% endfor %}
+    {% for message in app.flashes('info') %}
+        <div class="rdv-alert info">{{ message }}</div>
+    {% endfor %}
     <!-- En-tête avec titre et bouton -->
     <div class="page-header">
         <h1><i class="fas fa-calendar-check"></i> Mes rendez-vous</h1>
@@ -494,6 +668,16 @@
             <button type="button" class="filter-btn" data-filter="confirme">Confirmés</button>
             <button type="button" class="filter-btn" data-filter="en_attente">En attente</button>
             <button type="button" class="filter-btn" data-filter="annule">Annulés</button>
+            <button
+                type="button"
+                class="appointments-advanced-toggle"
+                id="appointmentsAdvancedToggle"
+                aria-expanded="false"
+                aria-controls="appointmentsAdvancedPanel"
+            >
+                <i class="bi bi-funnel"></i>
+                Filtrer
+            </button>
             <input
                 type="search"
                 id="appointmentsSearchInput"
@@ -501,6 +685,25 @@
                 placeholder="Rechercher: docteur, specialite, cabinet"
                 aria-label="Rechercher un rendez-vous"
             >
+        </div>
+        <div id="appointmentsAdvancedPanel" class="appointments-advanced-panel" hidden>
+            <div class="appointments-advanced-grid">
+                <label class="appointments-advanced-field" for="appointmentsFilterDate">
+                    Date
+                    <input type="date" id="appointmentsFilterDate" class="appointments-advanced-input">
+                </label>
+                <label class="appointments-advanced-field" for="appointmentsFilterMonth">
+                    Mois
+                    <input type="month" id="appointmentsFilterMonth" class="appointments-advanced-input">
+                </label>
+                <label class="appointments-advanced-field" for="appointmentsFilterHour">
+                    Heure
+                    <input type="time" id="appointmentsFilterHour" class="appointments-advanced-input" step="60">
+                </label>
+            </div>
+            <div class="appointments-advanced-actions">
+                <button type="button" id="appointmentsResetAdvancedFilters" class="appointments-reset-advanced-btn">Reinitialiser</button>
+            </div>
         </div>
 
         <!-- Grille de cards des rendez-vous -->
@@ -512,8 +715,26 @@
                     data-status="{{ rdv.statut.value|lower }}"
                     data-search="{{ ('dr ' ~ rdv.medecin.user.prenom ~ ' ' ~ rdv.medecin.user.nom ~ ' ' ~ rdv.medecin.specialite ~ ' ' ~ rdv.medecin.cabinet)|lower }}"
                     data-datetime="{{ rdv.date|date('Y-m-d') }}T{{ rdv.heure|date('H:i') }}"
+                    data-date="{{ rdv.date|date('Y-m-d') }}"
+                    data-hour="{{ rdv.heure|date('H:i') }}"
                     data-id="{{ rdv.id }}"
                 >
+                    {% if rdv.statut.value in ['CONFIRME', 'ANNULE'] %}
+                        <div class="appointment-card-delete-wrap">
+                            <form id="patientDeleteCardForm{{ rdv.id }}" method="post" action="{{ path('app_appointment_delete_from_list', {'id': rdv.id}) }}">
+                                <input type="hidden" name="_token" value="{{ csrf_token('delete_appointment_from_list_' ~ rdv.id) }}">
+                                <button
+                                    type="button"
+                                    class="btn-delete-card js-patient-delete-card"
+                                    data-delete-form="patientDeleteCardForm{{ rdv.id }}"
+                                    aria-label="Supprimer ce rendez-vous de ma liste"
+                                    title="Supprimer de ma liste"
+                                >
+                                    <i class="bi bi-trash"></i>
+                                </button>
+                            </form>
+                        </div>
+                    {% endif %}
                     <!-- Statut -->
                     <span class="appointment-status status-{{ rdv.statut.value|lower }}">
                         {% if rdv.statut.value == 'CONFIRME' %}
@@ -606,13 +827,42 @@
         </div>
     {% endif %}
 </div>
+{% if showRendezVousStatusModal|default(false) and rendezVousStatusItem %}
+<div id="patientRdvStatusModalAppointments" class="report-proposal-modal show" role="dialog" aria-modal="true" aria-labelledby="patientRdvStatusTitleAppointments">
+    <div class="report-proposal-card {{ rendezVousStatusType == 'annule' ? 'danger' : '' }}">
+        {% set resolvedStatusTitle = rendezVousStatusTitle ?: (rendezVousStatusType == 'annule' ? 'Rendez-vous annule' : 'Mise a jour rendez-vous') %}
+        {% set resolvedStatusMessage = rendezVousStatusMessage ?: (rendezVousStatusType == 'annule' ? 'Votre rendez-vous a ete annule.' : 'Votre rendez-vous a ete confirme.') %}
+        <h2 id="patientRdvStatusTitleAppointments" class="report-proposal-title">
+            {{ resolvedStatusTitle }}
+        </h2>
+        <p class="report-proposal-text">{{ resolvedStatusMessage }}</p>
+        <div class="report-proposal-reason">
+            <strong>Date:</strong> {{ rendezVousStatusItem.date|date('d/m/Y') }} a {{ rendezVousStatusItem.heure|date('H:i') }}<br>
+            <strong>Medecin:</strong> Dr {{ rendezVousStatusItem.medecin.user.prenom }} {{ rendezVousStatusItem.medecin.user.nom }}
+        </div>
+        <div class="report-proposal-actions">
+            <form method="post" action="{{ path('app_appointment_ack_notification', {'id': rendezVousStatusItem.id}) }}">
+                <input type="hidden" name="_token" value="{{ csrf_token('ack_patient_rdv_notification_' ~ rendezVousStatusItem.id) }}">
+                <button type="submit" class="report-proposal-btn {{ rendezVousStatusType == 'annule' ? 'reject' : 'accept' }}">
+                    Compris
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endif %}
 {% if showReportProposalModal|default(false) and reportProposalRendezVous %}
 <div id="patientReportProposalModalAppointments" class="report-proposal-modal show" role="dialog" aria-modal="true" aria-labelledby="patientReportProposalTitleAppointments">
     <div class="report-proposal-card">
-        <h2 id="patientReportProposalTitleAppointments" class="report-proposal-title">Le medecin propose un report</h2>
+        {% set isAdminReportProposal = reportProposalRendezVous.reportProposedByAdmin|default(false) %}
+        <h2 id="patientReportProposalTitleAppointments" class="report-proposal-title">
+            {{ isAdminReportProposal ? 'L administration propose un report' : 'Le medecin propose un report' }}
+        </h2>
         <p class="report-proposal-text">
-            Votre medecin a propose un changement de date pour ce rendez-vous.
-            Merci de choisir une decision pour continuer.
+            {{ isAdminReportProposal
+                ? 'Le medecin a valide une nouvelle date proposee par l administration. Merci de confirmer ou refuser.'
+                : 'Votre medecin a propose un changement de date pour ce rendez-vous. Merci de choisir une decision pour continuer.'
+            }}
         </p>
         <div class="report-proposal-reason">
             <strong>Medecin:</strong> Dr {{ reportProposalRendezVous.medecin.user.prenom }} {{ reportProposalRendezVous.medecin.user.nom }}<br>
@@ -632,6 +882,18 @@
     </div>
 </div>
 {% endif %}
+<div id="patientDeleteCardConfirmModal" class="report-proposal-modal" role="dialog" aria-modal="true" aria-labelledby="patientDeleteCardConfirmTitle">
+    <div class="report-proposal-card danger">
+        <h2 id="patientDeleteCardConfirmTitle" class="report-proposal-title">Confirmer la suppression</h2>
+        <p class="report-proposal-text">
+            Ce rendez-vous sera retire uniquement de votre liste. Cette action n affecte pas le medecin.
+        </p>
+        <div class="report-proposal-actions">
+            <button type="button" id="patientDeleteCardCancelBtn" class="report-proposal-btn accept">Annuler</button>
+            <button type="button" id="patientDeleteCardConfirmBtn" class="report-proposal-btn reject">Oui, supprimer</button>
+        </div>
+    </div>
+</div>
 {% endblock %}
 
 {% block javascripts %}
@@ -644,6 +906,17 @@
             const filteredEmptyState = document.getElementById('filteredEmptyState');
             const appointmentsGrid = document.getElementById('appointmentsGrid');
             const searchInput = document.getElementById('appointmentsSearchInput');
+            const advancedToggle = document.getElementById('appointmentsAdvancedToggle');
+            const advancedPanel = document.getElementById('appointmentsAdvancedPanel');
+            const filterDateInput = document.getElementById('appointmentsFilterDate');
+            const filterMonthInput = document.getElementById('appointmentsFilterMonth');
+            const filterHourInput = document.getElementById('appointmentsFilterHour');
+            const resetAdvancedFiltersButton = document.getElementById('appointmentsResetAdvancedFilters');
+            const deleteCardButtons = document.querySelectorAll('.js-patient-delete-card');
+            const deleteConfirmModal = document.getElementById('patientDeleteCardConfirmModal');
+            const deleteCancelBtn = document.getElementById('patientDeleteCardCancelBtn');
+            const deleteConfirmBtn = document.getElementById('patientDeleteCardConfirmBtn');
+            let activeDeleteForm = null;
             let currentFilter = 'all';
             const sortedCards = Array.from(cards).sort(function (a, b) {
                 const aId = Number(a.dataset.id || 0);
@@ -664,13 +937,21 @@
                     annule: 'Aucun rendez-vous annule pour l instant.'
                 };
                 const query = (searchInput ? searchInput.value : '').trim().toLowerCase();
+                const filterDate = filterDateInput ? filterDateInput.value : '';
+                const filterMonth = filterMonthInput ? filterMonthInput.value : '';
+                const filterHour = filterHourInput ? filterHourInput.value : '';
 
                 sortedCards.forEach(function (card) {
                     const status = (card.dataset.status || '').toLowerCase();
                     const searchable = (card.dataset.search || '').toLowerCase();
+                    const cardDate = card.dataset.date || '';
+                    const cardHour = card.dataset.hour || '';
                     const matchFilter = currentFilter === 'all' || status === currentFilter;
                     const matchSearch = query === '' || searchable.includes(query);
-                    const shouldShow = matchFilter && matchSearch;
+                    const matchDate = filterDate === '' || cardDate === filterDate;
+                    const matchMonth = filterMonth === '' || (cardDate && cardDate.slice(0, 7) === filterMonth);
+                    const matchHour = filterHour === '' || cardHour === filterHour;
+                    const shouldShow = matchFilter && matchSearch && matchDate && matchMonth && matchHour;
                     card.style.display = shouldShow ? '' : 'none';
                     if (appointmentsGrid) {
                         appointmentsGrid.appendChild(card);
@@ -712,6 +993,114 @@
                     applyFilter();
                 });
             }
+
+            function openDeleteModal() {
+                if (!deleteConfirmModal) {
+                    return;
+                }
+                deleteConfirmModal.classList.add('show');
+            }
+
+            function closeDeleteModal() {
+                if (!deleteConfirmModal) {
+                    return;
+                }
+                deleteConfirmModal.classList.remove('show');
+                activeDeleteForm = null;
+            }
+
+            deleteCardButtons.forEach(function (button) {
+                button.addEventListener('click', function () {
+                    const formId = button.getAttribute('data-delete-form');
+                    activeDeleteForm = formId ? document.getElementById(formId) : null;
+                    if (!activeDeleteForm) {
+                        return;
+                    }
+                    openDeleteModal();
+                });
+            });
+
+            if (deleteCancelBtn) {
+                deleteCancelBtn.addEventListener('click', function () {
+                    closeDeleteModal();
+                });
+            }
+
+            if (deleteConfirmBtn) {
+                deleteConfirmBtn.addEventListener('click', function () {
+                    if (activeDeleteForm) {
+                        activeDeleteForm.submit();
+                    }
+                });
+            }
+
+            if (advancedToggle && advancedPanel) {
+                advancedToggle.addEventListener('click', function () {
+                    const willOpen = advancedPanel.hasAttribute('hidden');
+                    if (willOpen) {
+                        advancedPanel.removeAttribute('hidden');
+                    } else {
+                        advancedPanel.setAttribute('hidden', '');
+                    }
+                    advancedToggle.classList.toggle('open', willOpen);
+                    advancedToggle.setAttribute('aria-expanded', willOpen ? 'true' : 'false');
+                });
+            }
+
+            document.addEventListener('keydown', function (event) {
+                if (event.key !== 'Escape') {
+                    return;
+                }
+
+                if (advancedPanel && !advancedPanel.hasAttribute('hidden')) {
+                    advancedPanel.setAttribute('hidden', '');
+                    if (advancedToggle) {
+                        advancedToggle.classList.remove('open');
+                        advancedToggle.setAttribute('aria-expanded', 'false');
+                    }
+                }
+
+                if (deleteConfirmModal && deleteConfirmModal.classList.contains('show')) {
+                    closeDeleteModal();
+                }
+            });
+
+            if (deleteConfirmModal) {
+                deleteConfirmModal.addEventListener('click', function (event) {
+                    if (event.target === deleteConfirmModal) {
+                        closeDeleteModal();
+                    }
+                });
+            }
+
+            [filterDateInput, filterMonthInput, filterHourInput].forEach(function (input) {
+                if (!input) {
+                    return;
+                }
+                input.addEventListener('input', function () {
+                    applyFilter();
+                });
+                input.addEventListener('change', function () {
+                    applyFilter();
+                });
+            });
+
+            if (resetAdvancedFiltersButton) {
+                resetAdvancedFiltersButton.addEventListener('click', function () {
+                    if (filterDateInput) {
+                        filterDateInput.value = '';
+                    }
+                    if (filterMonthInput) {
+                        filterMonthInput.value = '';
+                    }
+                    if (filterHourInput) {
+                        filterHourInput.value = '';
+                    }
+                    applyFilter();
+                });
+            }
+
+            applyFilter();
         });
     </script>
 {% endblock %}

@@ -2,10 +2,240 @@
 
 {% block title %}Rendez-vous{% endblock %}
 
+{% block stylesheets %}
+    {{ parent() }}
+    <style>
+        .rdv-admin-filters {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-bottom: 14px;
+            align-items: center;
+        }
+
+        .rdv-filter-btn {
+            border: 1px solid #dbeafe;
+            background: #f8fbff;
+            color: #0f172a;
+            border-radius: 999px;
+            padding: 8px 14px;
+            font-size: 13px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .rdv-filter-btn.active {
+            background: #00bfff;
+            border-color: #00bfff;
+            color: #fff;
+        }
+
+        .rdv-search-input {
+            margin-left: auto;
+            min-width: 280px;
+            max-width: 100%;
+            border: 1px solid #dbeafe;
+            border-radius: 999px;
+            padding: 8px 14px;
+            font-size: 13px;
+            font-weight: 600;
+            outline: none;
+        }
+
+        .rdv-search-input:focus {
+            border-color: #7dd3fc;
+            box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.14);
+        }
+
+        .rdv-advanced-toggle {
+            border: 1px solid #dbeafe;
+            background: #ffffff;
+            color: #0f172a;
+            border-radius: 999px;
+            padding: 8px 14px;
+            font-size: 13px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .rdv-advanced-toggle:hover {
+            border-color: #7dd3fc;
+            background: #f8fbff;
+        }
+
+        .rdv-advanced-toggle.open {
+            background: #e0f2fe;
+            border-color: #7dd3fc;
+            color: #0369a1;
+        }
+
+        .rdv-advanced-panel {
+            border: 1px solid #dbeafe;
+            border-radius: 14px;
+            background: #f8fbff;
+            padding: 14px;
+            margin-bottom: 14px;
+        }
+
+        .rdv-advanced-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+            gap: 12px;
+        }
+
+        .rdv-advanced-field {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            font-size: 12px;
+            font-weight: 700;
+            color: #334155;
+        }
+
+        .rdv-advanced-input {
+            border: 1px solid #dbeafe;
+            border-radius: 10px;
+            padding: 8px 10px;
+            font-size: 13px;
+            font-weight: 600;
+            color: #0f172a;
+            background: #fff;
+            outline: none;
+        }
+
+        .rdv-advanced-input:focus {
+            border-color: #7dd3fc;
+            box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.14);
+        }
+
+        .rdv-advanced-actions {
+            margin-top: 12px;
+            display: flex;
+            justify-content: flex-end;
+        }
+
+        .rdv-reset-advanced-btn {
+            border: 1px solid #cbd5e1;
+            border-radius: 10px;
+            padding: 7px 12px;
+            background: #fff;
+            color: #334155;
+            font-size: 12px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .rdv-reset-advanced-btn:hover {
+            border-color: #94a3b8;
+            background: #f8fafc;
+        }
+
+        .rdv-admin-action-link {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            border: 1px solid #bae6fd;
+            background: #e0f2fe;
+            color: #075985;
+            border-radius: 10px;
+            padding: 8px 12px;
+            font-size: 12px;
+            font-weight: 700;
+            text-decoration: none;
+        }
+
+        .rdv-admin-action-link:hover {
+            background: #bae6fd;
+            color: #0c4a6e;
+        }
+
+        .rdv-analytics-section {
+            margin-top: 22px;
+        }
+
+        .rdv-kpi-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 12px;
+            margin-bottom: 18px;
+        }
+
+        .rdv-kpi-card {
+            border: 1px solid #dbeafe;
+            border-radius: 14px;
+            padding: 14px;
+            background: linear-gradient(135deg, #f8fbff 0%, #eef8ff 100%);
+        }
+
+        .rdv-kpi-label {
+            font-size: 12px;
+            color: #475569;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .rdv-kpi-value {
+            margin-top: 4px;
+            font-size: 28px;
+            font-weight: 800;
+            color: #0f172a;
+            line-height: 1;
+        }
+
+        .rdv-chart-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 14px;
+        }
+
+        .rdv-chart-card {
+            border: 1px solid #dbeafe;
+            border-radius: 14px;
+            background: #fff;
+            padding: 14px;
+            box-shadow: 0 10px 30px rgba(2, 8, 23, 0.05);
+        }
+
+        .rdv-chart-title {
+            margin: 0 0 10px;
+            font-size: 14px;
+            font-weight: 800;
+            color: #0f172a;
+        }
+
+        .rdv-chart-wrap {
+            height: 260px;
+        }
+
+        .rdv-chart-grid.single .rdv-chart-card {
+            grid-column: 1 / -1;
+        }
+
+        @media (max-width: 768px) {
+            .rdv-search-input {
+                margin-left: 0;
+                width: 100%;
+            }
+
+            .rdv-advanced-toggle {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+{% endblock %}
+
 {% block body %}
 <div class="admin-page-header">
     <h1 class="admin-page-title">Rendez-vous Plateforme</h1>
-    <p class="admin-page-subtitle">Tous les rendez-vous pris, quel que soit le statut.</p>
+    <p class="admin-page-subtitle">Liste des rendez-vous du plus recent au plus ancien, avec filtre par statut.</p>
 </div>
 
 <div class="admin-card">
@@ -13,24 +243,73 @@
         <h3 class="admin-card-title"><i class="bi bi-calendar-check"></i> Liste des rendez-vous</h3>
     </div>
     <div class="admin-card-body">
+        <div class="rdv-admin-filters" role="group" aria-label="Filtrer les rendez-vous">
+            <button type="button" class="rdv-filter-btn active" data-rdv-filter="all">Tout</button>
+            <button type="button" class="rdv-filter-btn" data-rdv-filter="confirme">Acceptes</button>
+            <button type="button" class="rdv-filter-btn" data-rdv-filter="annule">Rejetes</button>
+            <button type="button" class="rdv-filter-btn" data-rdv-filter="en_attente">En attente</button>
+            <button
+                type="button"
+                class="rdv-advanced-toggle"
+                id="adminRdvAdvancedToggle"
+                aria-expanded="false"
+                aria-controls="adminRdvAdvancedPanel"
+            >
+                <i class="bi bi-funnel"></i>
+                Filtrer
+            </button>
+            <input
+                type="search"
+                id="adminRdvSearchInput"
+                class="rdv-search-input"
+                placeholder="Rechercher patient ou medecin"
+                aria-label="Rechercher rendez-vous"
+            >
+        </div>
+
+        <div id="adminRdvAdvancedPanel" class="rdv-advanced-panel" hidden>
+            <div class="rdv-advanced-grid">
+                <label class="rdv-advanced-field" for="adminRdvFilterDate">
+                    Date
+                    <input type="date" id="adminRdvFilterDate" class="rdv-advanced-input">
+                </label>
+                <label class="rdv-advanced-field" for="adminRdvFilterMonth">
+                    Mois
+                    <input type="month" id="adminRdvFilterMonth" class="rdv-advanced-input">
+                </label>
+                <label class="rdv-advanced-field" for="adminRdvFilterHour">
+                    Heure
+                    <input type="time" id="adminRdvFilterHour" class="rdv-advanced-input" step="60">
+                </label>
+            </div>
+            <div class="rdv-advanced-actions">
+                <button type="button" id="adminRdvResetAdvancedFilters" class="rdv-reset-advanced-btn">Reinitialiser</button>
+            </div>
+        </div>
+
         <div class="admin-table-container">
             <table class="admin-table">
                 <thead>
                     <tr>
-                        <th>ID</th>
                         <th>Patient</th>
                         <th>Medecin</th>
                         <th>Specialite</th>
                         <th>Date RDV</th>
                         <th>Heure</th>
                         <th>Statut</th>
+                        <th>Actions</th>
                     </tr>
                 </thead>
-                <tbody>
+                <tbody id="adminRdvTableBody">
                     {% for rdv in rendezVous %}
                         {% set statut = rdv.statut ? rdv.statut.value : 'INCONNU' %}
-                        <tr>
-                            <td>{{ rdv.id }}</td>
+                        <tr
+                            data-rdv-status="{{ statut|lower }}"
+                            data-rdv-search="{{ (rdv.patient.user.prenom ~ ' ' ~ rdv.patient.user.nom ~ ' ' ~ rdv.medecin.user.prenom ~ ' ' ~ rdv.medecin.user.nom)|lower }}"
+                            data-rdv-date="{{ rdv.date ? rdv.date|date('Y-m-d') : '' }}"
+                            data-rdv-hour="{{ rdv.heure ? rdv.heure|date('H:i') : '' }}"
+                            data-rdv-specialty="{{ (rdv.medecin.specialiteRef ? rdv.medecin.specialiteRef.nom : rdv.medecin.specialite)|default('Non renseignee') }}"
+                        >
                             <td>{{ rdv.patient.user.prenom }} {{ rdv.patient.user.nom }}</td>
                             <td>Dr {{ rdv.medecin.user.prenom }} {{ rdv.medecin.user.nom }}</td>
                             <td>{{ rdv.medecin.specialiteRef ? rdv.medecin.specialiteRef.nom : rdv.medecin.specialite }}</td>
@@ -45,16 +324,632 @@
                                     <span class="admin-badge warning">En attente</span>
                                 {% endif %}
                             </td>
+                            <td>
+                                <a href="{{ path('app_admin_show_rendez_vous', {'id': rdv.id}) }}" class="rdv-admin-action-link">
+                                    <i class="bi bi-gear"></i>
+                                    Actions
+                                </a>
+                            </td>
                         </tr>
                     {% else %}
-                        <tr>
+                        <tr id="adminRdvEmptyInitialRow">
                             <td colspan="7">Aucun rendez-vous trouve.</td>
                         </tr>
                     {% endfor %}
+                    <tr id="adminRdvEmptyFilteredRow" style="display: none;">
+                        <td colspan="7">Aucun rendez-vous pour ce filtre.</td>
+                    </tr>
                 </tbody>
             </table>
         </div>
     </div>
 </div>
+
+<div class="admin-card rdv-analytics-section">
+    <div class="admin-card-header">
+        <h3 class="admin-card-title"><i class="bi bi-bar-chart-line"></i> Analyse des rendez-vous</h3>
+    </div>
+    <div class="admin-card-body">
+        <div class="rdv-kpi-grid">
+            <div class="rdv-kpi-card">
+                <div class="rdv-kpi-label">Total</div>
+                <div class="rdv-kpi-value" id="rdvKpiTotal">0</div>
+            </div>
+            <div class="rdv-kpi-card">
+                <div class="rdv-kpi-label">Acceptes</div>
+                <div class="rdv-kpi-value" id="rdvKpiAccepted">0</div>
+            </div>
+            <div class="rdv-kpi-card">
+                <div class="rdv-kpi-label">Rejetes</div>
+                <div class="rdv-kpi-value" id="rdvKpiRejected">0</div>
+            </div>
+            <div class="rdv-kpi-card">
+                <div class="rdv-kpi-label">En attente</div>
+                <div class="rdv-kpi-value" id="rdvKpiPending">0</div>
+            </div>
+        </div>
+
+        <div id="rdvAnalyticsAllBlock" class="rdv-chart-grid">
+            <div class="rdv-chart-card">
+                <h4 class="rdv-chart-title">Tout: nombre de rendez-vous par specialite</h4>
+                <div class="rdv-chart-wrap"><canvas id="chartAllBySpecialty"></canvas></div>
+            </div>
+            <div class="rdv-chart-card">
+                <h4 class="rdv-chart-title">Acceptes par periode</h4>
+                <div class="rdv-chart-wrap"><canvas id="chartAcceptedByPeriod"></canvas></div>
+            </div>
+            <div class="rdv-chart-card">
+                <h4 class="rdv-chart-title">Rejetes par periode</h4>
+                <div class="rdv-chart-wrap"><canvas id="chartRejectedByPeriod"></canvas></div>
+            </div>
+            <div class="rdv-chart-card">
+                <h4 class="rdv-chart-title">En attente par periode</h4>
+                <div class="rdv-chart-wrap"><canvas id="chartPendingByPeriod"></canvas></div>
+            </div>
+        </div>
+
+        <div id="rdvAnalyticsFocusBlock" class="rdv-chart-grid single" style="display: none;">
+            <div class="rdv-chart-card">
+                <h4 class="rdv-chart-title" id="rdvFocusChartTitle">Comparaison par periode</h4>
+                <div class="rdv-chart-wrap"><canvas id="chartFocusComparison"></canvas></div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const buttons = document.querySelectorAll('[data-rdv-filter]');
+            const rows = Array.from(document.querySelectorAll('tr[data-rdv-status]'));
+            const emptyInitial = document.getElementById('adminRdvEmptyInitialRow');
+            const emptyFiltered = document.getElementById('adminRdvEmptyFilteredRow');
+            const searchInput = document.getElementById('adminRdvSearchInput');
+            const advancedToggle = document.getElementById('adminRdvAdvancedToggle');
+            const advancedPanel = document.getElementById('adminRdvAdvancedPanel');
+            const filterDateInput = document.getElementById('adminRdvFilterDate');
+            const filterMonthInput = document.getElementById('adminRdvFilterMonth');
+            const filterHourInput = document.getElementById('adminRdvFilterHour');
+            const resetAdvancedFiltersButton = document.getElementById('adminRdvResetAdvancedFilters');
+            const analyticsAllBlock = document.getElementById('rdvAnalyticsAllBlock');
+            const analyticsFocusBlock = document.getElementById('rdvAnalyticsFocusBlock');
+            const focusTitle = document.getElementById('rdvFocusChartTitle');
+            const kpiTotal = document.getElementById('rdvKpiTotal');
+            const kpiAccepted = document.getElementById('rdvKpiAccepted');
+            const kpiRejected = document.getElementById('rdvKpiRejected');
+            const kpiPending = document.getElementById('rdvKpiPending');
+            let currentFilter = 'all';
+
+            if (!buttons.length) {
+                return;
+            }
+
+            const charts = {
+                allBySpecialty: null,
+                acceptedByPeriod: null,
+                rejectedByPeriod: null,
+                pendingByPeriod: null,
+                focusComparison: null,
+            };
+
+            function toRecord(row) {
+                return {
+                    status: (row.dataset.rdvStatus || '').toLowerCase(),
+                    search: (row.dataset.rdvSearch || '').toLowerCase(),
+                    date: row.dataset.rdvDate || '',
+                    hour: row.dataset.rdvHour || '',
+                    specialty: (row.dataset.rdvSpecialty || 'Non renseignee').trim() || 'Non renseignee',
+                };
+            }
+
+            function normalizePeriod(dateValue) {
+                if (/^\d{4}-\d{2}-\d{2}$/.test(dateValue)) {
+                    return dateValue.slice(0, 7);
+                }
+
+                return 'Sans date';
+            }
+
+            function periodLabel(periodKey) {
+                if (periodKey === 'Sans date') {
+                    return periodKey;
+                }
+
+                const parts = periodKey.split('-');
+                if (parts.length !== 2) {
+                    return periodKey;
+                }
+
+                const year = Number(parts[0]);
+                const month = Number(parts[1]) - 1;
+                const date = new Date(year, month, 1);
+
+                return date.toLocaleDateString('fr-FR', { month: 'short', year: 'numeric' });
+            }
+
+            function emptyPeriodStats() {
+                return { total: 0, confirme: 0, annule: 0, en_attente: 0 };
+            }
+
+            function shiftPeriodKey(periodKey, monthOffset) {
+                const parts = periodKey.split('-');
+                if (parts.length !== 2) {
+                    return periodKey;
+                }
+
+                const year = Number(parts[0]);
+                const month = Number(parts[1]) - 1;
+                if (Number.isNaN(year) || Number.isNaN(month)) {
+                    return periodKey;
+                }
+
+                const date = new Date(year, month + monthOffset, 1);
+                const shiftedYear = date.getFullYear();
+                const shiftedMonth = String(date.getMonth() + 1).padStart(2, '0');
+
+                return shiftedYear + '-' + shiftedMonth;
+            }
+
+            function buildPeriodSeries(records) {
+                const map = new Map();
+
+                records.forEach(function (record) {
+                    const key = normalizePeriod(record.date);
+                    if (!map.has(key)) {
+                        map.set(key, emptyPeriodStats());
+                    }
+
+                    const item = map.get(key);
+                    item.total += 1;
+
+                    if (record.status === 'confirme') {
+                        item.confirme += 1;
+                    } else if (record.status === 'annule') {
+                        item.annule += 1;
+                    } else if (record.status === 'en_attente') {
+                        item.en_attente += 1;
+                    }
+                });
+
+                let keys = Array.from(map.keys());
+                const hasSansDate = keys.includes('Sans date');
+                let datedKeys = keys
+                    .filter(function (key) { return key !== 'Sans date'; })
+                    .sort();
+
+                // Avec seulement 1-2 points, Chart.js donne souvent une droite.
+                // On ajoute des mois tampons pour obtenir une vraie courbe visuelle.
+                if (datedKeys.length > 0 && datedKeys.length < 3) {
+                    const paddedKeys = [
+                        shiftPeriodKey(datedKeys[0], -1),
+                        ...datedKeys,
+                        shiftPeriodKey(datedKeys[datedKeys.length - 1], 1),
+                    ];
+
+                    datedKeys = Array.from(new Set(paddedKeys)).sort();
+                    datedKeys.forEach(function (key) {
+                        if (!map.has(key)) {
+                            map.set(key, emptyPeriodStats());
+                        }
+                    });
+                }
+
+                keys = datedKeys.concat(hasSansDate ? ['Sans date'] : []);
+
+                if (!keys.length) {
+                    keys = ['Sans date'];
+                    map.set('Sans date', emptyPeriodStats());
+                }
+
+                return {
+                    labels: keys.map(periodLabel),
+                    total: keys.map(function (key) { return map.get(key).total; }),
+                    confirme: keys.map(function (key) { return map.get(key).confirme; }),
+                    annule: keys.map(function (key) { return map.get(key).annule; }),
+                    enAttente: keys.map(function (key) { return map.get(key).en_attente; }),
+                };
+            }
+
+            function buildSpecialtySeries(records) {
+                const map = new Map();
+
+                records.forEach(function (record) {
+                    const specialty = record.specialty;
+                    map.set(specialty, (map.get(specialty) || 0) + 1);
+                });
+
+                let entries = Array.from(map.entries())
+                    .sort(function (a, b) { return b[1] - a[1]; });
+
+                if (!entries.length) {
+                    entries = [['Aucune specialite', 0]];
+                }
+
+                return {
+                    labels: entries.map(function (entry) { return entry[0]; }),
+                    values: entries.map(function (entry) { return entry[1]; }),
+                };
+            }
+
+            function updateKpis(records) {
+                const stats = { total: records.length, confirme: 0, annule: 0, en_attente: 0 };
+
+                records.forEach(function (record) {
+                    if (record.status === 'confirme') {
+                        stats.confirme += 1;
+                    } else if (record.status === 'annule') {
+                        stats.annule += 1;
+                    } else if (record.status === 'en_attente') {
+                        stats.en_attente += 1;
+                    }
+                });
+
+                if (kpiTotal) {
+                    kpiTotal.textContent = String(stats.total);
+                }
+                if (kpiAccepted) {
+                    kpiAccepted.textContent = String(stats.confirme);
+                }
+                if (kpiRejected) {
+                    kpiRejected.textContent = String(stats.annule);
+                }
+                if (kpiPending) {
+                    kpiPending.textContent = String(stats.en_attente);
+                }
+            }
+
+            function destroyChart(key) {
+                if (charts[key]) {
+                    charts[key].destroy();
+                    charts[key] = null;
+                }
+            }
+
+            function createLineChart(key, canvasId, labels, datasets) {
+                if (typeof Chart === 'undefined') {
+                    return;
+                }
+
+                const canvas = document.getElementById(canvasId);
+                if (!canvas) {
+                    return;
+                }
+
+                destroyChart(key);
+
+                const normalizedDatasets = datasets.map(function (dataset) {
+                    const accentColor = dataset.borderColor || '#0ea5e9';
+                    return Object.assign({
+                        tension: 0.55,
+                        cubicInterpolationMode: 'monotone',
+                        borderWidth: 3,
+                        pointRadius: 3,
+                        pointHoverRadius: 5,
+                        pointBorderWidth: 2,
+                        pointBackgroundColor: '#ffffff',
+                        pointBorderColor: accentColor,
+                    }, dataset);
+                });
+
+                charts[key] = new Chart(canvas.getContext('2d'), {
+                    type: 'line',
+                    data: { labels: labels, datasets: normalizedDatasets },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        interaction: { mode: 'index', intersect: false },
+                        plugins: {
+                            legend: { display: true, position: 'bottom' },
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                ticks: { precision: 0 },
+                            },
+                        },
+                    },
+                });
+            }
+
+            function createBarChart(key, canvasId, labels, values) {
+                if (typeof Chart === 'undefined') {
+                    return;
+                }
+
+                const canvas = document.getElementById(canvasId);
+                if (!canvas) {
+                    return;
+                }
+
+                destroyChart(key);
+
+                charts[key] = new Chart(canvas.getContext('2d'), {
+                    type: 'bar',
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            label: 'Nombre de rendez-vous',
+                            data: values,
+                            backgroundColor: '#38bdf8',
+                            borderColor: '#0284c7',
+                            borderWidth: 1,
+                            borderRadius: 8,
+                        }],
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: { display: false },
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                ticks: { precision: 0 },
+                            },
+                        },
+                    },
+                });
+            }
+
+            function updateCharts(searchMatchedRecords) {
+                updateKpis(searchMatchedRecords);
+
+                const periodSeries = buildPeriodSeries(searchMatchedRecords);
+
+                if (currentFilter === 'all') {
+                    if (analyticsAllBlock) {
+                        analyticsAllBlock.style.display = 'grid';
+                    }
+                    if (analyticsFocusBlock) {
+                        analyticsFocusBlock.style.display = 'none';
+                    }
+
+                    const specialtySeries = buildSpecialtySeries(searchMatchedRecords);
+                    createBarChart('allBySpecialty', 'chartAllBySpecialty', specialtySeries.labels, specialtySeries.values);
+                    createLineChart('acceptedByPeriod', 'chartAcceptedByPeriod', periodSeries.labels, [{
+                        label: 'Acceptes',
+                        data: periodSeries.confirme,
+                        borderColor: '#16a34a',
+                        backgroundColor: 'rgba(22, 163, 74, 0.2)',
+                        tension: 0.35,
+                        fill: true,
+                    }]);
+                    createLineChart('rejectedByPeriod', 'chartRejectedByPeriod', periodSeries.labels, [{
+                        label: 'Rejetes',
+                        data: periodSeries.annule,
+                        borderColor: '#dc2626',
+                        backgroundColor: 'rgba(220, 38, 38, 0.2)',
+                        tension: 0.35,
+                        fill: true,
+                    }]);
+                    createLineChart('pendingByPeriod', 'chartPendingByPeriod', periodSeries.labels, [{
+                        label: 'En attente',
+                        data: periodSeries.enAttente,
+                        borderColor: '#d97706',
+                        backgroundColor: 'rgba(217, 119, 6, 0.2)',
+                        tension: 0.35,
+                        fill: true,
+                    }]);
+
+                    destroyChart('focusComparison');
+                    return;
+                }
+
+                if (analyticsAllBlock) {
+                    analyticsAllBlock.style.display = 'none';
+                }
+                if (analyticsFocusBlock) {
+                    analyticsFocusBlock.style.display = 'grid';
+                }
+
+                let title = 'Comparaison par periode';
+                let datasets = [];
+
+                if (currentFilter === 'confirme') {
+                    title = 'Acceptes: Total vs Acceptes';
+                    datasets = [
+                        {
+                            label: 'Total rendez-vous',
+                            data: periodSeries.total,
+                            borderColor: '#0ea5e9',
+                            backgroundColor: 'rgba(14, 165, 233, 0.2)',
+                            tension: 0.35,
+                            fill: true,
+                        },
+                        {
+                            label: 'Rendez-vous acceptes',
+                            data: periodSeries.confirme,
+                            borderColor: '#16a34a',
+                            backgroundColor: 'rgba(22, 163, 74, 0.2)',
+                            tension: 0.35,
+                            fill: true,
+                        },
+                    ];
+                } else if (currentFilter === 'annule') {
+                    title = 'Rejetes: Total vs Rejetes';
+                    datasets = [
+                        {
+                            label: 'Total rendez-vous',
+                            data: periodSeries.total,
+                            borderColor: '#0ea5e9',
+                            backgroundColor: 'rgba(14, 165, 233, 0.2)',
+                            tension: 0.35,
+                            fill: true,
+                        },
+                        {
+                            label: 'Rendez-vous rejetes',
+                            data: periodSeries.annule,
+                            borderColor: '#dc2626',
+                            backgroundColor: 'rgba(220, 38, 38, 0.2)',
+                            tension: 0.35,
+                            fill: true,
+                        },
+                    ];
+                } else {
+                    title = 'En attente: Total + Acceptes + Rejetes + En attente';
+                    datasets = [
+                        {
+                            label: 'Total rendez-vous',
+                            data: periodSeries.total,
+                            borderColor: '#0ea5e9',
+                            backgroundColor: 'rgba(14, 165, 233, 0.15)',
+                            tension: 0.35,
+                            fill: false,
+                        },
+                        {
+                            label: 'Acceptes',
+                            data: periodSeries.confirme,
+                            borderColor: '#16a34a',
+                            backgroundColor: 'rgba(22, 163, 74, 0.15)',
+                            tension: 0.35,
+                            fill: false,
+                        },
+                        {
+                            label: 'Rejetes',
+                            data: periodSeries.annule,
+                            borderColor: '#dc2626',
+                            backgroundColor: 'rgba(220, 38, 38, 0.15)',
+                            tension: 0.35,
+                            fill: false,
+                        },
+                        {
+                            label: 'En attente',
+                            data: periodSeries.enAttente,
+                            borderColor: '#d97706',
+                            backgroundColor: 'rgba(217, 119, 6, 0.15)',
+                            tension: 0.35,
+                            fill: false,
+                        },
+                    ];
+                }
+
+                if (focusTitle) {
+                    focusTitle.textContent = title;
+                }
+
+                createLineChart('focusComparison', 'chartFocusComparison', periodSeries.labels, datasets);
+
+                destroyChart('allBySpecialty');
+                destroyChart('acceptedByPeriod');
+                destroyChart('rejectedByPeriod');
+                destroyChart('pendingByPeriod');
+            }
+
+            function applyFilter() {
+                let visibleCount = 0;
+                const query = searchInput ? searchInput.value.trim().toLowerCase() : '';
+                const filterDate = filterDateInput ? filterDateInput.value : '';
+                const filterMonth = filterMonthInput ? filterMonthInput.value : '';
+                const filterHour = filterHourInput ? filterHourInput.value : '';
+                const searchMatchedRecords = [];
+
+                rows.forEach(function (row) {
+                    const record = toRecord(row);
+                    const status = record.status;
+                    const searchable = record.search;
+                    const matchSearch = query === '' || searchable.includes(query);
+                    const matchDate = filterDate === '' || record.date === filterDate;
+                    const matchMonth = filterMonth === '' || (record.date && record.date.slice(0, 7) === filterMonth);
+                    const matchHour = filterHour === '' || record.hour === filterHour;
+                    const matchAdvanced = matchDate && matchMonth && matchHour;
+                    const matchBase = matchSearch && matchAdvanced;
+
+                    if (matchBase) {
+                        searchMatchedRecords.push(record);
+                    }
+
+                    const matchFilter = currentFilter === 'all' || status === currentFilter;
+                    const shouldShow = matchFilter && matchBase;
+                    row.style.display = shouldShow ? '' : 'none';
+                    if (shouldShow) {
+                        visibleCount += 1;
+                    }
+                });
+
+                if (emptyInitial) {
+                    emptyInitial.style.display = rows.length > 0 ? 'none' : '';
+                }
+
+                if (emptyFiltered) {
+                    emptyFiltered.style.display = rows.length > 0 && visibleCount === 0 ? '' : 'none';
+                }
+
+                updateCharts(searchMatchedRecords);
+            }
+
+            buttons.forEach(function (button) {
+                button.addEventListener('click', function () {
+                    buttons.forEach(function (btn) {
+                        btn.classList.remove('active');
+                    });
+                    button.classList.add('active');
+                    currentFilter = button.dataset.rdvFilter || 'all';
+                    applyFilter();
+                });
+            });
+
+            if (searchInput) {
+                searchInput.addEventListener('input', function () {
+                    applyFilter();
+                });
+            }
+
+            if (advancedToggle && advancedPanel) {
+                advancedToggle.addEventListener('click', function () {
+                    const willOpen = advancedPanel.hasAttribute('hidden');
+                    if (willOpen) {
+                        advancedPanel.removeAttribute('hidden');
+                    } else {
+                        advancedPanel.setAttribute('hidden', '');
+                    }
+                    advancedToggle.classList.toggle('open', willOpen);
+                    advancedToggle.setAttribute('aria-expanded', willOpen ? 'true' : 'false');
+                });
+            }
+
+            document.addEventListener('keydown', function (event) {
+                if (event.key === 'Escape' && advancedPanel && !advancedPanel.hasAttribute('hidden')) {
+                    advancedPanel.setAttribute('hidden', '');
+                    if (advancedToggle) {
+                        advancedToggle.classList.remove('open');
+                        advancedToggle.setAttribute('aria-expanded', 'false');
+                    }
+                }
+            });
+
+            [filterDateInput, filterMonthInput, filterHourInput].forEach(function (input) {
+                if (!input) {
+                    return;
+                }
+                input.addEventListener('input', function () {
+                    applyFilter();
+                });
+                input.addEventListener('change', function () {
+                    applyFilter();
+                });
+            });
+
+            if (resetAdvancedFiltersButton) {
+                resetAdvancedFiltersButton.addEventListener('click', function () {
+                    if (filterDateInput) {
+                        filterDateInput.value = '';
+                    }
+                    if (filterMonthInput) {
+                        filterMonthInput.value = '';
+                    }
+                    if (filterHourInput) {
+                        filterHourInput.value = '';
+                    }
+                    applyFilter();
+                });
+            }
+
+            applyFilter();
+        });
+    </script>
 {% endblock %}
 

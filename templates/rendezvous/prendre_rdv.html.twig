@@ -31,6 +31,47 @@
             color: #991b1b;
         }
 
+        .rdv-alert.warning {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .rdv-alert.info {
+            background: #dbeafe;
+            color: #1e3a8a;
+        }
+
+        .integration-banner {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
+            border: 1px solid #dbeafe;
+            border-radius: 12px;
+            padding: 12px 14px;
+            margin-bottom: 16px;
+            background: #eff6ff;
+            color: #1e3a8a;
+            font-weight: 600;
+            flex-wrap: wrap;
+        }
+
+        .integration-banner.connected {
+            border-color: #bbf7d0;
+            background: #f0fdf4;
+            color: #14532d;
+        }
+
+        .integration-banner .connect-link {
+            border-radius: 8px;
+            padding: 8px 12px;
+            text-decoration: none;
+            background: #2563eb;
+            color: #fff;
+            font-size: 13px;
+            font-weight: 700;
+        }
+
         .stepper {
             display: flex;
             justify-content: space-between;
@@ -390,6 +431,25 @@
     {% for message in app.flashes('error') %}
         <div class="rdv-alert error">{{ message }}</div>
     {% endfor %}
+    {% for message in app.flashes('warning') %}
+        <div class="rdv-alert warning">{{ message }}</div>
+    {% endfor %}
+    {% for message in app.flashes('info') %}
+        <div class="rdv-alert info">{{ message }}</div>
+    {% endfor %}
+
+    {% if googleCalendarConfigured %}
+        {% if googleCalendarConnected %}
+            <div class="integration-banner connected">
+                <span>Google Calendar connecte. Les nouveaux rendez-vous seront ajoutes automatiquement.</span>
+            </div>
+        {% else %}
+            <div class="integration-banner">
+                <span>Connecte Google Calendar pour synchroniser automatiquement tes rendez-vous.</span>
+                <a class="connect-link" href="{{ path('app_google_calendar_connect') }}">Connecter Google</a>
+            </div>
+        {% endif %}
+    {% endif %}
 
     <div class="stepper">
         <div class="step active" data-step="1">

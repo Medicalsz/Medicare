@@ -26,7 +26,9 @@ class RendezVousRepository extends ServiceEntityRepository
     {
         return $this->createQueryBuilder('r')
             ->andWhere('r.patient = :patient')
+            ->andWhere('r.hiddenByPatient = :hidden')
             ->setParameter('patient', $patient)
+            ->setParameter('hidden', false)
             ->orderBy('r.id', 'DESC')
             ->getQuery()
             ->getResult();
@@ -74,7 +76,9 @@ class RendezVousRepository extends ServiceEntityRepository
             ->leftJoin('r.patient', 'p')
             ->leftJoin('p.user', 'u')
             ->andWhere('r.medecin = :medecin')
+            ->andWhere('r.hiddenByMedecin = :hidden')
             ->setParameter('medecin', $medecin)
+            ->setParameter('hidden', false)
             ->addSelect('(CASE WHEN r.date >= :today THEN 0 ELSE 1 END) AS HIDDEN date_order')
             ->setParameter('today', new \DateTimeImmutable('today'))
             ->orderBy('date_order', 'ASC')
@@ -122,6 +126,82 @@ class RendezVousRepository extends ServiceEntityRepository
             ->setMaxResults(1)
             ->getQuery()
             ->getOneOrNullResult();
+    }
+
+    public function findPendingAdminReportResponseByMedecin(Medecin $medecin): ?RendezVous
+    {
+        return $this->createQueryBuilder('r')
+            ->addSelect('p', 'u')
+            ->leftJoin('r.patient', 'p')
+            ->leftJoin('p.user', 'u')
+            ->andWhere('r.medecin = :medecin')
+            ->andWhere('r.reportPendingMedecinResponse = :pending')
+            ->andWhere('r.reportProposedByAdmin = :byAdmin')
+            ->setParameter('medecin', $medecin)
+            ->setParameter('pending', true)
+            ->setParameter('byAdmin', true)
+            ->orderBy('r.id', 'DESC')
+            ->setMaxResults(1)
+            ->getQuery()
+            ->getOneOrNullResult();
+    }
+
+    public function findLatestPendingPatientNotification(Patient $patient): ?RendezVous
+    {
+        return $this->createQueryBuilder('r')
+            ->addSelect('m', 'u')
+            ->leftJoin('r.medecin', 'm')
+            ->leftJoin('m.user', 'u')
+            ->andWhere('r.patient = :patient')
+            ->andWhere('r.patientNotificationType IS NOT NULL')
+            ->andWhere('r.patientNotificationAt IS NOT NULL')
+            ->setParameter('patient', $patient)
+            ->orderBy('r.patientNotificationAt', 'DESC')
+            ->setMaxResults(1)
+            ->getQuery()
+            ->getOneOrNullResult();
+    }
+
+    public function findLatestPendingMedecinNotification(Medecin $medecin): ?RendezVous
+    {
+        return $this->createQueryBuilder('r')
+            ->addSelect('p', 'u')
+            ->leftJoin('r.patient', 'p')
+            ->leftJoin('p.user', 'u')
+            ->andWhere('r.medecin = :medecin')
+            ->andWhere('r.medecinNotificationType IS NOT NULL')
+            ->andWhere('r.medecinNotificationAt IS NOT NULL')
+            ->setParameter('medecin', $medecin)
+            ->orderBy('r.medecinNotificationAt', 'DESC')
+            ->setMaxResults(1)
+            ->getQuery()
+            ->getOneOrNullResult();
+    }
+
+    /**
+     * @return RendezVous[]
+     */
+    public function findConfirmedWithoutReminderBetweenDates(
+        \DateTimeInterface $dateFrom,
+        \DateTimeInterface $dateTo
+    ): array {
+        return $this->createQueryBuilder('r')
+            ->addSelect('p', 'u', 'm', 'mu')
+            ->leftJoin('r.patient', 'p')
+            ->leftJoin('p.user', 'u')
+            ->leftJoin('r.medecin', 'm')
+            ->leftJoin('m.user', 'mu')
+            ->andWhere('r.statut = :statut')
+            ->andWhere('r.reminderSentAt IS NULL')
+            ->andWhere('r.date >= :fromDate')
+            ->andWhere('r.date <= :toDate')
+            ->setParameter('statut', StatutRendezVous::CONFIRME)
+            ->setParameter('fromDate', $dateFrom->format('Y-m-d'))
+            ->setParameter('toDate', $dateTo->format('Y-m-d'))
+            ->orderBy('r.date', 'ASC')
+            ->addOrderBy('r.heure', 'ASC')
+            ->getQuery()
+            ->getResult();
     }
 
     public function medecinHasRendezVousAt(

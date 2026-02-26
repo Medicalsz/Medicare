@@ -15,6 +15,7 @@ use App\Repository\ConsultationRepository;
 use App\Repository\DisponibiliteRepository;
 use App\Repository\MedecinRepository;
 use App\Repository\RendezVousRepository;
+use App\Service\AppointmentMailer;
 use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -88,9 +89,77 @@ class MedecinDashboardController extends AbstractController
         }
 
         $rendezVous = $rendezVousRepository->findByMedecinOrderByDate($medecin);
+        $showMedecinStatusModal = false;
+        $medecinStatusType = null;
+        $medecinStatusTitle = null;
+        $medecinStatusMessage = null;
+        $medecinStatusRendezVous = null;
+        $showAdminReportProposalModal = false;
+        $adminReportProposalRendezVous = null;
+
+        $pendingAdminReport = $rendezVousRepository->findPendingAdminReportResponseByMedecin($medecin);
+        if ($pendingAdminReport instanceof RendezVous) {
+            $showAdminReportProposalModal = true;
+            $adminReportProposalRendezVous = $pendingAdminReport;
+        }
+
+        if (!$showAdminReportProposalModal) {
+            $notificationRdv = $rendezVousRepository->findLatestPendingMedecinNotification($medecin);
+            if (
+                $notificationRdv instanceof RendezVous
+                && $this->showModalOncePerRendezVousNotification(
+                    $request,
+                    'seen_medecin_rdv_notification_versions',
+                    $notificationRdv,
+                    $notificationRdv->getMedecinNotificationVersion()
+                )
+            ) {
+                $notificationType = (string) ($notificationRdv->getMedecinNotificationType() ?? '');
+                $notificationMessage = trim((string) ($notificationRdv->getMedecinNotificationMessage() ?? ''));
+
+                if ($notificationType === 'admin_report_pending_medecin' && $notificationRdv->isReportPendingMedecinResponse()) {
+                    $showAdminReportProposalModal = true;
+                    $adminReportProposalRendezVous = $notificationRdv;
+                } else {
+                    $showMedecinStatusModal = true;
+                    $medecinStatusRendezVous = $notificationRdv;
+
+                    if (in_array($notificationType, ['admin_cancelled', 'admin_report_rejected_by_patient', 'admin_report_rejected_by_medecin'], true)) {
+                        $medecinStatusType = 'annule';
+                    } else {
+                        $medecinStatusType = 'confirme';
+                    }
+
+                    if ($notificationType === 'admin_cancelled') {
+                        $medecinStatusTitle = 'Rendez-vous annule par l administration';
+                    } elseif ($notificationType === 'admin_confirmed') {
+                        $medecinStatusTitle = 'Rendez-vous confirme par l administration';
+                    } elseif ($notificationType === 'admin_report_accepted_by_patient') {
+                        $medecinStatusTitle = 'Report accepte par le patient';
+                    } elseif ($notificationType === 'admin_report_rejected_by_patient') {
+                        $medecinStatusTitle = 'Report refuse par le patient';
+                    } elseif ($notificationType === 'admin_report_rejected_by_medecin') {
+                        $medecinStatusTitle = 'Report admin refuse';
+                    } elseif ($notificationType === 'admin_ordonnance_deleted') {
+                        $medecinStatusTitle = 'Ordonnance supprimee';
+                    }
+
+                    $medecinStatusMessage = $notificationMessage !== ''
+                        ? $notificationMessage
+                        : null;
+                }
+            }
+        }
 
         return $this->render('medecin/demandes_rendez_vous.html.twig', [
             'rendezVous' => $rendezVous,
+            'showMedecinStatusModal' => $showMedecinStatusModal,
+            'medecinStatusType' => $medecinStatusType,
+            'medecinStatusTitle' => $medecinStatusTitle,
+            'medecinStatusMessage' => $medecinStatusMessage,
+            'medecinStatusRendezVous' => $medecinStatusRendezVous,
+            'showAdminReportProposalModal' => $showAdminReportProposalModal,
+            'adminReportProposalRendezVous' => $adminReportProposalRendezVous,
         ]);
     }
 
@@ -131,7 +200,8 @@ class MedecinDashboardController extends AbstractController
         int $id,
         Request $request,
         EntityManagerInterface $entityManager,
-        MedecinRepository $medecinRepository
+        MedecinRepository $medecinRepository,
+        AppointmentMailer $appointmentMailer
     ): Response {
         $this->denyAccessUnlessGranted('ROLE_MEDECIN');
 
@@ -163,12 +233,19 @@ class MedecinDashboardController extends AbstractController
             return $this->redirectToRoute('app_medecin_demandes_rendez_vous');
         }
 
-        $rdv
-            ->setStatut(StatutRendezVous::CONFIRME)
-            ->setProposedDate(null)
-            ->setProposedHeure(null)
-            ->setReportPendingPatientResponse(false);
+        $rdv->setStatut(StatutRendezVous::CONFIRME);
+        $rdv->setReminderSentAt(null);
+        $rdv->notifyPatient(
+            'medecin_confirmed',
+            'Votre rendez-vous a ete accepte par le medecin.'
+        );
+        $this->clearReportProposal($rdv);
         $entityManager->flush();
+        try {
+            $appointmentMailer->sendConfirmedAppointment($rdv);
+        } catch (\Throwable $exception) {
+            $this->addFlash('warning', 'Rendez-vous accepte, mais l email de confirmation n a pas ete envoye.');
+        }
 
         $this->addFlash('success', 'Rendez-vous accepte.');
         return $this->redirectToRoute('app_medecin_demandes_rendez_vous');
@@ -211,14 +288,182 @@ class MedecinDashboardController extends AbstractController
             return $this->redirectToRoute('app_medecin_demandes_rendez_vous');
         }
 
-        $rdv
-            ->setStatut(StatutRendezVous::ANNULE)
-            ->setProposedDate(null)
-            ->setProposedHeure(null)
-            ->setReportPendingPatientResponse(false);
+        $rdv->setStatut(StatutRendezVous::ANNULE);
+        $rdv->notifyPatient(
+            'medecin_cancelled',
+            'Votre rendez-vous a ete annule par le medecin.'
+        );
+        $this->clearReportProposal($rdv);
         $entityManager->flush();
 
         $this->addFlash('success', 'Rendez-vous rejete.');
+        return $this->redirectToRoute('app_medecin_demandes_rendez_vous');
+    }
+
+    #[Route('/medecin/rendez-vous/{id}/admin-report/accepter', name: 'app_medecin_accept_admin_report_rendez_vous', methods: ['POST'])]
+    public function accepterReportAdminRendezVous(
+        int $id,
+        Request $request,
+        EntityManagerInterface $entityManager,
+        MedecinRepository $medecinRepository
+    ): Response {
+        $this->denyAccessUnlessGranted('ROLE_MEDECIN');
+
+        if (!$this->canAccessMedecinArea($request, $entityManager)) {
+            return $this->redirectToRoute('app_dashboard');
+        }
+
+        if (!$this->isCsrfTokenValid('medecin_accept_admin_report_rdv_' . $id, (string) $request->request->get('_token'))) {
+            $this->addFlash('error', 'Jeton de securite invalide.');
+            return $this->redirectToRoute('app_medecin_demandes_rendez_vous');
+        }
+
+        /** @var User|null $user */
+        $user = $this->getUser();
+        $medecin = $user ? $medecinRepository->findOneBy(['user' => $user]) : null;
+        if (!$medecin) {
+            $this->addFlash('error', 'Profil medecin introuvable.');
+            return $this->redirectToRoute('app_medecin_demandes_rendez_vous');
+        }
+
+        $rdv = $entityManager->getRepository(RendezVous::class)->find($id);
+        if (!$rdv || $rdv->getMedecin()?->getId() !== $medecin->getId()) {
+            $this->addFlash('error', 'Rendez-vous introuvable.');
+            return $this->redirectToRoute('app_medecin_demandes_rendez_vous');
+        }
+
+        if (!$rdv->isReportPendingMedecinResponse() || !$rdv->isReportProposedByAdmin()) {
+            $this->addFlash('error', 'Aucun report admin en attente sur ce rendez-vous.');
+            return $this->redirectToRoute('app_medecin_demandes_rendez_vous');
+        }
+
+        $proposedDate = $rdv->getProposedDate();
+        $proposedHeure = $rdv->getProposedHeure();
+        if (!$proposedDate || !$proposedHeure) {
+            $this->addFlash('error', 'Le report admin est incomplet.');
+            return $this->redirectToRoute('app_medecin_demandes_rendez_vous');
+        }
+
+        $rdv
+            ->setReportPendingMedecinResponse(false)
+            ->setReportPendingPatientResponse(true)
+            ->setStatut(StatutRendezVous::EN_ATTENTE)
+            ->notifyPatient(
+                'admin_report_pending_patient',
+                sprintf(
+                    'L administration propose un report au %s a %s et le medecin a accepte. Merci de confirmer ou refuser ce report.',
+                    $proposedDate->format('d/m/Y'),
+                    $proposedHeure->format('H:i')
+                )
+            )
+            ->notifyMedecin(
+                'admin_report_accepted_by_medecin',
+                'Vous avez accepte le report propose par l administration. En attente de la reponse du patient.'
+            );
+
+        $entityManager->flush();
+
+        $this->addFlash('success', 'Report admin valide. La decision du patient est maintenant attendue.');
+        return $this->redirectToRoute('app_medecin_demandes_rendez_vous');
+    }
+
+    #[Route('/medecin/rendez-vous/{id}/admin-report/rejeter', name: 'app_medecin_reject_admin_report_rendez_vous', methods: ['POST'])]
+    public function rejeterReportAdminRendezVous(
+        int $id,
+        Request $request,
+        EntityManagerInterface $entityManager,
+        MedecinRepository $medecinRepository
+    ): Response {
+        $this->denyAccessUnlessGranted('ROLE_MEDECIN');
+
+        if (!$this->canAccessMedecinArea($request, $entityManager)) {
+            return $this->redirectToRoute('app_dashboard');
+        }
+
+        if (!$this->isCsrfTokenValid('medecin_reject_admin_report_rdv_' . $id, (string) $request->request->get('_token'))) {
+            $this->addFlash('error', 'Jeton de securite invalide.');
+            return $this->redirectToRoute('app_medecin_demandes_rendez_vous');
+        }
+
+        /** @var User|null $user */
+        $user = $this->getUser();
+        $medecin = $user ? $medecinRepository->findOneBy(['user' => $user]) : null;
+        if (!$medecin) {
+            $this->addFlash('error', 'Profil medecin introuvable.');
+            return $this->redirectToRoute('app_medecin_demandes_rendez_vous');
+        }
+
+        $rdv = $entityManager->getRepository(RendezVous::class)->find($id);
+        if (!$rdv || $rdv->getMedecin()?->getId() !== $medecin->getId()) {
+            $this->addFlash('error', 'Rendez-vous introuvable.');
+            return $this->redirectToRoute('app_medecin_demandes_rendez_vous');
+        }
+
+        if (!$rdv->isReportPendingMedecinResponse() || !$rdv->isReportProposedByAdmin()) {
+            $this->addFlash('error', 'Aucun report admin en attente sur ce rendez-vous.');
+            return $this->redirectToRoute('app_medecin_demandes_rendez_vous');
+        }
+
+        $rdv
+            ->setStatut(StatutRendezVous::ANNULE)
+            ->notifyPatient(
+                'admin_report_rejected_by_medecin',
+                'Le rendez-vous a ete annule en raison du non accord du medecin pour le report propose par l administration.'
+            )
+            ->notifyMedecin(
+                'admin_report_rejected_by_medecin',
+                'Vous avez refuse le report propose par l administration. Le rendez-vous a ete annule.'
+            );
+        $this->clearReportProposal($rdv);
+
+        $entityManager->flush();
+
+        $this->addFlash('success', 'Report admin refuse. Le rendez-vous a ete annule.');
+        return $this->redirectToRoute('app_medecin_demandes_rendez_vous');
+    }
+
+    #[Route('/medecin/rendez-vous/{id}/delete-from-list', name: 'app_medecin_delete_rendez_vous_from_list', methods: ['POST'])]
+    public function deleteRendezVousFromList(
+        int $id,
+        Request $request,
+        EntityManagerInterface $entityManager,
+        MedecinRepository $medecinRepository
+    ): Response {
+        $this->denyAccessUnlessGranted('ROLE_MEDECIN');
+
+        if (!$this->canAccessMedecinArea($request, $entityManager)) {
+            return $this->redirectToRoute('app_dashboard');
+        }
+
+        if (!$this->isCsrfTokenValid('medecin_delete_rdv_from_list_' . $id, (string) $request->request->get('_token'))) {
+            $this->addFlash('error', 'Jeton de securite invalide.');
+            return $this->redirectToRoute('app_medecin_demandes_rendez_vous');
+        }
+
+        /** @var User|null $user */
+        $user = $this->getUser();
+        $medecin = $user ? $medecinRepository->findOneBy(['user' => $user]) : null;
+        if (!$medecin) {
+            $this->addFlash('error', 'Profil medecin introuvable.');
+            return $this->redirectToRoute('app_medecin_demandes_rendez_vous');
+        }
+
+        $rdv = $entityManager->getRepository(RendezVous::class)->find($id);
+        if (!$rdv || $rdv->getMedecin()?->getId() !== $medecin->getId()) {
+            $this->addFlash('error', 'Rendez-vous introuvable.');
+            return $this->redirectToRoute('app_medecin_demandes_rendez_vous');
+        }
+
+        $statut = $rdv->getStatut();
+        if (!in_array($statut, [StatutRendezVous::CONFIRME, StatutRendezVous::ANNULE], true)) {
+            $this->addFlash('error', 'Suppression impossible: uniquement pour les rendez-vous confirmes ou annules.');
+            return $this->redirectToRoute('app_medecin_demandes_rendez_vous');
+        }
+
+        $rdv->setHiddenByMedecin(true);
+        $entityManager->flush();
+
+        $this->addFlash('success', 'Rendez-vous supprime de votre liste.');
         return $this->redirectToRoute('app_medecin_demandes_rendez_vous');
     }
 
@@ -261,6 +506,47 @@ class MedecinDashboardController extends AbstractController
         ]);
     }
 
+    #[Route('/medecin/rendez-vous/{id}/notification/ack', name: 'app_medecin_ack_rendez_vous_notification', methods: ['POST'])]
+    public function ackRendezVousNotification(
+        int $id,
+        Request $request,
+        EntityManagerInterface $entityManager,
+        MedecinRepository $medecinRepository
+    ): Response {
+        $this->denyAccessUnlessGranted('ROLE_MEDECIN');
+
+        if (!$this->canAccessMedecinArea($request, $entityManager)) {
+            return $this->redirectToRoute('app_dashboard');
+        }
+
+        if (!$this->isCsrfTokenValid('ack_medecin_rdv_notification_' . $id, (string) $request->request->get('_token'))) {
+            $this->addFlash('error', 'Jeton de securite invalide.');
+            return $this->redirectToRoute('app_medecin_demandes_rendez_vous');
+        }
+
+        /** @var User|null $user */
+        $user = $this->getUser();
+        $medecin = $user ? $medecinRepository->findOneBy(['user' => $user]) : null;
+        if (!$medecin) {
+            $this->addFlash('error', 'Profil medecin introuvable.');
+            return $this->redirectToRoute('app_medecin_demandes_rendez_vous');
+        }
+
+        $rdv = $entityManager->getRepository(RendezVous::class)->find($id);
+        if (!$rdv || $rdv->getMedecin()?->getId() !== $medecin->getId()) {
+            $this->addFlash('error', 'Rendez-vous introuvable.');
+            return $this->redirectToRoute('app_medecin_demandes_rendez_vous');
+        }
+
+        $rdv
+            ->setMedecinNotificationType(null)
+            ->setMedecinNotificationMessage(null)
+            ->setMedecinNotificationAt(null);
+        $entityManager->flush();
+
+        return $this->redirectToRoute('app_medecin_demandes_rendez_vous');
+    }
+
     #[Route('/medecin/rendez-vous/{id}/annuler', name: 'app_medecin_cancel_rendez_vous', methods: ['POST'])]
     public function annulerRendezVous(
         int $id,
@@ -298,11 +584,12 @@ class MedecinDashboardController extends AbstractController
             return $this->redirectToRoute('app_medecin_rendez_vous_show', ['id' => $id]);
         }
 
-        $rdv
-            ->setStatut(StatutRendezVous::ANNULE)
-            ->setProposedDate(null)
-            ->setProposedHeure(null)
-            ->setReportPendingPatientResponse(false);
+        $rdv->setStatut(StatutRendezVous::ANNULE);
+        $rdv->notifyPatient(
+            'medecin_cancelled',
+            'Votre rendez-vous a ete annule par le medecin.'
+        );
+        $this->clearReportProposal($rdv);
         $entityManager->flush();
 
         $this->addFlash('success', 'Rendez-vous annule.');
@@ -390,6 +677,8 @@ class MedecinDashboardController extends AbstractController
             ->setProposedDate($date)
             ->setProposedHeure($heure)
             ->setReportPendingPatientResponse(true)
+            ->setReportPendingMedecinResponse(false)
+            ->setReportProposedByAdmin(false)
             ->setStatut(StatutRendezVous::EN_ATTENTE);
 
         try {
@@ -940,6 +1229,43 @@ class MedecinDashboardController extends AbstractController
     private function toTimeObject(string $hhmm): \DateTimeImmutable
     {
         return new \DateTimeImmutable(sprintf('1970-01-01 %s:00', $hhmm));
+    }
+
+    private function clearReportProposal(RendezVous $rendezVous): void
+    {
+        $rendezVous
+            ->setProposedDate(null)
+            ->setProposedHeure(null)
+            ->setReportPendingPatientResponse(false)
+            ->setReportPendingMedecinResponse(false)
+            ->setReportProposedByAdmin(false);
+    }
+
+    private function showModalOncePerRendezVousNotification(
+        Request $request,
+        string $sessionKey,
+        RendezVous $rendezVous,
+        int $version
+    ): bool {
+        $rdvId = $rendezVous->getId();
+        if (!$rdvId || $version < 1) {
+            return false;
+        }
+
+        $seen = $request->getSession()->get($sessionKey, []);
+        if (!is_array($seen)) {
+            $seen = [];
+        }
+
+        $signature = $rdvId . ':' . $version;
+        if (in_array($signature, $seen, true)) {
+            return false;
+        }
+
+        $seen[] = $signature;
+        $request->getSession()->set($sessionKey, $seen);
+
+        return true;
     }
 
     private function formatTime(?\DateTimeInterface $time, string $fallback): string
