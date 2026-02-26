@@ -57,7 +57,7 @@ class ArrayChoiceList implements ChoiceListInterface
      *                               incrementing integers are used as
      *                               values
      */
-    public function __construct(iterable $choices, ?callable $value = null)
+    public function __construct(iterable $choices, callable $value = null)
     {
         if ($choices instanceof \Traversable) {
             $choices = iterator_to_array($choices);
@@ -114,7 +114,7 @@ class ArrayChoiceList implements ChoiceListInterface
         $choices = [];
 
         foreach ($values as $i => $givenValue) {
-            if (\array_key_exists($givenValue ?? '', $this->choices)) {
+            if (\array_key_exists($givenValue, $this->choices)) {
                 $choices[$i] = $this->choices[$givenValue];
             }
         }

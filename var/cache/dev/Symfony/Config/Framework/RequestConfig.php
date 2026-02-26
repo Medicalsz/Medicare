@@ -38,22 +38,22 @@ class RequestConfig
         return $this;
     }
 
-    public function __construct(array $config = [])
+    public function __construct(array $value = [])
     {
-        if (array_key_exists('enabled', $config)) {
+        if (array_key_exists('enabled', $value)) {
             $this->_usedProperties['enabled'] = true;
-            $this->enabled = $config['enabled'];
-            unset($config['enabled']);
+            $this->enabled = $value['enabled'];
+            unset($value['enabled']);
         }
 
-        if (array_key_exists('formats', $config)) {
+        if (array_key_exists('formats', $value)) {
             $this->_usedProperties['formats'] = true;
-            $this->formats = $config['formats'];
-            unset($config['formats']);
+            $this->formats = $value['formats'];
+            unset($value['formats']);
         }
 
-        if ($config) {
-            throw new InvalidConfigurationException(sprintf('The following keys are not supported by "%s": ', __CLASS__).implode(', ', array_keys($config)));
+        if ([] !== $value) {
+            throw new InvalidConfigurationException(sprintf('The following keys are not supported by "%s": ', __CLASS__).implode(', ', array_keys($value)));
         }
     }
 

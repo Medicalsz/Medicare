@@ -48,28 +48,28 @@ class DqlConfig
         return $this;
     }
 
-    public function __construct(array $config = [])
+    public function __construct(array $value = [])
     {
-        if (array_key_exists('string_functions', $config)) {
+        if (array_key_exists('string_functions', $value)) {
             $this->_usedProperties['stringFunctions'] = true;
-            $this->stringFunctions = $config['string_functions'];
-            unset($config['string_functions']);
+            $this->stringFunctions = $value['string_functions'];
+            unset($value['string_functions']);
         }
 
-        if (array_key_exists('numeric_functions', $config)) {
+        if (array_key_exists('numeric_functions', $value)) {
             $this->_usedProperties['numericFunctions'] = true;
-            $this->numericFunctions = $config['numeric_functions'];
-            unset($config['numeric_functions']);
+            $this->numericFunctions = $value['numeric_functions'];
+            unset($value['numeric_functions']);
         }
 
-        if (array_key_exists('datetime_functions', $config)) {
+        if (array_key_exists('datetime_functions', $value)) {
             $this->_usedProperties['datetimeFunctions'] = true;
-            $this->datetimeFunctions = $config['datetime_functions'];
-            unset($config['datetime_functions']);
+            $this->datetimeFunctions = $value['datetime_functions'];
+            unset($value['datetime_functions']);
         }
 
-        if ($config) {
-            throw new InvalidConfigurationException(sprintf('The following keys are not supported by "%s": ', __CLASS__).implode(', ', array_keys($config)));
+        if ([] !== $value) {
+            throw new InvalidConfigurationException(sprintf('The following keys are not supported by "%s": ', __CLASS__).implode(', ', array_keys($value)));
         }
     }
 

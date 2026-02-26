@@ -14,17 +14,14 @@ class MakerConfig implements \Symfony\Component\Config\Builder\ConfigBuilderInte
     private $generateFinalClasses;
     private $generateFinalEntities;
     private $_usedProperties = [];
-    private $_hasDeprecatedCalls = false;
 
     /**
      * @default 'App'
      * @param ParamConfigurator|mixed $value
      * @return $this
-     * @deprecated since Symfony 7.4
      */
     public function rootNamespace($value): static
     {
-        $this->_hasDeprecatedCalls = true;
         $this->_usedProperties['rootNamespace'] = true;
         $this->rootNamespace = $value;
 
@@ -35,11 +32,9 @@ class MakerConfig implements \Symfony\Component\Config\Builder\ConfigBuilderInte
      * @default true
      * @param ParamConfigurator|bool $value
      * @return $this
-     * @deprecated since Symfony 7.4
      */
     public function generateFinalClasses($value): static
     {
-        $this->_hasDeprecatedCalls = true;
         $this->_usedProperties['generateFinalClasses'] = true;
         $this->generateFinalClasses = $value;
 
@@ -50,11 +45,9 @@ class MakerConfig implements \Symfony\Component\Config\Builder\ConfigBuilderInte
      * @default false
      * @param ParamConfigurator|bool $value
      * @return $this
-     * @deprecated since Symfony 7.4
      */
     public function generateFinalEntities($value): static
     {
-        $this->_hasDeprecatedCalls = true;
         $this->_usedProperties['generateFinalEntities'] = true;
         $this->generateFinalEntities = $value;
 
@@ -66,28 +59,28 @@ class MakerConfig implements \Symfony\Component\Config\Builder\ConfigBuilderInte
         return 'maker';
     }
 
-    public function __construct(array $config = [])
+    public function __construct(array $value = [])
     {
-        if (array_key_exists('root_namespace', $config)) {
+        if (array_key_exists('root_namespace', $value)) {
             $this->_usedProperties['rootNamespace'] = true;
-            $this->rootNamespace = $config['root_namespace'];
-            unset($config['root_namespace']);
+            $this->rootNamespace = $value['root_namespace'];
+            unset($value['root_namespace']);
         }
 
-        if (array_key_exists('generate_final_classes', $config)) {
+        if (array_key_exists('generate_final_classes', $value)) {
             $this->_usedProperties['generateFinalClasses'] = true;
-            $this->generateFinalClasses = $config['generate_final_classes'];
-            unset($config['generate_final_classes']);
+            $this->generateFinalClasses = $value['generate_final_classes'];
+            unset($value['generate_final_classes']);
         }
 
-        if (array_key_exists('generate_final_entities', $config)) {
+        if (array_key_exists('generate_final_entities', $value)) {
             $this->_usedProperties['generateFinalEntities'] = true;
-            $this->generateFinalEntities = $config['generate_final_entities'];
-            unset($config['generate_final_entities']);
+            $this->generateFinalEntities = $value['generate_final_entities'];
+            unset($value['generate_final_entities']);
         }
 
-        if ($config) {
-            throw new InvalidConfigurationException(sprintf('The following keys are not supported by "%s": ', __CLASS__).implode(', ', array_keys($config)));
+        if ([] !== $value) {
+            throw new InvalidConfigurationException(sprintf('The following keys are not supported by "%s": ', __CLASS__).implode(', ', array_keys($value)));
         }
     }
 
@@ -102,9 +95,6 @@ class MakerConfig implements \Symfony\Component\Config\Builder\ConfigBuilderInte
         }
         if (isset($this->_usedProperties['generateFinalEntities'])) {
             $output['generate_final_entities'] = $this->generateFinalEntities;
-        }
-        if ($this->_hasDeprecatedCalls) {
-            trigger_deprecation('symfony/config', '7.4', 'Calling any fluent method on "%s" is deprecated; pass the configuration to the constructor instead.', $this::class);
         }
 
         return $output;

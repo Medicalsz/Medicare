@@ -84,40 +84,40 @@ class TransitionConfig
         return $this;
     }
 
-    public function __construct(array $config = [])
+    public function __construct(array $value = [])
     {
-        if (array_key_exists('name', $config)) {
+        if (array_key_exists('name', $value)) {
             $this->_usedProperties['name'] = true;
-            $this->name = $config['name'];
-            unset($config['name']);
+            $this->name = $value['name'];
+            unset($value['name']);
         }
 
-        if (array_key_exists('guard', $config)) {
+        if (array_key_exists('guard', $value)) {
             $this->_usedProperties['guard'] = true;
-            $this->guard = $config['guard'];
-            unset($config['guard']);
+            $this->guard = $value['guard'];
+            unset($value['guard']);
         }
 
-        if (array_key_exists('from', $config)) {
+        if (array_key_exists('from', $value)) {
             $this->_usedProperties['from'] = true;
-            $this->from = $config['from'];
-            unset($config['from']);
+            $this->from = $value['from'];
+            unset($value['from']);
         }
 
-        if (array_key_exists('to', $config)) {
+        if (array_key_exists('to', $value)) {
             $this->_usedProperties['to'] = true;
-            $this->to = $config['to'];
-            unset($config['to']);
+            $this->to = $value['to'];
+            unset($value['to']);
         }
 
-        if (array_key_exists('metadata', $config)) {
+        if (array_key_exists('metadata', $value)) {
             $this->_usedProperties['metadata'] = true;
-            $this->metadata = $config['metadata'];
-            unset($config['metadata']);
+            $this->metadata = $value['metadata'];
+            unset($value['metadata']);
         }
 
-        if ($config) {
-            throw new InvalidConfigurationException(sprintf('The following keys are not supported by "%s": ', __CLASS__).implode(', ', array_keys($config)));
+        if ([] !== $value) {
+            throw new InvalidConfigurationException(sprintf('The following keys are not supported by "%s": ', __CLASS__).implode(', ', array_keys($value)));
         }
     }
 

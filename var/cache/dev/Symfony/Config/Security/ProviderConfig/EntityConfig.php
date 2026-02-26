@@ -55,28 +55,28 @@ class EntityConfig
         return $this;
     }
 
-    public function __construct(array $config = [])
+    public function __construct(array $value = [])
     {
-        if (array_key_exists('class', $config)) {
+        if (array_key_exists('class', $value)) {
             $this->_usedProperties['class'] = true;
-            $this->class = $config['class'];
-            unset($config['class']);
+            $this->class = $value['class'];
+            unset($value['class']);
         }
 
-        if (array_key_exists('property', $config)) {
+        if (array_key_exists('property', $value)) {
             $this->_usedProperties['property'] = true;
-            $this->property = $config['property'];
-            unset($config['property']);
+            $this->property = $value['property'];
+            unset($value['property']);
         }
 
-        if (array_key_exists('manager_name', $config)) {
+        if (array_key_exists('manager_name', $value)) {
             $this->_usedProperties['managerName'] = true;
-            $this->managerName = $config['manager_name'];
-            unset($config['manager_name']);
+            $this->managerName = $value['manager_name'];
+            unset($value['manager_name']);
         }
 
-        if ($config) {
-            throw new InvalidConfigurationException(sprintf('The following keys are not supported by "%s": ', __CLASS__).implode(', ', array_keys($config)));
+        if ([] !== $value) {
+            throw new InvalidConfigurationException(sprintf('The following keys are not supported by "%s": ', __CLASS__).implode(', ', array_keys($value)));
         }
     }
 

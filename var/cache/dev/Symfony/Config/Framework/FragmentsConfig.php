@@ -54,28 +54,28 @@ class FragmentsConfig
         return $this;
     }
 
-    public function __construct(array $config = [])
+    public function __construct(array $value = [])
     {
-        if (array_key_exists('enabled', $config)) {
+        if (array_key_exists('enabled', $value)) {
             $this->_usedProperties['enabled'] = true;
-            $this->enabled = $config['enabled'];
-            unset($config['enabled']);
+            $this->enabled = $value['enabled'];
+            unset($value['enabled']);
         }
 
-        if (array_key_exists('hinclude_default_template', $config)) {
+        if (array_key_exists('hinclude_default_template', $value)) {
             $this->_usedProperties['hincludeDefaultTemplate'] = true;
-            $this->hincludeDefaultTemplate = $config['hinclude_default_template'];
-            unset($config['hinclude_default_template']);
+            $this->hincludeDefaultTemplate = $value['hinclude_default_template'];
+            unset($value['hinclude_default_template']);
         }
 
-        if (array_key_exists('path', $config)) {
+        if (array_key_exists('path', $value)) {
             $this->_usedProperties['path'] = true;
-            $this->path = $config['path'];
-            unset($config['path']);
+            $this->path = $value['path'];
+            unset($value['path']);
         }
 
-        if ($config) {
-            throw new InvalidConfigurationException(sprintf('The following keys are not supported by "%s": ', __CLASS__).implode(', ', array_keys($config)));
+        if ([] !== $value) {
+            throw new InvalidConfigurationException(sprintf('The following keys are not supported by "%s": ', __CLASS__).implode(', ', array_keys($value)));
         }
     }
 

@@ -4,114 +4,60 @@ namespace PHPStan\PhpDocParser\Parser;
 
 use PHPStan\PhpDocParser\Ast;
 use PHPStan\PhpDocParser\Lexer\Lexer;
-use PHPStan\PhpDocParser\ParserConfig;
+use function chr;
+use function hexdec;
+use function octdec;
+use function preg_replace_callback;
 use function str_replace;
 use function strtolower;
+use function substr;
 
 class ConstExprParser
 {
 
-	private ParserConfig $config;
+	private const REPLACEMENTS = [
+		'\\' => '\\',
+		'n' => "\n",
+		'r' => "\r",
+		't' => "\t",
+		'f' => "\f",
+		'v' => "\v",
+		'e' => "\x1B",
+	];
 
-	private bool $parseDoctrineStrings;
+	/** @var bool */
+	private $unescapeStrings;
 
-	public function __construct(
-		ParserConfig $config
-	)
+	public function __construct(bool $unescapeStrings = false)
 	{
-		$this->config = $config;
-		$this->parseDoctrineStrings = false;
+		$this->unescapeStrings = $unescapeStrings;
 	}
 
-	/**
-	 * @internal
-	 */
-	public function toDoctrine(): self
+	public function parse(TokenIterator $tokens, bool $trimStrings = false): Ast\ConstExpr\ConstExprNode
 	{
-		$self = new self($this->config);
-		$self->parseDoctrineStrings = true;
-		return $self;
-	}
-
-	public function parse(TokenIterator $tokens): Ast\ConstExpr\ConstExprNode
-	{
-		$startLine = $tokens->currentTokenLine();
-		$startIndex = $tokens->currentTokenIndex();
 		if ($tokens->isCurrentTokenType(Lexer::TOKEN_FLOAT)) {
 			$value = $tokens->currentTokenValue();
 			$tokens->next();
-
-			return $this->enrichWithAttributes(
-				$tokens,
-				new Ast\ConstExpr\ConstExprFloatNode(str_replace('_', '', $value)),
-				$startLine,
-				$startIndex,
-			);
+			return new Ast\ConstExpr\ConstExprFloatNode($value);
 		}
 
 		if ($tokens->isCurrentTokenType(Lexer::TOKEN_INTEGER)) {
 			$value = $tokens->currentTokenValue();
 			$tokens->next();
-
-			return $this->enrichWithAttributes(
-				$tokens,
-				new Ast\ConstExpr\ConstExprIntegerNode(str_replace('_', '', $value)),
-				$startLine,
-				$startIndex,
-			);
-		}
-
-		if ($this->parseDoctrineStrings && $tokens->isCurrentTokenType(Lexer::TOKEN_DOCTRINE_ANNOTATION_STRING)) {
-			$value = $tokens->currentTokenValue();
-			$tokens->next();
-
-			return $this->enrichWithAttributes(
-				$tokens,
-				new Ast\ConstExpr\DoctrineConstExprStringNode(Ast\ConstExpr\DoctrineConstExprStringNode::unescape($value)),
-				$startLine,
-				$startIndex,
-			);
+			return new Ast\ConstExpr\ConstExprIntegerNode($value);
 		}
 
 		if ($tokens->isCurrentTokenType(Lexer::TOKEN_SINGLE_QUOTED_STRING, Lexer::TOKEN_DOUBLE_QUOTED_STRING)) {
-			if ($this->parseDoctrineStrings) {
-				if ($tokens->isCurrentTokenType(Lexer::TOKEN_SINGLE_QUOTED_STRING)) {
-					throw new ParserException(
-						$tokens->currentTokenValue(),
-						$tokens->currentTokenType(),
-						$tokens->currentTokenOffset(),
-						Lexer::TOKEN_DOUBLE_QUOTED_STRING,
-						null,
-						$tokens->currentTokenLine(),
-					);
+			$value = $tokens->currentTokenValue();
+			if ($trimStrings) {
+				if ($this->unescapeStrings) {
+					$value = self::unescapeString($value);
+				} else {
+					$value = substr($value, 1, -1);
 				}
-
-				$value = $tokens->currentTokenValue();
-				$tokens->next();
-
-				return $this->enrichWithAttributes(
-					$tokens,
-					$this->parseDoctrineString($value, $tokens),
-					$startLine,
-					$startIndex,
-				);
 			}
-
-			$value = StringUnescaper::unescapeString($tokens->currentTokenValue());
-			$type = $tokens->currentTokenType();
 			$tokens->next();
-
-			return $this->enrichWithAttributes(
-				$tokens,
-				new Ast\ConstExpr\ConstExprStringNode(
-					$value,
-					$type === Lexer::TOKEN_SINGLE_QUOTED_STRING
-						? Ast\ConstExpr\ConstExprStringNode::SINGLE_QUOTED
-						: Ast\ConstExpr\ConstExprStringNode::DOUBLE_QUOTED,
-				),
-				$startLine,
-				$startIndex,
-			);
+			return new Ast\ConstExpr\ConstExprStringNode($value);
 
 		} elseif ($tokens->isCurrentTokenType(Lexer::TOKEN_IDENTIFIER)) {
 			$identifier = $tokens->currentTokenValue();
@@ -119,29 +65,14 @@ class ConstExprParser
 
 			switch (strtolower($identifier)) {
 				case 'true':
-					return $this->enrichWithAttributes(
-						$tokens,
-						new Ast\ConstExpr\ConstExprTrueNode(),
-						$startLine,
-						$startIndex,
-					);
+					return new Ast\ConstExpr\ConstExprTrueNode();
 				case 'false':
-					return $this->enrichWithAttributes(
-						$tokens,
-						new Ast\ConstExpr\ConstExprFalseNode(),
-						$startLine,
-						$startIndex,
-					);
+					return new Ast\ConstExpr\ConstExprFalseNode();
 				case 'null':
-					return $this->enrichWithAttributes(
-						$tokens,
-						new Ast\ConstExpr\ConstExprNullNode(),
-						$startLine,
-						$startIndex,
-					);
+					return new Ast\ConstExpr\ConstExprNullNode();
 				case 'array':
 					$tokens->consumeTokenType(Lexer::TOKEN_OPEN_PARENTHESES);
-					return $this->parseArray($tokens, Lexer::TOKEN_CLOSE_PARENTHESES, $startIndex);
+					return $this->parseArray($tokens, Lexer::TOKEN_CLOSE_PARENTHESES);
 			}
 
 			if ($tokens->tryConsumeTokenType(Lexer::TOKEN_DOUBLE_COLON)) {
@@ -175,41 +106,28 @@ class ConstExprParser
 					break;
 				}
 
-				return $this->enrichWithAttributes(
-					$tokens,
-					new Ast\ConstExpr\ConstFetchNode($identifier, $classConstantName),
-					$startLine,
-					$startIndex,
-				);
+				return new Ast\ConstExpr\ConstFetchNode($identifier, $classConstantName);
 
 			}
 
-			return $this->enrichWithAttributes(
-				$tokens,
-				new Ast\ConstExpr\ConstFetchNode('', $identifier),
-				$startLine,
-				$startIndex,
-			);
+			return new Ast\ConstExpr\ConstFetchNode('', $identifier);
 
 		} elseif ($tokens->tryConsumeTokenType(Lexer::TOKEN_OPEN_SQUARE_BRACKET)) {
-			return $this->parseArray($tokens, Lexer::TOKEN_CLOSE_SQUARE_BRACKET, $startIndex);
+			return $this->parseArray($tokens, Lexer::TOKEN_CLOSE_SQUARE_BRACKET);
 		}
 
 		throw new ParserException(
 			$tokens->currentTokenValue(),
 			$tokens->currentTokenType(),
 			$tokens->currentTokenOffset(),
-			Lexer::TOKEN_IDENTIFIER,
-			null,
-			$tokens->currentTokenLine(),
+			Lexer::TOKEN_IDENTIFIER
 		);
 	}
 
-	private function parseArray(TokenIterator $tokens, int $endToken, int $startIndex): Ast\ConstExpr\ConstExprArrayNode
+
+	private function parseArray(TokenIterator $tokens, int $endToken): Ast\ConstExpr\ConstExprArrayNode
 	{
 		$items = [];
-
-		$startLine = $tokens->currentTokenLine();
 
 		if (!$tokens->tryConsumeTokenType($endToken)) {
 			do {
@@ -218,35 +136,12 @@ class ConstExprParser
 			$tokens->consumeTokenType($endToken);
 		}
 
-		return $this->enrichWithAttributes(
-			$tokens,
-			new Ast\ConstExpr\ConstExprArrayNode($items),
-			$startLine,
-			$startIndex,
-		);
+		return new Ast\ConstExpr\ConstExprArrayNode($items);
 	}
 
-	/**
-	 * This method is supposed to be called with TokenIterator after reading TOKEN_DOUBLE_QUOTED_STRING and shifting
-	 * to the next token.
-	 */
-	public function parseDoctrineString(string $text, TokenIterator $tokens): Ast\ConstExpr\DoctrineConstExprStringNode
-	{
-		// Because of how Lexer works, a valid Doctrine string
-		// can consist of a sequence of TOKEN_DOUBLE_QUOTED_STRING and TOKEN_DOCTRINE_ANNOTATION_STRING
-		while ($tokens->isCurrentTokenType(Lexer::TOKEN_DOUBLE_QUOTED_STRING, Lexer::TOKEN_DOCTRINE_ANNOTATION_STRING)) {
-			$text .= $tokens->currentTokenValue();
-			$tokens->next();
-		}
-
-		return new Ast\ConstExpr\DoctrineConstExprStringNode(Ast\ConstExpr\DoctrineConstExprStringNode::unescape($text));
-	}
 
 	private function parseArrayItem(TokenIterator $tokens): Ast\ConstExpr\ConstExprArrayItemNode
 	{
-		$startLine = $tokens->currentTokenLine();
-		$startIndex = $tokens->currentTokenIndex();
-
 		$expr = $this->parse($tokens);
 
 		if ($tokens->tryConsumeTokenType(Lexer::TOKEN_DOUBLE_ARROW)) {
@@ -258,32 +153,78 @@ class ConstExprParser
 			$value = $expr;
 		}
 
-		return $this->enrichWithAttributes(
-			$tokens,
-			new Ast\ConstExpr\ConstExprArrayItemNode($key, $value),
-			$startLine,
-			$startIndex,
+		return new Ast\ConstExpr\ConstExprArrayItemNode($key, $value);
+	}
+
+	private static function unescapeString(string $string): string
+	{
+		$quote = $string[0];
+
+		if ($quote === '\'') {
+			return str_replace(
+				['\\\\', '\\\''],
+				['\\', '\''],
+				substr($string, 1, -1)
+			);
+		}
+
+		return self::parseEscapeSequences(substr($string, 1, -1), '"');
+	}
+
+	/**
+	 * Implementation based on https://github.com/nikic/PHP-Parser/blob/b0edd4c41111042d43bb45c6c657b2e0db367d9e/lib/PhpParser/Node/Scalar/String_.php#L90-L130
+	 */
+	private static function parseEscapeSequences(string $str, string $quote): string
+	{
+		$str = str_replace('\\' . $quote, $quote, $str);
+
+		return preg_replace_callback(
+			'~\\\\([\\\\nrtfve]|[xX][0-9a-fA-F]{1,2}|[0-7]{1,3}|u\{([0-9a-fA-F]+)\})~',
+			static function ($matches) {
+				$str = $matches[1];
+
+				if (isset(self::REPLACEMENTS[$str])) {
+					return self::REPLACEMENTS[$str];
+				}
+				if ($str[0] === 'x' || $str[0] === 'X') {
+					return chr(hexdec(substr($str, 1)));
+				}
+				if ($str[0] === 'u') {
+					return self::codePointToUtf8(hexdec($matches[2]));
+				}
+
+				return chr(octdec($str));
+			},
+			$str
 		);
 	}
 
 	/**
-	 * @template T of Ast\ConstExpr\ConstExprNode
-	 * @param T $node
-	 * @return T
+	 * Implementation based on https://github.com/nikic/PHP-Parser/blob/b0edd4c41111042d43bb45c6c657b2e0db367d9e/lib/PhpParser/Node/Scalar/String_.php#L132-L154
 	 */
-	private function enrichWithAttributes(TokenIterator $tokens, Ast\ConstExpr\ConstExprNode $node, int $startLine, int $startIndex): Ast\ConstExpr\ConstExprNode
+	private static function codePointToUtf8(int $num): string
 	{
-		if ($this->config->useLinesAttributes) {
-			$node->setAttribute(Ast\Attribute::START_LINE, $startLine);
-			$node->setAttribute(Ast\Attribute::END_LINE, $tokens->currentTokenLine());
+		if ($num <= 0x7F) {
+			return chr($num);
+		}
+		if ($num <= 0x7FF) {
+			return chr(($num >> 6) + 0xC0)
+				. chr(($num & 0x3F) + 0x80);
+		}
+		if ($num <= 0xFFFF) {
+			return chr(($num >> 12) + 0xE0)
+				. chr((($num >> 6) & 0x3F) + 0x80)
+				. chr(($num & 0x3F) + 0x80);
+		}
+		if ($num <= 0x1FFFFF) {
+			return chr(($num >> 18) + 0xF0)
+				. chr((($num >> 12) & 0x3F) + 0x80)
+				. chr((($num >> 6) & 0x3F) + 0x80)
+				. chr(($num & 0x3F) + 0x80);
 		}
 
-		if ($this->config->useIndexAttributes) {
-			$node->setAttribute(Ast\Attribute::START_INDEX, $startIndex);
-			$node->setAttribute(Ast\Attribute::END_INDEX, $tokens->endIndexOfLastRelevantToken());
-		}
-
-		return $node;
+		// Invalid UTF-8 codepoint escape sequence: Codepoint too large
+		return "\xef\xbf\xbd";
 	}
 
 }

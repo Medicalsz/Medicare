@@ -74,7 +74,7 @@ class HttpClientConfig
     }
 
     /**
-     * @template TValue of mixed
+     * @template TValue
      * @param TValue $value
      * @return \Symfony\Config\Framework\HttpClient\ScopedClientConfig|$this
      * @psalm-return (TValue is array ? \Symfony\Config\Framework\HttpClient\ScopedClientConfig : static)
@@ -98,40 +98,40 @@ class HttpClientConfig
         return $this->scopedClients[$name];
     }
 
-    public function __construct(array $config = [])
+    public function __construct(array $value = [])
     {
-        if (array_key_exists('enabled', $config)) {
+        if (array_key_exists('enabled', $value)) {
             $this->_usedProperties['enabled'] = true;
-            $this->enabled = $config['enabled'];
-            unset($config['enabled']);
+            $this->enabled = $value['enabled'];
+            unset($value['enabled']);
         }
 
-        if (array_key_exists('max_host_connections', $config)) {
+        if (array_key_exists('max_host_connections', $value)) {
             $this->_usedProperties['maxHostConnections'] = true;
-            $this->maxHostConnections = $config['max_host_connections'];
-            unset($config['max_host_connections']);
+            $this->maxHostConnections = $value['max_host_connections'];
+            unset($value['max_host_connections']);
         }
 
-        if (array_key_exists('default_options', $config)) {
+        if (array_key_exists('default_options', $value)) {
             $this->_usedProperties['defaultOptions'] = true;
-            $this->defaultOptions = new \Symfony\Config\Framework\HttpClient\DefaultOptionsConfig($config['default_options']);
-            unset($config['default_options']);
+            $this->defaultOptions = new \Symfony\Config\Framework\HttpClient\DefaultOptionsConfig($value['default_options']);
+            unset($value['default_options']);
         }
 
-        if (array_key_exists('mock_response_factory', $config)) {
+        if (array_key_exists('mock_response_factory', $value)) {
             $this->_usedProperties['mockResponseFactory'] = true;
-            $this->mockResponseFactory = $config['mock_response_factory'];
-            unset($config['mock_response_factory']);
+            $this->mockResponseFactory = $value['mock_response_factory'];
+            unset($value['mock_response_factory']);
         }
 
-        if (array_key_exists('scoped_clients', $config)) {
+        if (array_key_exists('scoped_clients', $value)) {
             $this->_usedProperties['scopedClients'] = true;
-            $this->scopedClients = array_map(fn ($v) => \is_array($v) ? new \Symfony\Config\Framework\HttpClient\ScopedClientConfig($v) : $v, $config['scoped_clients']);
-            unset($config['scoped_clients']);
+            $this->scopedClients = array_map(fn ($v) => \is_array($v) ? new \Symfony\Config\Framework\HttpClient\ScopedClientConfig($v) : $v, $value['scoped_clients']);
+            unset($value['scoped_clients']);
         }
 
-        if ($config) {
-            throw new InvalidConfigurationException(sprintf('The following keys are not supported by "%s": ', __CLASS__).implode(', ', array_keys($config)));
+        if ([] !== $value) {
+            throw new InvalidConfigurationException(sprintf('The following keys are not supported by "%s": ', __CLASS__).implode(', ', array_keys($value)));
         }
     }
 

@@ -269,9 +269,7 @@
     {% endif %}
     <label{% with { attr: label_attr } %}{{ block('attributes') }}{% endwith %}>
         {{ widget|raw }}
-        {%- if label is not same as(false) -%}
-            {{- block('form_label_content') -}}
-        {%- endif -%}
+        {{ translation_domain is same as(false) ? label : label|trans(label_translation_parameters, translation_domain) }}
     </label>
 {%- endblock checkbox_radio_label %}
 

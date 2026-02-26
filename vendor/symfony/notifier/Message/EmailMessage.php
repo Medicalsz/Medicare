@@ -29,7 +29,7 @@ class EmailMessage implements MessageInterface, FromNotificationInterface
     private ?Envelope $envelope;
     private ?Notification $notification = null;
 
-    public function __construct(RawMessage $message, ?Envelope $envelope = null)
+    public function __construct(RawMessage $message, Envelope $envelope = null)
     {
         $this->message = $message;
         $this->envelope = $envelope;
@@ -38,7 +38,7 @@ class EmailMessage implements MessageInterface, FromNotificationInterface
     public static function fromNotification(Notification $notification, EmailRecipientInterface $recipient): self
     {
         if ('' === $recipient->getEmail()) {
-            throw new InvalidArgumentException(\sprintf('"%s" needs an email, it cannot be empty.', __CLASS__));
+            throw new InvalidArgumentException(sprintf('"%s" needs an email, it cannot be empty.', __CLASS__));
         }
 
         if (!class_exists(NotificationEmail::class)) {

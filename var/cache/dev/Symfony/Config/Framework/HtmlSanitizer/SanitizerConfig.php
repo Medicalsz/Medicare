@@ -266,118 +266,118 @@ class SanitizerConfig
         return $this;
     }
 
-    public function __construct(array $config = [])
+    public function __construct(array $value = [])
     {
-        if (array_key_exists('allow_safe_elements', $config)) {
+        if (array_key_exists('allow_safe_elements', $value)) {
             $this->_usedProperties['allowSafeElements'] = true;
-            $this->allowSafeElements = $config['allow_safe_elements'];
-            unset($config['allow_safe_elements']);
+            $this->allowSafeElements = $value['allow_safe_elements'];
+            unset($value['allow_safe_elements']);
         }
 
-        if (array_key_exists('allow_static_elements', $config)) {
+        if (array_key_exists('allow_static_elements', $value)) {
             $this->_usedProperties['allowStaticElements'] = true;
-            $this->allowStaticElements = $config['allow_static_elements'];
-            unset($config['allow_static_elements']);
+            $this->allowStaticElements = $value['allow_static_elements'];
+            unset($value['allow_static_elements']);
         }
 
-        if (array_key_exists('allow_elements', $config)) {
+        if (array_key_exists('allow_elements', $value)) {
             $this->_usedProperties['allowElements'] = true;
-            $this->allowElements = $config['allow_elements'];
-            unset($config['allow_elements']);
+            $this->allowElements = $value['allow_elements'];
+            unset($value['allow_elements']);
         }
 
-        if (array_key_exists('block_elements', $config)) {
+        if (array_key_exists('block_elements', $value)) {
             $this->_usedProperties['blockElements'] = true;
-            $this->blockElements = $config['block_elements'];
-            unset($config['block_elements']);
+            $this->blockElements = $value['block_elements'];
+            unset($value['block_elements']);
         }
 
-        if (array_key_exists('drop_elements', $config)) {
+        if (array_key_exists('drop_elements', $value)) {
             $this->_usedProperties['dropElements'] = true;
-            $this->dropElements = $config['drop_elements'];
-            unset($config['drop_elements']);
+            $this->dropElements = $value['drop_elements'];
+            unset($value['drop_elements']);
         }
 
-        if (array_key_exists('allow_attributes', $config)) {
+        if (array_key_exists('allow_attributes', $value)) {
             $this->_usedProperties['allowAttributes'] = true;
-            $this->allowAttributes = $config['allow_attributes'];
-            unset($config['allow_attributes']);
+            $this->allowAttributes = $value['allow_attributes'];
+            unset($value['allow_attributes']);
         }
 
-        if (array_key_exists('drop_attributes', $config)) {
+        if (array_key_exists('drop_attributes', $value)) {
             $this->_usedProperties['dropAttributes'] = true;
-            $this->dropAttributes = $config['drop_attributes'];
-            unset($config['drop_attributes']);
+            $this->dropAttributes = $value['drop_attributes'];
+            unset($value['drop_attributes']);
         }
 
-        if (array_key_exists('force_attributes', $config)) {
+        if (array_key_exists('force_attributes', $value)) {
             $this->_usedProperties['forceAttributes'] = true;
-            $this->forceAttributes = $config['force_attributes'];
-            unset($config['force_attributes']);
+            $this->forceAttributes = $value['force_attributes'];
+            unset($value['force_attributes']);
         }
 
-        if (array_key_exists('force_https_urls', $config)) {
+        if (array_key_exists('force_https_urls', $value)) {
             $this->_usedProperties['forceHttpsUrls'] = true;
-            $this->forceHttpsUrls = $config['force_https_urls'];
-            unset($config['force_https_urls']);
+            $this->forceHttpsUrls = $value['force_https_urls'];
+            unset($value['force_https_urls']);
         }
 
-        if (array_key_exists('allowed_link_schemes', $config)) {
+        if (array_key_exists('allowed_link_schemes', $value)) {
             $this->_usedProperties['allowedLinkSchemes'] = true;
-            $this->allowedLinkSchemes = $config['allowed_link_schemes'];
-            unset($config['allowed_link_schemes']);
+            $this->allowedLinkSchemes = $value['allowed_link_schemes'];
+            unset($value['allowed_link_schemes']);
         }
 
-        if (array_key_exists('allowed_link_hosts', $config)) {
+        if (array_key_exists('allowed_link_hosts', $value)) {
             $this->_usedProperties['allowedLinkHosts'] = true;
-            $this->allowedLinkHosts = $config['allowed_link_hosts'];
-            unset($config['allowed_link_hosts']);
+            $this->allowedLinkHosts = $value['allowed_link_hosts'];
+            unset($value['allowed_link_hosts']);
         }
 
-        if (array_key_exists('allow_relative_links', $config)) {
+        if (array_key_exists('allow_relative_links', $value)) {
             $this->_usedProperties['allowRelativeLinks'] = true;
-            $this->allowRelativeLinks = $config['allow_relative_links'];
-            unset($config['allow_relative_links']);
+            $this->allowRelativeLinks = $value['allow_relative_links'];
+            unset($value['allow_relative_links']);
         }
 
-        if (array_key_exists('allowed_media_schemes', $config)) {
+        if (array_key_exists('allowed_media_schemes', $value)) {
             $this->_usedProperties['allowedMediaSchemes'] = true;
-            $this->allowedMediaSchemes = $config['allowed_media_schemes'];
-            unset($config['allowed_media_schemes']);
+            $this->allowedMediaSchemes = $value['allowed_media_schemes'];
+            unset($value['allowed_media_schemes']);
         }
 
-        if (array_key_exists('allowed_media_hosts', $config)) {
+        if (array_key_exists('allowed_media_hosts', $value)) {
             $this->_usedProperties['allowedMediaHosts'] = true;
-            $this->allowedMediaHosts = $config['allowed_media_hosts'];
-            unset($config['allowed_media_hosts']);
+            $this->allowedMediaHosts = $value['allowed_media_hosts'];
+            unset($value['allowed_media_hosts']);
         }
 
-        if (array_key_exists('allow_relative_medias', $config)) {
+        if (array_key_exists('allow_relative_medias', $value)) {
             $this->_usedProperties['allowRelativeMedias'] = true;
-            $this->allowRelativeMedias = $config['allow_relative_medias'];
-            unset($config['allow_relative_medias']);
+            $this->allowRelativeMedias = $value['allow_relative_medias'];
+            unset($value['allow_relative_medias']);
         }
 
-        if (array_key_exists('with_attribute_sanitizers', $config)) {
+        if (array_key_exists('with_attribute_sanitizers', $value)) {
             $this->_usedProperties['withAttributeSanitizers'] = true;
-            $this->withAttributeSanitizers = $config['with_attribute_sanitizers'];
-            unset($config['with_attribute_sanitizers']);
+            $this->withAttributeSanitizers = $value['with_attribute_sanitizers'];
+            unset($value['with_attribute_sanitizers']);
         }
 
-        if (array_key_exists('without_attribute_sanitizers', $config)) {
+        if (array_key_exists('without_attribute_sanitizers', $value)) {
             $this->_usedProperties['withoutAttributeSanitizers'] = true;
-            $this->withoutAttributeSanitizers = $config['without_attribute_sanitizers'];
-            unset($config['without_attribute_sanitizers']);
+            $this->withoutAttributeSanitizers = $value['without_attribute_sanitizers'];
+            unset($value['without_attribute_sanitizers']);
         }
 
-        if (array_key_exists('max_input_length', $config)) {
+        if (array_key_exists('max_input_length', $value)) {
             $this->_usedProperties['maxInputLength'] = true;
-            $this->maxInputLength = $config['max_input_length'];
-            unset($config['max_input_length']);
+            $this->maxInputLength = $value['max_input_length'];
+            unset($value['max_input_length']);
         }
 
-        if ($config) {
-            throw new InvalidConfigurationException(sprintf('The following keys are not supported by "%s": ', __CLASS__).implode(', ', array_keys($config)));
+        if ([] !== $value) {
+            throw new InvalidConfigurationException(sprintf('The following keys are not supported by "%s": ', __CLASS__).implode(', ', array_keys($value)));
         }
     }
 

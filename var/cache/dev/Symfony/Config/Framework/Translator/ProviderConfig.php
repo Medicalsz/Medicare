@@ -54,28 +54,28 @@ class ProviderConfig
         return $this;
     }
 
-    public function __construct(array $config = [])
+    public function __construct(array $value = [])
     {
-        if (array_key_exists('dsn', $config)) {
+        if (array_key_exists('dsn', $value)) {
             $this->_usedProperties['dsn'] = true;
-            $this->dsn = $config['dsn'];
-            unset($config['dsn']);
+            $this->dsn = $value['dsn'];
+            unset($value['dsn']);
         }
 
-        if (array_key_exists('domains', $config)) {
+        if (array_key_exists('domains', $value)) {
             $this->_usedProperties['domains'] = true;
-            $this->domains = $config['domains'];
-            unset($config['domains']);
+            $this->domains = $value['domains'];
+            unset($value['domains']);
         }
 
-        if (array_key_exists('locales', $config)) {
+        if (array_key_exists('locales', $value)) {
             $this->_usedProperties['locales'] = true;
-            $this->locales = $config['locales'];
-            unset($config['locales']);
+            $this->locales = $value['locales'];
+            unset($value['locales']);
         }
 
-        if ($config) {
-            throw new InvalidConfigurationException(sprintf('The following keys are not supported by "%s": ', __CLASS__).implode(', ', array_keys($config)));
+        if ([] !== $value) {
+            throw new InvalidConfigurationException(sprintf('The following keys are not supported by "%s": ', __CLASS__).implode(', ', array_keys($value)));
         }
     }
 

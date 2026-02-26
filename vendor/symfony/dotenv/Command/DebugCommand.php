@@ -15,7 +15,6 @@ use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Completion\CompletionInput;
 use Symfony\Component\Console\Completion\CompletionSuggestions;
-use Symfony\Component\Console\Formatter\OutputFormatter;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -81,35 +80,21 @@ EOT
             return 1;
         }
 
-        if (!$filePath = $_SERVER['SYMFONY_DOTENV_PATH'] ?? null) {
-            $dotenvPath = $this->projectDirectory;
+        $envFiles = $this->getEnvFiles();
+        $availableFiles = array_filter($envFiles, fn (string $file) => is_file($this->getFilePath($file)));
 
-            if (is_file($composerFile = $this->projectDirectory.'/composer.json')) {
-                $runtimeConfig = json_decode(file_get_contents($composerFile), true)['extra']['runtime'] ?? [];
-
-                if (isset($runtimeConfig['dotenv_path'])) {
-                    $dotenvPath = $this->projectDirectory.'/'.$runtimeConfig['dotenv_path'];
-                }
-            }
-
-            $filePath = $dotenvPath.'/.env';
+        if (\in_array('.env.local.php', $availableFiles, true)) {
+            $io->warning('Due to existing dump file (.env.local.php) all other dotenv files are skipped.');
         }
 
-        $envFiles = $this->getEnvFiles($filePath);
-        $availableFiles = array_filter($envFiles, 'is_file');
-
-        if (\in_array(\sprintf('%s.local.php', $filePath), $availableFiles, true)) {
-            $io->warning(\sprintf('Due to existing dump file (%s.local.php) all other dotenv files are skipped.', $this->getRelativeName($filePath)));
-        }
-
-        if (is_file($filePath) && is_file(\sprintf('%s.dist', $filePath))) {
-            $io->warning(\sprintf('The file %s.dist gets skipped due to the existence of %1$s.', $this->getRelativeName($filePath)));
+        if (is_file($this->getFilePath('.env')) && is_file($this->getFilePath('.env.dist'))) {
+            $io->warning('The file .env.dist gets skipped due to the existence of .env.');
         }
 
         $io->section('Scanned Files (in descending priority)');
-        $io->listing(array_map(fn (string $envFile) => \in_array($envFile, $availableFiles, true)
-            ? \sprintf('<fg=green>✓</> %s', $this->getRelativeName($envFile))
-            : \sprintf('<fg=red>⨯</> %s', $this->getRelativeName($envFile)), $envFiles));
+        $io->listing(array_map(static fn (string $envFile) => \in_array($envFile, $availableFiles, true)
+            ? sprintf('<fg=green>✓</> %s', $envFile)
+            : sprintf('<fg=red>⨯</> %s', $envFile), $envFiles));
 
         $nameFilter = $input->getArgument('filter');
         $variables = $this->getVariables($availableFiles, $nameFilter);
@@ -118,13 +103,13 @@ EOT
 
         if ($variables || null === $nameFilter) {
             $io->table(
-                array_merge(['Variable', 'Value'], array_map($this->getRelativeName(...), $availableFiles)),
-                $variables
+                array_merge(['Variable', 'Value'], $availableFiles),
+                $this->getVariables($availableFiles, $nameFilter)
             );
 
             $io->comment('Note that values might be different between web and CLI.');
         } else {
-            $io->warning(\sprintf('No variables match the given filter "%s".', $nameFilter));
+            $io->warning(sprintf('No variables match the given filter "%s".', $nameFilter));
         }
 
         return 0;
@@ -139,84 +124,69 @@ EOT
 
     private function getVariables(array $envFiles, ?string $nameFilter): array
     {
-        $variables = [];
+        $vars = $this->getAvailableVars();
+
+        $output = [];
         $fileValues = [];
-        $dotenvVars = array_flip(explode(',', $_SERVER['SYMFONY_DOTENV_VARS'] ?? ''));
-
-        foreach ($envFiles as $envFile) {
-            $fileValues[$envFile] = $this->loadValues($envFile);
-            $variables += $fileValues[$envFile];
-        }
-
-        foreach ($variables as $var => $varDetails) {
+        foreach ($vars as $var) {
             if (null !== $nameFilter && 0 !== stripos($var, $nameFilter)) {
-                unset($variables[$var]);
                 continue;
             }
 
-            $realValue = $_SERVER[$var] ?? '';
-            $varDetails = [$var, '<fg=green>'.OutputFormatter::escape($realValue).'</>'];
-            $varSeen = !isset($dotenvVars[$var]);
-
+            $realValue = $_SERVER[$var];
+            $varDetails = [$var, $realValue];
             foreach ($envFiles as $envFile) {
-                if (null === $value = $fileValues[$envFile][$var] ?? null) {
-                    $varDetails[] = '<fg=yellow>n/a</>';
-                    continue;
-                }
+                $values = $fileValues[$envFile] ??= $this->loadValues($envFile);
 
-                $shortenedValue = OutputFormatter::escape($this->getHelper('formatter')->truncate($value, 30));
-                $varDetails[] = $value === $realValue && !$varSeen ? '<fg=green>'.$shortenedValue.'</>' : $shortenedValue;
-                $varSeen = $varSeen || $value === $realValue;
+                $varString = $values[$var] ?? '<fg=yellow>n/a</>';
+                $shortenedVar = $this->getHelper('formatter')->truncate($varString, 30);
+                $varDetails[] = $varString === $realValue ? '<fg=green>'.$shortenedVar.'</>' : $shortenedVar;
             }
 
-            $variables[$var] = $varDetails;
+            $output[] = $varDetails;
         }
 
-        ksort($variables);
-
-        return $variables;
+        return $output;
     }
 
     private function getAvailableVars(): array
     {
-        $filePath = $_SERVER['SYMFONY_DOTENV_PATH'] ?? $this->projectDirectory.\DIRECTORY_SEPARATOR.'.env';
-        $envFiles = $this->getEnvFiles($filePath);
+        $vars = explode(',', $_SERVER['SYMFONY_DOTENV_VARS'] ?? '');
+        sort($vars);
 
-        return array_keys($this->getVariables(array_filter($envFiles, 'is_file'), null));
+        return $vars;
     }
 
-    private function getEnvFiles(string $filePath): array
+    private function getEnvFiles(): array
     {
         $files = [
-            \sprintf('%s.local.php', $filePath),
-            \sprintf('%s.%s.local', $filePath, $this->kernelEnvironment),
-            \sprintf('%s.%s', $filePath, $this->kernelEnvironment),
+            '.env.local.php',
+            sprintf('.env.%s.local', $this->kernelEnvironment),
+            sprintf('.env.%s', $this->kernelEnvironment),
         ];
 
         if ('test' !== $this->kernelEnvironment) {
-            $files[] = \sprintf('%s.local', $filePath);
+            $files[] = '.env.local';
         }
 
-        if (!is_file($filePath) && is_file(\sprintf('%s.dist', $filePath))) {
-            $files[] = \sprintf('%s.dist', $filePath);
+        if (!is_file($this->getFilePath('.env')) && is_file($this->getFilePath('.env.dist'))) {
+            $files[] = '.env.dist';
         } else {
-            $files[] = $filePath;
+            $files[] = '.env';
         }
 
         return $files;
     }
 
-    private function getRelativeName(string $filePath): string
+    private function getFilePath(string $file): string
     {
-        if (str_starts_with($filePath, $this->projectDirectory)) {
-            return substr($filePath, \strlen($this->projectDirectory) + 1);
-        }
-
-        return basename($filePath);
+        return $this->projectDirectory.\DIRECTORY_SEPARATOR.$file;
     }
 
-    private function loadValues(string $filePath): array
+    private function loadValues(string $file): array
     {
+        $filePath = $this->getFilePath($file);
+
         if (str_ends_with($filePath, '.php')) {
             return include $filePath;
         }

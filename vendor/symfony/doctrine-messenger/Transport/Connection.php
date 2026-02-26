@@ -13,25 +13,22 @@ namespace Symfony\Component\Messenger\Bridge\Doctrine\Transport;
 
 use Doctrine\DBAL\Abstraction\Result as AbstractionResult;
 use Doctrine\DBAL\Connection as DBALConnection;
+use Doctrine\DBAL\Driver\Exception as DriverException;
 use Doctrine\DBAL\Driver\ResultStatement;
 use Doctrine\DBAL\Exception as DBALException;
 use Doctrine\DBAL\Exception\TableNotFoundException;
 use Doctrine\DBAL\LockMode;
+use Doctrine\DBAL\Platforms\MySQLPlatform;
 use Doctrine\DBAL\Platforms\OraclePlatform;
-use Doctrine\DBAL\Platforms\PostgreSQLPlatform;
-use Doctrine\DBAL\Query\ForUpdate\ConflictResolutionMode;
 use Doctrine\DBAL\Query\QueryBuilder;
 use Doctrine\DBAL\Result;
-use Doctrine\DBAL\Schema\AbstractAsset;
 use Doctrine\DBAL\Schema\AbstractSchemaManager;
 use Doctrine\DBAL\Schema\Comparator;
-use Doctrine\DBAL\Schema\ComparatorConfig;
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\DBAL\Schema\SchemaDiff;
 use Doctrine\DBAL\Schema\Synchronizer\SchemaSynchronizer;
 use Doctrine\DBAL\Schema\Table;
 use Doctrine\DBAL\Types\Types;
-use Satag\DoctrineFirebirdDriver\Platforms\FirebirdPlatform;
 use Symfony\Component\Messenger\Exception\InvalidArgumentException;
 use Symfony\Component\Messenger\Exception\TransportException;
 use Symfony\Contracts\Service\ResetInterface;
@@ -53,8 +50,6 @@ class Connection implements ResetInterface
         'auto_setup' => true,
     ];
 
-    private const ORACLE_SEQUENCES_SUFFIX = '_seq';
-
     /**
      * Configuration of the connection.
      *
@@ -73,7 +68,7 @@ class Connection implements ResetInterface
     private ?SchemaSynchronizer $schemaSynchronizer;
     private bool $autoSetup;
 
-    public function __construct(array $configuration, DBALConnection $driverConnection, ?SchemaSynchronizer $schemaSynchronizer = null)
+    public function __construct(array $configuration, DBALConnection $driverConnection, SchemaSynchronizer $schemaSynchronizer = null)
     {
         $this->configuration = array_replace_recursive(static::DEFAULT_OPTIONS, $configuration);
         $this->driverConnection = $driverConnection;
@@ -93,16 +88,16 @@ class Connection implements ResetInterface
 
     public static function buildConfiguration(#[\SensitiveParameter] string $dsn, array $options = []): array
     {
-        if (false === $params = parse_url($dsn)) {
+        if (false === $components = parse_url($dsn)) {
             throw new InvalidArgumentException('The given Doctrine Messenger DSN is invalid.');
         }
 
         $query = [];
-        if (isset($params['query'])) {
-            parse_str($params['query'], $query);
+        if (isset($components['query'])) {
+            parse_str($components['query'], $query);
         }
 
-        $configuration = ['connection' => $params['host']];
+        $configuration = ['connection' => $components['host']];
         $configuration += $query + $options + static::DEFAULT_OPTIONS;
 
         $configuration['auto_setup'] = filter_var($configuration['auto_setup'], \FILTER_VALIDATE_BOOL);
@@ -110,13 +105,13 @@ class Connection implements ResetInterface
         // check for extra keys in options
         $optionsExtraKeys = array_diff(array_keys($options), array_keys(static::DEFAULT_OPTIONS));
         if (0 < \count($optionsExtraKeys)) {
-            throw new InvalidArgumentException(\sprintf('Unknown option found: [%s]. Allowed options are [%s].', implode(', ', $optionsExtraKeys), implode(', ', array_keys(static::DEFAULT_OPTIONS))));
+            throw new InvalidArgumentException(sprintf('Unknown option found: [%s]. Allowed options are [%s].', implode(', ', $optionsExtraKeys), implode(', ', array_keys(static::DEFAULT_OPTIONS))));
         }
 
         // check for extra keys in options
         $queryExtraKeys = array_diff(array_keys($query), array_keys(static::DEFAULT_OPTIONS));
         if (0 < \count($queryExtraKeys)) {
-            throw new InvalidArgumentException(\sprintf('Unknown option found in DSN: [%s]. Allowed options are [%s].', implode(', ', $queryExtraKeys), implode(', ', array_keys(static::DEFAULT_OPTIONS))));
+            throw new InvalidArgumentException(sprintf('Unknown option found in DSN: [%s]. Allowed options are [%s].', implode(', ', $queryExtraKeys), implode(', ', array_keys(static::DEFAULT_OPTIONS))));
         }
 
         return $configuration;
@@ -132,7 +127,7 @@ class Connection implements ResetInterface
     public function send(string $body, array $headers, int $delay = 0): string
     {
         $now = new \DateTimeImmutable('UTC');
-        $availableAt = $now->modify(\sprintf('%+d seconds', $delay / 1000));
+        $availableAt = $now->modify(sprintf('+%d seconds', $delay / 1000));
 
         $queryBuilder = $this->driverConnection->createQueryBuilder()
             ->insert($this->configuration['table_name'])
@@ -144,7 +139,7 @@ class Connection implements ResetInterface
                 'available_at' => '?',
             ]);
 
-        return $this->executeInsert($queryBuilder->getSQL(), [
+        $this->executeStatement($queryBuilder->getSQL(), [
             $body,
             json_encode($headers),
             $this->configuration['queue_name'],
@@ -157,10 +152,20 @@ class Connection implements ResetInterface
             Types::DATETIME_IMMUTABLE,
             Types::DATETIME_IMMUTABLE,
         ]);
+
+        return $this->driverConnection->lastInsertId();
     }
 
     public function get(): ?array
     {
+        if ($this->driverConnection->getDatabasePlatform() instanceof MySQLPlatform) {
+            try {
+                $this->driverConnection->delete($this->configuration['table_name'], ['delivered_at' => '9999-12-31 23:59:59']);
+            } catch (DriverException $e) {
+                // Ignore the exception
+            }
+        }
+
         get:
         $this->driverConnection->beginTransaction();
         try {
@@ -179,31 +184,24 @@ class Connection implements ResetInterface
             if ($this->driverConnection->getDatabasePlatform() instanceof OraclePlatform) {
                 $query = $this->createQueryBuilder('w')
                     ->where('w.id IN ('.str_replace('SELECT a.* FROM', 'SELECT a.id FROM', $sql).')')
-                    ->setParameters($query->getParameters(), $query->getParameterTypes());
+                    ->setParameters($query->getParameters());
 
                 if (method_exists(QueryBuilder::class, 'forUpdate')) {
-                    $query->forUpdate(ConflictResolutionMode::SKIP_LOCKED);
+                    $query->forUpdate();
                 }
 
                 $sql = $query->getSQL();
             } elseif (method_exists(QueryBuilder::class, 'forUpdate')) {
-                $query->forUpdate(ConflictResolutionMode::SKIP_LOCKED);
+                $query->forUpdate();
                 try {
                     $sql = $query->getSQL();
                 } catch (DBALException $e) {
-                    // If SKIP_LOCKED is not supported, fallback to without SKIP_LOCKED
-                    $query->forUpdate();
-
-                    try {
-                        $sql = $query->getSQL();
-                    } catch (DBALException $e) {
-                    }
                 }
             } elseif (preg_match('/FROM (.+) WHERE/', (string) $sql, $matches)) {
                 $fromClause = $matches[1];
                 $sql = str_replace(
-                    \sprintf('FROM %s WHERE', $fromClause),
-                    \sprintf('FROM %s WHERE', $this->driverConnection->getDatabasePlatform()->appendLockHint($fromClause, LockMode::PESSIMISTIC_WRITE)),
+                    sprintf('FROM %s WHERE', $fromClause),
+                    sprintf('FROM %s WHERE', $this->driverConnection->getDatabasePlatform()->appendLockHint($fromClause, LockMode::PESSIMISTIC_WRITE)),
                     $sql
                 );
             }
@@ -262,6 +260,10 @@ class Connection implements ResetInterface
     public function ack(string $id): bool
     {
         try {
+            if ($this->driverConnection->getDatabasePlatform() instanceof MySQLPlatform) {
+                return $this->driverConnection->update($this->configuration['table_name'], ['delivered_at' => '9999-12-31 23:59:59'], ['id' => $id]) > 0;
+            }
+
             return $this->driverConnection->delete($this->configuration['table_name'], ['id' => $id]) > 0;
         } catch (DBALException $exception) {
             throw new TransportException($exception->getMessage(), 0, $exception);
@@ -271,6 +273,10 @@ class Connection implements ResetInterface
     public function reject(string $id): bool
     {
         try {
+            if ($this->driverConnection->getDatabasePlatform() instanceof MySQLPlatform) {
+                return $this->driverConnection->update($this->configuration['table_name'], ['delivered_at' => '9999-12-31 23:59:59'], ['id' => $id]) > 0;
+            }
+
             return $this->driverConnection->delete($this->configuration['table_name'], ['id' => $id]) > 0;
         } catch (DBALException $exception) {
             throw new TransportException($exception->getMessage(), 0, $exception);
@@ -281,17 +287,7 @@ class Connection implements ResetInterface
     {
         $configuration = $this->driverConnection->getConfiguration();
         $assetFilter = $configuration->getSchemaAssetsFilter();
-        $configuration->setSchemaAssetsFilter(function ($tableName) {
-            if ($tableName instanceof AbstractAsset) {
-                $tableName = $tableName->getName();
-            }
-
-            if (!\is_string($tableName)) {
-                throw new \TypeError(\sprintf('The table name must be an instance of "%s" or a string ("%s" given).', AbstractAsset::class, get_debug_type($tableName)));
-            }
-
-            return $tableName === $this->configuration['table_name'];
-        });
+        $configuration->setSchemaAssetsFilter(static fn () => true);
         $this->updateSchema();
         $configuration->setSchemaAssetsFilter($assetFilter);
         $this->autoSetup = false;
@@ -308,7 +304,7 @@ class Connection implements ResetInterface
         return $stmt instanceof Result ? $stmt->fetchOne() : $stmt->fetchColumn();
     }
 
-    public function findAll(?int $limit = null): array
+    public function findAll(int $limit = null): array
     {
         $queryBuilder = $this->createAvailableMessagesQueryBuilder();
 
@@ -360,7 +356,7 @@ class Connection implements ResetInterface
     private function createAvailableMessagesQueryBuilder(): QueryBuilder
     {
         $now = new \DateTimeImmutable('UTC');
-        $redeliverLimit = $now->modify(\sprintf('-%d seconds', $this->configuration['redeliver_timeout']));
+        $redeliverLimit = $now->modify(sprintf('-%d seconds', $this->configuration['redeliver_timeout']));
 
         return $this->createQueryBuilder()
             ->where('m.queue_name = ?')
@@ -384,9 +380,7 @@ class Connection implements ResetInterface
 
         $alias .= '.';
 
-        if (!$this->driverConnection->getDatabasePlatform() instanceof FirebirdPlatform
-            && !$this->driverConnection->getDatabasePlatform() instanceof OraclePlatform
-        ) {
+        if (!$this->driverConnection->getDatabasePlatform() instanceof OraclePlatform) {
             return $queryBuilder->select($alias.'*');
         }
 
@@ -405,12 +399,14 @@ class Connection implements ResetInterface
         try {
             $stmt = $this->driverConnection->executeQuery($sql, $parameters, $types);
         } catch (TableNotFoundException $e) {
-            if (!$this->autoSetup || $this->driverConnection->isTransactionActive()) {
+            if ($this->driverConnection->isTransactionActive()) {
                 throw $e;
             }
 
-            $this->setup();
-
+            // create table
+            if ($this->autoSetup) {
+                $this->setup();
+            }
             $stmt = $this->driverConnection->executeQuery($sql, $parameters, $types);
         }
 
@@ -422,66 +418,18 @@ class Connection implements ResetInterface
         try {
             $stmt = $this->driverConnection->executeStatement($sql, $parameters, $types);
         } catch (TableNotFoundException $e) {
-            if (!$this->autoSetup || $this->driverConnection->isTransactionActive()) {
+            if ($this->driverConnection->isTransactionActive()) {
                 throw $e;
             }
 
-            $this->setup();
-
+            // create table
+            if ($this->autoSetup) {
+                $this->setup();
+            }
             $stmt = $this->driverConnection->executeStatement($sql, $parameters, $types);
         }
 
         return $stmt;
-    }
-
-    private function executeInsert(string $sql, array $parameters = [], array $types = []): string
-    {
-        // Use PostgreSQL RETURNING clause instead of lastInsertId() to get the
-        // inserted id in one operation instead of two.
-        if ($this->driverConnection->getDatabasePlatform() instanceof PostgreSQLPlatform) {
-            $sql .= ' RETURNING id';
-        }
-
-        insert:
-        $this->driverConnection->beginTransaction();
-
-        try {
-            if ($this->driverConnection->getDatabasePlatform() instanceof PostgreSQLPlatform) {
-                if (!$id = $this->driverConnection->fetchFirstColumn($sql, $parameters, $types)[0] ?? null) {
-                    throw new TransportException('no id was returned by PostgreSQL from RETURNING clause.');
-                }
-
-                $this->driverConnection->executeStatement('SELECT pg_notify(?, ?)', [$this->configuration['table_name'], $this->configuration['queue_name']]);
-            } elseif ($this->driverConnection->getDatabasePlatform() instanceof OraclePlatform) {
-                $sequenceName = $this->configuration['table_name'].self::ORACLE_SEQUENCES_SUFFIX;
-
-                $this->driverConnection->executeStatement($sql, $parameters, $types);
-
-                if (!$id = (int) $this->driverConnection->fetchOne('SELECT '.$sequenceName.'.CURRVAL FROM DUAL')) {
-                    throw new TransportException('no id was returned by Oracle from sequence: '.$sequenceName);
-                }
-            } else {
-                $this->driverConnection->executeStatement($sql, $parameters, $types);
-
-                if (!$id = $this->driverConnection->lastInsertId()) {
-                    throw new TransportException('lastInsertId() returned false, no id was returned.');
-                }
-            }
-
-            $this->driverConnection->commit();
-        } catch (\Throwable $e) {
-            $this->driverConnection->rollBack();
-
-            // handle setup after transaction is no longer open
-            if ($this->autoSetup && $e instanceof TableNotFoundException) {
-                $this->setup();
-                goto insert;
-            }
-
-            throw $e;
-        }
-
-        return $id;
     }
 
     private function getSchema(): Schema
@@ -497,7 +445,7 @@ class Connection implements ResetInterface
         $table = $schema->createTable($this->configuration['table_name']);
         // add an internal option to mark that we created this & the non-namespaced table name
         $table->addOption(self::TABLE_OPTION_NAME, $this->configuration['table_name']);
-        $idColumn = $table->addColumn('id', Types::BIGINT)
+        $table->addColumn('id', Types::BIGINT)
             ->setAutoincrement(true)
             ->setNotnull(true);
         $table->addColumn('body', Types::TEXT)
@@ -514,14 +462,9 @@ class Connection implements ResetInterface
         $table->addColumn('delivered_at', Types::DATETIME_IMMUTABLE)
             ->setNotnull(false);
         $table->setPrimaryKey(['id']);
-        $table->addIndex(['queue_name', 'available_at', 'delivered_at', 'id']);
-
-        // We need to create a sequence for Oracle and set the id column to get the correct nextval
-        if ($this->driverConnection->getDatabasePlatform() instanceof OraclePlatform) {
-            $idColumn->setDefault($this->configuration['table_name'].self::ORACLE_SEQUENCES_SUFFIX.'.nextval');
-
-            $schema->createSequence($this->configuration['table_name'].self::ORACLE_SEQUENCES_SUFFIX);
-        }
+        $table->addIndex(['queue_name']);
+        $table->addIndex(['available_at']);
+        $table->addIndex(['delivered_at']);
     }
 
     private function decodeEnvelopeHeaders(array $doctrineEnvelope): array
@@ -588,10 +531,6 @@ class Connection implements ResetInterface
 
     private function createComparator(AbstractSchemaManager $schemaManager): Comparator
     {
-        if (class_exists(ComparatorConfig::class)) {
-            return $schemaManager->createComparator((new ComparatorConfig())->withReportModifiedIndexes(false));
-        }
-
         return method_exists($schemaManager, 'createComparator')
             ? $schemaManager->createComparator()
             : new Comparator();

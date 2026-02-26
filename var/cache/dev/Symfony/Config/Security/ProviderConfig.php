@@ -83,40 +83,40 @@ class ProviderConfig
         return $this->ldap;
     }
 
-    public function __construct(array $config = [])
+    public function __construct(array $value = [])
     {
-        if (array_key_exists('id', $config)) {
+        if (array_key_exists('id', $value)) {
             $this->_usedProperties['id'] = true;
-            $this->id = $config['id'];
-            unset($config['id']);
+            $this->id = $value['id'];
+            unset($value['id']);
         }
 
-        if (array_key_exists('chain', $config)) {
+        if (array_key_exists('chain', $value)) {
             $this->_usedProperties['chain'] = true;
-            $this->chain = new \Symfony\Config\Security\ProviderConfig\ChainConfig($config['chain']);
-            unset($config['chain']);
+            $this->chain = new \Symfony\Config\Security\ProviderConfig\ChainConfig($value['chain']);
+            unset($value['chain']);
         }
 
-        if (array_key_exists('entity', $config)) {
+        if (array_key_exists('entity', $value)) {
             $this->_usedProperties['entity'] = true;
-            $this->entity = new \Symfony\Config\Security\ProviderConfig\EntityConfig($config['entity']);
-            unset($config['entity']);
+            $this->entity = new \Symfony\Config\Security\ProviderConfig\EntityConfig($value['entity']);
+            unset($value['entity']);
         }
 
-        if (array_key_exists('memory', $config)) {
+        if (array_key_exists('memory', $value)) {
             $this->_usedProperties['memory'] = true;
-            $this->memory = new \Symfony\Config\Security\ProviderConfig\MemoryConfig($config['memory']);
-            unset($config['memory']);
+            $this->memory = new \Symfony\Config\Security\ProviderConfig\MemoryConfig($value['memory']);
+            unset($value['memory']);
         }
 
-        if (array_key_exists('ldap', $config)) {
+        if (array_key_exists('ldap', $value)) {
             $this->_usedProperties['ldap'] = true;
-            $this->ldap = new \Symfony\Config\Security\ProviderConfig\LdapConfig($config['ldap']);
-            unset($config['ldap']);
+            $this->ldap = new \Symfony\Config\Security\ProviderConfig\LdapConfig($value['ldap']);
+            unset($value['ldap']);
         }
 
-        if ($config) {
-            throw new InvalidConfigurationException(sprintf('The following keys are not supported by "%s": ', __CLASS__).implode(', ', array_keys($config)));
+        if ([] !== $value) {
+            throw new InvalidConfigurationException(sprintf('The following keys are not supported by "%s": ', __CLASS__).implode(', ', array_keys($value)));
         }
     }
 

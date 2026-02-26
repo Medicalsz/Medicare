@@ -67,19 +67,19 @@ class Length extends Constraint
      * @param self::COUNT_*|null $countUnit
      */
     public function __construct(
-        int|array|null $exactly = null,
-        ?int $min = null,
-        ?int $max = null,
-        ?string $charset = null,
-        ?callable $normalizer = null,
-        ?string $countUnit = null,
-        ?string $exactMessage = null,
-        ?string $minMessage = null,
-        ?string $maxMessage = null,
-        ?string $charsetMessage = null,
-        ?array $groups = null,
+        int|array $exactly = null,
+        int $min = null,
+        int $max = null,
+        string $charset = null,
+        callable $normalizer = null,
+        string $countUnit = null,
+        string $exactMessage = null,
+        string $minMessage = null,
+        string $maxMessage = null,
+        string $charsetMessage = null,
+        array $groups = null,
         mixed $payload = null,
-        array $options = [],
+        array $options = []
     ) {
         if (\is_array($exactly)) {
             $options = array_merge($exactly, $options);
@@ -108,15 +108,15 @@ class Length extends Constraint
         $this->charsetMessage = $charsetMessage ?? $this->charsetMessage;
 
         if (null === $this->min && null === $this->max) {
-            throw new MissingOptionsException(\sprintf('Either option "min" or "max" must be given for constraint "%s".', __CLASS__), ['min', 'max']);
+            throw new MissingOptionsException(sprintf('Either option "min" or "max" must be given for constraint "%s".', __CLASS__), ['min', 'max']);
         }
 
         if (null !== $this->normalizer && !\is_callable($this->normalizer)) {
-            throw new InvalidArgumentException(\sprintf('The "normalizer" option must be a valid callable ("%s" given).', get_debug_type($this->normalizer)));
+            throw new InvalidArgumentException(sprintf('The "normalizer" option must be a valid callable ("%s" given).', get_debug_type($this->normalizer)));
         }
 
         if (!\in_array($this->countUnit, self::VALID_COUNT_UNITS)) {
-            throw new InvalidArgumentException(\sprintf('The "countUnit" option must be one of the "%s"::COUNT_* constants ("%s" given).', __CLASS__, $this->countUnit));
+            throw new InvalidArgumentException(sprintf('The "countUnit" option must be one of the "%s"::COUNT_* constants ("%s" given).', __CLASS__, $this->countUnit));
         }
     }
 }

@@ -11,18 +11,22 @@ class ParamTagValueNode implements PhpDocTagValueNode
 
 	use NodeAttributes;
 
-	public TypeNode $type;
+	/** @var TypeNode */
+	public $type;
 
-	public bool $isReference;
+	/** @var bool */
+	public $isReference;
 
-	public bool $isVariadic;
+	/** @var bool */
+	public $isVariadic;
 
-	public string $parameterName;
+	/** @var string */
+	public $parameterName;
 
 	/** @var string (may be empty) */
-	public string $description;
+	public $description;
 
-	public function __construct(TypeNode $type, bool $isVariadic, string $parameterName, string $description, bool $isReference)
+	public function __construct(TypeNode $type, bool $isVariadic, string $parameterName, string $description, bool $isReference = false)
 	{
 		$this->type = $type;
 		$this->isReference = $isReference;
@@ -31,25 +35,12 @@ class ParamTagValueNode implements PhpDocTagValueNode
 		$this->description = $description;
 	}
 
+
 	public function __toString(): string
 	{
 		$reference = $this->isReference ? '&' : '';
 		$variadic = $this->isVariadic ? '...' : '';
 		return trim("{$this->type} {$reference}{$variadic}{$this->parameterName} {$this->description}");
-	}
-
-	/**
-	 * @param array<string, mixed> $properties
-	 */
-	public static function __set_state(array $properties): self
-	{
-		$instance = new self($properties['type'], $properties['isVariadic'], $properties['parameterName'], $properties['description'], $properties['isReference']);
-		if (isset($properties['attributes'])) {
-			foreach ($properties['attributes'] as $key => $value) {
-				$instance->setAttribute($key, $value);
-			}
-		}
-		return $instance;
 	}
 
 }

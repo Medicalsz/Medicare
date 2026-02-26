@@ -185,7 +185,7 @@ class AssetMapperConfig
     /**
      * @default null
      * @param ParamConfigurator|mixed $value
-     * @deprecated Since symfony/framework-bundle 6.4: Option "provider" at "framework.asset_mapper" is deprecated and does nothing. Remove it.
+     * @deprecated Option "provider" at "asset_mapper" is deprecated and does nothing. Remove it.
      * @return $this
      */
     public function provider($value): static
@@ -196,88 +196,88 @@ class AssetMapperConfig
         return $this;
     }
 
-    public function __construct(array $config = [])
+    public function __construct(array $value = [])
     {
-        if (array_key_exists('enabled', $config)) {
+        if (array_key_exists('enabled', $value)) {
             $this->_usedProperties['enabled'] = true;
-            $this->enabled = $config['enabled'];
-            unset($config['enabled']);
+            $this->enabled = $value['enabled'];
+            unset($value['enabled']);
         }
 
-        if (array_key_exists('paths', $config)) {
+        if (array_key_exists('paths', $value)) {
             $this->_usedProperties['paths'] = true;
-            $this->paths = $config['paths'];
-            unset($config['paths']);
+            $this->paths = $value['paths'];
+            unset($value['paths']);
         }
 
-        if (array_key_exists('excluded_patterns', $config)) {
+        if (array_key_exists('excluded_patterns', $value)) {
             $this->_usedProperties['excludedPatterns'] = true;
-            $this->excludedPatterns = $config['excluded_patterns'];
-            unset($config['excluded_patterns']);
+            $this->excludedPatterns = $value['excluded_patterns'];
+            unset($value['excluded_patterns']);
         }
 
-        if (array_key_exists('exclude_dotfiles', $config)) {
+        if (array_key_exists('exclude_dotfiles', $value)) {
             $this->_usedProperties['excludeDotfiles'] = true;
-            $this->excludeDotfiles = $config['exclude_dotfiles'];
-            unset($config['exclude_dotfiles']);
+            $this->excludeDotfiles = $value['exclude_dotfiles'];
+            unset($value['exclude_dotfiles']);
         }
 
-        if (array_key_exists('server', $config)) {
+        if (array_key_exists('server', $value)) {
             $this->_usedProperties['server'] = true;
-            $this->server = $config['server'];
-            unset($config['server']);
+            $this->server = $value['server'];
+            unset($value['server']);
         }
 
-        if (array_key_exists('public_prefix', $config)) {
+        if (array_key_exists('public_prefix', $value)) {
             $this->_usedProperties['publicPrefix'] = true;
-            $this->publicPrefix = $config['public_prefix'];
-            unset($config['public_prefix']);
+            $this->publicPrefix = $value['public_prefix'];
+            unset($value['public_prefix']);
         }
 
-        if (array_key_exists('missing_import_mode', $config)) {
+        if (array_key_exists('missing_import_mode', $value)) {
             $this->_usedProperties['missingImportMode'] = true;
-            $this->missingImportMode = $config['missing_import_mode'];
-            unset($config['missing_import_mode']);
+            $this->missingImportMode = $value['missing_import_mode'];
+            unset($value['missing_import_mode']);
         }
 
-        if (array_key_exists('extensions', $config)) {
+        if (array_key_exists('extensions', $value)) {
             $this->_usedProperties['extensions'] = true;
-            $this->extensions = $config['extensions'];
-            unset($config['extensions']);
+            $this->extensions = $value['extensions'];
+            unset($value['extensions']);
         }
 
-        if (array_key_exists('importmap_path', $config)) {
+        if (array_key_exists('importmap_path', $value)) {
             $this->_usedProperties['importmapPath'] = true;
-            $this->importmapPath = $config['importmap_path'];
-            unset($config['importmap_path']);
+            $this->importmapPath = $value['importmap_path'];
+            unset($value['importmap_path']);
         }
 
-        if (array_key_exists('importmap_polyfill', $config)) {
+        if (array_key_exists('importmap_polyfill', $value)) {
             $this->_usedProperties['importmapPolyfill'] = true;
-            $this->importmapPolyfill = $config['importmap_polyfill'];
-            unset($config['importmap_polyfill']);
+            $this->importmapPolyfill = $value['importmap_polyfill'];
+            unset($value['importmap_polyfill']);
         }
 
-        if (array_key_exists('importmap_script_attributes', $config)) {
+        if (array_key_exists('importmap_script_attributes', $value)) {
             $this->_usedProperties['importmapScriptAttributes'] = true;
-            $this->importmapScriptAttributes = $config['importmap_script_attributes'];
-            unset($config['importmap_script_attributes']);
+            $this->importmapScriptAttributes = $value['importmap_script_attributes'];
+            unset($value['importmap_script_attributes']);
         }
 
-        if (array_key_exists('vendor_dir', $config)) {
+        if (array_key_exists('vendor_dir', $value)) {
             $this->_usedProperties['vendorDir'] = true;
-            $this->vendorDir = $config['vendor_dir'];
-            unset($config['vendor_dir']);
+            $this->vendorDir = $value['vendor_dir'];
+            unset($value['vendor_dir']);
         }
 
-        if (array_key_exists('provider', $config)) {
+        if (array_key_exists('provider', $value)) {
             $this->_usedProperties['provider'] = true;
-            $this->provider = $config['provider'];
-            unset($config['provider']);
+            $this->provider = $value['provider'];
+            unset($value['provider']);
         }
 
-        if ($config) {
-            throw new InvalidConfigurationException(sprintf('The following keys are not supported by "%s": ', __CLASS__).implode(', ', array_keys($config)));
+        if ([] !== $value) {
+            throw new InvalidConfigurationException(sprintf('The following keys are not supported by "%s": ', __CLASS__).implode(', ', array_keys($value)));
         }
     }
 

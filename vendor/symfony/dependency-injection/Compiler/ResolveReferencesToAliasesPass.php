@@ -24,7 +24,10 @@ class ResolveReferencesToAliasesPass extends AbstractRecursivePass
 {
     protected bool $skipScalars = true;
 
-    public function process(ContainerBuilder $container): void
+    /**
+     * @return void
+     */
+    public function process(ContainerBuilder $container)
     {
         parent::process($container);
 
@@ -33,11 +36,7 @@ class ResolveReferencesToAliasesPass extends AbstractRecursivePass
             $this->currentId = $id;
 
             if ($aliasId !== $defId = $this->getDefinitionId($aliasId, $container)) {
-                $newAlias = $container->setAlias($id, $defId)->setPublic($alias->isPublic());
-
-                if ($alias->isDeprecated()) {
-                    $newAlias->setDeprecated(...array_values($alias->getDeprecation('%alias_id%')));
-                }
+                $container->setAlias($id, $defId)->setPublic($alias->isPublic());
             }
         }
     }

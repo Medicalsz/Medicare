@@ -144,13 +144,13 @@ final class AmpClientState extends ClientState
         $options['capture_peer_cert_chain'] && $context = $context->withPeerCapturing();
         $options['crypto_method'] && $context = $context->withMinimumVersion($options['crypto_method']);
 
-        $connector = $handleConnector = new class implements Connector {
+        $connector = $handleConnector = new class() implements Connector {
             public DnsConnector $connector;
             public string $uri;
             /** @var resource|null */
             public $handle;
 
-            public function connect(string $uri, ?ConnectContext $context = null, ?CancellationToken $token = null): Promise
+            public function connect(string $uri, ConnectContext $context = null, CancellationToken $token = null): Promise
             {
                 $result = $this->connector->connect($this->uri ?? $uri, $context, $token);
                 $result->onResolve(function ($e, $socket) {
@@ -201,11 +201,11 @@ final class AmpClientState extends ClientState
         if ($this->maxPendingPushes <= \count($this->pushedResponses[$authority] ?? [])) {
             $fifoUrl = key($this->pushedResponses[$authority]);
             unset($this->pushedResponses[$authority][$fifoUrl]);
-            $this->logger?->debug(\sprintf('Evicting oldest pushed response: "%s"', $fifoUrl));
+            $this->logger?->debug(sprintf('Evicting oldest pushed response: "%s"', $fifoUrl));
         }
 
         $url = (string) $request->getUri();
-        $this->logger?->debug(\sprintf('Queueing pushed response: "%s"', $url));
+        $this->logger?->debug(sprintf('Queueing pushed response: "%s"', $url));
         $this->pushedResponses[$authority][] = [$url, $deferred, $request, $response, [
             'proxy' => $options['proxy'],
             'bindto' => $options['bindto'],

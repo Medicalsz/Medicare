@@ -41,22 +41,22 @@ class HtmlSanitizerConfig
         return $this->sanitizers[$name];
     }
 
-    public function __construct(array $config = [])
+    public function __construct(array $value = [])
     {
-        if (array_key_exists('enabled', $config)) {
+        if (array_key_exists('enabled', $value)) {
             $this->_usedProperties['enabled'] = true;
-            $this->enabled = $config['enabled'];
-            unset($config['enabled']);
+            $this->enabled = $value['enabled'];
+            unset($value['enabled']);
         }
 
-        if (array_key_exists('sanitizers', $config)) {
+        if (array_key_exists('sanitizers', $value)) {
             $this->_usedProperties['sanitizers'] = true;
-            $this->sanitizers = array_map(fn ($v) => new \Symfony\Config\Framework\HtmlSanitizer\SanitizerConfig($v), $config['sanitizers']);
-            unset($config['sanitizers']);
+            $this->sanitizers = array_map(fn ($v) => new \Symfony\Config\Framework\HtmlSanitizer\SanitizerConfig($v), $value['sanitizers']);
+            unset($value['sanitizers']);
         }
 
-        if ($config) {
-            throw new InvalidConfigurationException(sprintf('The following keys are not supported by "%s": ', __CLASS__).implode(', ', array_keys($config)));
+        if ([] !== $value) {
+            throw new InvalidConfigurationException(sprintf('The following keys are not supported by "%s": ', __CLASS__).implode(', ', array_keys($value)));
         }
     }
 

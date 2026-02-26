@@ -86,40 +86,40 @@ class RetryStrategyConfig
         return $this;
     }
 
-    public function __construct(array $config = [])
+    public function __construct(array $value = [])
     {
-        if (array_key_exists('service', $config)) {
+        if (array_key_exists('service', $value)) {
             $this->_usedProperties['service'] = true;
-            $this->service = $config['service'];
-            unset($config['service']);
+            $this->service = $value['service'];
+            unset($value['service']);
         }
 
-        if (array_key_exists('max_retries', $config)) {
+        if (array_key_exists('max_retries', $value)) {
             $this->_usedProperties['maxRetries'] = true;
-            $this->maxRetries = $config['max_retries'];
-            unset($config['max_retries']);
+            $this->maxRetries = $value['max_retries'];
+            unset($value['max_retries']);
         }
 
-        if (array_key_exists('delay', $config)) {
+        if (array_key_exists('delay', $value)) {
             $this->_usedProperties['delay'] = true;
-            $this->delay = $config['delay'];
-            unset($config['delay']);
+            $this->delay = $value['delay'];
+            unset($value['delay']);
         }
 
-        if (array_key_exists('multiplier', $config)) {
+        if (array_key_exists('multiplier', $value)) {
             $this->_usedProperties['multiplier'] = true;
-            $this->multiplier = $config['multiplier'];
-            unset($config['multiplier']);
+            $this->multiplier = $value['multiplier'];
+            unset($value['multiplier']);
         }
 
-        if (array_key_exists('max_delay', $config)) {
+        if (array_key_exists('max_delay', $value)) {
             $this->_usedProperties['maxDelay'] = true;
-            $this->maxDelay = $config['max_delay'];
-            unset($config['max_delay']);
+            $this->maxDelay = $value['max_delay'];
+            unset($value['max_delay']);
         }
 
-        if ($config) {
-            throw new InvalidConfigurationException(sprintf('The following keys are not supported by "%s": ', __CLASS__).implode(', ', array_keys($config)));
+        if ([] !== $value) {
+            throw new InvalidConfigurationException(sprintf('The following keys are not supported by "%s": ', __CLASS__).implode(', ', array_keys($value)));
         }
     }
 

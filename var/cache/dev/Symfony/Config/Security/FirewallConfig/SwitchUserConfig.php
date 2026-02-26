@@ -68,34 +68,34 @@ class SwitchUserConfig
         return $this;
     }
 
-    public function __construct(array $config = [])
+    public function __construct(array $value = [])
     {
-        if (array_key_exists('provider', $config)) {
+        if (array_key_exists('provider', $value)) {
             $this->_usedProperties['provider'] = true;
-            $this->provider = $config['provider'];
-            unset($config['provider']);
+            $this->provider = $value['provider'];
+            unset($value['provider']);
         }
 
-        if (array_key_exists('parameter', $config)) {
+        if (array_key_exists('parameter', $value)) {
             $this->_usedProperties['parameter'] = true;
-            $this->parameter = $config['parameter'];
-            unset($config['parameter']);
+            $this->parameter = $value['parameter'];
+            unset($value['parameter']);
         }
 
-        if (array_key_exists('role', $config)) {
+        if (array_key_exists('role', $value)) {
             $this->_usedProperties['role'] = true;
-            $this->role = $config['role'];
-            unset($config['role']);
+            $this->role = $value['role'];
+            unset($value['role']);
         }
 
-        if (array_key_exists('target_route', $config)) {
+        if (array_key_exists('target_route', $value)) {
             $this->_usedProperties['targetRoute'] = true;
-            $this->targetRoute = $config['target_route'];
-            unset($config['target_route']);
+            $this->targetRoute = $value['target_route'];
+            unset($value['target_route']);
         }
 
-        if ($config) {
-            throw new InvalidConfigurationException(sprintf('The following keys are not supported by "%s": ', __CLASS__).implode(', ', array_keys($config)));
+        if ([] !== $value) {
+            throw new InvalidConfigurationException(sprintf('The following keys are not supported by "%s": ', __CLASS__).implode(', ', array_keys($value)));
         }
     }
 

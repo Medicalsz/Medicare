@@ -45,11 +45,17 @@ abstract class AbstractFailedMessagesCommand extends Command
 {
     protected const DEFAULT_TRANSPORT_OPTION = 'choose';
 
-    public function __construct(
-        private ?string $globalFailureReceiverName,
-        protected ServiceProviderInterface $failureTransports,
-        protected ?PhpSerializer $phpSerializer = null,
-    ) {
+    protected ServiceProviderInterface $failureTransports;
+    protected ?PhpSerializer $phpSerializer;
+
+    private ?string $globalFailureReceiverName;
+
+    public function __construct(?string $globalFailureReceiverName, ServiceProviderInterface $failureTransports, PhpSerializer $phpSerializer = null)
+    {
+        $this->failureTransports = $failureTransports;
+        $this->globalFailureReceiverName = $globalFailureReceiverName;
+        $this->phpSerializer = $phpSerializer;
+
         parent::__construct();
     }
 
@@ -153,7 +159,7 @@ abstract class AbstractFailedMessagesCommand extends Command
         }
     }
 
-    protected function getReceiver(?string $name = null): ReceiverInterface
+    protected function getReceiver(string $name = null): ReceiverInterface
     {
         if (null === $name ??= $this->globalFailureReceiverName) {
             throw new InvalidArgumentException(sprintf('No default failure transport is defined. Available transports are: "%s".', implode('", "', array_keys($this->failureTransports->getProvidedServices()))));

@@ -20,14 +20,15 @@ use Psr\Container\ContainerInterface;
  */
 class ContainerLoader extends ObjectLoader
 {
-    public function __construct(
-        private ContainerInterface $container,
-        ?string $env = null,
-    ) {
+    private ContainerInterface $container;
+
+    public function __construct(ContainerInterface $container, string $env = null)
+    {
+        $this->container = $container;
         parent::__construct($env);
     }
 
-    public function supports(mixed $resource, ?string $type = null): bool
+    public function supports(mixed $resource, string $type = null): bool
     {
         return 'service' === $type && \is_string($resource);
     }

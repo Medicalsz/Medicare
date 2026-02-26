@@ -16,17 +16,14 @@ class MonologConfig implements \Symfony\Component\Config\Builder\ConfigBuilderIn
     private $channels;
     private $handlers;
     private $_usedProperties = [];
-    private $_hasDeprecatedCalls = false;
 
     /**
      * @default true
      * @param ParamConfigurator|mixed $value
      * @return $this
-     * @deprecated since Symfony 7.4
      */
     public function useMicroseconds($value): static
     {
-        $this->_hasDeprecatedCalls = true;
         $this->_usedProperties['useMicroseconds'] = true;
         $this->useMicroseconds = $value;
 
@@ -37,11 +34,9 @@ class MonologConfig implements \Symfony\Component\Config\Builder\ConfigBuilderIn
      * @param ParamConfigurator|list<ParamConfigurator|mixed> $value
      *
      * @return $this
-     * @deprecated since Symfony 7.4
      */
     public function channels(ParamConfigurator|array $value): static
     {
-        $this->_hasDeprecatedCalls = true;
         $this->_usedProperties['channels'] = true;
         $this->channels = $value;
 
@@ -49,18 +44,16 @@ class MonologConfig implements \Symfony\Component\Config\Builder\ConfigBuilderIn
     }
 
     /**
-     * @template TValue of mixed
+     * @template TValue
      * @param TValue $value
      * @example {"type":"stream","path":"\/var\/log\/symfony.log","level":"ERROR","bubble":"false","formatter":"my_formatter"}
      * @example {"type":"fingers_crossed","action_level":"WARNING","buffer_size":30,"handler":"custom"}
      * @example {"type":"service","id":"my_handler"}
      * @return \Symfony\Config\Monolog\HandlerConfig|$this
      * @psalm-return (TValue is array ? \Symfony\Config\Monolog\HandlerConfig : static)
-     * @deprecated since Symfony 7.4
      */
     public function handler(string $name, mixed $value = []): \Symfony\Config\Monolog\HandlerConfig|static
     {
-        $this->_hasDeprecatedCalls = true;
         if (!\is_array($value)) {
             $this->_usedProperties['handlers'] = true;
             $this->handlers[$name] = $value;
@@ -83,28 +76,28 @@ class MonologConfig implements \Symfony\Component\Config\Builder\ConfigBuilderIn
         return 'monolog';
     }
 
-    public function __construct(array $config = [])
+    public function __construct(array $value = [])
     {
-        if (array_key_exists('use_microseconds', $config)) {
+        if (array_key_exists('use_microseconds', $value)) {
             $this->_usedProperties['useMicroseconds'] = true;
-            $this->useMicroseconds = $config['use_microseconds'];
-            unset($config['use_microseconds']);
+            $this->useMicroseconds = $value['use_microseconds'];
+            unset($value['use_microseconds']);
         }
 
-        if (array_key_exists('channels', $config)) {
+        if (array_key_exists('channels', $value)) {
             $this->_usedProperties['channels'] = true;
-            $this->channels = $config['channels'];
-            unset($config['channels']);
+            $this->channels = $value['channels'];
+            unset($value['channels']);
         }
 
-        if (array_key_exists('handlers', $config)) {
+        if (array_key_exists('handlers', $value)) {
             $this->_usedProperties['handlers'] = true;
-            $this->handlers = array_map(fn ($v) => \is_array($v) ? new \Symfony\Config\Monolog\HandlerConfig($v) : $v, $config['handlers']);
-            unset($config['handlers']);
+            $this->handlers = array_map(fn ($v) => \is_array($v) ? new \Symfony\Config\Monolog\HandlerConfig($v) : $v, $value['handlers']);
+            unset($value['handlers']);
         }
 
-        if ($config) {
-            throw new InvalidConfigurationException(sprintf('The following keys are not supported by "%s": ', __CLASS__).implode(', ', array_keys($config)));
+        if ([] !== $value) {
+            throw new InvalidConfigurationException(sprintf('The following keys are not supported by "%s": ', __CLASS__).implode(', ', array_keys($value)));
         }
     }
 
@@ -119,9 +112,6 @@ class MonologConfig implements \Symfony\Component\Config\Builder\ConfigBuilderIn
         }
         if (isset($this->_usedProperties['handlers'])) {
             $output['handlers'] = array_map(fn ($v) => $v instanceof \Symfony\Config\Monolog\HandlerConfig ? $v->toArray() : $v, $this->handlers);
-        }
-        if ($this->_hasDeprecatedCalls) {
-            trigger_deprecation('symfony/config', '7.4', 'Calling any fluent method on "%s" is deprecated; pass the configuration to the constructor instead.', $this::class);
         }
 
         return $output;

@@ -39,22 +39,22 @@ class SymfonySerializerConfig
         return $this;
     }
 
-    public function __construct(array $config = [])
+    public function __construct(array $value = [])
     {
-        if (array_key_exists('format', $config)) {
+        if (array_key_exists('format', $value)) {
             $this->_usedProperties['format'] = true;
-            $this->format = $config['format'];
-            unset($config['format']);
+            $this->format = $value['format'];
+            unset($value['format']);
         }
 
-        if (array_key_exists('context', $config)) {
+        if (array_key_exists('context', $value)) {
             $this->_usedProperties['context'] = true;
-            $this->context = $config['context'];
-            unset($config['context']);
+            $this->context = $value['context'];
+            unset($value['context']);
         }
 
-        if ($config) {
-            throw new InvalidConfigurationException(sprintf('The following keys are not supported by "%s": ', __CLASS__).implode(', ', array_keys($config)));
+        if ([] !== $value) {
+            throw new InvalidConfigurationException(sprintf('The following keys are not supported by "%s": ', __CLASS__).implode(', ', array_keys($value)));
         }
     }
 

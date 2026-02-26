@@ -28,7 +28,7 @@ final class JsonEncoderContextBuilder implements ContextBuilderInterface
     /**
      * Configures the json_encode flags bitmask.
      *
-     * @see https://php.net/json.constants
+     * @see https://www.php.net/manual/en/json.constants.php
      *
      * @param positive-int|null $options
      */
@@ -40,7 +40,7 @@ final class JsonEncoderContextBuilder implements ContextBuilderInterface
     /**
      * Configures the json_decode flags bitmask.
      *
-     * @see https://php.net/json.constants
+     * @see https://www.php.net/manual/en/json.constants.php
      *
      * @param positive-int|null $options
      */

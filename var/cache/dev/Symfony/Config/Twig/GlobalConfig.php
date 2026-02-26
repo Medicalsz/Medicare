@@ -55,28 +55,28 @@ class GlobalConfig
         return $this;
     }
 
-    public function __construct(array $config = [])
+    public function __construct(array $value = [])
     {
-        if (array_key_exists('id', $config)) {
+        if (array_key_exists('id', $value)) {
             $this->_usedProperties['id'] = true;
-            $this->id = $config['id'];
-            unset($config['id']);
+            $this->id = $value['id'];
+            unset($value['id']);
         }
 
-        if (array_key_exists('type', $config)) {
+        if (array_key_exists('type', $value)) {
             $this->_usedProperties['type'] = true;
-            $this->type = $config['type'];
-            unset($config['type']);
+            $this->type = $value['type'];
+            unset($value['type']);
         }
 
-        if (array_key_exists('value', $config)) {
+        if (array_key_exists('value', $value)) {
             $this->_usedProperties['value'] = true;
-            $this->value = $config['value'];
-            unset($config['value']);
+            $this->value = $value['value'];
+            unset($value['value']);
         }
 
-        if ($config) {
-            throw new InvalidConfigurationException(sprintf('The following keys are not supported by "%s": ', __CLASS__).implode(', ', array_keys($config)));
+        if ([] !== $value) {
+            throw new InvalidConfigurationException(sprintf('The following keys are not supported by "%s": ', __CLASS__).implode(', ', array_keys($value)));
         }
     }
 

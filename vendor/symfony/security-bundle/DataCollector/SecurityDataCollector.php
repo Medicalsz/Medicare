@@ -44,7 +44,7 @@ class SecurityDataCollector extends DataCollector implements LateDataCollectorIn
     private ?TraceableFirewallListener $firewall;
     private bool $hasVarDumper;
 
-    public function __construct(?TokenStorageInterface $tokenStorage = null, ?RoleHierarchyInterface $roleHierarchy = null, ?LogoutUrlGenerator $logoutUrlGenerator = null, ?AccessDecisionManagerInterface $accessDecisionManager = null, ?FirewallMapInterface $firewallMap = null, ?TraceableFirewallListener $firewall = null)
+    public function __construct(TokenStorageInterface $tokenStorage = null, RoleHierarchyInterface $roleHierarchy = null, LogoutUrlGenerator $logoutUrlGenerator = null, AccessDecisionManagerInterface $accessDecisionManager = null, FirewallMapInterface $firewallMap = null, TraceableFirewallListener $firewall = null)
     {
         $this->tokenStorage = $tokenStorage;
         $this->roleHierarchy = $roleHierarchy;
@@ -55,7 +55,7 @@ class SecurityDataCollector extends DataCollector implements LateDataCollectorIn
         $this->hasVarDumper = class_exists(ClassStub::class);
     }
 
-    public function collect(Request $request, Response $response, ?\Throwable $exception = null): void
+    public function collect(Request $request, Response $response, \Throwable $exception = null): void
     {
         if (null === $this->tokenStorage) {
             $this->data = [
@@ -106,12 +106,10 @@ class SecurityDataCollector extends DataCollector implements LateDataCollectorIn
             }
 
             $logoutUrl = null;
-            if ($this->logoutUrlGenerator && method_exists($token, 'getFirewallName')) {
-                try {
-                    $logoutUrl = $this->logoutUrlGenerator->getLogoutPath($token->getFirewallName());
-                } catch (\Exception) {
-                    // fail silently when the logout URL cannot be generated
-                }
+            try {
+                $logoutUrl = $this->logoutUrlGenerator?->getLogoutPath();
+            } catch (\Exception) {
+                // fail silently when the logout URL cannot be generated
             }
 
             $this->data = [
@@ -133,7 +131,6 @@ class SecurityDataCollector extends DataCollector implements LateDataCollectorIn
         // collect voters and access decision manager information
         if ($this->accessDecisionManager instanceof TraceableAccessDecisionManager) {
             $this->data['voter_strategy'] = $this->accessDecisionManager->getStrategy();
-            $this->data['voters'] = [];
 
             foreach ($this->accessDecisionManager->getVoters() as $voter) {
                 if ($voter instanceof TraceableVoter) {
@@ -189,7 +186,7 @@ class SecurityDataCollector extends DataCollector implements LateDataCollectorIn
                 if ($this->data['impersonated'] && null !== $switchUserConfig = $firewallConfig->getSwitchUser()) {
                     $exitPath = $request->getRequestUri();
                     $exitPath .= null === $request->getQueryString() ? '?' : '&';
-                    $exitPath .= \sprintf('%s=%s', urlencode($switchUserConfig['parameter']), SwitchUserListener::EXIT_VALUE);
+                    $exitPath .= sprintf('%s=%s', urlencode($switchUserConfig['parameter']), SwitchUserListener::EXIT_VALUE);
 
                     $this->data['impersonation_exit_path'] = $exitPath;
                 }

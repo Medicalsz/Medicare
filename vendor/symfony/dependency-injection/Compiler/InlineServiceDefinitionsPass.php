@@ -26,20 +26,23 @@ class InlineServiceDefinitionsPass extends AbstractRecursivePass
 {
     protected bool $skipScalars = true;
 
+    private ?AnalyzeServiceReferencesPass $analyzingPass;
     private array $cloningIds = [];
     private array $connectedIds = [];
     private array $notInlinedIds = [];
     private array $inlinedIds = [];
     private array $notInlinableIds = [];
-    private array $autowireInline = [];
     private ?ServiceReferenceGraph $graph = null;
 
-    public function __construct(
-        private ?AnalyzeServiceReferencesPass $analyzingPass = null,
-    ) {
+    public function __construct(AnalyzeServiceReferencesPass $analyzingPass = null)
+    {
+        $this->analyzingPass = $analyzingPass;
     }
 
-    public function process(ContainerBuilder $container): void
+    /**
+     * @return void
+     */
+    public function process(ContainerBuilder $container)
     {
         $this->container = $container;
         if ($this->analyzingPass) {
@@ -70,9 +73,6 @@ class InlineServiceDefinitionsPass extends AbstractRecursivePass
                     if (!$this->graph->hasNode($id)) {
                         continue;
                     }
-                    if ($definition->isPublic()) {
-                        $this->connectedIds[$id] = true;
-                    }
                     foreach ($this->graph->getNode($id)->getOutEdges() as $edge) {
                         if (isset($notInlinedIds[$edge->getSourceNode()->getId()])) {
                             $this->currentId = $id;
@@ -87,9 +87,7 @@ class InlineServiceDefinitionsPass extends AbstractRecursivePass
                         $remainingInlinedIds[$id] = $id;
                     } else {
                         $container->removeDefinition($id);
-                        if (!isset($this->autowireInline[$id])) {
-                            $analyzedContainer->removeDefinition($id);
-                        }
+                        $analyzedContainer->removeDefinition($id);
                     }
                 }
             } while ($this->inlinedIds && $this->analyzingPass);
@@ -143,9 +141,9 @@ class InlineServiceDefinitionsPass extends AbstractRecursivePass
             return $value;
         }
 
-        $this->container->log($this, \sprintf('Inlined service "%s" to "%s".', $id, $this->currentId));
+        $this->container->log($this, sprintf('Inlined service "%s" to "%s".', $id, $this->currentId));
         $this->inlinedIds[$id] = $definition->isPublic() || !$definition->isShared();
-        $this->notInlinedIds[$this->currentId ?? ''] = true;
+        $this->notInlinedIds[$this->currentId] = true;
 
         if ($definition->isShared()) {
             return $definition;
@@ -171,11 +169,6 @@ class InlineServiceDefinitionsPass extends AbstractRecursivePass
      */
     private function isInlineableDefinition(string $id, Definition $definition): bool
     {
-        if (str_starts_with($id, '.autowire_inline.')) {
-            $this->autowireInline[$id] = true;
-
-            return true;
-        }
         if ($definition->hasErrors() || $definition->isDeprecated() || $definition->isLazy() || $definition->isSynthetic() || $definition->hasTag('container.do_not_inline')) {
             return false;
         }
@@ -196,13 +189,17 @@ class InlineServiceDefinitionsPass extends AbstractRecursivePass
             return true;
         }
 
-        if ($definition->isPublic()
-            || $this->currentId === $id
-            || !$this->graph->hasNode($id)
-        ) {
+        if ($definition->isPublic()) {
             return false;
         }
 
+        if (!$this->graph->hasNode($id)) {
+            return true;
+        }
+
+        if ($this->currentId === $id) {
+            return false;
+        }
         $this->connectedIds[$id] = true;
 
         $srcIds = [];
@@ -227,8 +224,6 @@ class InlineServiceDefinitionsPass extends AbstractRecursivePass
             return false;
         }
 
-        $srcDefinition = $this->container->getDefinition($srcId);
-
-        return $srcDefinition->isShared() && !$srcDefinition->isLazy();
+        return $this->container->getDefinition($srcId)->isShared();
     }
 }

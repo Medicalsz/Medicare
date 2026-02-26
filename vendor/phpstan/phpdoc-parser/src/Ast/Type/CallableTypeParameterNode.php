@@ -11,16 +11,20 @@ class CallableTypeParameterNode implements Node
 
 	use NodeAttributes;
 
-	public TypeNode $type;
+	/** @var TypeNode */
+	public $type;
 
-	public bool $isReference;
+	/** @var bool */
+	public $isReference;
 
-	public bool $isVariadic;
+	/** @var bool */
+	public $isVariadic;
 
 	/** @var string (may be empty) */
-	public string $parameterName;
+	public $parameterName;
 
-	public bool $isOptional;
+	/** @var bool */
+	public $isOptional;
 
 	public function __construct(TypeNode $type, bool $isReference, bool $isVariadic, string $parameterName, bool $isOptional)
 	{
@@ -31,27 +35,14 @@ class CallableTypeParameterNode implements Node
 		$this->isOptional = $isOptional;
 	}
 
+
 	public function __toString(): string
 	{
 		$type = "{$this->type} ";
 		$isReference = $this->isReference ? '&' : '';
 		$isVariadic = $this->isVariadic ? '...' : '';
-		$isOptional = $this->isOptional ? '=' : '';
-		return trim("{$type}{$isReference}{$isVariadic}{$this->parameterName}") . $isOptional;
-	}
-
-	/**
-	 * @param array<string, mixed> $properties
-	 */
-	public static function __set_state(array $properties): self
-	{
-		$instance = new self($properties['type'], $properties['isReference'], $properties['isVariadic'], $properties['parameterName'], $properties['isOptional']);
-		if (isset($properties['attributes'])) {
-			foreach ($properties['attributes'] as $key => $value) {
-				$instance->setAttribute($key, $value);
-			}
-		}
-		return $instance;
+		$default = $this->isOptional ? ' = default' : '';
+		return trim("{$type}{$isReference}{$isVariadic}{$this->parameterName}") . $default;
 	}
 
 }

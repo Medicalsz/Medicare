@@ -39,22 +39,22 @@ class RoutingConfig
         return $this;
     }
 
-    public function __construct(array $config = [])
+    public function __construct(array $value = [])
     {
-        if (array_key_exists('service', $config)) {
+        if (array_key_exists('service', $value)) {
             $this->_usedProperties['service'] = true;
-            $this->service = $config['service'];
-            unset($config['service']);
+            $this->service = $value['service'];
+            unset($value['service']);
         }
 
-        if (array_key_exists('secret', $config)) {
+        if (array_key_exists('secret', $value)) {
             $this->_usedProperties['secret'] = true;
-            $this->secret = $config['secret'];
-            unset($config['secret']);
+            $this->secret = $value['secret'];
+            unset($value['secret']);
         }
 
-        if ($config) {
-            throw new InvalidConfigurationException(sprintf('The following keys are not supported by "%s": ', __CLASS__).implode(', ', array_keys($config)));
+        if ([] !== $value) {
+            throw new InvalidConfigurationException(sprintf('The following keys are not supported by "%s": ', __CLASS__).implode(', ', array_keys($value)));
         }
     }
 

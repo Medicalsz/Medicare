@@ -36,27 +36,30 @@ class AnalyzeServiceReferencesPass extends AbstractRecursivePass
 
     private ServiceReferenceGraph $graph;
     private ?Definition $currentDefinition = null;
+    private bool $onlyConstructorArguments;
+    private bool $hasProxyDumper;
     private bool $lazy;
     private bool $byConstructor;
     private bool $byFactory;
-    private bool $byMultiUseArgument;
     private array $definitions;
     private array $aliases;
 
     /**
      * @param bool $onlyConstructorArguments Sets this Service Reference pass to ignore method calls
      */
-    public function __construct(
-        private bool $onlyConstructorArguments = false,
-        private bool $hasProxyDumper = true,
-    ) {
+    public function __construct(bool $onlyConstructorArguments = false, bool $hasProxyDumper = true)
+    {
+        $this->onlyConstructorArguments = $onlyConstructorArguments;
+        $this->hasProxyDumper = $hasProxyDumper;
         $this->enableExpressionProcessing();
     }
 
     /**
      * Processes a ContainerBuilder object to populate the service reference graph.
+     *
+     * @return void
      */
-    public function process(ContainerBuilder $container): void
+    public function process(ContainerBuilder $container)
     {
         $this->container = $container;
         $this->graph = $container->getCompiler()->getServiceReferenceGraph();
@@ -64,7 +67,6 @@ class AnalyzeServiceReferencesPass extends AbstractRecursivePass
         $this->lazy = false;
         $this->byConstructor = false;
         $this->byFactory = false;
-        $this->byMultiUseArgument = false;
         $this->definitions = $container->getDefinitions();
         $this->aliases = $container->getAliases();
 
@@ -87,12 +89,7 @@ class AnalyzeServiceReferencesPass extends AbstractRecursivePass
 
         if ($value instanceof ArgumentInterface) {
             $this->lazy = !$this->byFactory || !$value instanceof IteratorArgument;
-            $byMultiUseArgument = $this->byMultiUseArgument;
-            if ($value instanceof IteratorArgument) {
-                $this->byMultiUseArgument = true;
-            }
             parent::processValue($value->getValues());
-            $this->byMultiUseArgument = $byMultiUseArgument;
             $this->lazy = $lazy;
 
             return $value;
@@ -109,8 +106,7 @@ class AnalyzeServiceReferencesPass extends AbstractRecursivePass
                 $value,
                 $this->lazy || ($this->hasProxyDumper && $targetDefinition?->isLazy()),
                 ContainerInterface::IGNORE_ON_UNINITIALIZED_REFERENCE === $value->getInvalidBehavior(),
-                $this->byConstructor,
-                $this->byMultiUseArgument
+                $this->byConstructor
             );
 
             if ($inExpression) {
@@ -121,9 +117,7 @@ class AnalyzeServiceReferencesPass extends AbstractRecursivePass
                     $targetDefinition,
                     $value,
                     $this->lazy || $targetDefinition?->isLazy(),
-                    true,
-                    $this->byConstructor,
-                    $this->byMultiUseArgument
+                    true
                 );
             }
 

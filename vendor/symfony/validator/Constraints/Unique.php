@@ -44,12 +44,12 @@ class Unique extends Constraint
      * @param array|string $fields the combination of fields that must contain unique values or a set of options
      */
     public function __construct(
-        ?array $options = null,
-        ?string $message = null,
-        ?callable $normalizer = null,
-        ?array $groups = null,
+        array $options = null,
+        string $message = null,
+        callable $normalizer = null,
+        array $groups = null,
         mixed $payload = null,
-        array|string|null $fields = null,
+        array|string $fields = null,
     ) {
         parent::__construct($options, $groups, $payload);
 
@@ -58,7 +58,7 @@ class Unique extends Constraint
         $this->fields = $fields ?? $this->fields;
 
         if (null !== $this->normalizer && !\is_callable($this->normalizer)) {
-            throw new InvalidArgumentException(\sprintf('The "normalizer" option must be a valid callable ("%s" given).', get_debug_type($this->normalizer)));
+            throw new InvalidArgumentException(sprintf('The "normalizer" option must be a valid callable ("%s" given).', get_debug_type($this->normalizer)));
         }
     }
 }

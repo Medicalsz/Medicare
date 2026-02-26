@@ -42,22 +42,22 @@ class ExceptionConfig
         return $this;
     }
 
-    public function __construct(array $config = [])
+    public function __construct(array $value = [])
     {
-        if (array_key_exists('log_level', $config)) {
+        if (array_key_exists('log_level', $value)) {
             $this->_usedProperties['logLevel'] = true;
-            $this->logLevel = $config['log_level'];
-            unset($config['log_level']);
+            $this->logLevel = $value['log_level'];
+            unset($value['log_level']);
         }
 
-        if (array_key_exists('status_code', $config)) {
+        if (array_key_exists('status_code', $value)) {
             $this->_usedProperties['statusCode'] = true;
-            $this->statusCode = $config['status_code'];
-            unset($config['status_code']);
+            $this->statusCode = $value['status_code'];
+            unset($value['status_code']);
         }
 
-        if ($config) {
-            throw new InvalidConfigurationException(sprintf('The following keys are not supported by "%s": ', __CLASS__).implode(', ', array_keys($config)));
+        if ([] !== $value) {
+            throw new InvalidConfigurationException(sprintf('The following keys are not supported by "%s": ', __CLASS__).implode(', ', array_keys($value)));
         }
     }
 

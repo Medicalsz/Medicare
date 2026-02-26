@@ -12,26 +12,25 @@ class MethodTagValueNode implements PhpDocTagValueNode
 
 	use NodeAttributes;
 
-	public bool $isStatic;
+	/** @var bool */
+	public $isStatic;
 
-	public ?TypeNode $returnType = null;
+	/** @var TypeNode|null */
+	public $returnType;
 
-	public string $methodName;
+	/** @var string */
+	public $methodName;
 
 	/** @var TemplateTagValueNode[] */
-	public array $templateTypes;
+	public $templateTypes;
 
 	/** @var MethodTagValueParameterNode[] */
-	public array $parameters;
+	public $parameters;
 
 	/** @var string (may be empty) */
-	public string $description;
+	public $description;
 
-	/**
-	 * @param MethodTagValueParameterNode[] $parameters
-	 * @param TemplateTagValueNode[] $templateTypes
-	 */
-	public function __construct(bool $isStatic, ?TypeNode $returnType, string $methodName, array $parameters, string $description, array $templateTypes)
+	public function __construct(bool $isStatic, ?TypeNode $returnType, string $methodName, array $parameters, string $description, array $templateTypes = [])
 	{
 		$this->isStatic = $isStatic;
 		$this->returnType = $returnType;
@@ -41,6 +40,7 @@ class MethodTagValueNode implements PhpDocTagValueNode
 		$this->templateTypes = $templateTypes;
 	}
 
+
 	public function __toString(): string
 	{
 		$static = $this->isStatic ? 'static ' : '';
@@ -49,20 +49,6 @@ class MethodTagValueNode implements PhpDocTagValueNode
 		$description = $this->description !== '' ? " {$this->description}" : '';
 		$templateTypes = count($this->templateTypes) > 0 ? '<' . implode(', ', $this->templateTypes) . '>' : '';
 		return "{$static}{$returnType}{$this->methodName}{$templateTypes}({$parameters}){$description}";
-	}
-
-	/**
-	 * @param array<string, mixed> $properties
-	 */
-	public static function __set_state(array $properties): self
-	{
-		$instance = new self($properties['isStatic'], $properties['returnType'], $properties['methodName'], $properties['parameters'], $properties['description'], $properties['templateTypes']);
-		if (isset($properties['attributes'])) {
-			foreach ($properties['attributes'] as $key => $value) {
-				$instance->setAttribute($key, $value);
-			}
-		}
-		return $instance;
 	}
 
 }

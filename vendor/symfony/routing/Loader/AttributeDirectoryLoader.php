@@ -11,7 +11,7 @@
 
 namespace Symfony\Component\Routing\Loader;
 
-use Symfony\Component\Config\Resource\GlobResource;
+use Symfony\Component\Config\Resource\DirectoryResource;
 use Symfony\Component\Routing\RouteCollection;
 
 /**
@@ -26,14 +26,14 @@ class AttributeDirectoryLoader extends AttributeFileLoader
     /**
      * @throws \InvalidArgumentException When the directory does not exist or its routes cannot be parsed
      */
-    public function load(mixed $path, ?string $type = null): ?RouteCollection
+    public function load(mixed $path, string $type = null): ?RouteCollection
     {
         if (!is_dir($dir = $this->locator->locate($path))) {
             return parent::supports($path, $type) ? parent::load($path, $type) : new RouteCollection();
         }
 
         $collection = new RouteCollection();
-        $collection->addResource(new GlobResource($dir, '/*.php', true));
+        $collection->addResource(new DirectoryResource($dir, '/\.php$/'));
         $files = iterator_to_array(new \RecursiveIteratorIterator(
             new \RecursiveCallbackFilterIterator(
                 new \RecursiveDirectoryIterator($dir, \FilesystemIterator::SKIP_DOTS | \FilesystemIterator::FOLLOW_SYMLINKS),
@@ -61,13 +61,17 @@ class AttributeDirectoryLoader extends AttributeFileLoader
         return $collection;
     }
 
-    public function supports(mixed $resource, ?string $type = null): bool
+    public function supports(mixed $resource, string $type = null): bool
     {
         if (!\is_string($resource)) {
             return false;
         }
 
-        if ('attribute' === $type) {
+        if (\in_array($type, ['annotation', 'attribute'], true)) {
+            if ('annotation' === $type) {
+                trigger_deprecation('symfony/routing', '6.4', 'The "annotation" route type is deprecated, use the "attribute" route type instead.');
+            }
+
             return true;
         }
 
@@ -81,4 +85,8 @@ class AttributeDirectoryLoader extends AttributeFileLoader
             return false;
         }
     }
+}
+
+if (!class_exists(AnnotationDirectoryLoader::class, false)) {
+    class_alias(AttributeDirectoryLoader::class, AnnotationDirectoryLoader::class);
 }

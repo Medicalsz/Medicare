@@ -40,22 +40,22 @@ class HttpBasicConfig
         return $this;
     }
 
-    public function __construct(array $config = [])
+    public function __construct(array $value = [])
     {
-        if (array_key_exists('provider', $config)) {
+        if (array_key_exists('provider', $value)) {
             $this->_usedProperties['provider'] = true;
-            $this->provider = $config['provider'];
-            unset($config['provider']);
+            $this->provider = $value['provider'];
+            unset($value['provider']);
         }
 
-        if (array_key_exists('realm', $config)) {
+        if (array_key_exists('realm', $value)) {
             $this->_usedProperties['realm'] = true;
-            $this->realm = $config['realm'];
-            unset($config['realm']);
+            $this->realm = $value['realm'];
+            unset($value['realm']);
         }
 
-        if ($config) {
-            throw new InvalidConfigurationException(sprintf('The following keys are not supported by "%s": ', __CLASS__).implode(', ', array_keys($config)));
+        if ([] !== $value) {
+            throw new InvalidConfigurationException(sprintf('The following keys are not supported by "%s": ', __CLASS__).implode(', ', array_keys($value)));
         }
     }
 

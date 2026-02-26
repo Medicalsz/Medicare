@@ -46,7 +46,7 @@ class PercentToLocalizedStringTransformer implements DataTransformerInterface
      *
      * @throws UnexpectedTypeException if the given value of type is unknown
      */
-    public function __construct(?int $scale = null, ?string $type = null, int $roundingMode = \NumberFormatter::ROUND_HALFUP, bool $html5Format = false)
+    public function __construct(int $scale = null, string $type = null, int $roundingMode = \NumberFormatter::ROUND_HALFUP, bool $html5Format = false)
     {
         $type ??= self::FRACTIONAL;
 
@@ -131,15 +131,11 @@ class PercentToLocalizedStringTransformer implements DataTransformerInterface
             $type = \PHP_INT_SIZE === 8 ? \NumberFormatter::TYPE_INT64 : \NumberFormatter::TYPE_INT32;
         }
 
-        try {
-            // replace normal spaces so that the formatter can read them
-            $result = @$formatter->parse(str_replace(' ', "\xc2\xa0", $value), $type, $position);
-        } catch (\IntlException $e) {
-            throw new TransformationFailedException($e->getMessage(), 0, $e);
-        }
+        // replace normal spaces so that the formatter can read them
+        $result = $formatter->parse(str_replace(' ', "\xc2\xa0", $value), $type, $position);
 
         if (intl_is_failure($formatter->getErrorCode())) {
-            throw new TransformationFailedException($formatter->getErrorMessage(), $formatter->getErrorCode());
+            throw new TransformationFailedException($formatter->getErrorMessage());
         }
 
         if (self::FRACTIONAL == $this->type) {
@@ -162,7 +158,7 @@ class PercentToLocalizedStringTransformer implements DataTransformerInterface
             $remainder = trim($remainder, " \t\n\r\0\x0b\xc2\xa0");
 
             if ('' !== $remainder) {
-                throw new TransformationFailedException(\sprintf('The number contains unrecognized characters: "%s".', $remainder));
+                throw new TransformationFailedException(sprintf('The number contains unrecognized characters: "%s".', $remainder));
             }
         }
 

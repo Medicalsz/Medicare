@@ -37,7 +37,7 @@ class ResolvedFormType implements ResolvedFormTypeInterface
     /**
      * @param FormTypeExtensionInterface[] $typeExtensions
      */
-    public function __construct(FormTypeInterface $innerType, array $typeExtensions = [], ?ResolvedFormTypeInterface $parent = null)
+    public function __construct(FormTypeInterface $innerType, array $typeExtensions = [], ResolvedFormTypeInterface $parent = null)
     {
         foreach ($typeExtensions as $extension) {
             if (!$extension instanceof FormTypeExtensionInterface) {
@@ -75,7 +75,7 @@ class ResolvedFormType implements ResolvedFormTypeInterface
         try {
             $options = $this->getOptionsResolver()->resolve($options);
         } catch (ExceptionInterface $e) {
-            throw new $e(\sprintf('An error has occurred resolving the options of the form "%s": ', get_debug_type($this->getInnerType())).$e->getMessage(), $e->getCode(), $e);
+            throw new $e(sprintf('An error has occurred resolving the options of the form "%s": ', get_debug_type($this->getInnerType())).$e->getMessage(), $e->getCode(), $e);
         }
 
         // Should be decoupled from the specific option at some point
@@ -87,7 +87,7 @@ class ResolvedFormType implements ResolvedFormTypeInterface
         return $builder;
     }
 
-    public function createView(FormInterface $form, ?FormView $parent = null): FormView
+    public function createView(FormInterface $form, FormView $parent = null): FormView
     {
         return $this->newView($parent);
     }
@@ -129,8 +129,8 @@ class ResolvedFormType implements ResolvedFormTypeInterface
 
         $this->innerType->finishView($view, $form, $options);
 
-        /** @var FormTypeExtensionInterface $extension */
         foreach ($this->typeExtensions as $extension) {
+            /* @var FormTypeExtensionInterface $extension */
             $extension->finishView($view, $form, $options);
         }
     }
@@ -177,7 +177,7 @@ class ResolvedFormType implements ResolvedFormTypeInterface
      *
      * Override this method if you want to customize the view class.
      */
-    protected function newView(?FormView $parent = null): FormView
+    protected function newView(FormView $parent = null): FormView
     {
         return new FormView($parent);
     }

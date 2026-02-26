@@ -166,76 +166,76 @@ class AccessControlConfig
         return $this;
     }
 
-    public function __construct(array $config = [])
+    public function __construct(array $value = [])
     {
-        if (array_key_exists('request_matcher', $config)) {
+        if (array_key_exists('request_matcher', $value)) {
             $this->_usedProperties['requestMatcher'] = true;
-            $this->requestMatcher = $config['request_matcher'];
-            unset($config['request_matcher']);
+            $this->requestMatcher = $value['request_matcher'];
+            unset($value['request_matcher']);
         }
 
-        if (array_key_exists('requires_channel', $config)) {
+        if (array_key_exists('requires_channel', $value)) {
             $this->_usedProperties['requiresChannel'] = true;
-            $this->requiresChannel = $config['requires_channel'];
-            unset($config['requires_channel']);
+            $this->requiresChannel = $value['requires_channel'];
+            unset($value['requires_channel']);
         }
 
-        if (array_key_exists('path', $config)) {
+        if (array_key_exists('path', $value)) {
             $this->_usedProperties['path'] = true;
-            $this->path = $config['path'];
-            unset($config['path']);
+            $this->path = $value['path'];
+            unset($value['path']);
         }
 
-        if (array_key_exists('host', $config)) {
+        if (array_key_exists('host', $value)) {
             $this->_usedProperties['host'] = true;
-            $this->host = $config['host'];
-            unset($config['host']);
+            $this->host = $value['host'];
+            unset($value['host']);
         }
 
-        if (array_key_exists('port', $config)) {
+        if (array_key_exists('port', $value)) {
             $this->_usedProperties['port'] = true;
-            $this->port = $config['port'];
-            unset($config['port']);
+            $this->port = $value['port'];
+            unset($value['port']);
         }
 
-        if (array_key_exists('ips', $config)) {
+        if (array_key_exists('ips', $value)) {
             $this->_usedProperties['ips'] = true;
-            $this->ips = $config['ips'];
-            unset($config['ips']);
+            $this->ips = $value['ips'];
+            unset($value['ips']);
         }
 
-        if (array_key_exists('attributes', $config)) {
+        if (array_key_exists('attributes', $value)) {
             $this->_usedProperties['attributes'] = true;
-            $this->attributes = $config['attributes'];
-            unset($config['attributes']);
+            $this->attributes = $value['attributes'];
+            unset($value['attributes']);
         }
 
-        if (array_key_exists('route', $config)) {
+        if (array_key_exists('route', $value)) {
             $this->_usedProperties['route'] = true;
-            $this->route = $config['route'];
-            unset($config['route']);
+            $this->route = $value['route'];
+            unset($value['route']);
         }
 
-        if (array_key_exists('methods', $config)) {
+        if (array_key_exists('methods', $value)) {
             $this->_usedProperties['methods'] = true;
-            $this->methods = $config['methods'];
-            unset($config['methods']);
+            $this->methods = $value['methods'];
+            unset($value['methods']);
         }
 
-        if (array_key_exists('allow_if', $config)) {
+        if (array_key_exists('allow_if', $value)) {
             $this->_usedProperties['allowIf'] = true;
-            $this->allowIf = $config['allow_if'];
-            unset($config['allow_if']);
+            $this->allowIf = $value['allow_if'];
+            unset($value['allow_if']);
         }
 
-        if (array_key_exists('roles', $config)) {
+        if (array_key_exists('roles', $value)) {
             $this->_usedProperties['roles'] = true;
-            $this->roles = $config['roles'];
-            unset($config['roles']);
+            $this->roles = $value['roles'];
+            unset($value['roles']);
         }
 
-        if ($config) {
-            throw new InvalidConfigurationException(sprintf('The following keys are not supported by "%s": ', __CLASS__).implode(', ', array_keys($config)));
+        if ([] !== $value) {
+            throw new InvalidConfigurationException(sprintf('The following keys are not supported by "%s": ', __CLASS__).implode(', ', array_keys($value)));
         }
     }
 

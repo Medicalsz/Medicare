@@ -43,7 +43,6 @@ class Image extends File
         self::EMPTY_ERROR => 'EMPTY_ERROR',
         self::TOO_LARGE_ERROR => 'TOO_LARGE_ERROR',
         self::INVALID_MIME_TYPE_ERROR => 'INVALID_MIME_TYPE_ERROR',
-        self::FILENAME_TOO_LONG => 'FILENAME_TOO_LONG',
         self::SIZE_NOT_DETECTED_ERROR => 'SIZE_NOT_DETECTED_ERROR',
         self::TOO_WIDE_ERROR => 'TOO_WIDE_ERROR',
         self::TOO_NARROW_ERROR => 'TOO_NARROW_ERROR',
@@ -64,7 +63,7 @@ class Image extends File
      */
     protected static $errorNames = self::ERROR_NAMES;
 
-    public $mimeTypes;
+    public $mimeTypes = 'image/*';
     public $minWidth;
     public $maxWidth;
     public $maxHeight;
@@ -95,54 +94,52 @@ class Image extends File
     public $corruptedMessage = 'The image file is corrupted.';
 
     public function __construct(
-        ?array $options = null,
-        int|string|null $maxSize = null,
-        ?bool $binaryFormat = null,
-        ?array $mimeTypes = null,
-        ?int $filenameMaxLength = null,
-        ?int $minWidth = null,
-        ?int $maxWidth = null,
-        ?int $maxHeight = null,
-        ?int $minHeight = null,
-        int|float|null $maxRatio = null,
-        int|float|null $minRatio = null,
-        int|float|null $minPixels = null,
-        int|float|null $maxPixels = null,
-        ?bool $allowSquare = null,
-        ?bool $allowLandscape = null,
-        ?bool $allowPortrait = null,
-        ?bool $detectCorrupted = null,
-        ?string $notFoundMessage = null,
-        ?string $notReadableMessage = null,
-        ?string $maxSizeMessage = null,
-        ?string $mimeTypesMessage = null,
-        ?string $disallowEmptyMessage = null,
-        ?string $filenameTooLongMessage = null,
-        ?string $uploadIniSizeErrorMessage = null,
-        ?string $uploadFormSizeErrorMessage = null,
-        ?string $uploadPartialErrorMessage = null,
-        ?string $uploadNoFileErrorMessage = null,
-        ?string $uploadNoTmpDirErrorMessage = null,
-        ?string $uploadCantWriteErrorMessage = null,
-        ?string $uploadExtensionErrorMessage = null,
-        ?string $uploadErrorMessage = null,
-        ?string $sizeNotDetectedMessage = null,
-        ?string $maxWidthMessage = null,
-        ?string $minWidthMessage = null,
-        ?string $maxHeightMessage = null,
-        ?string $minHeightMessage = null,
-        ?string $minPixelsMessage = null,
-        ?string $maxPixelsMessage = null,
-        ?string $maxRatioMessage = null,
-        ?string $minRatioMessage = null,
-        ?string $allowSquareMessage = null,
-        ?string $allowLandscapeMessage = null,
-        ?string $allowPortraitMessage = null,
-        ?string $corruptedMessage = null,
-        ?array $groups = null,
-        mixed $payload = null,
-        array|string|null $extensions = null,
-        ?string $extensionsMessage = null,
+        array $options = null,
+        int|string $maxSize = null,
+        bool $binaryFormat = null,
+        array $mimeTypes = null,
+        int $filenameMaxLength = null,
+        int $minWidth = null,
+        int $maxWidth = null,
+        int $maxHeight = null,
+        int $minHeight = null,
+        int|float $maxRatio = null,
+        int|float $minRatio = null,
+        int|float $minPixels = null,
+        int|float $maxPixels = null,
+        bool $allowSquare = null,
+        bool $allowLandscape = null,
+        bool $allowPortrait = null,
+        bool $detectCorrupted = null,
+        string $notFoundMessage = null,
+        string $notReadableMessage = null,
+        string $maxSizeMessage = null,
+        string $mimeTypesMessage = null,
+        string $disallowEmptyMessage = null,
+        string $filenameTooLongMessage = null,
+        string $uploadIniSizeErrorMessage = null,
+        string $uploadFormSizeErrorMessage = null,
+        string $uploadPartialErrorMessage = null,
+        string $uploadNoFileErrorMessage = null,
+        string $uploadNoTmpDirErrorMessage = null,
+        string $uploadCantWriteErrorMessage = null,
+        string $uploadExtensionErrorMessage = null,
+        string $uploadErrorMessage = null,
+        string $sizeNotDetectedMessage = null,
+        string $maxWidthMessage = null,
+        string $minWidthMessage = null,
+        string $maxHeightMessage = null,
+        string $minHeightMessage = null,
+        string $minPixelsMessage = null,
+        string $maxPixelsMessage = null,
+        string $maxRatioMessage = null,
+        string $minRatioMessage = null,
+        string $allowSquareMessage = null,
+        string $allowLandscapeMessage = null,
+        string $allowPortraitMessage = null,
+        string $corruptedMessage = null,
+        array $groups = null,
+        mixed $payload = null
     ) {
         parent::__construct(
             $options,
@@ -165,9 +162,7 @@ class Image extends File
             $uploadExtensionErrorMessage,
             $uploadErrorMessage,
             $groups,
-            $payload,
-            $extensions,
-            $extensionsMessage,
+            $payload
         );
 
         $this->minWidth = $minWidth ?? $this->minWidth;
@@ -195,10 +190,6 @@ class Image extends File
         $this->allowLandscapeMessage = $allowLandscapeMessage ?? $this->allowLandscapeMessage;
         $this->allowPortraitMessage = $allowPortraitMessage ?? $this->allowPortraitMessage;
         $this->corruptedMessage = $corruptedMessage ?? $this->corruptedMessage;
-
-        if (null === $this->mimeTypes && [] === $this->extensions) {
-            $this->mimeTypes = 'image/*';
-        }
 
         if (!\in_array('image/*', (array) $this->mimeTypes, true) && !\array_key_exists('mimeTypesMessage', $options ?? []) && null === $mimeTypesMessage) {
             $this->mimeTypesMessage = 'The mime type of the file is invalid ({{ type }}). Allowed mime types are {{ types }}.';

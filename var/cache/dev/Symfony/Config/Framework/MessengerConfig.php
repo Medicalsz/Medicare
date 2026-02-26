@@ -39,9 +39,22 @@ class MessengerConfig
         return $this;
     }
 
-    public function routing(string $message_class, array $value = []): \Symfony\Config\Framework\Messenger\RoutingConfig
+    /**
+     * @template TValue
+     * @param TValue $value
+     * @return \Symfony\Config\Framework\Messenger\RoutingConfig|$this
+     * @psalm-return (TValue is array ? \Symfony\Config\Framework\Messenger\RoutingConfig : static)
+     */
+    public function routing(string $message_class, array $value = []): \Symfony\Config\Framework\Messenger\RoutingConfig|static
     {
-        if (!isset($this->routing[$message_class])) {
+        if (!\is_array($value)) {
+            $this->_usedProperties['routing'] = true;
+            $this->routing[$message_class] = $value;
+
+            return $this;
+        }
+
+        if (!isset($this->routing[$message_class]) || !$this->routing[$message_class] instanceof \Symfony\Config\Framework\Messenger\RoutingConfig) {
             $this->_usedProperties['routing'] = true;
             $this->routing[$message_class] = new \Symfony\Config\Framework\Messenger\RoutingConfig($value);
         } elseif (1 < \func_num_args()) {
@@ -53,7 +66,7 @@ class MessengerConfig
 
     /**
      * @default {"default_serializer":"messenger.transport.native_php_serializer","symfony_serializer":{"format":"json","context":[]}}
-     */
+    */
     public function serializer(array $value = []): \Symfony\Config\Framework\Messenger\SerializerConfig
     {
         if (null === $this->serializer) {
@@ -67,7 +80,7 @@ class MessengerConfig
     }
 
     /**
-     * @template TValue of string|array
+     * @template TValue
      * @param TValue $value
      * @return \Symfony\Config\Framework\Messenger\TransportConfig|$this
      * @psalm-return (TValue is array ? \Symfony\Config\Framework\Messenger\TransportConfig : static)
@@ -109,7 +122,7 @@ class MessengerConfig
      * Reset container services after each message.
      * @default true
      * @param ParamConfigurator|bool $value
-     * @deprecated Since symfony/framework-bundle 6.1: Option "reset_on_message" at "framework.messenger" is deprecated. It does nothing and will be removed in version 7.0.
+     * @deprecated Option "reset_on_message" at "messenger" is deprecated. It does nothing and will be removed in version 7.0.
      * @return $this
      */
     public function resetOnMessage($value): static
@@ -148,7 +161,7 @@ class MessengerConfig
 
     /**
      * @default {"messenger.bus.default":{"default_middleware":{"enabled":true,"allow_no_handlers":false,"allow_no_senders":true},"middleware":[]}}
-     */
+    */
     public function bus(string $name, array $value = []): \Symfony\Config\Framework\Messenger\BusConfig
     {
         if (!isset($this->buses[$name])) {
@@ -161,64 +174,64 @@ class MessengerConfig
         return $this->buses[$name];
     }
 
-    public function __construct(array $config = [])
+    public function __construct(array $value = [])
     {
-        if (array_key_exists('enabled', $config)) {
+        if (array_key_exists('enabled', $value)) {
             $this->_usedProperties['enabled'] = true;
-            $this->enabled = $config['enabled'];
-            unset($config['enabled']);
+            $this->enabled = $value['enabled'];
+            unset($value['enabled']);
         }
 
-        if (array_key_exists('routing', $config)) {
+        if (array_key_exists('routing', $value)) {
             $this->_usedProperties['routing'] = true;
-            $this->routing = array_map(fn ($v) => \is_array($v) ? new \Symfony\Config\Framework\Messenger\RoutingConfig($v) : $v, $config['routing']);
-            unset($config['routing']);
+            $this->routing = array_map(fn ($v) => \is_array($v) ? new \Symfony\Config\Framework\Messenger\RoutingConfig($v) : $v, $value['routing']);
+            unset($value['routing']);
         }
 
-        if (array_key_exists('serializer', $config)) {
+        if (array_key_exists('serializer', $value)) {
             $this->_usedProperties['serializer'] = true;
-            $this->serializer = new \Symfony\Config\Framework\Messenger\SerializerConfig($config['serializer']);
-            unset($config['serializer']);
+            $this->serializer = new \Symfony\Config\Framework\Messenger\SerializerConfig($value['serializer']);
+            unset($value['serializer']);
         }
 
-        if (array_key_exists('transports', $config)) {
+        if (array_key_exists('transports', $value)) {
             $this->_usedProperties['transports'] = true;
-            $this->transports = array_map(fn ($v) => \is_array($v) ? new \Symfony\Config\Framework\Messenger\TransportConfig($v) : $v, $config['transports']);
-            unset($config['transports']);
+            $this->transports = array_map(fn ($v) => \is_array($v) ? new \Symfony\Config\Framework\Messenger\TransportConfig($v) : $v, $value['transports']);
+            unset($value['transports']);
         }
 
-        if (array_key_exists('failure_transport', $config)) {
+        if (array_key_exists('failure_transport', $value)) {
             $this->_usedProperties['failureTransport'] = true;
-            $this->failureTransport = $config['failure_transport'];
-            unset($config['failure_transport']);
+            $this->failureTransport = $value['failure_transport'];
+            unset($value['failure_transport']);
         }
 
-        if (array_key_exists('reset_on_message', $config)) {
+        if (array_key_exists('reset_on_message', $value)) {
             $this->_usedProperties['resetOnMessage'] = true;
-            $this->resetOnMessage = $config['reset_on_message'];
-            unset($config['reset_on_message']);
+            $this->resetOnMessage = $value['reset_on_message'];
+            unset($value['reset_on_message']);
         }
 
-        if (array_key_exists('stop_worker_on_signals', $config)) {
+        if (array_key_exists('stop_worker_on_signals', $value)) {
             $this->_usedProperties['stopWorkerOnSignals'] = true;
-            $this->stopWorkerOnSignals = $config['stop_worker_on_signals'];
-            unset($config['stop_worker_on_signals']);
+            $this->stopWorkerOnSignals = $value['stop_worker_on_signals'];
+            unset($value['stop_worker_on_signals']);
         }
 
-        if (array_key_exists('default_bus', $config)) {
+        if (array_key_exists('default_bus', $value)) {
             $this->_usedProperties['defaultBus'] = true;
-            $this->defaultBus = $config['default_bus'];
-            unset($config['default_bus']);
+            $this->defaultBus = $value['default_bus'];
+            unset($value['default_bus']);
         }
 
-        if (array_key_exists('buses', $config)) {
+        if (array_key_exists('buses', $value)) {
             $this->_usedProperties['buses'] = true;
-            $this->buses = array_map(fn ($v) => new \Symfony\Config\Framework\Messenger\BusConfig($v), $config['buses']);
-            unset($config['buses']);
+            $this->buses = array_map(fn ($v) => new \Symfony\Config\Framework\Messenger\BusConfig($v), $value['buses']);
+            unset($value['buses']);
         }
 
-        if ($config) {
-            throw new InvalidConfigurationException(sprintf('The following keys are not supported by "%s": ', __CLASS__).implode(', ', array_keys($config)));
+        if ([] !== $value) {
+            throw new InvalidConfigurationException(sprintf('The following keys are not supported by "%s": ', __CLASS__).implode(', ', array_keys($value)));
         }
     }
 

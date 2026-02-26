@@ -14,7 +14,6 @@ class DeleteCookieConfig
     private $domain;
     private $secure;
     private $samesite;
-    private $partitioned;
     private $_usedProperties = [];
 
     /**
@@ -69,53 +68,34 @@ class DeleteCookieConfig
         return $this;
     }
 
-    /**
-     * @default false
-     * @param ParamConfigurator|mixed $value
-     * @return $this
-     */
-    public function partitioned($value): static
+    public function __construct(array $value = [])
     {
-        $this->_usedProperties['partitioned'] = true;
-        $this->partitioned = $value;
-
-        return $this;
-    }
-
-    public function __construct(array $config = [])
-    {
-        if (array_key_exists('path', $config)) {
+        if (array_key_exists('path', $value)) {
             $this->_usedProperties['path'] = true;
-            $this->path = $config['path'];
-            unset($config['path']);
+            $this->path = $value['path'];
+            unset($value['path']);
         }
 
-        if (array_key_exists('domain', $config)) {
+        if (array_key_exists('domain', $value)) {
             $this->_usedProperties['domain'] = true;
-            $this->domain = $config['domain'];
-            unset($config['domain']);
+            $this->domain = $value['domain'];
+            unset($value['domain']);
         }
 
-        if (array_key_exists('secure', $config)) {
+        if (array_key_exists('secure', $value)) {
             $this->_usedProperties['secure'] = true;
-            $this->secure = $config['secure'];
-            unset($config['secure']);
+            $this->secure = $value['secure'];
+            unset($value['secure']);
         }
 
-        if (array_key_exists('samesite', $config)) {
+        if (array_key_exists('samesite', $value)) {
             $this->_usedProperties['samesite'] = true;
-            $this->samesite = $config['samesite'];
-            unset($config['samesite']);
+            $this->samesite = $value['samesite'];
+            unset($value['samesite']);
         }
 
-        if (array_key_exists('partitioned', $config)) {
-            $this->_usedProperties['partitioned'] = true;
-            $this->partitioned = $config['partitioned'];
-            unset($config['partitioned']);
-        }
-
-        if ($config) {
-            throw new InvalidConfigurationException(sprintf('The following keys are not supported by "%s": ', __CLASS__).implode(', ', array_keys($config)));
+        if ([] !== $value) {
+            throw new InvalidConfigurationException(sprintf('The following keys are not supported by "%s": ', __CLASS__).implode(', ', array_keys($value)));
         }
     }
 
@@ -133,9 +113,6 @@ class DeleteCookieConfig
         }
         if (isset($this->_usedProperties['samesite'])) {
             $output['samesite'] = $this->samesite;
-        }
-        if (isset($this->_usedProperties['partitioned'])) {
-            $output['partitioned'] = $this->partitioned;
         }
 
         return $output;

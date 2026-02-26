@@ -66,7 +66,7 @@ class LogoutConfig
     /**
      * @default null
      * @param ParamConfigurator|mixed $value
-     * @deprecated Since symfony/security-bundle 6.3: The "csrf_token_generator" option is deprecated. Use "csrf_token_manager" instead.
+     * @deprecated The "csrf_token_generator" option is deprecated. Use "csrf_token_manager" instead.
      * @return $this
      */
     public function csrfTokenGenerator($value): static
@@ -142,9 +142,22 @@ class LogoutConfig
         return $this;
     }
 
-    public function deleteCookie(string $name, array $value = []): \Symfony\Config\Security\FirewallConfig\Logout\DeleteCookieConfig
+    /**
+     * @template TValue
+     * @param TValue $value
+     * @return \Symfony\Config\Security\FirewallConfig\Logout\DeleteCookieConfig|$this
+     * @psalm-return (TValue is array ? \Symfony\Config\Security\FirewallConfig\Logout\DeleteCookieConfig : static)
+     */
+    public function deleteCookie(string $name, array $value = []): \Symfony\Config\Security\FirewallConfig\Logout\DeleteCookieConfig|static
     {
-        if (!isset($this->deleteCookies[$name])) {
+        if (!\is_array($value)) {
+            $this->_usedProperties['deleteCookies'] = true;
+            $this->deleteCookies[$name] = $value;
+
+            return $this;
+        }
+
+        if (!isset($this->deleteCookies[$name]) || !$this->deleteCookies[$name] instanceof \Symfony\Config\Security\FirewallConfig\Logout\DeleteCookieConfig) {
             $this->_usedProperties['deleteCookies'] = true;
             $this->deleteCookies[$name] = new \Symfony\Config\Security\FirewallConfig\Logout\DeleteCookieConfig($value);
         } elseif (1 < \func_num_args()) {
@@ -154,70 +167,70 @@ class LogoutConfig
         return $this->deleteCookies[$name];
     }
 
-    public function __construct(array $config = [])
+    public function __construct(array $value = [])
     {
-        if (array_key_exists('enable_csrf', $config)) {
+        if (array_key_exists('enable_csrf', $value)) {
             $this->_usedProperties['enableCsrf'] = true;
-            $this->enableCsrf = $config['enable_csrf'];
-            unset($config['enable_csrf']);
+            $this->enableCsrf = $value['enable_csrf'];
+            unset($value['enable_csrf']);
         }
 
-        if (array_key_exists('csrf_token_id', $config)) {
+        if (array_key_exists('csrf_token_id', $value)) {
             $this->_usedProperties['csrfTokenId'] = true;
-            $this->csrfTokenId = $config['csrf_token_id'];
-            unset($config['csrf_token_id']);
+            $this->csrfTokenId = $value['csrf_token_id'];
+            unset($value['csrf_token_id']);
         }
 
-        if (array_key_exists('csrf_parameter', $config)) {
+        if (array_key_exists('csrf_parameter', $value)) {
             $this->_usedProperties['csrfParameter'] = true;
-            $this->csrfParameter = $config['csrf_parameter'];
-            unset($config['csrf_parameter']);
+            $this->csrfParameter = $value['csrf_parameter'];
+            unset($value['csrf_parameter']);
         }
 
-        if (array_key_exists('csrf_token_generator', $config)) {
+        if (array_key_exists('csrf_token_generator', $value)) {
             $this->_usedProperties['csrfTokenGenerator'] = true;
-            $this->csrfTokenGenerator = $config['csrf_token_generator'];
-            unset($config['csrf_token_generator']);
+            $this->csrfTokenGenerator = $value['csrf_token_generator'];
+            unset($value['csrf_token_generator']);
         }
 
-        if (array_key_exists('csrf_token_manager', $config)) {
+        if (array_key_exists('csrf_token_manager', $value)) {
             $this->_usedProperties['csrfTokenManager'] = true;
-            $this->csrfTokenManager = $config['csrf_token_manager'];
-            unset($config['csrf_token_manager']);
+            $this->csrfTokenManager = $value['csrf_token_manager'];
+            unset($value['csrf_token_manager']);
         }
 
-        if (array_key_exists('path', $config)) {
+        if (array_key_exists('path', $value)) {
             $this->_usedProperties['path'] = true;
-            $this->path = $config['path'];
-            unset($config['path']);
+            $this->path = $value['path'];
+            unset($value['path']);
         }
 
-        if (array_key_exists('target', $config)) {
+        if (array_key_exists('target', $value)) {
             $this->_usedProperties['target'] = true;
-            $this->target = $config['target'];
-            unset($config['target']);
+            $this->target = $value['target'];
+            unset($value['target']);
         }
 
-        if (array_key_exists('invalidate_session', $config)) {
+        if (array_key_exists('invalidate_session', $value)) {
             $this->_usedProperties['invalidateSession'] = true;
-            $this->invalidateSession = $config['invalidate_session'];
-            unset($config['invalidate_session']);
+            $this->invalidateSession = $value['invalidate_session'];
+            unset($value['invalidate_session']);
         }
 
-        if (array_key_exists('clear_site_data', $config)) {
+        if (array_key_exists('clear_site_data', $value)) {
             $this->_usedProperties['clearSiteData'] = true;
-            $this->clearSiteData = $config['clear_site_data'];
-            unset($config['clear_site_data']);
+            $this->clearSiteData = $value['clear_site_data'];
+            unset($value['clear_site_data']);
         }
 
-        if (array_key_exists('delete_cookies', $config)) {
+        if (array_key_exists('delete_cookies', $value)) {
             $this->_usedProperties['deleteCookies'] = true;
-            $this->deleteCookies = array_map(fn ($v) => \is_array($v) ? new \Symfony\Config\Security\FirewallConfig\Logout\DeleteCookieConfig($v) : $v, $config['delete_cookies']);
-            unset($config['delete_cookies']);
+            $this->deleteCookies = array_map(fn ($v) => \is_array($v) ? new \Symfony\Config\Security\FirewallConfig\Logout\DeleteCookieConfig($v) : $v, $value['delete_cookies']);
+            unset($value['delete_cookies']);
         }
 
-        if ($config) {
-            throw new InvalidConfigurationException(sprintf('The following keys are not supported by "%s": ', __CLASS__).implode(', ', array_keys($config)));
+        if ([] !== $value) {
+            throw new InvalidConfigurationException(sprintf('The following keys are not supported by "%s": ', __CLASS__).implode(', ', array_keys($value)));
         }
     }
 

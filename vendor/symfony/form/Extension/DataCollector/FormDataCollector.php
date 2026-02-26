@@ -65,7 +65,7 @@ class FormDataCollector extends DataCollector implements FormDataCollectorInterf
     public function __construct(FormDataExtractorInterface $dataExtractor)
     {
         if (!class_exists(ClassStub::class)) {
-            throw new \LogicException(\sprintf('The VarDumper component is needed for using the "%s" class. Install symfony/var-dumper version 3.4 or above.', __CLASS__));
+            throw new \LogicException(sprintf('The VarDumper component is needed for using the "%s" class. Install symfony/var-dumper version 3.4 or above.', __CLASS__));
         }
 
         $this->dataExtractor = $dataExtractor;
@@ -76,7 +76,7 @@ class FormDataCollector extends DataCollector implements FormDataCollectorInterf
     /**
      * Does nothing. The data is collected during the form event listeners.
      */
-    public function collect(Request $request, Response $response, ?\Throwable $exception = null): void
+    public function collect(Request $request, Response $response, \Throwable $exception = null): void
     {
     }
 
@@ -200,7 +200,10 @@ class FormDataCollector extends DataCollector implements FormDataCollectorInterf
         return $this->data;
     }
 
-    public function __serialize(): array
+    /**
+     * @internal
+     */
+    public function __sleep(): array
     {
         foreach ($this->data['forms_by_hash'] as &$form) {
             if (isset($form['type_class']) && !$form['type_class'] instanceof ClassStub) {
@@ -208,7 +211,9 @@ class FormDataCollector extends DataCollector implements FormDataCollectorInterf
             }
         }
 
-        return ['data' => $this->data = $this->cloneVar($this->data)];
+        $this->data = $this->cloneVar($this->data);
+
+        return parent::__sleep();
     }
 
     protected function getCasters(): array

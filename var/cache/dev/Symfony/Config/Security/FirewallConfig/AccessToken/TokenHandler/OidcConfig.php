@@ -86,40 +86,40 @@ class OidcConfig
         return $this;
     }
 
-    public function __construct(array $config = [])
+    public function __construct(array $value = [])
     {
-        if (array_key_exists('claim', $config)) {
+        if (array_key_exists('claim', $value)) {
             $this->_usedProperties['claim'] = true;
-            $this->claim = $config['claim'];
-            unset($config['claim']);
+            $this->claim = $value['claim'];
+            unset($value['claim']);
         }
 
-        if (array_key_exists('audience', $config)) {
+        if (array_key_exists('audience', $value)) {
             $this->_usedProperties['audience'] = true;
-            $this->audience = $config['audience'];
-            unset($config['audience']);
+            $this->audience = $value['audience'];
+            unset($value['audience']);
         }
 
-        if (array_key_exists('issuers', $config)) {
+        if (array_key_exists('issuers', $value)) {
             $this->_usedProperties['issuers'] = true;
-            $this->issuers = $config['issuers'];
-            unset($config['issuers']);
+            $this->issuers = $value['issuers'];
+            unset($value['issuers']);
         }
 
-        if (array_key_exists('algorithm', $config)) {
+        if (array_key_exists('algorithm', $value)) {
             $this->_usedProperties['algorithm'] = true;
-            $this->algorithm = $config['algorithm'];
-            unset($config['algorithm']);
+            $this->algorithm = $value['algorithm'];
+            unset($value['algorithm']);
         }
 
-        if (array_key_exists('key', $config)) {
+        if (array_key_exists('key', $value)) {
             $this->_usedProperties['key'] = true;
-            $this->key = $config['key'];
-            unset($config['key']);
+            $this->key = $value['key'];
+            unset($value['key']);
         }
 
-        if ($config) {
-            throw new InvalidConfigurationException(sprintf('The following keys are not supported by "%s": ', __CLASS__).implode(', ', array_keys($config)));
+        if ([] !== $value) {
+            throw new InvalidConfigurationException(sprintf('The following keys are not supported by "%s": ', __CLASS__).implode(', ', array_keys($value)));
         }
     }
 

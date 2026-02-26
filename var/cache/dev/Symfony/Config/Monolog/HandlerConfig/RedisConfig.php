@@ -96,46 +96,46 @@ class RedisConfig
         return $this;
     }
 
-    public function __construct(array $config = [])
+    public function __construct(array $value = [])
     {
-        if (array_key_exists('id', $config)) {
+        if (array_key_exists('id', $value)) {
             $this->_usedProperties['id'] = true;
-            $this->id = $config['id'];
-            unset($config['id']);
+            $this->id = $value['id'];
+            unset($value['id']);
         }
 
-        if (array_key_exists('host', $config)) {
+        if (array_key_exists('host', $value)) {
             $this->_usedProperties['host'] = true;
-            $this->host = $config['host'];
-            unset($config['host']);
+            $this->host = $value['host'];
+            unset($value['host']);
         }
 
-        if (array_key_exists('password', $config)) {
+        if (array_key_exists('password', $value)) {
             $this->_usedProperties['password'] = true;
-            $this->password = $config['password'];
-            unset($config['password']);
+            $this->password = $value['password'];
+            unset($value['password']);
         }
 
-        if (array_key_exists('port', $config)) {
+        if (array_key_exists('port', $value)) {
             $this->_usedProperties['port'] = true;
-            $this->port = $config['port'];
-            unset($config['port']);
+            $this->port = $value['port'];
+            unset($value['port']);
         }
 
-        if (array_key_exists('database', $config)) {
+        if (array_key_exists('database', $value)) {
             $this->_usedProperties['database'] = true;
-            $this->database = $config['database'];
-            unset($config['database']);
+            $this->database = $value['database'];
+            unset($value['database']);
         }
 
-        if (array_key_exists('key_name', $config)) {
+        if (array_key_exists('key_name', $value)) {
             $this->_usedProperties['keyName'] = true;
-            $this->keyName = $config['key_name'];
-            unset($config['key_name']);
+            $this->keyName = $value['key_name'];
+            unset($value['key_name']);
         }
 
-        if ($config) {
-            throw new InvalidConfigurationException(sprintf('The following keys are not supported by "%s": ', __CLASS__).implode(', ', array_keys($config)));
+        if ([] !== $value) {
+            throw new InvalidConfigurationException(sprintf('The following keys are not supported by "%s": ', __CLASS__).implode(', ', array_keys($value)));
         }
     }
 

@@ -11,10 +11,10 @@
 
 namespace Symfony\Component\Messenger\Bridge\Doctrine\Transport;
 
+use Doctrine\DBAL\Schema\Table;
+
 /**
  * Uses PostgreSQL LISTEN/NOTIFY to push messages to workers.
- *
- * If you do not want to use the LISTEN mechanism, set the `use_notify` option to `false` when calling DoctrineTransportFactory::createTransport.
  *
  * @internal
  *
@@ -22,23 +22,26 @@ namespace Symfony\Component\Messenger\Bridge\Doctrine\Transport;
  */
 final class PostgreSqlConnection extends Connection
 {
-    private bool $listening = false;
-
     /**
+     * * use_notify: Set to false to disable the use of LISTEN/NOTIFY. Default: true
      * * check_delayed_interval: The interval to check for delayed messages, in milliseconds. Set to 0 to disable checks. Default: 60000 (1 minute)
-     * * get_notify_timeout: The length of time to wait for a response when calling PDO::pgsqlGetNotify (or Pdo\Pgsql::getNotify on PHP 8.4+), in milliseconds. Default: 0.
+     * * get_notify_timeout: The length of time to wait for a response when calling PDO::pgsqlGetNotify, in milliseconds. Default: 0.
      */
     protected const DEFAULT_OPTIONS = parent::DEFAULT_OPTIONS + [
+        'use_notify' => true,
         'check_delayed_interval' => 60000,
         'get_notify_timeout' => 0,
     ];
 
-    public function __serialize(): array
+    public function __sleep(): array
     {
         throw new \BadMethodCallException('Cannot serialize '.__CLASS__);
     }
 
-    public function __unserialize(array $data): void
+    /**
+     * @return void
+     */
+    public function __wakeup()
     {
         throw new \BadMethodCallException('Cannot unserialize '.__CLASS__);
     }
@@ -46,11 +49,6 @@ final class PostgreSqlConnection extends Connection
     public function __destruct()
     {
         $this->unlisten();
-    }
-
-    public function isListening(): bool
-    {
-        return $this->listening;
     }
 
     public function reset(): void
@@ -67,9 +65,7 @@ final class PostgreSqlConnection extends Connection
 
         // This is secure because the table name must be a valid identifier:
         // https://www.postgresql.org/docs/current/sql-syntax-lexical.html#SQL-SYNTAX-IDENTIFIERS
-        $this->executeStatement(\sprintf('LISTEN "%s"', $this->configuration['table_name']));
-
-        $this->listening = true;
+        $this->executeStatement(sprintf('LISTEN "%s"', $this->configuration['table_name']));
 
         // The condition should be removed once support for DBAL <3.3 is dropped
         if (method_exists($this->driverConnection, 'getNativeConnection')) {
@@ -81,9 +77,7 @@ final class PostgreSqlConnection extends Connection
             }
         }
 
-        $notification = \PHP_VERSION_ID >= 80500
-            ? $wrappedConnection->getNotify(\PDO::FETCH_ASSOC, $this->configuration['get_notify_timeout'])
-            : $wrappedConnection->pgsqlGetNotify(\PDO::FETCH_ASSOC, $this->configuration['get_notify_timeout']);
+        $notification = $wrappedConnection->pgsqlGetNotify(\PDO::FETCH_ASSOC, $this->configuration['get_notify_timeout']);
         if (
             // no notifications, or for another table or queue
             (false === $notification || $notification['message'] !== $this->configuration['table_name'] || $notification['payload'] !== $this->configuration['queue_name'])
@@ -98,13 +92,63 @@ final class PostgreSqlConnection extends Connection
         return parent::get();
     }
 
-    private function unlisten(): void
+    public function setup(): void
     {
-        if (!$this->listening) {
-            return;
+        parent::setup();
+
+        $this->executeStatement(implode("\n", $this->getTriggerSql()));
+    }
+
+    /**
+     * @return string[]
+     */
+    public function getExtraSetupSqlForTable(Table $createdTable): array
+    {
+        if (!$createdTable->hasOption(self::TABLE_OPTION_NAME)) {
+            return [];
         }
 
-        $this->executeStatement(\sprintf('UNLISTEN "%s"', $this->configuration['table_name']));
-        $this->listening = false;
+        if ($createdTable->getOption(self::TABLE_OPTION_NAME) !== $this->configuration['table_name']) {
+            return [];
+        }
+
+        return $this->getTriggerSql();
+    }
+
+    private function getTriggerSql(): array
+    {
+        $functionName = $this->createTriggerFunctionName();
+
+        return [
+            // create trigger function
+            sprintf(<<<'SQL'
+CREATE OR REPLACE FUNCTION %1$s() RETURNS TRIGGER AS $$
+    BEGIN
+        PERFORM pg_notify('%2$s', NEW.queue_name::text);
+        RETURN NEW;
+    END;
+$$ LANGUAGE plpgsql;
+SQL
+                , $functionName, $this->configuration['table_name']),
+            // register trigger
+            sprintf('DROP TRIGGER IF EXISTS notify_trigger ON %s;', $this->configuration['table_name']),
+            sprintf('CREATE TRIGGER notify_trigger AFTER INSERT OR UPDATE ON %1$s FOR EACH ROW EXECUTE PROCEDURE %2$s();', $this->configuration['table_name'], $functionName),
+        ];
+    }
+
+    private function createTriggerFunctionName(): string
+    {
+        $tableConfig = explode('.', $this->configuration['table_name']);
+
+        if (1 === \count($tableConfig)) {
+            return sprintf('notify_%1$s', $tableConfig[0]);
+        }
+
+        return sprintf('%1$s.notify_%2$s', $tableConfig[0], $tableConfig[1]);
+    }
+
+    private function unlisten(): void
+    {
+        $this->executeStatement(sprintf('UNLISTEN "%s"', $this->configuration['table_name']));
     }
 }

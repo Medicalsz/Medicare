@@ -85,16 +85,16 @@ class NoSuspiciousCharacters extends Constraint
      * @param self::RESTRICTION_LEVEL_*|null  $restrictionLevel
      */
     public function __construct(
-        ?array $options = null,
-        ?string $restrictionLevelMessage = null,
-        ?string $invisibleMessage = null,
-        ?string $mixedNumbersMessage = null,
-        ?string $hiddenOverlayMessage = null,
-        ?int $checks = null,
-        ?int $restrictionLevel = null,
-        ?array $locales = null,
-        ?array $groups = null,
-        mixed $payload = null,
+        array $options = null,
+        string $restrictionLevelMessage = null,
+        string $invisibleMessage = null,
+        string $mixedNumbersMessage = null,
+        string $hiddenOverlayMessage = null,
+        int $checks = null,
+        int $restrictionLevel = null,
+        array $locales = null,
+        array $groups = null,
+        mixed $payload = null
     ) {
         if (!class_exists(\Spoofchecker::class)) {
             throw new LogicException('The intl extension is required to use the NoSuspiciousCharacters constraint.');

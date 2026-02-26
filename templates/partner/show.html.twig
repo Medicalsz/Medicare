@@ -1,0 +1,193 @@
+{% extends 'admin_base.html.twig' %}
+
+{% block title %}Détails Partenaire{% endblock %}
+
+{% block body %}
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+            <div class="d-flex align-items-center mb-4">
+                <a href="{{ path('app_partner_index') }}" class="btn btn-outline-secondary btn-sm rounded-circle me-3">
+                    <i class="bi bi-arrow-left"></i>
+                </a>
+                <h1 class="h3 mb-0 text-gray-800">Profil du Partenaire</h1>
+            </div>
+
+            <div class="card shadow-sm border-0 rounded-4 overflow-hidden mb-4">
+                <div class="card-header bg-primary text-white py-4">
+                    <div class="d-flex align-items-center">
+                        <div class="bg-white rounded-circle p-1 me-4 shadow-sm" style="width: 100px; height: 100px; overflow: hidden;">
+                            {% if partner.imageName %}
+                                <img src="{{ vich_uploader_asset(partner, 'imageFile') }}" alt="{{ partner.name }}" class="img-fluid w-100 h-100 object-fit-cover">
+                            {% else %}
+                                <div class="w-100 h-100 d-flex align-items-center justify-content-center bg-light text-secondary">
+                                    <i class="bi bi-building fs-1"></i>
+                                </div>
+                            {% endif %}
+                        </div>
+                        <div>
+                            <h2 class="h4 mb-1 fw-bold">{{ partner.name }}</h2>
+                            <span class="badge bg-white text-primary px-3 py-2 rounded-pill">
+                                {{ partner.typePartenaire.value }}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body p-4">
+                    <div class="row g-4">
+                        <div class="col-md-6">
+                            <div class="d-flex mb-4">
+                                <div class="feature-icon bg-light text-primary rounded-3 p-3 me-3">
+                                    <i class="bi bi-geo-alt fs-4"></i>
+                                </div>
+                                <div>
+                                    <label class="text-muted small text-uppercase fw-bold">Adresse</label>
+                                    <p class="mb-0 fw-medium">{{ partner.adresse }}</p>
+                                </div>
+                            </div>
+                            <div class="d-flex">
+                                <div class="feature-icon bg-light text-primary rounded-3 p-3 me-3">
+                                    <i class="bi bi-calendar-check fs-4"></i>
+                                </div>
+                                <div>
+                                    <label class="text-muted small text-uppercase fw-bold">Partenaire depuis</label>
+                                    <p class="mb-0 fw-medium">{{ partner.datePartenariat|date('d F Y') }}</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="d-flex mb-4">
+                                <div class="feature-icon bg-light text-primary rounded-3 p-3 me-3">
+                                    <i class="bi bi-telephone fs-4"></i>
+                                </div>
+                                <div>
+                                    <label class="text-muted small text-uppercase fw-bold">Téléphone</label>
+                                    <p class="mb-0 fw-medium">{{ partner.telephone }}</p>
+                                </div>
+                            </div>
+                            <div class="d-flex">
+                                <div class="feature-icon bg-light text-primary rounded-3 p-3 me-3">
+                                    <i class="bi bi-envelope fs-4"></i>
+                                </div>
+                                <div>
+                                    <label class="text-muted small text-uppercase fw-bold">Email</label>
+                                    <p class="mb-0 fw-medium">{{ partner.email }}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <hr class="my-4 opacity-25">
+
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div class="d-flex align-items-center">
+                            <span class="text-muted me-3">Statut actuel:</span>
+                            <span class="badge 
+                                {% if partner.statut.value == 'ACTIF' %}bg-success
+                                {% elseif partner.statut.value == 'SUSPENDU' %}bg-warning
+                                {% else %}bg-danger{% endif %} px-4 py-2">
+                                {{ partner.statut.value }}
+                            </span>
+                        </div>
+                        <div class="gap-2 d-flex">
+                            <a href="{{ path('app_partner_edit', {'id': partner.id}) }}" class="btn btn-primary px-4 shadow-sm">
+                                <i class="bi bi-pencil me-2"></i>Modifier
+                            </a>
+                            {{ include('partner/_delete_form.html.twig', {'button_class': 'btn btn-outline-danger px-4'}) }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="card shadow-sm border-0 rounded-4 overflow-hidden mb-4">
+                <div class="card-header bg-light py-3">
+                    <h3 class="h6 mb-0 text-gray-800">AI-Powered Suggestions</h3>
+                </div>
+                <div class="card-body p-4">
+                    <p class="text-muted">Click the button below to generate creative collaboration ideas for this partner based on their profile.</p>
+                    <button id="suggest-btn" class="btn btn-info text-white">
+                        <i class="bi bi-magic me-2"></i>Get Suggestions
+                    </button>
+                    <div id="suggestions-container" class="mt-4" style="display: none;">
+                        <h4 class="h6">Here are a few ideas:</h4>
+                        <ul id="suggestions-list" class="list-group list-group-flush">
+                            <!-- Suggestions will be injected here -->
+                        </ul>
+                    </div>
+                    <div id="loading-spinner" class="mt-4 text-center" style="display: none;">
+                        <div class="spinner-border text-primary" role="status">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
+                        <p class="mt-2">Generating ideas...</p>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<style>
+    .object-fit-cover { object-fit: cover; }
+    .feature-icon { width: 60px; height: 60px; display: flex; align-items: center; justify-content: center; }
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const suggestBtn = document.getElementById('suggest-btn');
+    const suggestionsContainer = document.getElementById('suggestions-container');
+    const suggestionsList = document.getElementById('suggestions-list');
+    const loadingSpinner = document.getElementById('loading-spinner');
+    const partnerId = {{ partner.id }};
+
+    suggestBtn.addEventListener('click', function () {
+        // Show spinner and hide previous suggestions
+        loadingSpinner.style.display = 'block';
+        suggestionsContainer.style.display = 'none';
+        suggestionsList.innerHTML = '';
+        suggestBtn.disabled = true;
+
+        fetch(`/api/partners/${partnerId}/suggest-collaboration`, {
+            method: 'POST',
+        })
+        .then(response => response.json())
+        .then(data => {
+            loadingSpinner.style.display = 'none';
+            suggestionsContainer.style.display = 'block';
+            suggestBtn.disabled = false;
+
+            if (data.suggestions && data.suggestions.length > 0) {
+                if (data.suggestions.error) {
+                    const errorItem = document.createElement('li');
+                    errorItem.className = 'list-group-item text-danger';
+                    errorItem.textContent = data.suggestions.error;
+                    suggestionsList.appendChild(errorItem);
+                } else {
+                    data.suggestions.forEach(suggestion => {
+                        const listItem = document.createElement('li');
+                        listItem.className = 'list-group-item';
+                        listItem.textContent = suggestion;
+                        suggestionsList.appendChild(listItem);
+                    });
+                }
+            } else {
+                const noSuggestionItem = document.createElement('li');
+                noSuggestionItem.className = 'list-group-item text-muted';
+                noSuggestionItem.textContent = 'No suggestions could be generated at this time.';
+                suggestionsList.appendChild(noSuggestionItem);
+            }
+        })
+        .catch(error => {
+            console.error('Error fetching AI suggestions:', error);
+            loadingSpinner.style.display = 'none';
+            suggestionsContainer.style.display = 'block';
+            suggestBtn.disabled = false;
+
+            const errorItem = document.createElement('li');
+            errorItem.className = 'list-group-item text-danger';
+            errorItem.textContent = 'An error occurred while trying to get suggestions.';
+            suggestionsList.appendChild(errorItem);
+        });
+    });
+});
+</script>
+{% endblock %}

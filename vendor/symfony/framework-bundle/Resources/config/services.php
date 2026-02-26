@@ -100,7 +100,6 @@ return static function (ContainerConfigurator $container) {
         ->alias(HttpKernelInterface::class, 'http_kernel')
 
         ->set('request_stack', RequestStack::class)
-            ->tag('kernel.reset', ['method' => 'resetRequestFormats', 'on_invalid' => 'ignore'])
             ->public()
         ->alias(RequestStack::class, 'request_stack')
 
@@ -131,7 +130,7 @@ return static function (ContainerConfigurator $container) {
             ->args([
                 tagged_iterator('kernel.cache_warmer'),
                 param('kernel.debug'),
-                \sprintf('%s/%sDeprecations.log', param('kernel.build_dir'), param('kernel.container_class')),
+                sprintf('%s/%sDeprecations.log', param('kernel.build_dir'), param('kernel.container_class')),
             ])
             ->tag('container.no_preload')
 

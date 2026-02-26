@@ -30,7 +30,7 @@ class WorkflowsConfig
     }
 
     /**
-     * @template TValue of mixed
+     * @template TValue
      * @param TValue $value
      * @return \Symfony\Config\Framework\Workflows\WorkflowsConfig|$this
      * @psalm-return (TValue is array ? \Symfony\Config\Framework\Workflows\WorkflowsConfig : static)
@@ -54,22 +54,22 @@ class WorkflowsConfig
         return $this->workflows[$name];
     }
 
-    public function __construct(array $config = [])
+    public function __construct(array $value = [])
     {
-        if (array_key_exists('enabled', $config)) {
+        if (array_key_exists('enabled', $value)) {
             $this->_usedProperties['enabled'] = true;
-            $this->enabled = $config['enabled'];
-            unset($config['enabled']);
+            $this->enabled = $value['enabled'];
+            unset($value['enabled']);
         }
 
-        if (array_key_exists('workflows', $config)) {
+        if (array_key_exists('workflows', $value)) {
             $this->_usedProperties['workflows'] = true;
-            $this->workflows = array_map(fn ($v) => \is_array($v) ? new \Symfony\Config\Framework\Workflows\WorkflowsConfig($v) : $v, $config['workflows']);
-            unset($config['workflows']);
+            $this->workflows = array_map(fn ($v) => \is_array($v) ? new \Symfony\Config\Framework\Workflows\WorkflowsConfig($v) : $v, $value['workflows']);
+            unset($value['workflows']);
         }
 
-        if ($config) {
-            throw new InvalidConfigurationException(sprintf('The following keys are not supported by "%s": ', __CLASS__).implode(', ', array_keys($config)));
+        if ([] !== $value) {
+            throw new InvalidConfigurationException(sprintf('The following keys are not supported by "%s": ', __CLASS__).implode(', ', array_keys($value)));
         }
     }
 

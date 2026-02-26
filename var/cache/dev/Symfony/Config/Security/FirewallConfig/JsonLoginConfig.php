@@ -103,7 +103,7 @@ class JsonLoginConfig
     /**
      * @default false
      * @param ParamConfigurator|bool $value
-     * @deprecated Since symfony/security-bundle 6.4: Option "require_previous_session" at "security.firewalls..json_login" is deprecated, it will be removed in version 7.0. Setting it has no effect anymore.
+     * @deprecated Option "require_previous_session" at "json_login" is deprecated, it will be removed in version 7.0. Setting it has no effect anymore.
      * @return $this
      */
     public function requirePreviousSession($value): static
@@ -153,70 +153,70 @@ class JsonLoginConfig
         return $this;
     }
 
-    public function __construct(array $config = [])
+    public function __construct(array $value = [])
     {
-        if (array_key_exists('provider', $config)) {
+        if (array_key_exists('provider', $value)) {
             $this->_usedProperties['provider'] = true;
-            $this->provider = $config['provider'];
-            unset($config['provider']);
+            $this->provider = $value['provider'];
+            unset($value['provider']);
         }
 
-        if (array_key_exists('remember_me', $config)) {
+        if (array_key_exists('remember_me', $value)) {
             $this->_usedProperties['rememberMe'] = true;
-            $this->rememberMe = $config['remember_me'];
-            unset($config['remember_me']);
+            $this->rememberMe = $value['remember_me'];
+            unset($value['remember_me']);
         }
 
-        if (array_key_exists('success_handler', $config)) {
+        if (array_key_exists('success_handler', $value)) {
             $this->_usedProperties['successHandler'] = true;
-            $this->successHandler = $config['success_handler'];
-            unset($config['success_handler']);
+            $this->successHandler = $value['success_handler'];
+            unset($value['success_handler']);
         }
 
-        if (array_key_exists('failure_handler', $config)) {
+        if (array_key_exists('failure_handler', $value)) {
             $this->_usedProperties['failureHandler'] = true;
-            $this->failureHandler = $config['failure_handler'];
-            unset($config['failure_handler']);
+            $this->failureHandler = $value['failure_handler'];
+            unset($value['failure_handler']);
         }
 
-        if (array_key_exists('check_path', $config)) {
+        if (array_key_exists('check_path', $value)) {
             $this->_usedProperties['checkPath'] = true;
-            $this->checkPath = $config['check_path'];
-            unset($config['check_path']);
+            $this->checkPath = $value['check_path'];
+            unset($value['check_path']);
         }
 
-        if (array_key_exists('use_forward', $config)) {
+        if (array_key_exists('use_forward', $value)) {
             $this->_usedProperties['useForward'] = true;
-            $this->useForward = $config['use_forward'];
-            unset($config['use_forward']);
+            $this->useForward = $value['use_forward'];
+            unset($value['use_forward']);
         }
 
-        if (array_key_exists('require_previous_session', $config)) {
+        if (array_key_exists('require_previous_session', $value)) {
             $this->_usedProperties['requirePreviousSession'] = true;
-            $this->requirePreviousSession = $config['require_previous_session'];
-            unset($config['require_previous_session']);
+            $this->requirePreviousSession = $value['require_previous_session'];
+            unset($value['require_previous_session']);
         }
 
-        if (array_key_exists('login_path', $config)) {
+        if (array_key_exists('login_path', $value)) {
             $this->_usedProperties['loginPath'] = true;
-            $this->loginPath = $config['login_path'];
-            unset($config['login_path']);
+            $this->loginPath = $value['login_path'];
+            unset($value['login_path']);
         }
 
-        if (array_key_exists('username_path', $config)) {
+        if (array_key_exists('username_path', $value)) {
             $this->_usedProperties['usernamePath'] = true;
-            $this->usernamePath = $config['username_path'];
-            unset($config['username_path']);
+            $this->usernamePath = $value['username_path'];
+            unset($value['username_path']);
         }
 
-        if (array_key_exists('password_path', $config)) {
+        if (array_key_exists('password_path', $value)) {
             $this->_usedProperties['passwordPath'] = true;
-            $this->passwordPath = $config['password_path'];
-            unset($config['password_path']);
+            $this->passwordPath = $value['password_path'];
+            unset($value['password_path']);
         }
 
-        if ($config) {
-            throw new InvalidConfigurationException(sprintf('The following keys are not supported by "%s": ', __CLASS__).implode(', ', array_keys($config)));
+        if ([] !== $value) {
+            throw new InvalidConfigurationException(sprintf('The following keys are not supported by "%s": ', __CLASS__).implode(', ', array_keys($value)));
         }
     }
 

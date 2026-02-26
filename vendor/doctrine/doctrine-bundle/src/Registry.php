@@ -1,24 +1,18 @@
 <?php
 
-declare(strict_types=1);
-
 namespace Doctrine\Bundle\DoctrineBundle;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\ORMException;
 use Doctrine\Persistence\Proxy;
 use ProxyManager\Proxy\LazyLoadingInterface;
-use ReflectionClass;
+use Psr\Container\ContainerInterface;
 use Symfony\Bridge\Doctrine\ManagerRegistry;
-use Symfony\Component\DependencyInjection\Container;
 use Symfony\Component\VarExporter\LazyObjectInterface;
 use Symfony\Contracts\Service\ResetInterface;
 
 use function array_keys;
 use function assert;
-use function method_exists;
-
-use const PHP_VERSION_ID;
 
 /**
  * References all Doctrine connections and entity managers in a given Container.
@@ -29,7 +23,7 @@ class Registry extends ManagerRegistry implements ResetInterface
      * @param string[] $connections
      * @param string[] $entityManagers
      */
-    public function __construct(Container $container, array $connections, array $entityManagers, string $defaultConnection, string $defaultEntityManager)
+    public function __construct(ContainerInterface $container, array $connections, array $entityManagers, string $defaultConnection, string $defaultEntityManager)
     {
         $this->container = $container;
 
@@ -57,14 +51,12 @@ class Registry extends ManagerRegistry implements ResetInterface
             }
 
             try {
-                /** @phpstan-ignore method.notFound (ORM < 3 specific) */
+                /** @psalm-suppress UndefinedMethod ORM < 3 specific */
                 return $objectManager->getConfiguration()->getEntityNamespace($alias);
-            /* @phpstan-ignore class.notFound */
-            } catch (ORMException) {
+            } catch (ORMException $e) {
             }
         }
 
-        /* @phpstan-ignore class.notFound */
         throw ORMException::unknownEntityNamespace($alias);
     }
 
@@ -85,27 +77,10 @@ class Registry extends ManagerRegistry implements ResetInterface
 
         assert($manager instanceof EntityManagerInterface);
 
-        // Determine if the version of symfony/dependency-injection is >= 7.3
-        /** @phpstan-ignore function.alreadyNarrowedType */
-        $sfNativeLazyObjects = method_exists('Symfony\Component\DependencyInjection\ContainerBuilder', 'findTaggedResourceIds');
+        if ((! $manager instanceof LazyLoadingInterface && ! $manager instanceof LazyObjectInterface) || $manager->isOpen()) {
+            $manager->clear();
 
-        if (PHP_VERSION_ID < 80400 || ! $sfNativeLazyObjects) {
-            if ((! $manager instanceof LazyLoadingInterface && ! $manager instanceof LazyObjectInterface) || $manager->isOpen()) {
-                $manager->clear();
-
-                return;
-            }
-        } else {
-            $r = new ReflectionClass($manager);
-            if ($r->isUninitializedLazyObject($manager)) {
-                return;
-            }
-
-            if ($manager->isOpen()) {
-                $manager->clear();
-
-                return;
-            }
+            return;
         }
 
         $this->resetManager($managerName);

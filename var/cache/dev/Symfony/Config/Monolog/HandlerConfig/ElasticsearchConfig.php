@@ -110,52 +110,52 @@ class ElasticsearchConfig
         return $this;
     }
 
-    public function __construct(array $config = [])
+    public function __construct(array $value = [])
     {
-        if (array_key_exists('id', $config)) {
+        if (array_key_exists('id', $value)) {
             $this->_usedProperties['id'] = true;
-            $this->id = $config['id'];
-            unset($config['id']);
+            $this->id = $value['id'];
+            unset($value['id']);
         }
 
-        if (array_key_exists('hosts', $config)) {
+        if (array_key_exists('hosts', $value)) {
             $this->_usedProperties['hosts'] = true;
-            $this->hosts = $config['hosts'];
-            unset($config['hosts']);
+            $this->hosts = $value['hosts'];
+            unset($value['hosts']);
         }
 
-        if (array_key_exists('host', $config)) {
+        if (array_key_exists('host', $value)) {
             $this->_usedProperties['host'] = true;
-            $this->host = $config['host'];
-            unset($config['host']);
+            $this->host = $value['host'];
+            unset($value['host']);
         }
 
-        if (array_key_exists('port', $config)) {
+        if (array_key_exists('port', $value)) {
             $this->_usedProperties['port'] = true;
-            $this->port = $config['port'];
-            unset($config['port']);
+            $this->port = $value['port'];
+            unset($value['port']);
         }
 
-        if (array_key_exists('transport', $config)) {
+        if (array_key_exists('transport', $value)) {
             $this->_usedProperties['transport'] = true;
-            $this->transport = $config['transport'];
-            unset($config['transport']);
+            $this->transport = $value['transport'];
+            unset($value['transport']);
         }
 
-        if (array_key_exists('user', $config)) {
+        if (array_key_exists('user', $value)) {
             $this->_usedProperties['user'] = true;
-            $this->user = $config['user'];
-            unset($config['user']);
+            $this->user = $value['user'];
+            unset($value['user']);
         }
 
-        if (array_key_exists('password', $config)) {
+        if (array_key_exists('password', $value)) {
             $this->_usedProperties['password'] = true;
-            $this->password = $config['password'];
-            unset($config['password']);
+            $this->password = $value['password'];
+            unset($value['password']);
         }
 
-        if ($config) {
-            throw new InvalidConfigurationException(sprintf('The following keys are not supported by "%s": ', __CLASS__).implode(', ', array_keys($config)));
+        if ([] !== $value) {
+            throw new InvalidConfigurationException(sprintf('The following keys are not supported by "%s": ', __CLASS__).implode(', ', array_keys($value)));
         }
     }
 

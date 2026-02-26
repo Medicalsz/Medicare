@@ -108,52 +108,52 @@ class HttpBasicLdapConfig
         return $this;
     }
 
-    public function __construct(array $config = [])
+    public function __construct(array $value = [])
     {
-        if (array_key_exists('provider', $config)) {
+        if (array_key_exists('provider', $value)) {
             $this->_usedProperties['provider'] = true;
-            $this->provider = $config['provider'];
-            unset($config['provider']);
+            $this->provider = $value['provider'];
+            unset($value['provider']);
         }
 
-        if (array_key_exists('realm', $config)) {
+        if (array_key_exists('realm', $value)) {
             $this->_usedProperties['realm'] = true;
-            $this->realm = $config['realm'];
-            unset($config['realm']);
+            $this->realm = $value['realm'];
+            unset($value['realm']);
         }
 
-        if (array_key_exists('service', $config)) {
+        if (array_key_exists('service', $value)) {
             $this->_usedProperties['service'] = true;
-            $this->service = $config['service'];
-            unset($config['service']);
+            $this->service = $value['service'];
+            unset($value['service']);
         }
 
-        if (array_key_exists('dn_string', $config)) {
+        if (array_key_exists('dn_string', $value)) {
             $this->_usedProperties['dnString'] = true;
-            $this->dnString = $config['dn_string'];
-            unset($config['dn_string']);
+            $this->dnString = $value['dn_string'];
+            unset($value['dn_string']);
         }
 
-        if (array_key_exists('query_string', $config)) {
+        if (array_key_exists('query_string', $value)) {
             $this->_usedProperties['queryString'] = true;
-            $this->queryString = $config['query_string'];
-            unset($config['query_string']);
+            $this->queryString = $value['query_string'];
+            unset($value['query_string']);
         }
 
-        if (array_key_exists('search_dn', $config)) {
+        if (array_key_exists('search_dn', $value)) {
             $this->_usedProperties['searchDn'] = true;
-            $this->searchDn = $config['search_dn'];
-            unset($config['search_dn']);
+            $this->searchDn = $value['search_dn'];
+            unset($value['search_dn']);
         }
 
-        if (array_key_exists('search_password', $config)) {
+        if (array_key_exists('search_password', $value)) {
             $this->_usedProperties['searchPassword'] = true;
-            $this->searchPassword = $config['search_password'];
-            unset($config['search_password']);
+            $this->searchPassword = $value['search_password'];
+            unset($value['search_password']);
         }
 
-        if ($config) {
-            throw new InvalidConfigurationException(sprintf('The following keys are not supported by "%s": ', __CLASS__).implode(', ', array_keys($config)));
+        if ([] !== $value) {
+            throw new InvalidConfigurationException(sprintf('The following keys are not supported by "%s": ', __CLASS__).implode(', ', array_keys($value)));
         }
     }
 

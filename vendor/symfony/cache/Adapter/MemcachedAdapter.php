@@ -15,7 +15,6 @@ use Symfony\Component\Cache\Exception\CacheException;
 use Symfony\Component\Cache\Exception\InvalidArgumentException;
 use Symfony\Component\Cache\Marshaller\DefaultMarshaller;
 use Symfony\Component\Cache\Marshaller\MarshallerInterface;
-use Symfony\Contracts\Cache\ItemInterface;
 
 /**
  * @author Rob Frawley 2nd <rmf@src.run>
@@ -25,8 +24,8 @@ class MemcachedAdapter extends AbstractAdapter
 {
     /**
      * We are replacing characters that are illegal in Memcached keys with reserved characters from
-     * {@see ItemInterface::RESERVED_CHARACTERS} that are legal in Memcached.
-     * Note: don’t use {@see AbstractAdapter::NS_SEPARATOR}.
+     * {@see \Symfony\Contracts\Cache\ItemInterface::RESERVED_CHARACTERS} that are legal in Memcached.
+     * Note: don’t use {@see \Symfony\Component\Cache\Adapter\AbstractAdapter::NS_SEPARATOR}.
      */
     private const RESERVED_MEMCACHED = " \n\r\t\v\f\0";
     private const RESERVED_PSR6 = '@()\{}/';
@@ -46,7 +45,7 @@ class MemcachedAdapter extends AbstractAdapter
      *
      * Using a MemcachedAdapter as a pure items store is fine.
      */
-    public function __construct(\Memcached $client, string $namespace = '', int $defaultLifetime = 0, ?MarshallerInterface $marshaller = null)
+    public function __construct(\Memcached $client, string $namespace = '', int $defaultLifetime = 0, MarshallerInterface $marshaller = null)
     {
         if (!static::isSupported()) {
             throw new CacheException('Memcached > 3.1.5 is required.');
@@ -69,7 +68,10 @@ class MemcachedAdapter extends AbstractAdapter
         $this->marshaller = $marshaller ?? new DefaultMarshaller();
     }
 
-    public static function isSupported(): bool
+    /**
+     * @return bool
+     */
+    public static function isSupported()
     {
         return \extension_loaded('memcached') && version_compare(phpversion('memcached'), '3.1.6', '>=');
     }
@@ -112,8 +114,6 @@ class MemcachedAdapter extends AbstractAdapter
                 $params = preg_replace_callback('#^memcached:(//)?(?:([^@]*+)@)?#', function ($m) use (&$username, &$password) {
                     if (!empty($m[2])) {
                         [$username, $password] = explode(':', $m[2], 2) + [1 => null];
-                        $username = rawurldecode($username);
-                        $password = null !== $password ? rawurldecode($password) : null;
                     }
 
                     return 'file:'.($m[1] ?? '');
@@ -312,7 +312,7 @@ class MemcachedAdapter extends AbstractAdapter
             throw new CacheException('MemcachedAdapter: "serializer" option must be "php" or "igbinary".');
         }
         if ('' !== $prefix = (string) $this->lazyClient->getOption(\Memcached::OPT_PREFIX_KEY)) {
-            throw new CacheException(\sprintf('MemcachedAdapter: "prefix_key" option must be empty when using proxified connections, "%s" given.', $prefix));
+            throw new CacheException(sprintf('MemcachedAdapter: "prefix_key" option must be empty when using proxified connections, "%s" given.', $prefix));
         }
 
         return $this->client = $this->lazyClient;

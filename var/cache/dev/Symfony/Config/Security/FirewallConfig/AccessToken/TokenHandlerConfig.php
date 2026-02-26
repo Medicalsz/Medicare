@@ -32,7 +32,7 @@ class TokenHandlerConfig
     }
 
     /**
-     * @template TValue of string|array
+     * @template TValue
      * @param TValue $value
      * @return \Symfony\Config\Security\FirewallConfig\AccessToken\TokenHandler\OidcUserInfoConfig|$this
      * @psalm-return (TValue is array ? \Symfony\Config\Security\FirewallConfig\AccessToken\TokenHandler\OidcUserInfoConfig : static)
@@ -68,28 +68,28 @@ class TokenHandlerConfig
         return $this->oidc;
     }
 
-    public function __construct(array $config = [])
+    public function __construct(array $value = [])
     {
-        if (array_key_exists('id', $config)) {
+        if (array_key_exists('id', $value)) {
             $this->_usedProperties['id'] = true;
-            $this->id = $config['id'];
-            unset($config['id']);
+            $this->id = $value['id'];
+            unset($value['id']);
         }
 
-        if (array_key_exists('oidc_user_info', $config)) {
+        if (array_key_exists('oidc_user_info', $value)) {
             $this->_usedProperties['oidcUserInfo'] = true;
-            $this->oidcUserInfo = \is_array($config['oidc_user_info']) ? new \Symfony\Config\Security\FirewallConfig\AccessToken\TokenHandler\OidcUserInfoConfig($config['oidc_user_info']) : $config['oidc_user_info'];
-            unset($config['oidc_user_info']);
+            $this->oidcUserInfo = \is_array($value['oidc_user_info']) ? new \Symfony\Config\Security\FirewallConfig\AccessToken\TokenHandler\OidcUserInfoConfig($value['oidc_user_info']) : $value['oidc_user_info'];
+            unset($value['oidc_user_info']);
         }
 
-        if (array_key_exists('oidc', $config)) {
+        if (array_key_exists('oidc', $value)) {
             $this->_usedProperties['oidc'] = true;
-            $this->oidc = new \Symfony\Config\Security\FirewallConfig\AccessToken\TokenHandler\OidcConfig($config['oidc']);
-            unset($config['oidc']);
+            $this->oidc = new \Symfony\Config\Security\FirewallConfig\AccessToken\TokenHandler\OidcConfig($value['oidc']);
+            unset($value['oidc']);
         }
 
-        if ($config) {
-            throw new InvalidConfigurationException(sprintf('The following keys are not supported by "%s": ', __CLASS__).implode(', ', array_keys($config)));
+        if ([] !== $value) {
+            throw new InvalidConfigurationException(sprintf('The following keys are not supported by "%s": ', __CLASS__).implode(', ', array_keys($value)));
         }
     }
 

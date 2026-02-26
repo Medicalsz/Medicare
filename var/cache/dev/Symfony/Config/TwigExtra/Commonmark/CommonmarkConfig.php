@@ -82,40 +82,40 @@ class CommonmarkConfig
         return $this;
     }
 
-    public function __construct(array $config = [])
+    public function __construct(array $value = [])
     {
-        if (array_key_exists('enable_em', $config)) {
+        if (array_key_exists('enable_em', $value)) {
             $this->_usedProperties['enableEm'] = true;
-            $this->enableEm = $config['enable_em'];
-            unset($config['enable_em']);
+            $this->enableEm = $value['enable_em'];
+            unset($value['enable_em']);
         }
 
-        if (array_key_exists('enable_strong', $config)) {
+        if (array_key_exists('enable_strong', $value)) {
             $this->_usedProperties['enableStrong'] = true;
-            $this->enableStrong = $config['enable_strong'];
-            unset($config['enable_strong']);
+            $this->enableStrong = $value['enable_strong'];
+            unset($value['enable_strong']);
         }
 
-        if (array_key_exists('use_asterisk', $config)) {
+        if (array_key_exists('use_asterisk', $value)) {
             $this->_usedProperties['useAsterisk'] = true;
-            $this->useAsterisk = $config['use_asterisk'];
-            unset($config['use_asterisk']);
+            $this->useAsterisk = $value['use_asterisk'];
+            unset($value['use_asterisk']);
         }
 
-        if (array_key_exists('use_underscore', $config)) {
+        if (array_key_exists('use_underscore', $value)) {
             $this->_usedProperties['useUnderscore'] = true;
-            $this->useUnderscore = $config['use_underscore'];
-            unset($config['use_underscore']);
+            $this->useUnderscore = $value['use_underscore'];
+            unset($value['use_underscore']);
         }
 
-        if (array_key_exists('unordered_list_markers', $config)) {
+        if (array_key_exists('unordered_list_markers', $value)) {
             $this->_usedProperties['unorderedListMarkers'] = true;
-            $this->unorderedListMarkers = $config['unordered_list_markers'];
-            unset($config['unordered_list_markers']);
+            $this->unorderedListMarkers = $value['unordered_list_markers'];
+            unset($value['unordered_list_markers']);
         }
 
-        if ($config) {
-            throw new InvalidConfigurationException(sprintf('The following keys are not supported by "%s": ', __CLASS__).implode(', ', array_keys($config)));
+        if ([] !== $value) {
+            throw new InvalidConfigurationException(sprintf('The following keys are not supported by "%s": ', __CLASS__).implode(', ', array_keys($value)));
         }
     }
 

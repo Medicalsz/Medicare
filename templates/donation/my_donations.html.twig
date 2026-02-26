@@ -1,0 +1,331 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Mes Dons - Medicare{% endblock %}
+
+{% block stylesheets %}
+<style>
+    .my-donations-section {
+        padding: 120px 0 60px;
+        background-color: #f8f9fa;
+        min-height: 100vh;
+    }
+    .donation-card {
+        background: white;
+        border-radius: 15px;
+        box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+        border: none;
+        transition: transform 0.3s ease;
+        margin-bottom: 20px;
+        overflow: hidden;
+    }
+    .donation-card:hover {
+        transform: translateY(-5px);
+    }
+    .donation-type-badge {
+        position: absolute;
+        top: 0;
+        right: 0;
+        padding: 8px 15px;
+        border-bottom-left-radius: 15px;
+        font-weight: 600;
+        font-size: 0.8rem;
+        text-transform: uppercase;
+    }
+    .type-argent { background-color: #e3f2fd; color: #0d6efd; }
+    .type-materiel { background-color: #f1f8e9; color: #7cb342; }
+    
+    .status-badge {
+        padding: 5px 12px;
+        border-radius: 20px;
+        font-size: 0.85rem;
+        font-weight: 500;
+    }
+    .status-en_attente { background-color: #fff3cd; color: #856404; }
+    .status-confirmé { background-color: #d1e7dd; color: #0f5132; }
+    
+    .btn-edit-donation {
+        background-color: #6c757d !important;
+        color: white !important;
+        border: none !important;
+        border-radius: 8px;
+        font-size: 0.85rem;
+        font-weight: 500;
+        transition: 0.3s;
+        width: 100%;
+        padding: 10px;
+        display: block !important;
+        margin-top: 15px;
+    }
+    .btn-edit-donation:hover {
+        background-color: #5a6268 !important;
+        transform: translateY(-2px);
+    }
+    
+    .modal-content {
+        border-radius: 15px;
+        border: none;
+    }
+    .item-row {
+        background: #f8f9fa;
+        border-radius: 10px;
+        padding: 10px;
+        margin-bottom: 10px;
+        position: relative;
+    }
+    .btn-remove-item {
+        color: #dc3545;
+        cursor: pointer;
+        transition: 0.3s;
+    }
+    .btn-remove-item:hover {
+        color: #a71d2a;
+    }
+    
+    .cause-img {
+        width: 100%;
+        height: 150px;
+        object-fit: cover;
+    }
+    .donation-header {
+        margin-bottom: 40px;
+    }
+    .donation-header h1 {
+        font-weight: 700;
+        color: var(--heading-color);
+    }
+</style>
+{% endblock %}
+
+{% block body %}
+
+<section class="my-donations-section">
+    <div class="container">
+        <div class="donation-header text-center">
+            <h1>Mes Dons</h1>
+            <p class="text-muted">Retrouvez ici l'historique de votre générosité</p>
+        </div>
+
+        {% if dons|length > 0 %}
+            <div class="row">
+                {% for don in dons %}
+                    <div class="col-md-6 col-lg-4">
+                        <div class="donation-card position-relative">
+                            <span class="donation-type-badge type-{{ don.typeDon.value|lower }}">
+                                {{ don.typeDon.value == 'argent' ? '💰 Argent' : '📦 Matériel' }}
+                            </span>
+                            
+                            <div class="p-4">
+                                <h5 class="fw-bold mb-3">{{ don.cause.titre }}</h5>
+                                
+                                <div class="mb-3 d-flex justify-content-between align-items-center">
+                                    <span class="text-muted small">
+                                        <i class="bi bi-calendar3 me-1"></i> {{ don.dateDon|date('d/m/Y') }}
+                                    </span>
+                                    <span class="status-badge status-{{ don.statutDon.value|lower }}">
+                                        {{ don.statutDon.value|capitalize }}
+                                    </span>
+                                </div>
+
+                                <div class="donation-details mb-3">
+                                    {% if don.typeDon.value == 'argent' %}
+                                        <div class="fs-4 fw-bold text-primary">{{ don.montant }} DT</div>
+                                    {% else %}
+                                        <div class="text-muted small mb-2">Objets donnés :</div>
+                                        <ul class="list-unstyled mb-0">
+                                            {% for objet in don.objets %}
+                                                <li><i class="bi bi-check2-circle text-success me-2"></i>{{ objet.nomObjet }} (x{{ objet.quantite }})</li>
+                                            {% endfor %}
+                                        </ul>
+                                        
+                                        <div class="mt-4">
+                                            <button class="btn btn-warning w-100 fw-bold btn-trigger-edit" 
+                                                    style="border-radius: 10px; padding: 10px;"
+                                                    data-bs-toggle="modal" 
+                                                    data-bs-target="#editDonationModal"
+                                                    data-id="{{ don.id }}"
+                                                    data-cause="{{ don.cause.titre }}"
+                                                    data-objects="{{ don.objets|map(o => {id: o.id, nom: o.nomObjet, quantite: o.quantite})|json_encode|escape('html_attr') }}">
+                                                <i class="bi bi-pencil-square me-2"></i>Modifier mon don
+                                            </button>
+                                        </div>
+                                    {% endif %}
+                                </div>
+
+                                {% if don.adresse %}
+                                    <div class="mt-3 pt-3 border-top small">
+                                        <i class="bi bi-geo-alt text-danger me-1"></i> <strong>Adresse :</strong> {{ don.adresse }}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="text-center py-5">
+                <div class="mb-4">
+                    <i class="bi bi-heart-break" style="font-size: 4rem; color: #dee2e6;"></i>
+                </div>
+                <h3>Vous n'avez pas encore fait de don</h3>
+                <p class="text-muted">Vos contributions apparaîtront ici dès que vous aurez soutenu une cause.</p>
+                <a href="{{ path('app_donation_index') }}" class="btn btn-primary mt-3 px-4 py-2" style="border-radius: 10px;">Voir les causes</a>
+            </div>
+        {% endif %}
+    </div>
+</section>
+
+<!-- Modal Modification Don Matériel -->
+<div class="modal fade" id="editDonationModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content shadow-lg">
+            <div class="modal-header border-0 pb-0">
+                <h5 class="modal-title fw-bold" id="modalTitle">Modifier mon don</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p class="text-muted small mb-4" id="modalSubTitle"></p>
+                
+                <form id="editDonationForm">
+                    <input type="hidden" id="editDonationId">
+                    <div id="itemsContainer">
+                        <!-- Les objets seront injectés ici via JS -->
+                    </div>
+                    
+                    <button type="button" class="btn btn-outline-primary btn-sm w-100 mt-2 mb-4" onclick="addItemRow()">
+                        <i class="bi bi-plus-circle me-2"></i>Ajouter un objet
+                    </button>
+
+                    <div class="d-grid">
+                        <button type="submit" class="btn btn-primary py-2 fw-bold" style="border-radius: 10px;">
+                            Enregistrer les modifications
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+    let currentItems = [];
+
+    document.addEventListener('DOMContentLoaded', function() {
+        const modalElement = document.getElementById('editDonationModal');
+        
+        if (modalElement) {
+            modalElement.addEventListener('show.bs.modal', function(event) {
+                const button = event.relatedTarget;
+                const donationId = button.getAttribute('data-id');
+                const causeTitle = button.getAttribute('data-cause');
+                const objects = JSON.parse(button.getAttribute('data-objects'));
+
+                document.getElementById('editDonationId').value = donationId;
+                document.getElementById('modalSubTitle').innerText = "Cause : " + causeTitle;
+                currentItems = objects;
+                renderItems();
+            });
+        }
+    });
+
+    function renderItems() {
+        const container = document.getElementById('itemsContainer');
+        container.innerHTML = '';
+        
+        currentItems.forEach((item, index) => {
+            const row = document.createElement('div');
+            row.className = 'item-row d-flex align-items-center gap-2';
+            row.innerHTML = `
+                <input type="hidden" value="${item.id || ''}" class="item-id">
+                <div class="flex-grow-1">
+                    <input type="text" class="form-control form-control-sm item-nom" 
+                           value="${item.nom}" placeholder="Nom de l'objet" 
+                           onchange="updateLocalItem(${index}, 'nom', this.value)" required>
+                </div>
+                <div style="width: 80px;">
+                    <input type="number" class="form-control form-control-sm item-quantite" 
+                           value="${item.quantite}" min="1" placeholder="Qté" 
+                           onchange="updateLocalItem(${index}, 'quantite', this.value)" required>
+                </div>
+                <div class="btn-remove-item" onclick="removeItem(${index})">
+                    <i class="bi bi-trash"></i>
+                </div>
+            `;
+            container.appendChild(row);
+        });
+    }
+
+    function updateLocalItem(index, field, value) {
+        currentItems[index][field] = value;
+    }
+
+    function addItemRow() {
+        syncItemsFromDOM();
+        currentItems.push({id: null, nom: '', quantite: 1});
+        renderItems();
+    }
+
+    function removeItem(index) {
+        syncItemsFromDOM();
+        currentItems.splice(index, 1);
+        renderItems();
+    }
+
+    function syncItemsFromDOM() {
+        const rows = document.querySelectorAll('.item-row');
+        const newItems = [];
+        rows.forEach(row => {
+            newItems.push({
+                id: row.querySelector('.item-id').value || null,
+                nom: row.querySelector('.item-nom').value,
+                quantite: row.querySelector('.item-quantite').value
+            });
+        });
+        currentItems = newItems;
+    }
+
+    document.getElementById('editDonationForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        syncItemsFromDOM();
+        const donationId = document.getElementById('editDonationId').value;
+
+        if (currentItems.length === 0) {
+            Swal.fire('Erreur', 'Vous devez laisser au moins un objet dans votre don.', 'error');
+            return;
+        }
+
+        fetch(`/mes-dons/modifier-materiel/${donationId}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-Requested-With': 'XMLHttpRequest'
+            },
+            body: JSON.stringify({ objets: currentItems })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                const modalInstance = bootstrap.Modal.getInstance(document.getElementById('editDonationModal'));
+                if (modalInstance) modalInstance.hide();
+                
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Succès',
+                    text: data.message,
+                    timer: 2000,
+                    showConfirmButton: false
+                }).then(() => {
+                    window.location.reload();
+                });
+            } else {
+                Swal.fire('Erreur', data.message, 'error');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            Swal.fire('Erreur', 'Une erreur est survenue lors de la sauvegarde.', 'error');
+        });
+    });
+</script>
+{% endblock %}

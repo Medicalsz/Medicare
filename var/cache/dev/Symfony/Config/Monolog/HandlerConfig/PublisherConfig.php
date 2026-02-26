@@ -82,40 +82,40 @@ class PublisherConfig
         return $this;
     }
 
-    public function __construct(array $config = [])
+    public function __construct(array $value = [])
     {
-        if (array_key_exists('id', $config)) {
+        if (array_key_exists('id', $value)) {
             $this->_usedProperties['id'] = true;
-            $this->id = $config['id'];
-            unset($config['id']);
+            $this->id = $value['id'];
+            unset($value['id']);
         }
 
-        if (array_key_exists('hostname', $config)) {
+        if (array_key_exists('hostname', $value)) {
             $this->_usedProperties['hostname'] = true;
-            $this->hostname = $config['hostname'];
-            unset($config['hostname']);
+            $this->hostname = $value['hostname'];
+            unset($value['hostname']);
         }
 
-        if (array_key_exists('port', $config)) {
+        if (array_key_exists('port', $value)) {
             $this->_usedProperties['port'] = true;
-            $this->port = $config['port'];
-            unset($config['port']);
+            $this->port = $value['port'];
+            unset($value['port']);
         }
 
-        if (array_key_exists('chunk_size', $config)) {
+        if (array_key_exists('chunk_size', $value)) {
             $this->_usedProperties['chunkSize'] = true;
-            $this->chunkSize = $config['chunk_size'];
-            unset($config['chunk_size']);
+            $this->chunkSize = $value['chunk_size'];
+            unset($value['chunk_size']);
         }
 
-        if (array_key_exists('encoder', $config)) {
+        if (array_key_exists('encoder', $value)) {
             $this->_usedProperties['encoder'] = true;
-            $this->encoder = $config['encoder'];
-            unset($config['encoder']);
+            $this->encoder = $value['encoder'];
+            unset($value['encoder']);
         }
 
-        if ($config) {
-            throw new InvalidConfigurationException(sprintf('The following keys are not supported by "%s": ', __CLASS__).implode(', ', array_keys($config)));
+        if ([] !== $value) {
+            throw new InvalidConfigurationException(sprintf('The following keys are not supported by "%s": ', __CLASS__).implode(', ', array_keys($value)));
         }
     }
 

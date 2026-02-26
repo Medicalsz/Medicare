@@ -167,76 +167,76 @@ class PasswordHasherConfig
         return $this;
     }
 
-    public function __construct(array $config = [])
+    public function __construct(array $value = [])
     {
-        if (array_key_exists('algorithm', $config)) {
+        if (array_key_exists('algorithm', $value)) {
             $this->_usedProperties['algorithm'] = true;
-            $this->algorithm = $config['algorithm'];
-            unset($config['algorithm']);
+            $this->algorithm = $value['algorithm'];
+            unset($value['algorithm']);
         }
 
-        if (array_key_exists('migrate_from', $config)) {
+        if (array_key_exists('migrate_from', $value)) {
             $this->_usedProperties['migrateFrom'] = true;
-            $this->migrateFrom = $config['migrate_from'];
-            unset($config['migrate_from']);
+            $this->migrateFrom = $value['migrate_from'];
+            unset($value['migrate_from']);
         }
 
-        if (array_key_exists('hash_algorithm', $config)) {
+        if (array_key_exists('hash_algorithm', $value)) {
             $this->_usedProperties['hashAlgorithm'] = true;
-            $this->hashAlgorithm = $config['hash_algorithm'];
-            unset($config['hash_algorithm']);
+            $this->hashAlgorithm = $value['hash_algorithm'];
+            unset($value['hash_algorithm']);
         }
 
-        if (array_key_exists('key_length', $config)) {
+        if (array_key_exists('key_length', $value)) {
             $this->_usedProperties['keyLength'] = true;
-            $this->keyLength = $config['key_length'];
-            unset($config['key_length']);
+            $this->keyLength = $value['key_length'];
+            unset($value['key_length']);
         }
 
-        if (array_key_exists('ignore_case', $config)) {
+        if (array_key_exists('ignore_case', $value)) {
             $this->_usedProperties['ignoreCase'] = true;
-            $this->ignoreCase = $config['ignore_case'];
-            unset($config['ignore_case']);
+            $this->ignoreCase = $value['ignore_case'];
+            unset($value['ignore_case']);
         }
 
-        if (array_key_exists('encode_as_base64', $config)) {
+        if (array_key_exists('encode_as_base64', $value)) {
             $this->_usedProperties['encodeAsBase64'] = true;
-            $this->encodeAsBase64 = $config['encode_as_base64'];
-            unset($config['encode_as_base64']);
+            $this->encodeAsBase64 = $value['encode_as_base64'];
+            unset($value['encode_as_base64']);
         }
 
-        if (array_key_exists('iterations', $config)) {
+        if (array_key_exists('iterations', $value)) {
             $this->_usedProperties['iterations'] = true;
-            $this->iterations = $config['iterations'];
-            unset($config['iterations']);
+            $this->iterations = $value['iterations'];
+            unset($value['iterations']);
         }
 
-        if (array_key_exists('cost', $config)) {
+        if (array_key_exists('cost', $value)) {
             $this->_usedProperties['cost'] = true;
-            $this->cost = $config['cost'];
-            unset($config['cost']);
+            $this->cost = $value['cost'];
+            unset($value['cost']);
         }
 
-        if (array_key_exists('memory_cost', $config)) {
+        if (array_key_exists('memory_cost', $value)) {
             $this->_usedProperties['memoryCost'] = true;
-            $this->memoryCost = $config['memory_cost'];
-            unset($config['memory_cost']);
+            $this->memoryCost = $value['memory_cost'];
+            unset($value['memory_cost']);
         }
 
-        if (array_key_exists('time_cost', $config)) {
+        if (array_key_exists('time_cost', $value)) {
             $this->_usedProperties['timeCost'] = true;
-            $this->timeCost = $config['time_cost'];
-            unset($config['time_cost']);
+            $this->timeCost = $value['time_cost'];
+            unset($value['time_cost']);
         }
 
-        if (array_key_exists('id', $config)) {
+        if (array_key_exists('id', $value)) {
             $this->_usedProperties['id'] = true;
-            $this->id = $config['id'];
-            unset($config['id']);
+            $this->id = $value['id'];
+            unset($value['id']);
         }
 
-        if ($config) {
-            throw new InvalidConfigurationException(sprintf('The following keys are not supported by "%s": ', __CLASS__).implode(', ', array_keys($config)));
+        if ([] !== $value) {
+            throw new InvalidConfigurationException(sprintf('The following keys are not supported by "%s": ', __CLASS__).implode(', ', array_keys($value)));
         }
     }
 

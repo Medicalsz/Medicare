@@ -26,7 +26,7 @@ class CommonmarkConfig
 
     /**
      * Array of options for rendering HTML.
-     */
+    */
     public function renderer(array $value = []): \Symfony\Config\TwigExtra\Commonmark\RendererConfig
     {
         if (null === $this->renderer) {
@@ -97,7 +97,7 @@ class CommonmarkConfig
 
     /**
      * Array of options for configuring how URL-safe slugs are created.
-     */
+    */
     public function slugNormalizer(array $value = []): \Symfony\Config\TwigExtra\Commonmark\SlugNormalizerConfig
     {
         if (null === $this->slugNormalizer) {
@@ -112,7 +112,7 @@ class CommonmarkConfig
 
     /**
      * Array of options for configuring the CommonMark core extension.
-     */
+    */
     public function commonmark(array $value = []): \Symfony\Config\TwigExtra\Commonmark\CommonmarkConfig
     {
         if (null === $this->commonmark) {
@@ -125,51 +125,51 @@ class CommonmarkConfig
         return $this->commonmark;
     }
 
-    public function __construct(array $config = [])
+    public function __construct(array $value = [])
     {
-        if (array_key_exists('renderer', $config)) {
+        if (array_key_exists('renderer', $value)) {
             $this->_usedProperties['renderer'] = true;
-            $this->renderer = new \Symfony\Config\TwigExtra\Commonmark\RendererConfig($config['renderer']);
-            unset($config['renderer']);
+            $this->renderer = new \Symfony\Config\TwigExtra\Commonmark\RendererConfig($value['renderer']);
+            unset($value['renderer']);
         }
 
-        if (array_key_exists('html_input', $config)) {
+        if (array_key_exists('html_input', $value)) {
             $this->_usedProperties['htmlInput'] = true;
-            $this->htmlInput = $config['html_input'];
-            unset($config['html_input']);
+            $this->htmlInput = $value['html_input'];
+            unset($value['html_input']);
         }
 
-        if (array_key_exists('allow_unsafe_links', $config)) {
+        if (array_key_exists('allow_unsafe_links', $value)) {
             $this->_usedProperties['allowUnsafeLinks'] = true;
-            $this->allowUnsafeLinks = $config['allow_unsafe_links'];
-            unset($config['allow_unsafe_links']);
+            $this->allowUnsafeLinks = $value['allow_unsafe_links'];
+            unset($value['allow_unsafe_links']);
         }
 
-        if (array_key_exists('max_nesting_level', $config)) {
+        if (array_key_exists('max_nesting_level', $value)) {
             $this->_usedProperties['maxNestingLevel'] = true;
-            $this->maxNestingLevel = $config['max_nesting_level'];
-            unset($config['max_nesting_level']);
+            $this->maxNestingLevel = $value['max_nesting_level'];
+            unset($value['max_nesting_level']);
         }
 
-        if (array_key_exists('max_delimiters_per_line', $config)) {
+        if (array_key_exists('max_delimiters_per_line', $value)) {
             $this->_usedProperties['maxDelimitersPerLine'] = true;
-            $this->maxDelimitersPerLine = $config['max_delimiters_per_line'];
-            unset($config['max_delimiters_per_line']);
+            $this->maxDelimitersPerLine = $value['max_delimiters_per_line'];
+            unset($value['max_delimiters_per_line']);
         }
 
-        if (array_key_exists('slug_normalizer', $config)) {
+        if (array_key_exists('slug_normalizer', $value)) {
             $this->_usedProperties['slugNormalizer'] = true;
-            $this->slugNormalizer = new \Symfony\Config\TwigExtra\Commonmark\SlugNormalizerConfig($config['slug_normalizer']);
-            unset($config['slug_normalizer']);
+            $this->slugNormalizer = new \Symfony\Config\TwigExtra\Commonmark\SlugNormalizerConfig($value['slug_normalizer']);
+            unset($value['slug_normalizer']);
         }
 
-        if (array_key_exists('commonmark', $config)) {
+        if (array_key_exists('commonmark', $value)) {
             $this->_usedProperties['commonmark'] = true;
-            $this->commonmark = new \Symfony\Config\TwigExtra\Commonmark\CommonmarkConfig($config['commonmark']);
-            unset($config['commonmark']);
+            $this->commonmark = new \Symfony\Config\TwigExtra\Commonmark\CommonmarkConfig($value['commonmark']);
+            unset($value['commonmark']);
         }
 
-        $this->_extraKeys = $config;
+        $this->_extraKeys = $value;
 
     }
 

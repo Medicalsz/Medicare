@@ -342,7 +342,7 @@ class XmlEncoder implements EncoderInterface, DecoderInterface, NormalizationAwa
      *
      * @throws NotEncodableValueException
      */
-    private function buildXml(\DOMNode $parentNode, mixed $data, string $format, array $context, ?string $xmlRootNodeName = null): bool
+    private function buildXml(\DOMNode $parentNode, mixed $data, string $format, array $context, string $xmlRootNodeName = null): bool
     {
         $append = true;
         $removeEmptyTags = $context[self::REMOVE_EMPTY_TAGS] ?? $this->defaultContext[self::REMOVE_EMPTY_TAGS] ?? false;
@@ -391,7 +391,7 @@ class XmlEncoder implements EncoderInterface, DecoderInterface, NormalizationAwa
 
         if (\is_object($data)) {
             if (null === $this->serializer) {
-                throw new BadMethodCallException(\sprintf('The serializer needs to be set to allow "%s()" to be used with object data.', __METHOD__));
+                throw new BadMethodCallException(sprintf('The serializer needs to be set to allow "%s()" to be used with object data.', __METHOD__));
             }
 
             $data = $this->serializer->normalize($data, $format, $context);
@@ -410,13 +410,13 @@ class XmlEncoder implements EncoderInterface, DecoderInterface, NormalizationAwa
             return $this->appendNode($parentNode, $data, $format, $context, 'data');
         }
 
-        throw new NotEncodableValueException('An unexpected value could not be serialized: '.(!\is_resource($data) ? var_export($data, true) : \sprintf('%s resource', get_resource_type($data))));
+        throw new NotEncodableValueException('An unexpected value could not be serialized: '.(!\is_resource($data) ? var_export($data, true) : sprintf('%s resource', get_resource_type($data))));
     }
 
     /**
      * Selects the type of node to create and appends it to the parent.
      */
-    private function appendNode(\DOMNode $parentNode, mixed $data, string $format, array $context, string $nodeName, ?string $key = null): bool
+    private function appendNode(\DOMNode $parentNode, mixed $data, string $format, array $context, string $nodeName, string $key = null): bool
     {
         $dom = $parentNode instanceof \DOMDocument ? $parentNode : $parentNode->ownerDocument;
         $node = $dom->createElement($nodeName);
@@ -459,12 +459,12 @@ class XmlEncoder implements EncoderInterface, DecoderInterface, NormalizationAwa
             $node->appendChild($child);
         } elseif (\is_object($val)) {
             if (null === $this->serializer) {
-                throw new BadMethodCallException(\sprintf('The serializer needs to be set to allow "%s()" to be used with object data.', __METHOD__));
+                throw new BadMethodCallException(sprintf('The serializer needs to be set to allow "%s()" to be used with object data.', __METHOD__));
             }
 
             return $this->selectNodeType($node, $this->serializer->normalize($val, $format, $context), $format, $context);
         } elseif (is_numeric($val)) {
-            return $this->appendText($node, is_nan($val) ? 'NAN' : (string) $val);
+            return $this->appendText($node, (string) $val);
         } elseif (\is_string($val) && $this->needsCdataWrapping($val, $context)) {
             return $this->appendCData($node, $val);
         } elseif (\is_string($val)) {

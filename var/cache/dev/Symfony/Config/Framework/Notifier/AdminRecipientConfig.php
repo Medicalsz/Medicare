@@ -39,22 +39,22 @@ class AdminRecipientConfig
         return $this;
     }
 
-    public function __construct(array $config = [])
+    public function __construct(array $value = [])
     {
-        if (array_key_exists('email', $config)) {
+        if (array_key_exists('email', $value)) {
             $this->_usedProperties['email'] = true;
-            $this->email = $config['email'];
-            unset($config['email']);
+            $this->email = $value['email'];
+            unset($value['email']);
         }
 
-        if (array_key_exists('phone', $config)) {
+        if (array_key_exists('phone', $value)) {
             $this->_usedProperties['phone'] = true;
-            $this->phone = $config['phone'];
-            unset($config['phone']);
+            $this->phone = $value['phone'];
+            unset($value['phone']);
         }
 
-        if ($config) {
-            throw new InvalidConfigurationException(sprintf('The following keys are not supported by "%s": ', __CLASS__).implode(', ', array_keys($config)));
+        if ([] !== $value) {
+            throw new InvalidConfigurationException(sprintf('The following keys are not supported by "%s": ', __CLASS__).implode(', ', array_keys($value)));
         }
     }
 

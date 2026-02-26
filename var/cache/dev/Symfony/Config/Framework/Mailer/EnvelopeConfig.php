@@ -40,22 +40,22 @@ class EnvelopeConfig
         return $this;
     }
 
-    public function __construct(array $config = [])
+    public function __construct(array $value = [])
     {
-        if (array_key_exists('sender', $config)) {
+        if (array_key_exists('sender', $value)) {
             $this->_usedProperties['sender'] = true;
-            $this->sender = $config['sender'];
-            unset($config['sender']);
+            $this->sender = $value['sender'];
+            unset($value['sender']);
         }
 
-        if (array_key_exists('recipients', $config)) {
+        if (array_key_exists('recipients', $value)) {
             $this->_usedProperties['recipients'] = true;
-            $this->recipients = $config['recipients'];
-            unset($config['recipients']);
+            $this->recipients = $value['recipients'];
+            unset($value['recipients']);
         }
 
-        if ($config) {
-            throw new InvalidConfigurationException(sprintf('The following keys are not supported by "%s": ', __CLASS__).implode(', ', array_keys($config)));
+        if ([] !== $value) {
+            throw new InvalidConfigurationException(sprintf('The following keys are not supported by "%s": ', __CLASS__).implode(', ', array_keys($value)));
         }
     }
 

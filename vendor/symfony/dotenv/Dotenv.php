@@ -25,7 +25,7 @@ use Symfony\Component\Process\Process;
  */
 final class Dotenv
 {
-    public const VARNAME_REGEX = '(?i:_?[A-Z][A-Z0-9_]*+)';
+    public const VARNAME_REGEX = '(?i:[A-Z][A-Z0-9_]*+)';
     public const STATE_VARNAME = 0;
     public const STATE_VALUE = 1;
 
@@ -98,7 +98,7 @@ final class Dotenv
      * @throws FormatException when a file has a syntax error
      * @throws PathException   when a file does not exist or is not readable
      */
-    public function loadEnv(string $path, ?string $envKey = null, string $defaultEnv = 'dev', array $testEnvs = ['test'], bool $overrideExistingVars = false): void
+    public function loadEnv(string $path, string $envKey = null, string $defaultEnv = 'dev', array $testEnvs = ['test'], bool $overrideExistingVars = false): void
     {
         $k = $envKey ?? $this->envKey;
 
@@ -341,8 +341,8 @@ final class Dotenv
                 ++$this->cursor;
                 $value = str_replace(['\\"', '\r', '\n'], ['"', "\r", "\n"], $value);
                 $resolvedValue = $value;
-                $resolvedValue = $this->resolveCommands($resolvedValue, $loadedVars);
                 $resolvedValue = $this->resolveVariables($resolvedValue, $loadedVars);
+                $resolvedValue = $this->resolveCommands($resolvedValue, $loadedVars);
                 $resolvedValue = str_replace('\\\\', '\\', $resolvedValue);
                 $v .= $resolvedValue;
             } else {
@@ -364,8 +364,8 @@ final class Dotenv
                 }
                 $value = rtrim($value);
                 $resolvedValue = $value;
-                $resolvedValue = $this->resolveCommands($resolvedValue, $loadedVars);
                 $resolvedValue = $this->resolveVariables($resolvedValue, $loadedVars);
+                $resolvedValue = $this->resolveCommands($resolvedValue, $loadedVars);
                 $resolvedValue = str_replace('\\\\', '\\', $resolvedValue);
 
                 if ($resolvedValue === $value && preg_match('/\s+/', $value)) {
@@ -460,7 +460,7 @@ final class Dotenv
             try {
                 $process->mustRun();
             } catch (ProcessException) {
-                throw $this->createFormatException(\sprintf('Issue expanding a command (%s)', $process->getErrorOutput()));
+                throw $this->createFormatException(sprintf('Issue expanding a command (%s)', $process->getErrorOutput()));
             }
 
             return preg_replace('/[\r\n]+$/', '', $process->getOutput());
@@ -480,7 +480,7 @@ final class Dotenv
             (?!\()                             # no opening parenthesis
             (?P<opening_brace>\{)?             # optional brace
             (?P<name>'.self::VARNAME_REGEX.')? # var name
-            (?P<default_value>:[-=][^\}]*+)?   # optional default value
+            (?P<default_value>:[-=][^\}]++)?   # optional default value
             (?P<closing_brace>\})?             # optional closing brace
         /x';
 
@@ -515,7 +515,7 @@ final class Dotenv
             if ('' === $value && isset($matches['default_value']) && '' !== $matches['default_value']) {
                 $unsupportedChars = strpbrk($matches['default_value'], '\'"{$');
                 if (false !== $unsupportedChars) {
-                    throw $this->createFormatException(\sprintf('Unsupported character "%s" found in the default value of variable "$%s".', $unsupportedChars[0], $name));
+                    throw $this->createFormatException(sprintf('Unsupported character "%s" found in the default value of variable "$%s".', $unsupportedChars[0], $name));
                 }
 
                 $value = substr($matches['default_value'], 2);
@@ -553,13 +553,7 @@ final class Dotenv
                 throw new PathException($path);
             }
 
-            $data = file_get_contents($path);
-
-            if ("\xEF\xBB\xBF" === substr($data, 0, 3)) {
-                throw new FormatException('Loading files starting with a byte-order-mark (BOM) is not supported.', new FormatExceptionContext($data, $path, 1, 0));
-            }
-
-            $this->populate($this->parse($data, $path), $overrideExistingVars);
+            $this->populate($this->parse(file_get_contents($path), $path), $overrideExistingVars);
         }
     }
 }

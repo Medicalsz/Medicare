@@ -107,7 +107,7 @@ class LimiterConfig
 
     /**
      * Configures the fill rate if "policy" is set to "token_bucket"
-     */
+    */
     public function rate(array $value = []): \Symfony\Config\Framework\RateLimiter\LimiterConfig\RateConfig
     {
         if (null === $this->rate) {
@@ -120,52 +120,52 @@ class LimiterConfig
         return $this->rate;
     }
 
-    public function __construct(array $config = [])
+    public function __construct(array $value = [])
     {
-        if (array_key_exists('lock_factory', $config)) {
+        if (array_key_exists('lock_factory', $value)) {
             $this->_usedProperties['lockFactory'] = true;
-            $this->lockFactory = $config['lock_factory'];
-            unset($config['lock_factory']);
+            $this->lockFactory = $value['lock_factory'];
+            unset($value['lock_factory']);
         }
 
-        if (array_key_exists('cache_pool', $config)) {
+        if (array_key_exists('cache_pool', $value)) {
             $this->_usedProperties['cachePool'] = true;
-            $this->cachePool = $config['cache_pool'];
-            unset($config['cache_pool']);
+            $this->cachePool = $value['cache_pool'];
+            unset($value['cache_pool']);
         }
 
-        if (array_key_exists('storage_service', $config)) {
+        if (array_key_exists('storage_service', $value)) {
             $this->_usedProperties['storageService'] = true;
-            $this->storageService = $config['storage_service'];
-            unset($config['storage_service']);
+            $this->storageService = $value['storage_service'];
+            unset($value['storage_service']);
         }
 
-        if (array_key_exists('policy', $config)) {
+        if (array_key_exists('policy', $value)) {
             $this->_usedProperties['policy'] = true;
-            $this->policy = $config['policy'];
-            unset($config['policy']);
+            $this->policy = $value['policy'];
+            unset($value['policy']);
         }
 
-        if (array_key_exists('limit', $config)) {
+        if (array_key_exists('limit', $value)) {
             $this->_usedProperties['limit'] = true;
-            $this->limit = $config['limit'];
-            unset($config['limit']);
+            $this->limit = $value['limit'];
+            unset($value['limit']);
         }
 
-        if (array_key_exists('interval', $config)) {
+        if (array_key_exists('interval', $value)) {
             $this->_usedProperties['interval'] = true;
-            $this->interval = $config['interval'];
-            unset($config['interval']);
+            $this->interval = $value['interval'];
+            unset($value['interval']);
         }
 
-        if (array_key_exists('rate', $config)) {
+        if (array_key_exists('rate', $value)) {
             $this->_usedProperties['rate'] = true;
-            $this->rate = new \Symfony\Config\Framework\RateLimiter\LimiterConfig\RateConfig($config['rate']);
-            unset($config['rate']);
+            $this->rate = new \Symfony\Config\Framework\RateLimiter\LimiterConfig\RateConfig($value['rate']);
+            unset($value['rate']);
         }
 
-        if ($config) {
-            throw new InvalidConfigurationException(sprintf('The following keys are not supported by "%s": ', __CLASS__).implode(', ', array_keys($config)));
+        if ([] !== $value) {
+            throw new InvalidConfigurationException(sprintf('The following keys are not supported by "%s": ', __CLASS__).implode(', ', array_keys($value)));
         }
     }
 

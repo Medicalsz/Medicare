@@ -98,7 +98,6 @@ class SecurityExtension extends Extension implements PrependExtensionInterface
     {
         if (!array_filter($configs)) {
             trigger_deprecation('symfony/security-bundle', '6.3', 'Enabling bundle "%s" and not configuring it is deprecated.', SecurityBundle::class);
-
             // uncomment the following line in 7.0
             // throw new InvalidConfigurationException(sprintf('Enabling bundle "%s" and not configuring it is not allowed.', SecurityBundle::class));
             return;
@@ -208,7 +207,7 @@ class SecurityExtension extends Extension implements PrependExtensionInterface
             MainConfiguration::STRATEGY_CONSENSUS => new Definition(ConsensusStrategy::class, [$allowIfAllAbstainDecisions, $allowIfEqualGrantedDeniedDecisions]),
             MainConfiguration::STRATEGY_UNANIMOUS => new Definition(UnanimousStrategy::class, [$allowIfAllAbstainDecisions]),
             MainConfiguration::STRATEGY_PRIORITY => new Definition(PriorityStrategy::class, [$allowIfAllAbstainDecisions]),
-            default => throw new InvalidConfigurationException(\sprintf('The strategy "%s" is not supported.', $strategy)),
+            default => throw new InvalidConfigurationException(sprintf('The strategy "%s" is not supported.', $strategy)),
         };
     }
 
@@ -335,7 +334,7 @@ class SecurityExtension extends Extension implements PrependExtensionInterface
                 $authenticators[$name] = ServiceLocatorTagPass::register($container, $firewallAuthenticatorRefs);
             }
             $contextId = 'security.firewall.map.context.'.$name;
-            $isLazy = !$firewall['stateless'] && $firewall['lazy'];
+            $isLazy = !$firewall['stateless'] && (!empty($firewall['anonymous']['lazy']) || $firewall['lazy']);
             $context = new ChildDefinition($isLazy ? 'security.firewall.lazy_context' : 'security.firewall.context');
             $context = $container->setDefinition($contextId, $context);
             $context
@@ -397,7 +396,7 @@ class SecurityExtension extends Extension implements PrependExtensionInterface
         $defaultProvider = null;
         if (isset($firewall['provider'])) {
             if (!isset($providerIds[$normalizedName = str_replace('-', '_', $firewall['provider'])])) {
-                throw new InvalidConfigurationException(\sprintf('Invalid firewall "%s": user provider "%s" not found.', $id, $firewall['provider']));
+                throw new InvalidConfigurationException(sprintf('Invalid firewall "%s": user provider "%s" not found.', $id, $firewall['provider']));
             }
             $defaultProvider = $providerIds[$normalizedName];
 
@@ -580,9 +579,6 @@ class SecurityExtension extends Extension implements PrependExtensionInterface
 
         $container->setAlias('security.user_checker.'.$id, new Alias($firewall['user_checker'], false));
 
-        $userCheckerLocator = $container->getDefinition('security.user_checker_locator');
-        $userCheckerLocator->replaceArgument(0, array_merge($userCheckerLocator->getArgument(0), [$id => new ServiceClosureArgument(new Reference('security.user_checker.'.$id))]));
-
         foreach ($this->getSortedFactories() as $factory) {
             $key = str_replace('-', '_', $factory->getKey());
             if ('custom_authenticators' !== $key && \array_key_exists($key, $firewall)) {
@@ -631,7 +627,7 @@ class SecurityExtension extends Extension implements PrependExtensionInterface
                 $userProvider = $this->getUserProvider($container, $id, $firewall, $key, $defaultProvider, $providerIds);
 
                 if (!$factory instanceof AuthenticatorFactoryInterface) {
-                    throw new InvalidConfigurationException(\sprintf('Authenticator factory "%s" ("%s") must implement "%s".', get_debug_type($factory), $key, AuthenticatorFactoryInterface::class));
+                    throw new InvalidConfigurationException(sprintf('Authenticator factory "%s" ("%s") must implement "%s".', get_debug_type($factory), $key, AuthenticatorFactoryInterface::class));
                 }
 
                 if (null === $userProvider && !$factory instanceof StatelessAuthenticatorFactoryInterface) {
@@ -668,7 +664,7 @@ class SecurityExtension extends Extension implements PrependExtensionInterface
     {
         if (isset($firewall[$factoryKey]['provider'])) {
             if (!isset($providerIds[$normalizedName = str_replace('-', '_', $firewall[$factoryKey]['provider'])])) {
-                throw new InvalidConfigurationException(\sprintf('Invalid firewall "%s": user provider "%s" not found.', $id, $firewall[$factoryKey]['provider']));
+                throw new InvalidConfigurationException(sprintf('Invalid firewall "%s": user provider "%s" not found.', $id, $firewall[$factoryKey]['provider']));
             }
 
             return $providerIds[$normalizedName];
@@ -686,7 +682,7 @@ class SecurityExtension extends Extension implements PrependExtensionInterface
             return $this->createMissingUserProvider($container, $id, $factoryKey);
         }
 
-        if ('remember_me' === $factoryKey || 'custom_authenticators' === $factoryKey) {
+        if ('remember_me' === $factoryKey || 'anonymous' === $factoryKey || 'custom_authenticators' === $factoryKey) {
             if ('custom_authenticators' === $factoryKey) {
                 trigger_deprecation('symfony/security-bundle', '5.4', 'Not configuring explicitly the provider for the "%s" firewall is deprecated because it\'s ambiguous as there is more than one registered provider. Set the "provider" key to one of the configured providers, even if your custom authenticators don\'t use it.', $id);
             }
@@ -694,12 +690,12 @@ class SecurityExtension extends Extension implements PrependExtensionInterface
             return 'security.user_providers';
         }
 
-        throw new InvalidConfigurationException(\sprintf('Not configuring explicitly the provider for the "%s" authenticator on "%s" firewall is ambiguous as there is more than one registered provider.', $factoryKey, $id));
+        throw new InvalidConfigurationException(sprintf('Not configuring explicitly the provider for the "%s" authenticator on "%s" firewall is ambiguous as there is more than one registered provider.', $factoryKey, $id));
     }
 
     private function createMissingUserProvider(ContainerBuilder $container, string $id, string $factoryKey): string
     {
-        $userProvider = \sprintf('security.user.provider.missing.%s', $factoryKey);
+        $userProvider = sprintf('security.user.provider.missing.%s', $factoryKey);
         $container->setDefinition(
             $userProvider,
             (new ChildDefinition('security.user.provider.missing'))->replaceArgument(0, $id)
@@ -779,7 +775,7 @@ class SecurityExtension extends Extension implements PrependExtensionInterface
                 $config['algorithm'] = 'native';
                 $config['native_algorithm'] = \PASSWORD_ARGON2I;
             } else {
-                throw new InvalidConfigurationException(\sprintf('Algorithm "argon2i" is not available. Either use "%s" or upgrade to PHP 7.2+ instead.', \defined('SODIUM_CRYPTO_PWHASH_ALG_ARGON2ID13') ? 'argon2id", "auto' : 'auto'));
+                throw new InvalidConfigurationException(sprintf('Algorithm "argon2i" is not available. Either use "%s" or upgrade to PHP 7.2+ instead.', \defined('SODIUM_CRYPTO_PWHASH_ALG_ARGON2ID13') ? 'argon2id", "auto' : 'auto'));
             }
 
             return $this->createHasher($config);
@@ -792,7 +788,7 @@ class SecurityExtension extends Extension implements PrependExtensionInterface
                 $config['algorithm'] = 'native';
                 $config['native_algorithm'] = \PASSWORD_ARGON2ID;
             } else {
-                throw new InvalidConfigurationException(\sprintf('Algorithm "argon2id" is not available. Either use "%s", upgrade to PHP 7.3+ or use libsodium 1.0.15+ instead.', \defined('PASSWORD_ARGON2I') || $hasSodium ? 'argon2i", "auto' : 'auto'));
+                throw new InvalidConfigurationException(sprintf('Algorithm "argon2id" is not available. Either use "%s", upgrade to PHP 7.3+ or use libsodium 1.0.15+ instead.', \defined('PASSWORD_ARGON2I') || $hasSodium ? 'argon2i", "auto' : 'auto'));
             }
 
             return $this->createHasher($config);
@@ -876,7 +872,7 @@ class SecurityExtension extends Extension implements PrependExtensionInterface
             return $name;
         }
 
-        throw new InvalidConfigurationException(\sprintf('Unable to create definition for "%s" user provider.', $name));
+        throw new InvalidConfigurationException(sprintf('Unable to create definition for "%s" user provider.', $name));
     }
 
     private function getUserProviderId(string $name): string
@@ -907,10 +903,10 @@ class SecurityExtension extends Extension implements PrependExtensionInterface
         $userProvider = isset($config['provider']) ? $this->getUserProviderId($config['provider']) : $defaultProvider;
 
         if (!$userProvider) {
-            throw new InvalidConfigurationException(\sprintf('Not configuring explicitly the provider for the "switch_user" listener on "%s" firewall is ambiguous as there is more than one registered provider.', $id));
+            throw new InvalidConfigurationException(sprintf('Not configuring explicitly the provider for the "switch_user" listener on "%s" firewall is ambiguous as there is more than one registered provider.', $id));
         }
         if ($stateless && null !== $config['target_route']) {
-            throw new InvalidConfigurationException(\sprintf('Cannot set a "target_route" for the "switch_user" listener on the "%s" firewall as it is stateless.', $id));
+            throw new InvalidConfigurationException(sprintf('Cannot set a "target_route" for the "switch_user" listener on the "%s" firewall as it is stateless.', $id));
         }
 
         $switchUserListenerId = 'security.authentication.switchuser_listener.'.$id;
@@ -944,7 +940,7 @@ class SecurityExtension extends Extension implements PrependExtensionInterface
         return $this->expressions[$id] = new Reference($id);
     }
 
-    private function createRequestMatcher(ContainerBuilder $container, ?string $path = null, ?string $host = null, ?int $port = null, array $methods = [], ?array $ips = null, array $attributes = []): Reference
+    private function createRequestMatcher(ContainerBuilder $container, string $path = null, string $host = null, int $port = null, array $methods = [], array $ips = null, array $attributes = []): Reference
     {
         if ($methods) {
             $methods = array_map('strtoupper', $methods);
@@ -955,7 +951,7 @@ class SecurityExtension extends Extension implements PrependExtensionInterface
                 $container->resolveEnvPlaceholders($ip, null, $usedEnvs);
 
                 if (!$usedEnvs && !$this->isValidIps($ip)) {
-                    throw new \LogicException(\sprintf('The given value "%s" in the "security.access_control" config option is not a valid IP address.', $ip));
+                    throw new \LogicException(sprintf('The given value "%s" in the "security.access_control" config option is not a valid IP address.', $ip));
                 }
 
                 $usedEnvs = null;

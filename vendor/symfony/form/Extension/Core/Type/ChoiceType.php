@@ -30,7 +30,6 @@ use Symfony\Component\Form\ChoiceList\Loader\ChoiceLoaderInterface;
 use Symfony\Component\Form\ChoiceList\View\ChoiceGroupView;
 use Symfony\Component\Form\ChoiceList\View\ChoiceListView;
 use Symfony\Component\Form\ChoiceList\View\ChoiceView;
-use Symfony\Component\Form\Event\PreSubmitEvent;
 use Symfony\Component\Form\Exception\TransformationFailedException;
 use Symfony\Component\Form\Extension\Core\DataMapper\CheckboxListMapper;
 use Symfony\Component\Form\Extension\Core\DataMapper\RadioListMapper;
@@ -53,7 +52,7 @@ class ChoiceType extends AbstractType
     private ChoiceListFactoryInterface $choiceListFactory;
     private ?TranslatorInterface $translator;
 
-    public function __construct(?ChoiceListFactoryInterface $choiceListFactory = null, ?TranslatorInterface $translator = null)
+    public function __construct(ChoiceListFactoryInterface $choiceListFactory = null, TranslatorInterface $translator = null)
     {
         $this->choiceListFactory = $choiceListFactory ?? new CachingFactoryDecorator(
             new PropertyAccessDecorator(
@@ -102,7 +101,6 @@ class ChoiceType extends AbstractType
             // Make sure that scalar, submitted values are converted to arrays
             // which can be submitted to the checkboxes/radio buttons
             $builder->addEventListener(FormEvents::PRE_SUBMIT, static function (FormEvent $event) use ($choiceList, $options, &$unknownValues) {
-                /** @var PreSubmitEvent $event */
                 $form = $event->getForm();
                 $data = $event->getData();
 
@@ -161,7 +159,7 @@ class ChoiceType extends AbstractType
 
                 // Throw exception if unknown values were submitted (multiple choices will be handled in a different event listener below)
                 if (\count($unknownValues) > 0 && !$options['multiple']) {
-                    throw new TransformationFailedException(\sprintf('The choices "%s" do not exist in the choice list.', implode('", "', array_keys($unknownValues))));
+                    throw new TransformationFailedException(sprintf('The choices "%s" do not exist in the choice list.', implode('", "', array_keys($unknownValues))));
                 }
 
                 $event->setData($knownValues);
@@ -185,7 +183,7 @@ class ChoiceType extends AbstractType
                         $message = strtr($messageTemplate, ['{{ value }}' => $clientDataAsString]);
                     }
 
-                    $form->addError(new FormError($message, $messageTemplate, ['{{ value }}' => $clientDataAsString], null, new TransformationFailedException(\sprintf('The choices "%s" do not exist in the choice list.', $clientDataAsString))));
+                    $form->addError(new FormError($message, $messageTemplate, ['{{ value }}' => $clientDataAsString], null, new TransformationFailedException(sprintf('The choices "%s" do not exist in the choice list.', $clientDataAsString))));
                 }
             });
 
@@ -281,8 +279,6 @@ class ChoiceType extends AbstractType
      */
     public function finishView(FormView $view, FormInterface $form, array $options)
     {
-        $view->vars['duplicate_preferred_choices'] = $options['duplicate_preferred_choices'];
-
         if ($options['expanded']) {
             // Radio buttons should have the same name as the parent
             $childName = $view->vars['full_name'];

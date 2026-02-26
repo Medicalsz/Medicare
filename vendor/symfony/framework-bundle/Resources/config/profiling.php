@@ -40,18 +40,12 @@ return static function (ContainerConfigurator $container) {
 
         ->set('console_profiler_listener', ConsoleProfilerListener::class)
             ->args([
-                service('.lazy_profiler'),
+                service('profiler'),
                 service('.virtual_request_stack'),
                 service('debug.stopwatch'),
-                param('kernel.runtime_mode.cli'),
-                service('router')->nullOnInvalid(),
+                service('router'),
             ])
             ->tag('kernel.event_subscriber')
-
-        ->set('.lazy_profiler', Profiler::class)
-            ->factory('current')
-            ->args([[service('profiler')]])
-            ->lazy()
 
         ->set('.virtual_request_stack', VirtualRequestStack::class)
             ->args([service('request_stack')])

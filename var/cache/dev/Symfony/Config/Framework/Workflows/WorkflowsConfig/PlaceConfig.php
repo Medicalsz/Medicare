@@ -40,22 +40,22 @@ class PlaceConfig
         return $this;
     }
 
-    public function __construct(array $config = [])
+    public function __construct(array $value = [])
     {
-        if (array_key_exists('name', $config)) {
+        if (array_key_exists('name', $value)) {
             $this->_usedProperties['name'] = true;
-            $this->name = $config['name'];
-            unset($config['name']);
+            $this->name = $value['name'];
+            unset($value['name']);
         }
 
-        if (array_key_exists('metadata', $config)) {
+        if (array_key_exists('metadata', $value)) {
             $this->_usedProperties['metadata'] = true;
-            $this->metadata = $config['metadata'];
-            unset($config['metadata']);
+            $this->metadata = $value['metadata'];
+            unset($value['metadata']);
         }
 
-        if ($config) {
-            throw new InvalidConfigurationException(sprintf('The following keys are not supported by "%s": ', __CLASS__).implode(', ', array_keys($config)));
+        if ([] !== $value) {
+            throw new InvalidConfigurationException(sprintf('The following keys are not supported by "%s": ', __CLASS__).implode(', ', array_keys($value)));
         }
     }
 

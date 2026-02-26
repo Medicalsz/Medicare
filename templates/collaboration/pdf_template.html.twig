@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Collaboration Details</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            border: 1px solid #dddddd;
+            text-align: left;
+            padding: 8px;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        h1 {
+            text-align: center;
+        }
+        .image-container {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .image-container img {
+            max-width: 200px;
+            max-height: 200px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Collaboration Details</h1>
+
+    {% if collaboration.imageName %}
+        <div class="image-container">
+            {# Note: The 'imagine_filter' might not work directly in PDF generation without extra setup.
+               This path points to the public URL. For PDF generation from a local path, you might need to adjust this.
+               A simple way is to convert the image to a base64 string and embed it.
+               For now, we'll try the direct path. #}
+            <img src="{{ vich_uploader_asset(collaboration, 'imageFile') }}">
+        </div>
+    {% endif %}
+
+    <table>
+        <tbody>
+            <tr>
+                <th>Id</th>
+                <td>{{ collaboration.id }}</td>
+            </tr>
+            <tr>
+                <th>Titre</th>
+                <td>{{ collaboration.titre }}</td>
+            </tr>
+            <tr>
+                <th>Description</th>
+                <td>{{ collaboration.description }}</td>
+            </tr>
+            <tr>
+                <th>Date Debut</th>
+                <td>{{ collaboration.dateDebut ? collaboration.dateDebut|date('Y-m-d') : '' }}</td>
+            </tr>
+            <tr>
+                <th>Date Fin</th>
+                <td>{{ collaboration.dateFin ? collaboration.dateFin|date('Y-m-d') : '' }}</td>
+            </tr>
+            <tr>
+                <th>Statut</th>
+                <td>{{ collaboration.statut.value }}</td>
+            </tr>
+        </tbody>
+    </table>
+</body>
+</html>

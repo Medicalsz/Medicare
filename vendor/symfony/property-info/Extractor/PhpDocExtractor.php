@@ -12,8 +12,6 @@
 namespace Symfony\Component\PropertyInfo\Extractor;
 
 use phpDocumentor\Reflection\DocBlock;
-use phpDocumentor\Reflection\DocBlock\Tags\Factory\StaticMethod;
-use phpDocumentor\Reflection\DocBlock\Tags\Generic;
 use phpDocumentor\Reflection\DocBlock\Tags\InvalidTag;
 use phpDocumentor\Reflection\DocBlockFactory;
 use phpDocumentor\Reflection\DocBlockFactoryInterface;
@@ -59,14 +57,10 @@ class PhpDocExtractor implements PropertyDescriptionExtractorInterface, Property
      * @param string[]|null $accessorPrefixes
      * @param string[]|null $arrayMutatorPrefixes
      */
-    public function __construct(?DocBlockFactoryInterface $docBlockFactory = null, ?array $mutatorPrefixes = null, ?array $accessorPrefixes = null, ?array $arrayMutatorPrefixes = null)
+    public function __construct(DocBlockFactoryInterface $docBlockFactory = null, array $mutatorPrefixes = null, array $accessorPrefixes = null, array $arrayMutatorPrefixes = null)
     {
         if (!class_exists(DocBlockFactory::class)) {
-            throw new \LogicException(\sprintf('Unable to use the "%s" class as the "phpdocumentor/reflection-docblock" package is not installed. Try running composer require "phpdocumentor/reflection-docblock".', __CLASS__));
-        }
-
-        if (!is_subclass_of(Generic::class, StaticMethod::class)) {
-            throw new \LogicException('symfony/property-info v6 does not support phpdocumentor/reflection-docblock v6. Please stick to ^5.2 in your composer.json file.');
+            throw new \LogicException(sprintf('Unable to use the "%s" class as the "phpdocumentor/reflection-docblock" package is not installed. Try running composer require "phpdocumentor/reflection-docblock".', __CLASS__));
         }
 
         $this->docBlockFactory = $docBlockFactory ?: DocBlockFactory::createInstance();
@@ -79,7 +73,7 @@ class PhpDocExtractor implements PropertyDescriptionExtractorInterface, Property
 
     public function getShortDescription(string $class, string $property, array $context = []): ?string
     {
-        /** @var DocBlock $docBlock */
+        /** @var $docBlock DocBlock */
         [$docBlock] = $this->getDocBlock($class, $property);
         if (!$docBlock) {
             return null;
@@ -106,7 +100,7 @@ class PhpDocExtractor implements PropertyDescriptionExtractorInterface, Property
 
     public function getLongDescription(string $class, string $property, array $context = []): ?string
     {
-        /** @var DocBlock $docBlock */
+        /** @var $docBlock DocBlock */
         [$docBlock] = $this->getDocBlock($class, $property);
         if (!$docBlock) {
             return null;
@@ -119,7 +113,7 @@ class PhpDocExtractor implements PropertyDescriptionExtractorInterface, Property
 
     public function getTypes(string $class, string $property, array $context = []): ?array
     {
-        /** @var DocBlock $docBlock */
+        /** @var $docBlock DocBlock */
         [$docBlock, $source, $prefix] = $this->getDocBlock($class, $property);
         if (!$docBlock) {
             return null;
@@ -227,7 +221,7 @@ class PhpDocExtractor implements PropertyDescriptionExtractorInterface, Property
      */
     private function getDocBlock(string $class, string $property): array
     {
-        $propertyHash = \sprintf('%s::%s', $class, $property);
+        $propertyHash = sprintf('%s::%s', $class, $property);
 
         if (isset($this->docBlocks[$propertyHash])) {
             return $this->docBlocks[$propertyHash];
@@ -296,24 +290,19 @@ class PhpDocExtractor implements PropertyDescriptionExtractorInterface, Property
     {
         $prefixes = self::ACCESSOR === $type ? $this->accessorPrefixes : $this->mutatorPrefixes;
         $prefix = null;
-        $method = null;
 
         foreach ($prefixes as $prefix) {
             $methodName = $prefix.$ucFirstProperty;
 
             try {
-                $method = new \ReflectionMethod($class, $methodName);
-                if ($method->isStatic()) {
-                    continue;
-                }
-
-                if (self::ACCESSOR === $type && \in_array((string) $method->getReturnType(), ['void', 'never'], true)) {
+                $reflectionMethod = new \ReflectionMethod($class, $methodName);
+                if ($reflectionMethod->isStatic()) {
                     continue;
                 }
 
                 if (
-                    (self::ACCESSOR === $type && !$method->getNumberOfRequiredParameters())
-                    || (self::MUTATOR === $type && $method->getNumberOfParameters() >= 1)
+                    (self::ACCESSOR === $type && 0 === $reflectionMethod->getNumberOfRequiredParameters())
+                    || (self::MUTATOR === $type && $reflectionMethod->getNumberOfParameters() >= 1)
                 ) {
                     break;
                 }
@@ -322,11 +311,11 @@ class PhpDocExtractor implements PropertyDescriptionExtractorInterface, Property
             }
         }
 
-        if (!$method) {
+        if (!isset($reflectionMethod)) {
             return null;
         }
 
-        $reflector = $method->getDeclaringClass();
+        $reflector = $reflectionMethod->getDeclaringClass();
 
         foreach ($reflector->getTraits() as $trait) {
             if ($trait->hasMethod($methodName)) {
@@ -335,7 +324,7 @@ class PhpDocExtractor implements PropertyDescriptionExtractorInterface, Property
         }
 
         try {
-            return [$this->docBlockFactory->create($method, $this->createFromReflector($reflector)), $prefix];
+            return [$this->docBlockFactory->create($reflectionMethod, $this->createFromReflector($reflector)), $prefix];
         } catch (\InvalidArgumentException|\RuntimeException) {
             return null;
         }

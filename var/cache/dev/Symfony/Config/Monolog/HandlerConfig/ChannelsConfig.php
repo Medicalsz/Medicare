@@ -40,22 +40,22 @@ class ChannelsConfig
         return $this;
     }
 
-    public function __construct(array $config = [])
+    public function __construct(array $value = [])
     {
-        if (array_key_exists('type', $config)) {
+        if (array_key_exists('type', $value)) {
             $this->_usedProperties['type'] = true;
-            $this->type = $config['type'];
-            unset($config['type']);
+            $this->type = $value['type'];
+            unset($value['type']);
         }
 
-        if (array_key_exists('elements', $config)) {
+        if (array_key_exists('elements', $value)) {
             $this->_usedProperties['elements'] = true;
-            $this->elements = $config['elements'];
-            unset($config['elements']);
+            $this->elements = $value['elements'];
+            unset($value['elements']);
         }
 
-        if ($config) {
-            throw new InvalidConfigurationException(sprintf('The following keys are not supported by "%s": ', __CLASS__).implode(', ', array_keys($config)));
+        if ([] !== $value) {
+            throw new InvalidConfigurationException(sprintf('The following keys are not supported by "%s": ', __CLASS__).implode(', ', array_keys($value)));
         }
     }
 

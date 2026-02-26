@@ -57,28 +57,28 @@ class OidcUserInfoConfig
         return $this;
     }
 
-    public function __construct(array $config = [])
+    public function __construct(array $value = [])
     {
-        if (array_key_exists('base_uri', $config)) {
+        if (array_key_exists('base_uri', $value)) {
             $this->_usedProperties['baseUri'] = true;
-            $this->baseUri = $config['base_uri'];
-            unset($config['base_uri']);
+            $this->baseUri = $value['base_uri'];
+            unset($value['base_uri']);
         }
 
-        if (array_key_exists('claim', $config)) {
+        if (array_key_exists('claim', $value)) {
             $this->_usedProperties['claim'] = true;
-            $this->claim = $config['claim'];
-            unset($config['claim']);
+            $this->claim = $value['claim'];
+            unset($value['claim']);
         }
 
-        if (array_key_exists('client', $config)) {
+        if (array_key_exists('client', $value)) {
             $this->_usedProperties['client'] = true;
-            $this->client = $config['client'];
-            unset($config['client']);
+            $this->client = $value['client'];
+            unset($value['client']);
         }
 
-        if ($config) {
-            throw new InvalidConfigurationException(sprintf('The following keys are not supported by "%s": ', __CLASS__).implode(', ', array_keys($config)));
+        if ([] !== $value) {
+            throw new InvalidConfigurationException(sprintf('The following keys are not supported by "%s": ', __CLASS__).implode(', ', array_keys($value)));
         }
     }
 

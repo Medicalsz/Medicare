@@ -26,18 +26,23 @@ use Symfony\Component\Routing\Matcher\UrlMatcherInterface;
  */
 class HttpUtils
 {
+    private ?UrlGeneratorInterface $urlGenerator;
+    private UrlMatcherInterface|RequestMatcherInterface|null $urlMatcher;
+    private ?string $domainRegexp;
+    private ?string $secureDomainRegexp;
+
     /**
      * @param $domainRegexp       A regexp the target of HTTP redirections must match, scheme included
      * @param $secureDomainRegexp A regexp the target of HTTP redirections must match when the scheme is "https"
      *
      * @throws \InvalidArgumentException
      */
-    public function __construct(
-        private ?UrlGeneratorInterface $urlGenerator = null,
-        private UrlMatcherInterface|RequestMatcherInterface|null $urlMatcher = null,
-        private ?string $domainRegexp = null,
-        private ?string $secureDomainRegexp = null,
-    ) {
+    public function __construct(UrlGeneratorInterface $urlGenerator = null, UrlMatcherInterface|RequestMatcherInterface $urlMatcher = null, string $domainRegexp = null, string $secureDomainRegexp = null)
+    {
+        $this->urlGenerator = $urlGenerator;
+        $this->urlMatcher = $urlMatcher;
+        $this->domainRegexp = $domainRegexp;
+        $this->secureDomainRegexp = $secureDomainRegexp;
     }
 
     /**
@@ -48,10 +53,10 @@ class HttpUtils
      */
     public function createRedirectResponse(Request $request, string $path, int $status = 302): RedirectResponse
     {
-        if (null !== $this->secureDomainRegexp && 'https' === $this->urlMatcher->getContext()->getScheme() && preg_match('#^https?:[/\\\\]{2,}+[^/]++#i', $path, $host) && !preg_match(\sprintf($this->secureDomainRegexp, preg_quote($request->getHttpHost())), $host[0])) {
+        if (null !== $this->secureDomainRegexp && 'https' === $this->urlMatcher->getContext()->getScheme() && preg_match('#^https?:[/\\\\]{2,}+[^/]++#i', $path, $host) && !preg_match(sprintf($this->secureDomainRegexp, preg_quote($request->getHttpHost())), $host[0])) {
             $path = '/';
         }
-        if (null !== $this->domainRegexp && preg_match('#^https?:[/\\\\]{2,}+[^/]++#i', $path, $host) && !preg_match(\sprintf($this->domainRegexp, preg_quote($request->getHttpHost())), $host[0])) {
+        if (null !== $this->domainRegexp && preg_match('#^https?:[/\\\\]{2,}+[^/]++#i', $path, $host) && !preg_match(sprintf($this->domainRegexp, preg_quote($request->getHttpHost())), $host[0])) {
             $path = '/';
         }
 
@@ -65,25 +70,7 @@ class HttpUtils
      */
     public function createRequest(Request $request, string $path): Request
     {
-        if ($trustedProxies = Request::getTrustedProxies()) {
-            Request::setTrustedProxies([], Request::getTrustedHeaderSet());
-        }
-
-        $context = $this->urlGenerator?->getContext();
-        if ($baseUrl = $context?->getBaseUrl()) {
-            $context->setBaseUrl('');
-        }
-
-        try {
-            $newRequest = Request::create($this->generateUri($request, $path), 'get', [], $request->cookies->all(), [], $request->server->all());
-        } finally {
-            if ($trustedProxies) {
-                Request::setTrustedProxies($trustedProxies, Request::getTrustedHeaderSet());
-            }
-            if ($baseUrl) {
-                $context->setBaseUrl($baseUrl);
-            }
-        }
+        $newRequest = Request::create($this->generateUri($request, $path), 'get', [], $request->cookies->all(), [], $request->server->all());
 
         static $setSession;
 
@@ -100,8 +87,8 @@ class HttpUtils
             $newRequest->attributes->set(SecurityRequestAttributes::LAST_USERNAME, $request->attributes->get(SecurityRequestAttributes::LAST_USERNAME));
         }
 
-        if ($request->attributes->has('_format')) {
-            $newRequest->attributes->set('_format', $request->attributes->get('_format'));
+        if ($request->get('_format')) {
+            $newRequest->attributes->set('_format', $request->get('_format'));
         }
         if ($request->getDefaultLocale() !== $request->getLocale()) {
             $newRequest->setLocale($request->getLocale());
@@ -134,7 +121,9 @@ class HttpUtils
                 }
 
                 return isset($parameters['_route']) && $path === $parameters['_route'];
-            } catch (MethodNotAllowedException|ResourceNotFoundException) {
+            } catch (MethodNotAllowedException) {
+                return false;
+            } catch (ResourceNotFoundException) {
                 return false;
             }
         }

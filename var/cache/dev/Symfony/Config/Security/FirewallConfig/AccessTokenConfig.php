@@ -100,7 +100,7 @@ class AccessTokenConfig
     }
 
     /**
-     * @template TValue of mixed
+     * @template TValue
      * @param TValue $value
      * @example "App\\Security\\CustomTokenHandler"
      * @return \Symfony\Config\Security\FirewallConfig\AccessToken\TokenHandlerConfig|$this
@@ -125,52 +125,52 @@ class AccessTokenConfig
         return $this->tokenHandler;
     }
 
-    public function __construct(array $config = [])
+    public function __construct(array $value = [])
     {
-        if (array_key_exists('provider', $config)) {
+        if (array_key_exists('provider', $value)) {
             $this->_usedProperties['provider'] = true;
-            $this->provider = $config['provider'];
-            unset($config['provider']);
+            $this->provider = $value['provider'];
+            unset($value['provider']);
         }
 
-        if (array_key_exists('remember_me', $config)) {
+        if (array_key_exists('remember_me', $value)) {
             $this->_usedProperties['rememberMe'] = true;
-            $this->rememberMe = $config['remember_me'];
-            unset($config['remember_me']);
+            $this->rememberMe = $value['remember_me'];
+            unset($value['remember_me']);
         }
 
-        if (array_key_exists('success_handler', $config)) {
+        if (array_key_exists('success_handler', $value)) {
             $this->_usedProperties['successHandler'] = true;
-            $this->successHandler = $config['success_handler'];
-            unset($config['success_handler']);
+            $this->successHandler = $value['success_handler'];
+            unset($value['success_handler']);
         }
 
-        if (array_key_exists('failure_handler', $config)) {
+        if (array_key_exists('failure_handler', $value)) {
             $this->_usedProperties['failureHandler'] = true;
-            $this->failureHandler = $config['failure_handler'];
-            unset($config['failure_handler']);
+            $this->failureHandler = $value['failure_handler'];
+            unset($value['failure_handler']);
         }
 
-        if (array_key_exists('realm', $config)) {
+        if (array_key_exists('realm', $value)) {
             $this->_usedProperties['realm'] = true;
-            $this->realm = $config['realm'];
-            unset($config['realm']);
+            $this->realm = $value['realm'];
+            unset($value['realm']);
         }
 
-        if (array_key_exists('token_extractors', $config)) {
+        if (array_key_exists('token_extractors', $value)) {
             $this->_usedProperties['tokenExtractors'] = true;
-            $this->tokenExtractors = $config['token_extractors'];
-            unset($config['token_extractors']);
+            $this->tokenExtractors = $value['token_extractors'];
+            unset($value['token_extractors']);
         }
 
-        if (array_key_exists('token_handler', $config)) {
+        if (array_key_exists('token_handler', $value)) {
             $this->_usedProperties['tokenHandler'] = true;
-            $this->tokenHandler = \is_array($config['token_handler']) ? new \Symfony\Config\Security\FirewallConfig\AccessToken\TokenHandlerConfig($config['token_handler']) : $config['token_handler'];
-            unset($config['token_handler']);
+            $this->tokenHandler = \is_array($value['token_handler']) ? new \Symfony\Config\Security\FirewallConfig\AccessToken\TokenHandlerConfig($value['token_handler']) : $value['token_handler'];
+            unset($value['token_handler']);
         }
 
-        if ($config) {
-            throw new InvalidConfigurationException(sprintf('The following keys are not supported by "%s": ', __CLASS__).implode(', ', array_keys($config)));
+        if ([] !== $value) {
+            throw new InvalidConfigurationException(sprintf('The following keys are not supported by "%s": ', __CLASS__).implode(', ', array_keys($value)));
         }
     }
 

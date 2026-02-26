@@ -114,7 +114,7 @@ class UnsupportedSchemeException extends LogicException
         ],
         'kaz-info-teh' => [
             'class' => Bridge\KazInfoTeh\KazInfoTehTransportFactory::class,
-            'package' => 'symfony/kaz-info-teh-notifier',
+            'package' => 'symfony/symfony/kaz-info-teh-notifier',
         ],
         'lightsms' => [
             'class' => Bridge\LightSms\LightSmsTransportFactory::class,
@@ -305,7 +305,7 @@ class UnsupportedSchemeException extends LogicException
     /**
      * @param string[] $supported
      */
-    public function __construct(Dsn $dsn, ?string $name = null, array $supported = [], ?\Throwable $previous = null)
+    public function __construct(Dsn $dsn, string $name = null, array $supported = [], \Throwable $previous = null)
     {
         $provider = $dsn->getScheme();
         if (false !== $pos = strpos($provider, '+')) {
@@ -313,14 +313,14 @@ class UnsupportedSchemeException extends LogicException
         }
         $package = self::SCHEME_TO_PACKAGE_MAP[$provider] ?? null;
         if ($package && !class_exists($package['class'])) {
-            parent::__construct(\sprintf('Unable to send notification via "%s" as the bridge is not installed. Try running "composer require %s".', $provider, $package['package']));
+            parent::__construct(sprintf('Unable to send notification via "%s" as the bridge is not installed. Try running "composer require %s".', $provider, $package['package']));
 
             return;
         }
 
-        $message = \sprintf('The "%s" scheme is not supported', $dsn->getScheme());
+        $message = sprintf('The "%s" scheme is not supported', $dsn->getScheme());
         if ($name && $supported) {
-            $message .= \sprintf('; supported schemes for notifier "%s" are: "%s"', $name, implode('", "', $supported));
+            $message .= sprintf('; supported schemes for notifier "%s" are: "%s"', $name, implode('", "', $supported));
         }
 
         parent::__construct($message.'.', 0, $previous);

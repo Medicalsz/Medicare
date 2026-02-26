@@ -11,12 +11,14 @@ class ParamOutTagValueNode implements PhpDocTagValueNode
 
 	use NodeAttributes;
 
-	public TypeNode $type;
+	/** @var TypeNode */
+	public $type;
 
-	public string $parameterName;
+	/** @var string */
+	public $parameterName;
 
 	/** @var string (may be empty) */
-	public string $description;
+	public $description;
 
 	public function __construct(TypeNode $type, string $parameterName, string $description)
 	{
@@ -28,20 +30,6 @@ class ParamOutTagValueNode implements PhpDocTagValueNode
 	public function __toString(): string
 	{
 		return trim("{$this->type} {$this->parameterName} {$this->description}");
-	}
-
-	/**
-	 * @param array<string, mixed> $properties
-	 */
-	public static function __set_state(array $properties): self
-	{
-		$instance = new self($properties['type'], $properties['parameterName'], $properties['description']);
-		if (isset($properties['attributes'])) {
-			foreach ($properties['attributes'] as $key => $value) {
-				$instance->setAttribute($key, $value);
-			}
-		}
-		return $instance;
 	}
 
 }

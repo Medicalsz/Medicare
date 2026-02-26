@@ -27,7 +27,10 @@ class CheckExceptionOnInvalidReferenceBehaviorPass extends AbstractRecursivePass
 
     private array $serviceLocatorContextIds = [];
 
-    public function process(ContainerBuilder $container): void
+    /**
+     * @return void
+     */
+    public function process(ContainerBuilder $container)
     {
         $this->serviceLocatorContextIds = [];
         foreach ($container->findTaggedServiceIds('container.service_locator_context') as $id => $tags) {
@@ -47,7 +50,7 @@ class CheckExceptionOnInvalidReferenceBehaviorPass extends AbstractRecursivePass
         if (!$value instanceof Reference) {
             return parent::processValue($value, $isRoot);
         }
-        if (ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE < $value->getInvalidBehavior() || $this->container->has((string) $value)) {
+        if (ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE < $value->getInvalidBehavior() || $this->container->has($id = (string) $value)) {
             return $value;
         }
 
@@ -57,7 +60,15 @@ class CheckExceptionOnInvalidReferenceBehaviorPass extends AbstractRecursivePass
         if (isset($this->serviceLocatorContextIds[$currentId])) {
             $currentId = $this->serviceLocatorContextIds[$currentId];
             $locator = $this->container->getDefinition($this->currentId)->getFactory()[0];
-            $this->throwServiceNotFoundException($value, $currentId, $locator->getArgument(0));
+
+            foreach ($locator->getArgument(0) as $k => $v) {
+                if ($v->getValues()[0] === $value) {
+                    if ($k !== $id) {
+                        $currentId = $k.'" in the container provided to "'.$currentId;
+                    }
+                    throw new ServiceNotFoundException($id, $currentId, null, $this->getAlternatives($id));
+                }
+            }
         }
 
         if ('.' === $currentId[0] && $graph->hasNode($currentId)) {
@@ -71,21 +82,14 @@ class CheckExceptionOnInvalidReferenceBehaviorPass extends AbstractRecursivePass
                     $currentId = $sourceId;
                     break;
                 }
-
-                if (isset($this->serviceLocatorContextIds[$sourceId])) {
-                    $currentId = $this->serviceLocatorContextIds[$sourceId];
-                    $locator = $this->container->getDefinition($this->currentId);
-                    $this->throwServiceNotFoundException($value, $currentId, $locator->getArgument(0));
-                }
             }
         }
 
-        $this->throwServiceNotFoundException($value, $currentId, $value);
+        throw new ServiceNotFoundException($id, $currentId, null, $this->getAlternatives($id));
     }
 
-    private function throwServiceNotFoundException(Reference $ref, string $sourceId, mixed $value): void
+    private function getAlternatives(string $id): array
     {
-        $id = (string) $ref;
         $alternatives = [];
         foreach ($this->container->getServiceIds() as $knownId) {
             if ('' === $knownId || '.' === $knownId[0] || $knownId === $this->currentId) {
@@ -98,28 +102,6 @@ class CheckExceptionOnInvalidReferenceBehaviorPass extends AbstractRecursivePass
             }
         }
 
-        $pass = new class extends AbstractRecursivePass {
-            public Reference $ref;
-            public string $sourceId;
-            public array $alternatives;
-
-            public function processValue(mixed $value, bool $isRoot = false): mixed
-            {
-                if ($this->ref !== $value) {
-                    return parent::processValue($value, $isRoot);
-                }
-                $sourceId = $this->sourceId;
-                if (null !== $this->currentId && $this->currentId !== (string) $value) {
-                    $sourceId = $this->currentId.'" in the container provided to "'.$sourceId;
-                }
-
-                throw new ServiceNotFoundException((string) $value, $sourceId, null, $this->alternatives);
-            }
-        };
-        $pass->ref = $ref;
-        $pass->sourceId = $sourceId;
-        $pass->alternatives = $alternatives;
-
-        $pass->processValue($value, true);
+        return $alternatives;
     }
 }

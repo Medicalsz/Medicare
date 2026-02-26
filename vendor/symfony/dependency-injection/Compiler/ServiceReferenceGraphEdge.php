@@ -20,15 +20,21 @@ namespace Symfony\Component\DependencyInjection\Compiler;
  */
 class ServiceReferenceGraphEdge
 {
-    public function __construct(
-        private ServiceReferenceGraphNode $sourceNode,
-        private ServiceReferenceGraphNode $destNode,
-        private mixed $value = null,
-        private bool $lazy = false,
-        private bool $weak = false,
-        private bool $byConstructor = false,
-        private bool $byMultiUseArgument = false,
-    ) {
+    private ServiceReferenceGraphNode $sourceNode;
+    private ServiceReferenceGraphNode $destNode;
+    private mixed $value;
+    private bool $lazy;
+    private bool $weak;
+    private bool $byConstructor;
+
+    public function __construct(ServiceReferenceGraphNode $sourceNode, ServiceReferenceGraphNode $destNode, mixed $value = null, bool $lazy = false, bool $weak = false, bool $byConstructor = false)
+    {
+        $this->sourceNode = $sourceNode;
+        $this->destNode = $destNode;
+        $this->value = $value;
+        $this->lazy = $lazy;
+        $this->weak = $weak;
+        $this->byConstructor = $byConstructor;
     }
 
     /**
@@ -77,10 +83,5 @@ class ServiceReferenceGraphEdge
     public function isReferencedByConstructor(): bool
     {
         return $this->byConstructor;
-    }
-
-    public function isFromMultiUseArgument(): bool
-    {
-        return $this->byMultiUseArgument;
     }
 }

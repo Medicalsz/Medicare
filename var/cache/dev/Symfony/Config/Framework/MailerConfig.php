@@ -74,7 +74,7 @@ class MailerConfig
 
     /**
      * Mailer Envelope configuration
-     */
+    */
     public function envelope(array $value = []): \Symfony\Config\Framework\Mailer\EnvelopeConfig
     {
         if (null === $this->envelope) {
@@ -88,7 +88,7 @@ class MailerConfig
     }
 
     /**
-     * @template TValue of mixed
+     * @template TValue
      * @param TValue $value
      * @return \Symfony\Config\Framework\Mailer\HeaderConfig|$this
      * @psalm-return (TValue is array ? \Symfony\Config\Framework\Mailer\HeaderConfig : static)
@@ -112,46 +112,46 @@ class MailerConfig
         return $this->headers[$name];
     }
 
-    public function __construct(array $config = [])
+    public function __construct(array $value = [])
     {
-        if (array_key_exists('enabled', $config)) {
+        if (array_key_exists('enabled', $value)) {
             $this->_usedProperties['enabled'] = true;
-            $this->enabled = $config['enabled'];
-            unset($config['enabled']);
+            $this->enabled = $value['enabled'];
+            unset($value['enabled']);
         }
 
-        if (array_key_exists('message_bus', $config)) {
+        if (array_key_exists('message_bus', $value)) {
             $this->_usedProperties['messageBus'] = true;
-            $this->messageBus = $config['message_bus'];
-            unset($config['message_bus']);
+            $this->messageBus = $value['message_bus'];
+            unset($value['message_bus']);
         }
 
-        if (array_key_exists('dsn', $config)) {
+        if (array_key_exists('dsn', $value)) {
             $this->_usedProperties['dsn'] = true;
-            $this->dsn = $config['dsn'];
-            unset($config['dsn']);
+            $this->dsn = $value['dsn'];
+            unset($value['dsn']);
         }
 
-        if (array_key_exists('transports', $config)) {
+        if (array_key_exists('transports', $value)) {
             $this->_usedProperties['transports'] = true;
-            $this->transports = $config['transports'];
-            unset($config['transports']);
+            $this->transports = $value['transports'];
+            unset($value['transports']);
         }
 
-        if (array_key_exists('envelope', $config)) {
+        if (array_key_exists('envelope', $value)) {
             $this->_usedProperties['envelope'] = true;
-            $this->envelope = new \Symfony\Config\Framework\Mailer\EnvelopeConfig($config['envelope']);
-            unset($config['envelope']);
+            $this->envelope = new \Symfony\Config\Framework\Mailer\EnvelopeConfig($value['envelope']);
+            unset($value['envelope']);
         }
 
-        if (array_key_exists('headers', $config)) {
+        if (array_key_exists('headers', $value)) {
             $this->_usedProperties['headers'] = true;
-            $this->headers = array_map(fn ($v) => \is_array($v) ? new \Symfony\Config\Framework\Mailer\HeaderConfig($v) : $v, $config['headers']);
-            unset($config['headers']);
+            $this->headers = array_map(fn ($v) => \is_array($v) ? new \Symfony\Config\Framework\Mailer\HeaderConfig($v) : $v, $value['headers']);
+            unset($value['headers']);
         }
 
-        if ($config) {
-            throw new InvalidConfigurationException(sprintf('The following keys are not supported by "%s": ', __CLASS__).implode(', ', array_keys($config)));
+        if ([] !== $value) {
+            throw new InvalidConfigurationException(sprintf('The following keys are not supported by "%s": ', __CLASS__).implode(', ', array_keys($value)));
         }
     }
 

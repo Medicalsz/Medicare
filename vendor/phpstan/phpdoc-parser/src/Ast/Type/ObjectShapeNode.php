@@ -11,11 +11,8 @@ class ObjectShapeNode implements TypeNode
 	use NodeAttributes;
 
 	/** @var ObjectShapeItemNode[] */
-	public array $items;
+	public $items;
 
-	/**
-	 * @param ObjectShapeItemNode[] $items
-	 */
 	public function __construct(array $items)
 	{
 		$this->items = $items;
@@ -26,20 +23,6 @@ class ObjectShapeNode implements TypeNode
 		$items = $this->items;
 
 		return 'object{' . implode(', ', $items) . '}';
-	}
-
-	/**
-	 * @param array<string, mixed> $properties
-	 */
-	public static function __set_state(array $properties): self
-	{
-		$instance = new self($properties['items']);
-		if (isset($properties['attributes'])) {
-			foreach ($properties['attributes'] as $key => $value) {
-				$instance->setAttribute($key, $value);
-			}
-		}
-		return $instance;
 	}
 
 }

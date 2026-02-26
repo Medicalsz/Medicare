@@ -17,10 +17,10 @@ class InvalidTagValueNode implements PhpDocTagValueNode
 	use NodeAttributes;
 
 	/** @var string (may be empty) */
-	public string $value;
+	public $value;
 
 	/** @var mixed[] */
-	private array $exceptionArgs;
+	private $exceptionArgs;
 
 	public function __construct(string $value, ParserException $exception)
 	{
@@ -31,11 +31,10 @@ class InvalidTagValueNode implements PhpDocTagValueNode
 			$exception->getCurrentOffset(),
 			$exception->getExpectedTokenType(),
 			$exception->getExpectedTokenValue(),
-			$exception->getCurrentTokenLine(),
 		];
 	}
 
-	public function __get(string $name): ?ParserException
+	public function __get(string $name)
 	{
 		if ($name !== 'exception') {
 			trigger_error(sprintf('Undefined property: %s::$%s', self::class, $name), E_USER_WARNING);
@@ -48,21 +47,6 @@ class InvalidTagValueNode implements PhpDocTagValueNode
 	public function __toString(): string
 	{
 		return $this->value;
-	}
-
-	/**
-	 * @param array<string, mixed> $properties
-	 */
-	public static function __set_state(array $properties): self
-	{
-		$exception = new ParserException(...$properties['exceptionArgs']);
-		$instance = new self($properties['value'], $exception);
-		if (isset($properties['attributes'])) {
-			foreach ($properties['attributes'] as $key => $value) {
-				$instance->setAttribute($key, $value);
-			}
-		}
-		return $instance;
 	}
 
 }

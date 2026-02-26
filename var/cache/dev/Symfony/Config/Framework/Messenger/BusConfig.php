@@ -17,7 +17,7 @@ class BusConfig
     private $_usedProperties = [];
 
     /**
-     * @template TValue of mixed
+     * @template TValue
      * @param TValue $value
      * @default {"enabled":true,"allow_no_handlers":false,"allow_no_senders":true}
      * @return \Symfony\Config\Framework\Messenger\BusConfig\DefaultMiddlewareConfig|$this
@@ -43,7 +43,7 @@ class BusConfig
     }
 
     /**
-     * @template TValue of mixed
+     * @template TValue
      * @param TValue $value
      * @return \Symfony\Config\Framework\Messenger\BusConfig\MiddlewareConfig|$this
      * @psalm-return (TValue is array ? \Symfony\Config\Framework\Messenger\BusConfig\MiddlewareConfig : static)
@@ -60,22 +60,22 @@ class BusConfig
         return $this->middleware[] = new \Symfony\Config\Framework\Messenger\BusConfig\MiddlewareConfig($value);
     }
 
-    public function __construct(array $config = [])
+    public function __construct(array $value = [])
     {
-        if (array_key_exists('default_middleware', $config)) {
+        if (array_key_exists('default_middleware', $value)) {
             $this->_usedProperties['defaultMiddleware'] = true;
-            $this->defaultMiddleware = \is_array($config['default_middleware']) ? new \Symfony\Config\Framework\Messenger\BusConfig\DefaultMiddlewareConfig($config['default_middleware']) : $config['default_middleware'];
-            unset($config['default_middleware']);
+            $this->defaultMiddleware = \is_array($value['default_middleware']) ? new \Symfony\Config\Framework\Messenger\BusConfig\DefaultMiddlewareConfig($value['default_middleware']) : $value['default_middleware'];
+            unset($value['default_middleware']);
         }
 
-        if (array_key_exists('middleware', $config)) {
+        if (array_key_exists('middleware', $value)) {
             $this->_usedProperties['middleware'] = true;
-            $this->middleware = array_map(fn ($v) => \is_array($v) ? new \Symfony\Config\Framework\Messenger\BusConfig\MiddlewareConfig($v) : $v, $config['middleware']);
-            unset($config['middleware']);
+            $this->middleware = array_map(fn ($v) => \is_array($v) ? new \Symfony\Config\Framework\Messenger\BusConfig\MiddlewareConfig($v) : $v, $value['middleware']);
+            unset($value['middleware']);
         }
 
-        if ($config) {
-            throw new InvalidConfigurationException(sprintf('The following keys are not supported by "%s": ', __CLASS__).implode(', ', array_keys($config)));
+        if ([] !== $value) {
+            throw new InvalidConfigurationException(sprintf('The following keys are not supported by "%s": ', __CLASS__).implode(', ', array_keys($value)));
         }
     }
 

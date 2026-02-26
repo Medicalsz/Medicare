@@ -16,11 +16,9 @@ use Psr\Cache\InvalidArgumentException;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
 use Symfony\Component\Cache\CacheItem;
-use Symfony\Component\Cache\Exception\BadMethodCallException;
 use Symfony\Component\Cache\PruneableInterface;
 use Symfony\Component\Cache\ResettableInterface;
 use Symfony\Component\Cache\Traits\ContractsTrait;
-use Symfony\Contracts\Cache\NamespacedPoolInterface;
 use Symfony\Contracts\Cache\TagAwareCacheInterface;
 
 /**
@@ -35,7 +33,7 @@ use Symfony\Contracts\Cache\TagAwareCacheInterface;
  * @author Nicolas Grekas <p@tchwork.com>
  * @author Sergey Belyshkin <sbelyshkin@gmail.com>
  */
-class TagAwareAdapter implements TagAwareAdapterInterface, TagAwareCacheInterface, NamespacedPoolInterface, PruneableInterface, ResettableInterface, LoggerAwareInterface
+class TagAwareAdapter implements TagAwareAdapterInterface, TagAwareCacheInterface, PruneableInterface, ResettableInterface, LoggerAwareInterface
 {
     use ContractsTrait;
     use LoggerAwareTrait;
@@ -46,19 +44,18 @@ class TagAwareAdapter implements TagAwareAdapterInterface, TagAwareCacheInterfac
     private AdapterInterface $pool;
     private AdapterInterface $tags;
     private array $knownTagVersions = [];
+    private float $knownTagVersionsTtl;
 
     private static \Closure $setCacheItemTags;
     private static \Closure $setTagVersions;
     private static \Closure $getTagsByKey;
     private static \Closure $saveTags;
 
-    public function __construct(
-        AdapterInterface $itemsPool,
-        ?AdapterInterface $tagsPool = null,
-        private float $knownTagVersionsTtl = 0.15,
-    ) {
+    public function __construct(AdapterInterface $itemsPool, AdapterInterface $tagsPool = null, float $knownTagVersionsTtl = 0.15)
+    {
         $this->pool = $itemsPool;
         $this->tags = $tagsPool ?? $itemsPool;
+        $this->knownTagVersionsTtl = $knownTagVersionsTtl;
         self::$setCacheItemTags ??= \Closure::bind(
             static function (array $items, array $itemTags) {
                 foreach ($items as $key => $item) {
@@ -149,6 +146,8 @@ class TagAwareAdapter implements TagAwareAdapterInterface, TagAwareCacheInterfac
         foreach ($keys as $key) {
             if ('' !== $key && \is_string($key)) {
                 $commit = $commit || isset($this->deferred[$key]);
+                $key = static::TAGS_PREFIX.$key;
+                $tagKeys[$key] = $key; // BC with pools populated before v6.1
             }
         }
 
@@ -157,7 +156,7 @@ class TagAwareAdapter implements TagAwareAdapterInterface, TagAwareCacheInterfac
         }
 
         try {
-            $items = $this->pool->getItems($keys);
+            $items = $this->pool->getItems($tagKeys + $keys);
         } catch (InvalidArgumentException $e) {
             $this->pool->getItems($keys); // Should throw an exception
 
@@ -167,24 +166,18 @@ class TagAwareAdapter implements TagAwareAdapterInterface, TagAwareCacheInterfac
         $bufferedItems = $itemTags = [];
 
         foreach ($items as $key => $item) {
+            if (isset($tagKeys[$key])) { // BC with pools populated before v6.1
+                if ($item->isHit()) {
+                    $itemTags[substr($key, \strlen(static::TAGS_PREFIX))] = $item->get() ?: [];
+                }
+                continue;
+            }
+
             if (null !== $tags = $item->getMetadata()[CacheItem::METADATA_TAGS] ?? null) {
                 $itemTags[$key] = $tags;
             }
 
             $bufferedItems[$key] = $item;
-
-            if (null === $tags) {
-                $key = "\0tags\0".$key;
-                $tagKeys[$key] = $key; // BC with pools populated before v6.1
-            }
-        }
-
-        if ($tagKeys) {
-            foreach ($this->pool->getItems($tagKeys) as $key => $item) {
-                if ($item->isHit()) {
-                    $itemTags[substr($key, \strlen("\0tags\0"))] = $item->get() ?: [];
-                }
-            }
         }
 
         $tagVersions = $this->getTagVersions($itemTags, false);
@@ -209,10 +202,12 @@ class TagAwareAdapter implements TagAwareAdapterInterface, TagAwareCacheInterfac
                     unset($this->deferred[$key]);
                 }
             }
-
-            return $this->pool->clear($prefix);
         } else {
             $this->deferred = [];
+        }
+
+        if ($this->pool instanceof AdapterInterface) {
+            return $this->pool->clear($prefix);
         }
 
         return $this->pool->clear();
@@ -227,7 +222,7 @@ class TagAwareAdapter implements TagAwareAdapterInterface, TagAwareCacheInterfac
     {
         foreach ($keys as $key) {
             if ('' !== $key && \is_string($key)) {
-                $keys[] = "\0tags\0".$key; // BC with pools populated before v6.1
+                $keys[] = static::TAGS_PREFIX.$key; // BC with pools populated before v6.1
             }
         }
 
@@ -279,29 +274,15 @@ class TagAwareAdapter implements TagAwareAdapterInterface, TagAwareCacheInterfac
         return $ok;
     }
 
-    /**
-     * @throws BadMethodCallException When the item pool is not a NamespacedPoolInterface
-     */
-    public function withSubNamespace(string $namespace): static
-    {
-        if (!$this->pool instanceof NamespacedPoolInterface) {
-            throw new BadMethodCallException(\sprintf('Cannot call "%s::withSubNamespace()": this class doesn\'t implement "%s".', get_debug_type($this->pool), NamespacedPoolInterface::class));
-        }
-
-        $knownTagVersions = &$this->knownTagVersions; // ensures clones share the same array
-        $clone = clone $this;
-        $clone->deferred = [];
-        $clone->pool = $this->pool->withSubNamespace($namespace);
-
-        return $clone;
-    }
-
     public function prune(): bool
     {
         return $this->pool instanceof PruneableInterface && $this->pool->prune();
     }
 
-    public function reset(): void
+    /**
+     * @return void
+     */
+    public function reset()
     {
         $this->commit();
         $this->knownTagVersions = [];
@@ -309,12 +290,15 @@ class TagAwareAdapter implements TagAwareAdapterInterface, TagAwareCacheInterfac
         $this->tags instanceof ResettableInterface && $this->tags->reset();
     }
 
-    public function __serialize(): array
+    public function __sleep(): array
     {
         throw new \BadMethodCallException('Cannot serialize '.__CLASS__);
     }
 
-    public function __unserialize(array $data): void
+    /**
+     * @return void
+     */
+    public function __wakeup()
     {
         throw new \BadMethodCallException('Cannot unserialize '.__CLASS__);
     }
@@ -378,7 +362,7 @@ class TagAwareAdapter implements TagAwareAdapterInterface, TagAwareCacheInterfac
             (self::$saveTags)($this->tags, $newTags);
         }
 
-        while ($now > ($this->knownTagVersions[$tag = array_key_first($this->knownTagVersions) ?? ''][0] ?? \INF)) {
+        while ($now > ($this->knownTagVersions[$tag = array_key_first($this->knownTagVersions)][0] ?? \INF)) {
             unset($this->knownTagVersions[$tag]);
         }
 

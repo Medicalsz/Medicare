@@ -68,34 +68,34 @@ class AnnotationsConfig
         return $this;
     }
 
-    public function __construct(array $config = [])
+    public function __construct(array $value = [])
     {
-        if (array_key_exists('enabled', $config)) {
+        if (array_key_exists('enabled', $value)) {
             $this->_usedProperties['enabled'] = true;
-            $this->enabled = $config['enabled'];
-            unset($config['enabled']);
+            $this->enabled = $value['enabled'];
+            unset($value['enabled']);
         }
 
-        if (array_key_exists('cache', $config)) {
+        if (array_key_exists('cache', $value)) {
             $this->_usedProperties['cache'] = true;
-            $this->cache = $config['cache'];
-            unset($config['cache']);
+            $this->cache = $value['cache'];
+            unset($value['cache']);
         }
 
-        if (array_key_exists('file_cache_dir', $config)) {
+        if (array_key_exists('file_cache_dir', $value)) {
             $this->_usedProperties['fileCacheDir'] = true;
-            $this->fileCacheDir = $config['file_cache_dir'];
-            unset($config['file_cache_dir']);
+            $this->fileCacheDir = $value['file_cache_dir'];
+            unset($value['file_cache_dir']);
         }
 
-        if (array_key_exists('debug', $config)) {
+        if (array_key_exists('debug', $value)) {
             $this->_usedProperties['debug'] = true;
-            $this->debug = $config['debug'];
-            unset($config['debug']);
+            $this->debug = $value['debug'];
+            unset($value['debug']);
         }
 
-        if ($config) {
-            throw new InvalidConfigurationException(sprintf('The following keys are not supported by "%s": ', __CLASS__).implode(', ', array_keys($config)));
+        if ([] !== $value) {
+            throw new InvalidConfigurationException(sprintf('The following keys are not supported by "%s": ', __CLASS__).implode(', ', array_keys($value)));
         }
     }
 

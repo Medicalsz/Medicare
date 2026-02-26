@@ -16,24 +16,22 @@ class GenericTypeNode implements TypeNode
 
 	use NodeAttributes;
 
-	public IdentifierTypeNode $type;
+	/** @var IdentifierTypeNode */
+	public $type;
 
 	/** @var TypeNode[] */
-	public array $genericTypes;
+	public $genericTypes;
 
 	/** @var (self::VARIANCE_*)[] */
-	public array $variances;
+	public $variances;
 
-	/**
-	 * @param TypeNode[] $genericTypes
-	 * @param (self::VARIANCE_*)[] $variances
-	 */
 	public function __construct(IdentifierTypeNode $type, array $genericTypes, array $variances = [])
 	{
 		$this->type = $type;
 		$this->genericTypes = $genericTypes;
 		$this->variances = $variances;
 	}
+
 
 	public function __toString(): string
 	{
@@ -51,20 +49,6 @@ class GenericTypeNode implements TypeNode
 		}
 
 		return $this->type . '<' . implode(', ', $genericTypes) . '>';
-	}
-
-	/**
-	 * @param array<string, mixed> $properties
-	 */
-	public static function __set_state(array $properties): self
-	{
-		$instance = new self($properties['type'], $properties['genericTypes'], $properties['variances'] ?? []);
-		if (isset($properties['attributes'])) {
-			foreach ($properties['attributes'] as $key => $value) {
-				$instance->setAttribute($key, $value);
-			}
-		}
-		return $instance;
 	}
 
 }

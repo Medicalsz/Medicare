@@ -102,7 +102,7 @@ class SerializerConfig
 
     /**
      * @default {"paths":[]}
-     */
+    */
     public function mapping(array $value = []): \Symfony\Config\Framework\Serializer\MappingConfig
     {
         if (null === $this->mapping) {
@@ -116,70 +116,68 @@ class SerializerConfig
     }
 
     /**
-     * @param ParamConfigurator|list<ParamConfigurator|mixed> $value
-     *
      * @return $this
      */
-    public function defaultContext(ParamConfigurator|array $value): static
+    public function defaultContext(string $name, mixed $value): static
     {
         $this->_usedProperties['defaultContext'] = true;
-        $this->defaultContext = $value;
+        $this->defaultContext[$name] = $value;
 
         return $this;
     }
 
-    public function __construct(array $config = [])
+    public function __construct(array $value = [])
     {
-        if (array_key_exists('enabled', $config)) {
+        if (array_key_exists('enabled', $value)) {
             $this->_usedProperties['enabled'] = true;
-            $this->enabled = $config['enabled'];
-            unset($config['enabled']);
+            $this->enabled = $value['enabled'];
+            unset($value['enabled']);
         }
 
-        if (array_key_exists('enable_annotations', $config)) {
+        if (array_key_exists('enable_annotations', $value)) {
             $this->_usedProperties['enableAnnotations'] = true;
-            $this->enableAnnotations = $config['enable_annotations'];
-            unset($config['enable_annotations']);
+            $this->enableAnnotations = $value['enable_annotations'];
+            unset($value['enable_annotations']);
         }
 
-        if (array_key_exists('enable_attributes', $config)) {
+        if (array_key_exists('enable_attributes', $value)) {
             $this->_usedProperties['enableAttributes'] = true;
-            $this->enableAttributes = $config['enable_attributes'];
-            unset($config['enable_attributes']);
+            $this->enableAttributes = $value['enable_attributes'];
+            unset($value['enable_attributes']);
         }
 
-        if (array_key_exists('name_converter', $config)) {
+        if (array_key_exists('name_converter', $value)) {
             $this->_usedProperties['nameConverter'] = true;
-            $this->nameConverter = $config['name_converter'];
-            unset($config['name_converter']);
+            $this->nameConverter = $value['name_converter'];
+            unset($value['name_converter']);
         }
 
-        if (array_key_exists('circular_reference_handler', $config)) {
+        if (array_key_exists('circular_reference_handler', $value)) {
             $this->_usedProperties['circularReferenceHandler'] = true;
-            $this->circularReferenceHandler = $config['circular_reference_handler'];
-            unset($config['circular_reference_handler']);
+            $this->circularReferenceHandler = $value['circular_reference_handler'];
+            unset($value['circular_reference_handler']);
         }
 
-        if (array_key_exists('max_depth_handler', $config)) {
+        if (array_key_exists('max_depth_handler', $value)) {
             $this->_usedProperties['maxDepthHandler'] = true;
-            $this->maxDepthHandler = $config['max_depth_handler'];
-            unset($config['max_depth_handler']);
+            $this->maxDepthHandler = $value['max_depth_handler'];
+            unset($value['max_depth_handler']);
         }
 
-        if (array_key_exists('mapping', $config)) {
+        if (array_key_exists('mapping', $value)) {
             $this->_usedProperties['mapping'] = true;
-            $this->mapping = new \Symfony\Config\Framework\Serializer\MappingConfig($config['mapping']);
-            unset($config['mapping']);
+            $this->mapping = new \Symfony\Config\Framework\Serializer\MappingConfig($value['mapping']);
+            unset($value['mapping']);
         }
 
-        if (array_key_exists('default_context', $config)) {
+        if (array_key_exists('default_context', $value)) {
             $this->_usedProperties['defaultContext'] = true;
-            $this->defaultContext = $config['default_context'];
-            unset($config['default_context']);
+            $this->defaultContext = $value['default_context'];
+            unset($value['default_context']);
         }
 
-        if ($config) {
-            throw new InvalidConfigurationException(sprintf('The following keys are not supported by "%s": ', __CLASS__).implode(', ', array_keys($config)));
+        if ([] !== $value) {
+            throw new InvalidConfigurationException(sprintf('The following keys are not supported by "%s": ', __CLASS__).implode(', ', array_keys($value)));
         }
     }
 

@@ -28,13 +28,13 @@ class WorkflowsConfig
     private $_usedProperties = [];
 
     /**
-     * @template TValue of array|bool
+     * @template TValue
      * @param TValue $value
      * @default {"enabled":false}
      * @return \Symfony\Config\Framework\Workflows\WorkflowsConfig\AuditTrailConfig|$this
      * @psalm-return (TValue is array ? \Symfony\Config\Framework\Workflows\WorkflowsConfig\AuditTrailConfig : static)
      */
-    public function auditTrail(array|bool $value = []): \Symfony\Config\Framework\Workflows\WorkflowsConfig\AuditTrailConfig|static
+    public function auditTrail(array $value = []): \Symfony\Config\Framework\Workflows\WorkflowsConfig\AuditTrailConfig|static
     {
         if (!\is_array($value)) {
             $this->_usedProperties['auditTrail'] = true;
@@ -135,7 +135,7 @@ class WorkflowsConfig
     }
 
     /**
-     * @template TValue of mixed
+     * @template TValue
      * @param TValue $value
      * @return \Symfony\Config\Framework\Workflows\WorkflowsConfig\PlaceConfig|$this
      * @psalm-return (TValue is array ? \Symfony\Config\Framework\Workflows\WorkflowsConfig\PlaceConfig : static)
@@ -153,7 +153,7 @@ class WorkflowsConfig
     }
 
     /**
-     * @template TValue of mixed
+     * @template TValue
      * @param TValue $value
      * @return \Symfony\Config\Framework\Workflows\WorkflowsConfig\TransitionConfig|$this
      * @psalm-return (TValue is array ? \Symfony\Config\Framework\Workflows\WorkflowsConfig\TransitionConfig : static)
@@ -183,70 +183,70 @@ class WorkflowsConfig
         return $this;
     }
 
-    public function __construct(array $config = [])
+    public function __construct(array $value = [])
     {
-        if (array_key_exists('audit_trail', $config)) {
+        if (array_key_exists('audit_trail', $value)) {
             $this->_usedProperties['auditTrail'] = true;
-            $this->auditTrail = \is_array($config['audit_trail']) ? new \Symfony\Config\Framework\Workflows\WorkflowsConfig\AuditTrailConfig($config['audit_trail']) : $config['audit_trail'];
-            unset($config['audit_trail']);
+            $this->auditTrail = \is_array($value['audit_trail']) ? new \Symfony\Config\Framework\Workflows\WorkflowsConfig\AuditTrailConfig($value['audit_trail']) : $value['audit_trail'];
+            unset($value['audit_trail']);
         }
 
-        if (array_key_exists('type', $config)) {
+        if (array_key_exists('type', $value)) {
             $this->_usedProperties['type'] = true;
-            $this->type = $config['type'];
-            unset($config['type']);
+            $this->type = $value['type'];
+            unset($value['type']);
         }
 
-        if (array_key_exists('marking_store', $config)) {
+        if (array_key_exists('marking_store', $value)) {
             $this->_usedProperties['markingStore'] = true;
-            $this->markingStore = new \Symfony\Config\Framework\Workflows\WorkflowsConfig\MarkingStoreConfig($config['marking_store']);
-            unset($config['marking_store']);
+            $this->markingStore = new \Symfony\Config\Framework\Workflows\WorkflowsConfig\MarkingStoreConfig($value['marking_store']);
+            unset($value['marking_store']);
         }
 
-        if (array_key_exists('supports', $config)) {
+        if (array_key_exists('supports', $value)) {
             $this->_usedProperties['supports'] = true;
-            $this->supports = $config['supports'];
-            unset($config['supports']);
+            $this->supports = $value['supports'];
+            unset($value['supports']);
         }
 
-        if (array_key_exists('support_strategy', $config)) {
+        if (array_key_exists('support_strategy', $value)) {
             $this->_usedProperties['supportStrategy'] = true;
-            $this->supportStrategy = $config['support_strategy'];
-            unset($config['support_strategy']);
+            $this->supportStrategy = $value['support_strategy'];
+            unset($value['support_strategy']);
         }
 
-        if (array_key_exists('initial_marking', $config)) {
+        if (array_key_exists('initial_marking', $value)) {
             $this->_usedProperties['initialMarking'] = true;
-            $this->initialMarking = $config['initial_marking'];
-            unset($config['initial_marking']);
+            $this->initialMarking = $value['initial_marking'];
+            unset($value['initial_marking']);
         }
 
-        if (array_key_exists('events_to_dispatch', $config)) {
+        if (array_key_exists('events_to_dispatch', $value)) {
             $this->_usedProperties['eventsToDispatch'] = true;
-            $this->eventsToDispatch = $config['events_to_dispatch'];
-            unset($config['events_to_dispatch']);
+            $this->eventsToDispatch = $value['events_to_dispatch'];
+            unset($value['events_to_dispatch']);
         }
 
-        if (array_key_exists('places', $config)) {
+        if (array_key_exists('places', $value)) {
             $this->_usedProperties['places'] = true;
-            $this->places = array_map(fn ($v) => \is_array($v) ? new \Symfony\Config\Framework\Workflows\WorkflowsConfig\PlaceConfig($v) : $v, $config['places']);
-            unset($config['places']);
+            $this->places = array_map(fn ($v) => \is_array($v) ? new \Symfony\Config\Framework\Workflows\WorkflowsConfig\PlaceConfig($v) : $v, $value['places']);
+            unset($value['places']);
         }
 
-        if (array_key_exists('transitions', $config)) {
+        if (array_key_exists('transitions', $value)) {
             $this->_usedProperties['transitions'] = true;
-            $this->transitions = array_map(fn ($v) => \is_array($v) ? new \Symfony\Config\Framework\Workflows\WorkflowsConfig\TransitionConfig($v) : $v, $config['transitions']);
-            unset($config['transitions']);
+            $this->transitions = array_map(fn ($v) => \is_array($v) ? new \Symfony\Config\Framework\Workflows\WorkflowsConfig\TransitionConfig($v) : $v, $value['transitions']);
+            unset($value['transitions']);
         }
 
-        if (array_key_exists('metadata', $config)) {
+        if (array_key_exists('metadata', $value)) {
             $this->_usedProperties['metadata'] = true;
-            $this->metadata = $config['metadata'];
-            unset($config['metadata']);
+            $this->metadata = $value['metadata'];
+            unset($value['metadata']);
         }
 
-        if ($config) {
-            throw new InvalidConfigurationException(sprintf('The following keys are not supported by "%s": ', __CLASS__).implode(', ', array_keys($config)));
+        if ([] !== $value) {
+            throw new InvalidConfigurationException(sprintf('The following keys are not supported by "%s": ', __CLASS__).implode(', ', array_keys($value)));
         }
     }
 

@@ -14,10 +14,8 @@ namespace Symfony\Bundle\WebProfilerBundle\Twig;
 use Symfony\Component\VarDumper\Cloner\Data;
 use Symfony\Component\VarDumper\Dumper\HtmlDumper;
 use Twig\Environment;
-use Twig\Extension\EscaperExtension;
 use Twig\Extension\ProfilerExtension;
 use Twig\Profiler\Profile;
-use Twig\Runtime\EscaperRuntime;
 use Twig\TwigFunction;
 
 /**
@@ -38,7 +36,7 @@ class WebProfilerExtension extends ProfilerExtension
 
     private int $stackLevel = 0;
 
-    public function __construct(?HtmlDumper $dumper = null)
+    public function __construct(HtmlDumper $dumper = null)
     {
         $this->dumper = $dumper ?? new HtmlDumper();
         $this->dumper->setOutput($this->output = fopen('php://memory', 'r+'));
@@ -78,14 +76,14 @@ class WebProfilerExtension extends ProfilerExtension
         return str_replace("\n</pre", '</pre', rtrim($dump));
     }
 
-    public function dumpLog(Environment $env, string $message, ?Data $context = null): string
+    public function dumpLog(Environment $env, string $message, Data $context = null): string
     {
-        $message = self::escape($env, $message);
+        $message = twig_escape_filter($env, $message);
         $message = preg_replace('/&quot;(.*?)&quot;/', '&quot;<b>$1</b>&quot;', $message);
 
         $replacements = [];
         foreach ($context ?? [] as $k => $v) {
-            $k = '{'.self::escape($env, $k).'}';
+            $k = '{'.twig_escape_filter($env, $k).'}';
             if (str_contains($message, $k)) {
                 $replacements[$k] = $v;
             }
@@ -105,21 +103,5 @@ class WebProfilerExtension extends ProfilerExtension
     public function getName(): string
     {
         return 'profiler';
-    }
-
-    private static function escape(Environment $env, string $s): string
-    {
-        // Twig 3.10 and above
-        if (class_exists(EscaperRuntime::class)) {
-            return $env->getRuntime(EscaperRuntime::class)->escape($s);
-        }
-
-        // Twig 3.9
-        if (method_exists(EscaperExtension::class, 'escape')) {
-            return EscaperExtension::escape($env, $s);
-        }
-
-        // to be removed when support for Twig 3 is dropped
-        return twig_escape_filter($env, $s);
     }
 }

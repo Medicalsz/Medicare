@@ -96,7 +96,7 @@ class RememberMeConfig
     }
 
     /**
-     * @template TValue of string|array
+     * @template TValue
      * @param TValue $value
      * @return \Symfony\Config\Security\FirewallConfig\RememberMe\TokenProviderConfig|$this
      * @psalm-return (TValue is array ? \Symfony\Config\Security\FirewallConfig\RememberMe\TokenProviderConfig : static)
@@ -187,7 +187,7 @@ class RememberMeConfig
     }
 
     /**
-     * @default false
+     * @default null
      * @param ParamConfigurator|true|false|'auto' $value
      * @return $this
      */
@@ -213,7 +213,7 @@ class RememberMeConfig
     }
 
     /**
-     * @default null
+     * @default 'lax'
      * @param ParamConfigurator|NULL|'lax'|'strict'|'none' $value
      * @return $this
      */
@@ -251,106 +251,106 @@ class RememberMeConfig
         return $this;
     }
 
-    public function __construct(array $config = [])
+    public function __construct(array $value = [])
     {
-        if (array_key_exists('secret', $config)) {
+        if (array_key_exists('secret', $value)) {
             $this->_usedProperties['secret'] = true;
-            $this->secret = $config['secret'];
-            unset($config['secret']);
+            $this->secret = $value['secret'];
+            unset($value['secret']);
         }
 
-        if (array_key_exists('service', $config)) {
+        if (array_key_exists('service', $value)) {
             $this->_usedProperties['service'] = true;
-            $this->service = $config['service'];
-            unset($config['service']);
+            $this->service = $value['service'];
+            unset($value['service']);
         }
 
-        if (array_key_exists('user_providers', $config)) {
+        if (array_key_exists('user_providers', $value)) {
             $this->_usedProperties['userProviders'] = true;
-            $this->userProviders = $config['user_providers'];
-            unset($config['user_providers']);
+            $this->userProviders = $value['user_providers'];
+            unset($value['user_providers']);
         }
 
-        if (array_key_exists('catch_exceptions', $config)) {
+        if (array_key_exists('catch_exceptions', $value)) {
             $this->_usedProperties['catchExceptions'] = true;
-            $this->catchExceptions = $config['catch_exceptions'];
-            unset($config['catch_exceptions']);
+            $this->catchExceptions = $value['catch_exceptions'];
+            unset($value['catch_exceptions']);
         }
 
-        if (array_key_exists('signature_properties', $config)) {
+        if (array_key_exists('signature_properties', $value)) {
             $this->_usedProperties['signatureProperties'] = true;
-            $this->signatureProperties = $config['signature_properties'];
-            unset($config['signature_properties']);
+            $this->signatureProperties = $value['signature_properties'];
+            unset($value['signature_properties']);
         }
 
-        if (array_key_exists('token_provider', $config)) {
+        if (array_key_exists('token_provider', $value)) {
             $this->_usedProperties['tokenProvider'] = true;
-            $this->tokenProvider = \is_array($config['token_provider']) ? new \Symfony\Config\Security\FirewallConfig\RememberMe\TokenProviderConfig($config['token_provider']) : $config['token_provider'];
-            unset($config['token_provider']);
+            $this->tokenProvider = \is_array($value['token_provider']) ? new \Symfony\Config\Security\FirewallConfig\RememberMe\TokenProviderConfig($value['token_provider']) : $value['token_provider'];
+            unset($value['token_provider']);
         }
 
-        if (array_key_exists('token_verifier', $config)) {
+        if (array_key_exists('token_verifier', $value)) {
             $this->_usedProperties['tokenVerifier'] = true;
-            $this->tokenVerifier = $config['token_verifier'];
-            unset($config['token_verifier']);
+            $this->tokenVerifier = $value['token_verifier'];
+            unset($value['token_verifier']);
         }
 
-        if (array_key_exists('name', $config)) {
+        if (array_key_exists('name', $value)) {
             $this->_usedProperties['name'] = true;
-            $this->name = $config['name'];
-            unset($config['name']);
+            $this->name = $value['name'];
+            unset($value['name']);
         }
 
-        if (array_key_exists('lifetime', $config)) {
+        if (array_key_exists('lifetime', $value)) {
             $this->_usedProperties['lifetime'] = true;
-            $this->lifetime = $config['lifetime'];
-            unset($config['lifetime']);
+            $this->lifetime = $value['lifetime'];
+            unset($value['lifetime']);
         }
 
-        if (array_key_exists('path', $config)) {
+        if (array_key_exists('path', $value)) {
             $this->_usedProperties['path'] = true;
-            $this->path = $config['path'];
-            unset($config['path']);
+            $this->path = $value['path'];
+            unset($value['path']);
         }
 
-        if (array_key_exists('domain', $config)) {
+        if (array_key_exists('domain', $value)) {
             $this->_usedProperties['domain'] = true;
-            $this->domain = $config['domain'];
-            unset($config['domain']);
+            $this->domain = $value['domain'];
+            unset($value['domain']);
         }
 
-        if (array_key_exists('secure', $config)) {
+        if (array_key_exists('secure', $value)) {
             $this->_usedProperties['secure'] = true;
-            $this->secure = $config['secure'];
-            unset($config['secure']);
+            $this->secure = $value['secure'];
+            unset($value['secure']);
         }
 
-        if (array_key_exists('httponly', $config)) {
+        if (array_key_exists('httponly', $value)) {
             $this->_usedProperties['httponly'] = true;
-            $this->httponly = $config['httponly'];
-            unset($config['httponly']);
+            $this->httponly = $value['httponly'];
+            unset($value['httponly']);
         }
 
-        if (array_key_exists('samesite', $config)) {
+        if (array_key_exists('samesite', $value)) {
             $this->_usedProperties['samesite'] = true;
-            $this->samesite = $config['samesite'];
-            unset($config['samesite']);
+            $this->samesite = $value['samesite'];
+            unset($value['samesite']);
         }
 
-        if (array_key_exists('always_remember_me', $config)) {
+        if (array_key_exists('always_remember_me', $value)) {
             $this->_usedProperties['alwaysRememberMe'] = true;
-            $this->alwaysRememberMe = $config['always_remember_me'];
-            unset($config['always_remember_me']);
+            $this->alwaysRememberMe = $value['always_remember_me'];
+            unset($value['always_remember_me']);
         }
 
-        if (array_key_exists('remember_me_parameter', $config)) {
+        if (array_key_exists('remember_me_parameter', $value)) {
             $this->_usedProperties['rememberMeParameter'] = true;
-            $this->rememberMeParameter = $config['remember_me_parameter'];
-            unset($config['remember_me_parameter']);
+            $this->rememberMeParameter = $value['remember_me_parameter'];
+            unset($value['remember_me_parameter']);
         }
 
-        if ($config) {
-            throw new InvalidConfigurationException(sprintf('The following keys are not supported by "%s": ', __CLASS__).implode(', ', array_keys($config)));
+        if ([] !== $value) {
+            throw new InvalidConfigurationException(sprintf('The following keys are not supported by "%s": ', __CLASS__).implode(', ', array_keys($value)));
         }
     }
 

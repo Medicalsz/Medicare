@@ -70,34 +70,34 @@ class LoginThrottlingConfig
         return $this;
     }
 
-    public function __construct(array $config = [])
+    public function __construct(array $value = [])
     {
-        if (array_key_exists('limiter', $config)) {
+        if (array_key_exists('limiter', $value)) {
             $this->_usedProperties['limiter'] = true;
-            $this->limiter = $config['limiter'];
-            unset($config['limiter']);
+            $this->limiter = $value['limiter'];
+            unset($value['limiter']);
         }
 
-        if (array_key_exists('max_attempts', $config)) {
+        if (array_key_exists('max_attempts', $value)) {
             $this->_usedProperties['maxAttempts'] = true;
-            $this->maxAttempts = $config['max_attempts'];
-            unset($config['max_attempts']);
+            $this->maxAttempts = $value['max_attempts'];
+            unset($value['max_attempts']);
         }
 
-        if (array_key_exists('interval', $config)) {
+        if (array_key_exists('interval', $value)) {
             $this->_usedProperties['interval'] = true;
-            $this->interval = $config['interval'];
-            unset($config['interval']);
+            $this->interval = $value['interval'];
+            unset($value['interval']);
         }
 
-        if (array_key_exists('lock_factory', $config)) {
+        if (array_key_exists('lock_factory', $value)) {
             $this->_usedProperties['lockFactory'] = true;
-            $this->lockFactory = $config['lock_factory'];
-            unset($config['lock_factory']);
+            $this->lockFactory = $value['lock_factory'];
+            unset($value['lock_factory']);
         }
 
-        if ($config) {
-            throw new InvalidConfigurationException(sprintf('The following keys are not supported by "%s": ', __CLASS__).implode(', ', array_keys($config)));
+        if ([] !== $value) {
+            throw new InvalidConfigurationException(sprintf('The following keys are not supported by "%s": ', __CLASS__).implode(', ', array_keys($value)));
         }
     }
 

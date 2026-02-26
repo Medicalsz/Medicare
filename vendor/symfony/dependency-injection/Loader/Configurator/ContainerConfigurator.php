@@ -21,7 +21,6 @@ use Symfony\Component\DependencyInjection\Definition;
 use Symfony\Component\DependencyInjection\Exception\InvalidArgumentException;
 use Symfony\Component\DependencyInjection\Extension\ExtensionInterface;
 use Symfony\Component\DependencyInjection\Loader\PhpFileLoader;
-use Symfony\Component\DependencyInjection\Loader\UndefinedExtensionHandler;
 use Symfony\Component\ExpressionLanguage\Expression;
 
 /**
@@ -31,37 +30,35 @@ class ContainerConfigurator extends AbstractConfigurator
 {
     public const FACTORY = 'container';
 
+    private ContainerBuilder $container;
+    private PhpFileLoader $loader;
     private array $instanceof;
+    private string $path;
+    private string $file;
     private int $anonymousCount = 0;
+    private ?string $env;
 
-    public function __construct(
-        private ContainerBuilder $container,
-        private PhpFileLoader $loader,
-        array &$instanceof,
-        private string $path,
-        private string $file,
-        private ?string $env = null,
-    ) {
+    public function __construct(ContainerBuilder $container, PhpFileLoader $loader, array &$instanceof, string $path, string $file, string $env = null)
+    {
+        $this->container = $container;
+        $this->loader = $loader;
         $this->instanceof = &$instanceof;
+        $this->path = $path;
+        $this->file = $file;
+        $this->env = $env;
     }
 
-    final public function extension(string $namespace, array $config, bool $prepend = false): void
+    final public function extension(string $namespace, array $config): void
     {
-        if ($prepend) {
-            $this->container->prependExtensionConfig($namespace, static::processValue($config));
-
-            return;
-        }
-
         if (!$this->container->hasExtension($namespace)) {
             $extensions = array_filter(array_map(fn (ExtensionInterface $ext) => $ext->getAlias(), $this->container->getExtensions()));
-            throw new InvalidArgumentException(UndefinedExtensionHandler::getErrorMessage($namespace, $this->file, $namespace, $extensions));
+            throw new InvalidArgumentException(sprintf('There is no extension able to load the configuration for "%s" (in "%s"). Looked for namespace "%s", found "%s".', $namespace, $this->file, $namespace, $extensions ? implode('", "', $extensions) : 'none'));
         }
 
         $this->container->loadFromExtension($namespace, static::processValue($config));
     }
 
-    final public function import(string $resource, ?string $type = null, bool|string $ignoreErrors = false): void
+    final public function import(string $resource, string $type = null, bool|string $ignoreErrors = false): void
     {
         $this->loader->setCurrentDir(\dirname($this->path));
         $this->loader->import($resource, $type, $ignoreErrors, $this->file);
@@ -114,7 +111,7 @@ function service(string $serviceId): ReferenceConfigurator
 /**
  * Creates an inline service.
  */
-function inline_service(?string $class = null): InlineServiceConfigurator
+function inline_service(string $class = null): InlineServiceConfigurator
 {
     return new InlineServiceConfigurator(new Definition($class));
 }
@@ -127,6 +124,10 @@ function inline_service(?string $class = null): InlineServiceConfigurator
 function service_locator(array $values): ServiceLocatorArgument
 {
     $values = AbstractConfigurator::processValue($values, true);
+
+    if (isset($values[0])) {
+        trigger_deprecation('symfony/dependency-injection', '6.3', 'Using integers as keys in a "service_locator()" argument is deprecated. The keys will default to the IDs of the original services in 7.0.');
+    }
 
     return new ServiceLocatorArgument($values);
 }
@@ -144,7 +145,7 @@ function iterator(array $values): IteratorArgument
 /**
  * Creates a lazy iterator by tag name.
  */
-function tagged_iterator(string $tag, ?string $indexAttribute = null, ?string $defaultIndexMethod = null, ?string $defaultPriorityMethod = null, string|array $exclude = [], bool $excludeSelf = true): TaggedIteratorArgument
+function tagged_iterator(string $tag, string $indexAttribute = null, string $defaultIndexMethod = null, string $defaultPriorityMethod = null, string|array $exclude = [], bool $excludeSelf = true): TaggedIteratorArgument
 {
     return new TaggedIteratorArgument($tag, $indexAttribute, $defaultIndexMethod, false, $defaultPriorityMethod, (array) $exclude, $excludeSelf);
 }
@@ -152,7 +153,7 @@ function tagged_iterator(string $tag, ?string $indexAttribute = null, ?string $d
 /**
  * Creates a service locator by tag name.
  */
-function tagged_locator(string $tag, ?string $indexAttribute = null, ?string $defaultIndexMethod = null, ?string $defaultPriorityMethod = null, string|array $exclude = [], bool $excludeSelf = true): ServiceLocatorArgument
+function tagged_locator(string $tag, string $indexAttribute = null, string $defaultIndexMethod = null, string $defaultPriorityMethod = null, string|array $exclude = [], bool $excludeSelf = true): ServiceLocatorArgument
 {
     return new ServiceLocatorArgument(new TaggedIteratorArgument($tag, $indexAttribute, $defaultIndexMethod, true, $defaultPriorityMethod, (array) $exclude, $excludeSelf));
 }
@@ -160,9 +161,9 @@ function tagged_locator(string $tag, ?string $indexAttribute = null, ?string $de
 /**
  * Creates an expression.
  */
-function expr(string $expression): ExpressionConfigurator
+function expr(string $expression): Expression
 {
-    return new ExpressionConfigurator($expression);
+    return new Expression($expression);
 }
 
 /**
@@ -192,7 +193,7 @@ function service_closure(string $serviceId): ClosureReferenceConfigurator
 /**
  * Creates a closure.
  */
-function closure(string|array|\Closure|ReferenceConfigurator|Expression $callable): InlineServiceConfigurator
+function closure(string|array|ReferenceConfigurator|Expression $callable): InlineServiceConfigurator
 {
     return (new InlineServiceConfigurator(new Definition('Closure')))
         ->factory(['Closure', 'fromCallable'])

@@ -33,7 +33,7 @@ class DateTimeToArrayTransformer extends BaseDateTimeTransformer
      * @param string[]|null $fields         The date fields
      * @param bool          $pad            Whether to use padding
      */
-    public function __construct(?string $inputTimezone = null, ?string $outputTimezone = null, ?array $fields = null, bool $pad = false, ?\DateTimeInterface $referenceDate = null)
+    public function __construct(string $inputTimezone = null, string $outputTimezone = null, array $fields = null, bool $pad = false, \DateTimeInterface $referenceDate = null)
     {
         parent::__construct($inputTimezone, $outputTimezone);
 
@@ -123,7 +123,7 @@ class DateTimeToArrayTransformer extends BaseDateTimeTransformer
         }
 
         if (\count($emptyFields) > 0) {
-            throw new TransformationFailedException(\sprintf('The fields "%s" should not be empty.', implode('", "', $emptyFields)));
+            throw new TransformationFailedException(sprintf('The fields "%s" should not be empty.', implode('", "', $emptyFields)));
         }
 
         if (isset($value['month']) && !ctype_digit((string) $value['month'])) {
@@ -155,7 +155,7 @@ class DateTimeToArrayTransformer extends BaseDateTimeTransformer
         }
 
         try {
-            $dateTime = new \DateTime(\sprintf(
+            $dateTime = new \DateTime(sprintf(
                 '%s-%s-%s %s:%s:%s',
                 empty($value['year']) ? $this->referenceDate->format('Y') : $value['year'],
                 empty($value['month']) ? $this->referenceDate->format('m') : $value['month'],

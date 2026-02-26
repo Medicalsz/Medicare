@@ -57,28 +57,28 @@ class PeerFingerprintConfig
         return $this;
     }
 
-    public function __construct(array $config = [])
+    public function __construct(array $value = [])
     {
-        if (array_key_exists('sha1', $config)) {
+        if (array_key_exists('sha1', $value)) {
             $this->_usedProperties['sha1'] = true;
-            $this->sha1 = $config['sha1'];
-            unset($config['sha1']);
+            $this->sha1 = $value['sha1'];
+            unset($value['sha1']);
         }
 
-        if (array_key_exists('pin-sha256', $config)) {
+        if (array_key_exists('pin-sha256', $value)) {
             $this->_usedProperties['pinsha256'] = true;
-            $this->pinsha256 = $config['pin-sha256'];
-            unset($config['pin-sha256']);
+            $this->pinsha256 = $value['pin-sha256'];
+            unset($value['pin-sha256']);
         }
 
-        if (array_key_exists('md5', $config)) {
+        if (array_key_exists('md5', $value)) {
             $this->_usedProperties['md5'] = true;
-            $this->md5 = $config['md5'];
-            unset($config['md5']);
+            $this->md5 = $value['md5'];
+            unset($value['md5']);
         }
 
-        if ($config) {
-            throw new InvalidConfigurationException(sprintf('The following keys are not supported by "%s": ', __CLASS__).implode(', ', array_keys($config)));
+        if ([] !== $value) {
+            throw new InvalidConfigurationException(sprintf('The following keys are not supported by "%s": ', __CLASS__).implode(', ', array_keys($value)));
         }
     }
 

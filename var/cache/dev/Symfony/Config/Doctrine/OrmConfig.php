@@ -16,7 +16,6 @@ class OrmConfig
     private $defaultEntityManager;
     private $autoGenerateProxyClasses;
     private $enableLazyGhostObjects;
-    private $enableNativeLazyObjects;
     private $proxyDir;
     private $proxyNamespace;
     private $controllerResolver;
@@ -38,7 +37,7 @@ class OrmConfig
     }
 
     /**
-     * Auto generate mode possible values are: "NEVER", "ALWAYS", "FILE_NOT_EXISTS", "EVAL", "FILE_NOT_EXISTS_OR_CHANGED", this option is ignored when the "enable_native_lazy_objects" option is true
+     * Auto generate mode possible values are: "NEVER", "ALWAYS", "FILE_NOT_EXISTS", "EVAL", "FILE_NOT_EXISTS_OR_CHANGED"
      * @default false
      * @param ParamConfigurator|mixed $value
      * @return $this
@@ -66,22 +65,7 @@ class OrmConfig
     }
 
     /**
-     * Enables the new native implementation of PHP lazy objects instead of generated proxies
-     * @default false
-     * @param ParamConfigurator|bool $value
-     * @return $this
-     */
-    public function enableNativeLazyObjects($value): static
-    {
-        $this->_usedProperties['enableNativeLazyObjects'] = true;
-        $this->enableNativeLazyObjects = $value;
-
-        return $this;
-    }
-
-    /**
-     * Configures the path where generated proxy classes are saved when using non-native lazy objects, this option is ignored when the "enable_native_lazy_objects" option is true
-     * @default '%kernel.build_dir%/doctrine/orm/Proxies'
+     * @default '%kernel.cache_dir%/doctrine/orm/Proxies'
      * @param ParamConfigurator|mixed $value
      * @return $this
      */
@@ -94,7 +78,6 @@ class OrmConfig
     }
 
     /**
-     * Defines the root namespace for generated proxy classes when using non-native lazy objects, this option is ignored when the "enable_native_lazy_objects" option is true
      * @default 'Proxies'
      * @param ParamConfigurator|mixed $value
      * @return $this
@@ -108,22 +91,11 @@ class OrmConfig
     }
 
     /**
-     * @template TValue of array|bool
-     * @param TValue $value
      * @default {"enabled":true,"auto_mapping":null,"evict_cache":false}
-     * @return \Symfony\Config\Doctrine\Orm\ControllerResolverConfig|$this
-     * @psalm-return (TValue is array ? \Symfony\Config\Doctrine\Orm\ControllerResolverConfig : static)
-     */
-    public function controllerResolver(array|bool $value = []): \Symfony\Config\Doctrine\Orm\ControllerResolverConfig|static
+    */
+    public function controllerResolver(array $value = []): \Symfony\Config\Doctrine\Orm\ControllerResolverConfig
     {
-        if (!\is_array($value)) {
-            $this->_usedProperties['controllerResolver'] = true;
-            $this->controllerResolver = $value;
-
-            return $this;
-        }
-
-        if (!$this->controllerResolver instanceof \Symfony\Config\Doctrine\Orm\ControllerResolverConfig) {
+        if (null === $this->controllerResolver) {
             $this->_usedProperties['controllerResolver'] = true;
             $this->controllerResolver = new \Symfony\Config\Doctrine\Orm\ControllerResolverConfig($value);
         } elseif (0 < \func_num_args()) {
@@ -156,64 +128,58 @@ class OrmConfig
         return $this;
     }
 
-    public function __construct(array $config = [])
+    public function __construct(array $value = [])
     {
-        if (array_key_exists('default_entity_manager', $config)) {
+        if (array_key_exists('default_entity_manager', $value)) {
             $this->_usedProperties['defaultEntityManager'] = true;
-            $this->defaultEntityManager = $config['default_entity_manager'];
-            unset($config['default_entity_manager']);
+            $this->defaultEntityManager = $value['default_entity_manager'];
+            unset($value['default_entity_manager']);
         }
 
-        if (array_key_exists('auto_generate_proxy_classes', $config)) {
+        if (array_key_exists('auto_generate_proxy_classes', $value)) {
             $this->_usedProperties['autoGenerateProxyClasses'] = true;
-            $this->autoGenerateProxyClasses = $config['auto_generate_proxy_classes'];
-            unset($config['auto_generate_proxy_classes']);
+            $this->autoGenerateProxyClasses = $value['auto_generate_proxy_classes'];
+            unset($value['auto_generate_proxy_classes']);
         }
 
-        if (array_key_exists('enable_lazy_ghost_objects', $config)) {
+        if (array_key_exists('enable_lazy_ghost_objects', $value)) {
             $this->_usedProperties['enableLazyGhostObjects'] = true;
-            $this->enableLazyGhostObjects = $config['enable_lazy_ghost_objects'];
-            unset($config['enable_lazy_ghost_objects']);
+            $this->enableLazyGhostObjects = $value['enable_lazy_ghost_objects'];
+            unset($value['enable_lazy_ghost_objects']);
         }
 
-        if (array_key_exists('enable_native_lazy_objects', $config)) {
-            $this->_usedProperties['enableNativeLazyObjects'] = true;
-            $this->enableNativeLazyObjects = $config['enable_native_lazy_objects'];
-            unset($config['enable_native_lazy_objects']);
-        }
-
-        if (array_key_exists('proxy_dir', $config)) {
+        if (array_key_exists('proxy_dir', $value)) {
             $this->_usedProperties['proxyDir'] = true;
-            $this->proxyDir = $config['proxy_dir'];
-            unset($config['proxy_dir']);
+            $this->proxyDir = $value['proxy_dir'];
+            unset($value['proxy_dir']);
         }
 
-        if (array_key_exists('proxy_namespace', $config)) {
+        if (array_key_exists('proxy_namespace', $value)) {
             $this->_usedProperties['proxyNamespace'] = true;
-            $this->proxyNamespace = $config['proxy_namespace'];
-            unset($config['proxy_namespace']);
+            $this->proxyNamespace = $value['proxy_namespace'];
+            unset($value['proxy_namespace']);
         }
 
-        if (array_key_exists('controller_resolver', $config)) {
+        if (array_key_exists('controller_resolver', $value)) {
             $this->_usedProperties['controllerResolver'] = true;
-            $this->controllerResolver = \is_array($config['controller_resolver']) ? new \Symfony\Config\Doctrine\Orm\ControllerResolverConfig($config['controller_resolver']) : $config['controller_resolver'];
-            unset($config['controller_resolver']);
+            $this->controllerResolver = new \Symfony\Config\Doctrine\Orm\ControllerResolverConfig($value['controller_resolver']);
+            unset($value['controller_resolver']);
         }
 
-        if (array_key_exists('entity_managers', $config)) {
+        if (array_key_exists('entity_managers', $value)) {
             $this->_usedProperties['entityManagers'] = true;
-            $this->entityManagers = array_map(fn ($v) => new \Symfony\Config\Doctrine\Orm\EntityManagerConfig($v), $config['entity_managers']);
-            unset($config['entity_managers']);
+            $this->entityManagers = array_map(fn ($v) => new \Symfony\Config\Doctrine\Orm\EntityManagerConfig($v), $value['entity_managers']);
+            unset($value['entity_managers']);
         }
 
-        if (array_key_exists('resolve_target_entities', $config)) {
+        if (array_key_exists('resolve_target_entities', $value)) {
             $this->_usedProperties['resolveTargetEntities'] = true;
-            $this->resolveTargetEntities = $config['resolve_target_entities'];
-            unset($config['resolve_target_entities']);
+            $this->resolveTargetEntities = $value['resolve_target_entities'];
+            unset($value['resolve_target_entities']);
         }
 
-        if ($config) {
-            throw new InvalidConfigurationException(sprintf('The following keys are not supported by "%s": ', __CLASS__).implode(', ', array_keys($config)));
+        if ([] !== $value) {
+            throw new InvalidConfigurationException(sprintf('The following keys are not supported by "%s": ', __CLASS__).implode(', ', array_keys($value)));
         }
     }
 
@@ -229,9 +195,6 @@ class OrmConfig
         if (isset($this->_usedProperties['enableLazyGhostObjects'])) {
             $output['enable_lazy_ghost_objects'] = $this->enableLazyGhostObjects;
         }
-        if (isset($this->_usedProperties['enableNativeLazyObjects'])) {
-            $output['enable_native_lazy_objects'] = $this->enableNativeLazyObjects;
-        }
         if (isset($this->_usedProperties['proxyDir'])) {
             $output['proxy_dir'] = $this->proxyDir;
         }
@@ -239,7 +202,7 @@ class OrmConfig
             $output['proxy_namespace'] = $this->proxyNamespace;
         }
         if (isset($this->_usedProperties['controllerResolver'])) {
-            $output['controller_resolver'] = $this->controllerResolver instanceof \Symfony\Config\Doctrine\Orm\ControllerResolverConfig ? $this->controllerResolver->toArray() : $this->controllerResolver;
+            $output['controller_resolver'] = $this->controllerResolver->toArray();
         }
         if (isset($this->_usedProperties['entityManagers'])) {
             $output['entity_managers'] = array_map(fn ($v) => $v->toArray(), $this->entityManagers);

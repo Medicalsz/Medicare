@@ -54,28 +54,28 @@ class RendererConfig
         return $this;
     }
 
-    public function __construct(array $config = [])
+    public function __construct(array $value = [])
     {
-        if (array_key_exists('block_separator', $config)) {
+        if (array_key_exists('block_separator', $value)) {
             $this->_usedProperties['blockSeparator'] = true;
-            $this->blockSeparator = $config['block_separator'];
-            unset($config['block_separator']);
+            $this->blockSeparator = $value['block_separator'];
+            unset($value['block_separator']);
         }
 
-        if (array_key_exists('inner_separator', $config)) {
+        if (array_key_exists('inner_separator', $value)) {
             $this->_usedProperties['innerSeparator'] = true;
-            $this->innerSeparator = $config['inner_separator'];
-            unset($config['inner_separator']);
+            $this->innerSeparator = $value['inner_separator'];
+            unset($value['inner_separator']);
         }
 
-        if (array_key_exists('soft_break', $config)) {
+        if (array_key_exists('soft_break', $value)) {
             $this->_usedProperties['softBreak'] = true;
-            $this->softBreak = $config['soft_break'];
-            unset($config['soft_break']);
+            $this->softBreak = $value['soft_break'];
+            unset($value['soft_break']);
         }
 
-        if ($config) {
-            throw new InvalidConfigurationException(sprintf('The following keys are not supported by "%s": ', __CLASS__).implode(', ', array_keys($config)));
+        if ([] !== $value) {
+            throw new InvalidConfigurationException(sprintf('The following keys are not supported by "%s": ', __CLASS__).implode(', ', array_keys($value)));
         }
     }
 

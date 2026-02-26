@@ -42,22 +42,22 @@ class RateConfig
         return $this;
     }
 
-    public function __construct(array $config = [])
+    public function __construct(array $value = [])
     {
-        if (array_key_exists('interval', $config)) {
+        if (array_key_exists('interval', $value)) {
             $this->_usedProperties['interval'] = true;
-            $this->interval = $config['interval'];
-            unset($config['interval']);
+            $this->interval = $value['interval'];
+            unset($value['interval']);
         }
 
-        if (array_key_exists('amount', $config)) {
+        if (array_key_exists('amount', $value)) {
             $this->_usedProperties['amount'] = true;
-            $this->amount = $config['amount'];
-            unset($config['amount']);
+            $this->amount = $value['amount'];
+            unset($value['amount']);
         }
 
-        if ($config) {
-            throw new InvalidConfigurationException(sprintf('The following keys are not supported by "%s": ', __CLASS__).implode(', ', array_keys($config)));
+        if ([] !== $value) {
+            throw new InvalidConfigurationException(sprintf('The following keys are not supported by "%s": ', __CLASS__).implode(', ', array_keys($value)));
         }
     }
 

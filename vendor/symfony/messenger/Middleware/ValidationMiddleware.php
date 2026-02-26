@@ -21,9 +21,11 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
  */
 class ValidationMiddleware implements MiddlewareInterface
 {
-    public function __construct(
-        private ValidatorInterface $validator,
-    ) {
+    private ValidatorInterface $validator;
+
+    public function __construct(ValidatorInterface $validator)
+    {
+        $this->validator = $validator;
     }
 
     public function handle(Envelope $envelope, StackInterface $stack): Envelope
@@ -37,7 +39,7 @@ class ValidationMiddleware implements MiddlewareInterface
 
         $violations = $this->validator->validate($message, null, $groups);
         if (\count($violations)) {
-            throw new ValidationFailedException($message, $violations, $envelope);
+            throw new ValidationFailedException($message, $violations);
         }
 
         return $stack->next()->handle($envelope, $stack);

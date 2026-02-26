@@ -55,28 +55,28 @@ class DateConfig
         return $this;
     }
 
-    public function __construct(array $config = [])
+    public function __construct(array $value = [])
     {
-        if (array_key_exists('format', $config)) {
+        if (array_key_exists('format', $value)) {
             $this->_usedProperties['format'] = true;
-            $this->format = $config['format'];
-            unset($config['format']);
+            $this->format = $value['format'];
+            unset($value['format']);
         }
 
-        if (array_key_exists('interval_format', $config)) {
+        if (array_key_exists('interval_format', $value)) {
             $this->_usedProperties['intervalFormat'] = true;
-            $this->intervalFormat = $config['interval_format'];
-            unset($config['interval_format']);
+            $this->intervalFormat = $value['interval_format'];
+            unset($value['interval_format']);
         }
 
-        if (array_key_exists('timezone', $config)) {
+        if (array_key_exists('timezone', $value)) {
             $this->_usedProperties['timezone'] = true;
-            $this->timezone = $config['timezone'];
-            unset($config['timezone']);
+            $this->timezone = $value['timezone'];
+            unset($value['timezone']);
         }
 
-        if ($config) {
-            throw new InvalidConfigurationException(sprintf('The following keys are not supported by "%s": ', __CLASS__).implode(', ', array_keys($config)));
+        if ([] !== $value) {
+            throw new InvalidConfigurationException(sprintf('The following keys are not supported by "%s": ', __CLASS__).implode(', ', array_keys($value)));
         }
     }
 

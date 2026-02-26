@@ -50,11 +50,22 @@ class RetryFailedConfig
     }
 
     /**
+     * @template TValue
+     * @param TValue $value
      * A list of HTTP status code that triggers a retry
+     * @return \Symfony\Config\Framework\HttpClient\DefaultOptions\RetryFailed\HttpCodeConfig|$this
+     * @psalm-return (TValue is array ? \Symfony\Config\Framework\HttpClient\DefaultOptions\RetryFailed\HttpCodeConfig : static)
      */
-    public function httpCode(string $code, array $value = []): \Symfony\Config\Framework\HttpClient\DefaultOptions\RetryFailed\HttpCodeConfig
+    public function httpCode(string $code, array $value = []): \Symfony\Config\Framework\HttpClient\DefaultOptions\RetryFailed\HttpCodeConfig|static
     {
-        if (!isset($this->httpCodes[$code])) {
+        if (!\is_array($value)) {
+            $this->_usedProperties['httpCodes'] = true;
+            $this->httpCodes[$code] = $value;
+
+            return $this;
+        }
+
+        if (!isset($this->httpCodes[$code]) || !$this->httpCodes[$code] instanceof \Symfony\Config\Framework\HttpClient\DefaultOptions\RetryFailed\HttpCodeConfig) {
             $this->_usedProperties['httpCodes'] = true;
             $this->httpCodes[$code] = new \Symfony\Config\Framework\HttpClient\DefaultOptions\RetryFailed\HttpCodeConfig($value);
         } elseif (1 < \func_num_args()) {
@@ -133,58 +144,58 @@ class RetryFailedConfig
         return $this;
     }
 
-    public function __construct(array $config = [])
+    public function __construct(array $value = [])
     {
-        if (array_key_exists('enabled', $config)) {
+        if (array_key_exists('enabled', $value)) {
             $this->_usedProperties['enabled'] = true;
-            $this->enabled = $config['enabled'];
-            unset($config['enabled']);
+            $this->enabled = $value['enabled'];
+            unset($value['enabled']);
         }
 
-        if (array_key_exists('retry_strategy', $config)) {
+        if (array_key_exists('retry_strategy', $value)) {
             $this->_usedProperties['retryStrategy'] = true;
-            $this->retryStrategy = $config['retry_strategy'];
-            unset($config['retry_strategy']);
+            $this->retryStrategy = $value['retry_strategy'];
+            unset($value['retry_strategy']);
         }
 
-        if (array_key_exists('http_codes', $config)) {
+        if (array_key_exists('http_codes', $value)) {
             $this->_usedProperties['httpCodes'] = true;
-            $this->httpCodes = array_map(fn ($v) => new \Symfony\Config\Framework\HttpClient\DefaultOptions\RetryFailed\HttpCodeConfig($v), $config['http_codes']);
-            unset($config['http_codes']);
+            $this->httpCodes = array_map(fn ($v) => \is_array($v) ? new \Symfony\Config\Framework\HttpClient\DefaultOptions\RetryFailed\HttpCodeConfig($v) : $v, $value['http_codes']);
+            unset($value['http_codes']);
         }
 
-        if (array_key_exists('max_retries', $config)) {
+        if (array_key_exists('max_retries', $value)) {
             $this->_usedProperties['maxRetries'] = true;
-            $this->maxRetries = $config['max_retries'];
-            unset($config['max_retries']);
+            $this->maxRetries = $value['max_retries'];
+            unset($value['max_retries']);
         }
 
-        if (array_key_exists('delay', $config)) {
+        if (array_key_exists('delay', $value)) {
             $this->_usedProperties['delay'] = true;
-            $this->delay = $config['delay'];
-            unset($config['delay']);
+            $this->delay = $value['delay'];
+            unset($value['delay']);
         }
 
-        if (array_key_exists('multiplier', $config)) {
+        if (array_key_exists('multiplier', $value)) {
             $this->_usedProperties['multiplier'] = true;
-            $this->multiplier = $config['multiplier'];
-            unset($config['multiplier']);
+            $this->multiplier = $value['multiplier'];
+            unset($value['multiplier']);
         }
 
-        if (array_key_exists('max_delay', $config)) {
+        if (array_key_exists('max_delay', $value)) {
             $this->_usedProperties['maxDelay'] = true;
-            $this->maxDelay = $config['max_delay'];
-            unset($config['max_delay']);
+            $this->maxDelay = $value['max_delay'];
+            unset($value['max_delay']);
         }
 
-        if (array_key_exists('jitter', $config)) {
+        if (array_key_exists('jitter', $value)) {
             $this->_usedProperties['jitter'] = true;
-            $this->jitter = $config['jitter'];
-            unset($config['jitter']);
+            $this->jitter = $value['jitter'];
+            unset($value['jitter']);
         }
 
-        if ($config) {
-            throw new InvalidConfigurationException(sprintf('The following keys are not supported by "%s": ', __CLASS__).implode(', ', array_keys($config)));
+        if ([] !== $value) {
+            throw new InvalidConfigurationException(sprintf('The following keys are not supported by "%s": ', __CLASS__).implode(', ', array_keys($value)));
         }
     }
 
@@ -198,7 +209,7 @@ class RetryFailedConfig
             $output['retry_strategy'] = $this->retryStrategy;
         }
         if (isset($this->_usedProperties['httpCodes'])) {
-            $output['http_codes'] = array_map(fn ($v) => $v->toArray(), $this->httpCodes);
+            $output['http_codes'] = array_map(fn ($v) => $v instanceof \Symfony\Config\Framework\HttpClient\DefaultOptions\RetryFailed\HttpCodeConfig ? $v->toArray() : $v, $this->httpCodes);
         }
         if (isset($this->_usedProperties['maxRetries'])) {
             $output['max_retries'] = $this->maxRetries;

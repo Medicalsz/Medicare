@@ -1,0 +1,97 @@
+{% if don is defined %}
+<div class="modal fade" id="pickupModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="pickupModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow-lg" style="border-radius: 20px;">
+            <div class="modal-header border-0 pb-0">
+                <div class="w-100 text-center mt-3">
+                    <div class="icon-box mb-3">
+                        <i class="bi bi-check-circle-fill text-success fs-1"></i>
+                    </div>
+                    <h4 class="modal-title fw-bold" id="pickupModalLabel">Donation Confirmée !</h4>
+                </div>
+            </div>
+            <div class="modal-body text-center px-4">
+                <p class="text-muted">
+                    Bonne nouvelle ! Votre don pour la cause <strong>"{{ don.cause.titre }}"</strong> a été confirmé par notre équipe.
+                </p>
+                
+                {% if don.typeDon.value == 'matériel' %}
+                    <div class="alert alert-info border-0 small mb-4" style="border-radius: 12px; background-color: rgba(13, 202, 240, 0.1);">
+                        <i class="bi bi-info-circle-fill me-2"></i>
+                        Veuillez nous indiquer l'adresse exacte où nos équipes pourront se rendre pour réceptionner votre don matériel.
+                    </div>
+                    
+                    <form id="pickupAddressForm">
+                        <div class="mb-3 text-start">
+                            <label for="pickup_adresse" class="form-label fw-bold small">Adresse de réception</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light border-end-0"><i class="bi bi-geo-alt"></i></span>
+                                <input type="text" class="form-control border-start-0 bg-light" id="pickup_adresse" name="adresse" 
+                                       placeholder="Rue, Ville, Code postal..." value="{{ don.adresse }}" required>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-success w-100 py-2 fw-bold" style="border-radius: 12px;">
+                            Confirmer l'adresse et terminer
+                        </button>
+                    </form>
+                {% else %}
+                    <p class="text-success fw-bold mb-4">
+                        Merci pour votre générosité ! Votre don d'argent a été bien reçu.
+                    </p>
+                    <button type="button" id="confirmCashDon" class="btn btn-success w-100 py-2 fw-bold" style="border-radius: 12px;">
+                        Fermer
+                    </button>
+                {% endif %}
+            </div>
+            <div class="modal-footer border-0 pb-4 justify-content-center">
+                <small class="text-muted">Medicare - Ensemble pour un monde meilleur</small>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const pickupModal = new bootstrap.Modal(document.getElementById('pickupModal'));
+    pickupModal.show();
+
+    const form = document.getElementById('pickupAddressForm');
+    if (form) {
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const formData = new FormData(form);
+            
+            fetch("{{ path('app_donation_confirm_pickup', {id: don.id}) }}", {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    pickupModal.hide();
+                    location.reload(); // Recharger pour vérifier s'il y a d'autres dons en attente
+                } else {
+                    alert(data.message || 'Une erreur est survenue.');
+                }
+            });
+        });
+    }
+
+    const cashBtn = document.getElementById('confirmCashDon');
+    if (cashBtn) {
+        cashBtn.addEventListener('click', function() {
+            fetch("{{ path('app_donation_confirm_pickup', {id: don.id}) }}", {
+                method: 'POST'
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    pickupModal.hide();
+                    location.reload();
+                }
+            });
+        });
+    }
+});
+</script>
+{% endif %}

@@ -26,16 +26,16 @@ class AutoMappingConfig
         return $this;
     }
 
-    public function __construct(array $config = [])
+    public function __construct(array $value = [])
     {
-        if (array_key_exists('services', $config)) {
+        if (array_key_exists('services', $value)) {
             $this->_usedProperties['services'] = true;
-            $this->services = $config['services'];
-            unset($config['services']);
+            $this->services = $value['services'];
+            unset($value['services']);
         }
 
-        if ($config) {
-            throw new InvalidConfigurationException(sprintf('The following keys are not supported by "%s": ', __CLASS__).implode(', ', array_keys($config)));
+        if ([] !== $value) {
+            throw new InvalidConfigurationException(sprintf('The following keys are not supported by "%s": ', __CLASS__).implode(', ', array_keys($value)));
         }
     }
 

@@ -63,7 +63,7 @@ class DateTimeNormalizer implements NormalizerInterface, DenormalizerInterface, 
     /**
      * @throws InvalidArgumentException
      */
-    public function normalize(mixed $object, ?string $format = null, array $context = []): string
+    public function normalize(mixed $object, string $format = null, array $context = []): string
     {
         if (!$object instanceof \DateTimeInterface) {
             throw new InvalidArgumentException('The object must implement the "\DateTimeInterface".');
@@ -83,7 +83,7 @@ class DateTimeNormalizer implements NormalizerInterface, DenormalizerInterface, 
     /**
      * @param array $context
      */
-    public function supportsNormalization(mixed $data, ?string $format = null /* , array $context = [] */): bool
+    public function supportsNormalization(mixed $data, string $format = null /* , array $context = [] */): bool
     {
         return $data instanceof \DateTimeInterface;
     }
@@ -91,12 +91,12 @@ class DateTimeNormalizer implements NormalizerInterface, DenormalizerInterface, 
     /**
      * @throws NotNormalizableValueException
      */
-    public function denormalize(mixed $data, string $type, ?string $format = null, array $context = []): \DateTimeInterface
+    public function denormalize(mixed $data, string $type, string $format = null, array $context = []): \DateTimeInterface
     {
         if (\is_int($data) || \is_float($data)) {
             switch ($context[self::FORMAT_KEY] ?? $this->defaultContext[self::FORMAT_KEY] ?? null) {
-                case 'U': $data = \sprintf('%d', $data); break;
-                case 'U.u': $data = \sprintf('%.6F', $data); break;
+                case 'U': $data = sprintf('%d', $data); break;
+                case 'U.u': $data = sprintf('%.6F', $data); break;
             }
         }
 
@@ -119,7 +119,7 @@ class DateTimeNormalizer implements NormalizerInterface, DenormalizerInterface, 
 
                 $dateTimeErrors = $type::getLastErrors();
 
-                throw NotNormalizableValueException::createForUnexpectedDataType(\sprintf('Parsing datetime string "%s" using format "%s" resulted in %d errors: ', $data, $dateTimeFormat, $dateTimeErrors['error_count'])."\n".implode("\n", $this->formatDateTimeErrors($dateTimeErrors['errors'])), $data, [Type::BUILTIN_TYPE_STRING], $context['deserialization_path'] ?? null, true);
+                throw NotNormalizableValueException::createForUnexpectedDataType(sprintf('Parsing datetime string "%s" using format "%s" resulted in %d errors: ', $data, $dateTimeFormat, $dateTimeErrors['error_count'])."\n".implode("\n", $this->formatDateTimeErrors($dateTimeErrors['errors'])), $data, [Type::BUILTIN_TYPE_STRING], $context['deserialization_path'] ?? null, true);
             }
 
             $defaultDateTimeFormat = $this->defaultContext[self::FORMAT_KEY] ?? null;
@@ -141,7 +141,7 @@ class DateTimeNormalizer implements NormalizerInterface, DenormalizerInterface, 
     /**
      * @param array $context
      */
-    public function supportsDenormalization(mixed $data, string $type, ?string $format = null /* , array $context = [] */): bool
+    public function supportsDenormalization(mixed $data, string $type, string $format = null /* , array $context = [] */): bool
     {
         return isset(self::SUPPORTED_TYPES[$type]);
     }
@@ -166,7 +166,7 @@ class DateTimeNormalizer implements NormalizerInterface, DenormalizerInterface, 
         $formattedErrors = [];
 
         foreach ($errors as $pos => $message) {
-            $formattedErrors[] = \sprintf('at position %d: %s', $pos, $message);
+            $formattedErrors[] = sprintf('at position %d: %s', $pos, $message);
         }
 
         return $formattedErrors;

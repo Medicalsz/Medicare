@@ -153,7 +153,7 @@ class ConnectionConfig
     /**
      * @default null
      * @param ParamConfigurator|bool $value
-     * @deprecated Since doctrine/doctrine-bundle 2.4: The "doctrine.dbal.override_url" configuration key is deprecated.
+     * @deprecated The "doctrine.dbal.override_url" configuration key is deprecated.
      * @return $this
      */
     public function overrideUrl($value): static
@@ -165,7 +165,6 @@ class ConnectionConfig
     }
 
     /**
-     * Adds the given suffix to the configured database name, this option has no effects for the SQLite platform
      * @default null
      * @param ParamConfigurator|mixed $value
      * @return $this
@@ -498,7 +497,7 @@ class ConnectionConfig
     /**
      * @default null
      * @param ParamConfigurator|mixed $value
-     * @deprecated Since doctrine/doctrine-bundle 2.9: The "platform_service" configuration key is deprecated since doctrine-bundle 2.9. DBAL 4 will not support setting a custom platform via connection params anymore.
+     * @deprecated The "platform_service" configuration key is deprecated since doctrine-bundle 2.9. DBAL 4 will not support setting a custom platform via connection params anymore.
      * @return $this
      */
     public function platformService($value): static
@@ -657,7 +656,7 @@ class ConnectionConfig
     /**
      * @default null
      * @param ParamConfigurator|bool $value
-     * @deprecated Since doctrine/doctrine-bundle 2.2: The "keep_slave" configuration key is deprecated since doctrine-bundle 2.2. Use the "keep_replica" configuration key instead.
+     * @deprecated The "keep_slave" configuration key is deprecated since doctrine-bundle 2.2. Use the "keep_replica" configuration key instead.
      * @return $this
      */
     public function keepSlave($value): static
@@ -741,9 +740,9 @@ class ConnectionConfig
     }
 
     /**
-     * @template TValue of mixed
+     * @template TValue
      * @param TValue $value
-     * @deprecated Since doctrine/doctrine-bundle 2.2: The "slaves" configuration key will be renamed to "replicas" in doctrine-bundle 3.0. "slaves" is deprecated since doctrine-bundle 2.2.
+     * @deprecated The "slaves" configuration key will be renamed to "replicas" in doctrine-bundle 3.0. "slaves" is deprecated since doctrine-bundle 2.2.
      * @return \Symfony\Config\Doctrine\Dbal\ConnectionConfig\SlaveConfig|$this
      * @psalm-return (TValue is array ? \Symfony\Config\Doctrine\Dbal\ConnectionConfig\SlaveConfig : static)
      */
@@ -767,7 +766,7 @@ class ConnectionConfig
     }
 
     /**
-     * @template TValue of mixed
+     * @template TValue
      * @param TValue $value
      * @return \Symfony\Config\Doctrine\Dbal\ConnectionConfig\ReplicaConfig|$this
      * @psalm-return (TValue is array ? \Symfony\Config\Doctrine\Dbal\ConnectionConfig\ReplicaConfig : static)
@@ -791,322 +790,322 @@ class ConnectionConfig
         return $this->replicas[$name];
     }
 
-    public function __construct(array $config = [])
+    public function __construct(array $value = [])
     {
-        if (array_key_exists('url', $config)) {
+        if (array_key_exists('url', $value)) {
             $this->_usedProperties['url'] = true;
-            $this->url = $config['url'];
-            unset($config['url']);
+            $this->url = $value['url'];
+            unset($value['url']);
         }
 
-        if (array_key_exists('dbname', $config)) {
+        if (array_key_exists('dbname', $value)) {
             $this->_usedProperties['dbname'] = true;
-            $this->dbname = $config['dbname'];
-            unset($config['dbname']);
+            $this->dbname = $value['dbname'];
+            unset($value['dbname']);
         }
 
-        if (array_key_exists('host', $config)) {
+        if (array_key_exists('host', $value)) {
             $this->_usedProperties['host'] = true;
-            $this->host = $config['host'];
-            unset($config['host']);
+            $this->host = $value['host'];
+            unset($value['host']);
         }
 
-        if (array_key_exists('port', $config)) {
+        if (array_key_exists('port', $value)) {
             $this->_usedProperties['port'] = true;
-            $this->port = $config['port'];
-            unset($config['port']);
+            $this->port = $value['port'];
+            unset($value['port']);
         }
 
-        if (array_key_exists('user', $config)) {
+        if (array_key_exists('user', $value)) {
             $this->_usedProperties['user'] = true;
-            $this->user = $config['user'];
-            unset($config['user']);
+            $this->user = $value['user'];
+            unset($value['user']);
         }
 
-        if (array_key_exists('password', $config)) {
+        if (array_key_exists('password', $value)) {
             $this->_usedProperties['password'] = true;
-            $this->password = $config['password'];
-            unset($config['password']);
+            $this->password = $value['password'];
+            unset($value['password']);
         }
 
-        if (array_key_exists('override_url', $config)) {
+        if (array_key_exists('override_url', $value)) {
             $this->_usedProperties['overrideUrl'] = true;
-            $this->overrideUrl = $config['override_url'];
-            unset($config['override_url']);
+            $this->overrideUrl = $value['override_url'];
+            unset($value['override_url']);
         }
 
-        if (array_key_exists('dbname_suffix', $config)) {
+        if (array_key_exists('dbname_suffix', $value)) {
             $this->_usedProperties['dbnameSuffix'] = true;
-            $this->dbnameSuffix = $config['dbname_suffix'];
-            unset($config['dbname_suffix']);
+            $this->dbnameSuffix = $value['dbname_suffix'];
+            unset($value['dbname_suffix']);
         }
 
-        if (array_key_exists('application_name', $config)) {
+        if (array_key_exists('application_name', $value)) {
             $this->_usedProperties['applicationName'] = true;
-            $this->applicationName = $config['application_name'];
-            unset($config['application_name']);
+            $this->applicationName = $value['application_name'];
+            unset($value['application_name']);
         }
 
-        if (array_key_exists('charset', $config)) {
+        if (array_key_exists('charset', $value)) {
             $this->_usedProperties['charset'] = true;
-            $this->charset = $config['charset'];
-            unset($config['charset']);
+            $this->charset = $value['charset'];
+            unset($value['charset']);
         }
 
-        if (array_key_exists('path', $config)) {
+        if (array_key_exists('path', $value)) {
             $this->_usedProperties['path'] = true;
-            $this->path = $config['path'];
-            unset($config['path']);
+            $this->path = $value['path'];
+            unset($value['path']);
         }
 
-        if (array_key_exists('memory', $config)) {
+        if (array_key_exists('memory', $value)) {
             $this->_usedProperties['memory'] = true;
-            $this->memory = $config['memory'];
-            unset($config['memory']);
+            $this->memory = $value['memory'];
+            unset($value['memory']);
         }
 
-        if (array_key_exists('unix_socket', $config)) {
+        if (array_key_exists('unix_socket', $value)) {
             $this->_usedProperties['unixSocket'] = true;
-            $this->unixSocket = $config['unix_socket'];
-            unset($config['unix_socket']);
+            $this->unixSocket = $value['unix_socket'];
+            unset($value['unix_socket']);
         }
 
-        if (array_key_exists('persistent', $config)) {
+        if (array_key_exists('persistent', $value)) {
             $this->_usedProperties['persistent'] = true;
-            $this->persistent = $config['persistent'];
-            unset($config['persistent']);
+            $this->persistent = $value['persistent'];
+            unset($value['persistent']);
         }
 
-        if (array_key_exists('protocol', $config)) {
+        if (array_key_exists('protocol', $value)) {
             $this->_usedProperties['protocol'] = true;
-            $this->protocol = $config['protocol'];
-            unset($config['protocol']);
+            $this->protocol = $value['protocol'];
+            unset($value['protocol']);
         }
 
-        if (array_key_exists('service', $config)) {
+        if (array_key_exists('service', $value)) {
             $this->_usedProperties['service'] = true;
-            $this->service = $config['service'];
-            unset($config['service']);
+            $this->service = $value['service'];
+            unset($value['service']);
         }
 
-        if (array_key_exists('servicename', $config)) {
+        if (array_key_exists('servicename', $value)) {
             $this->_usedProperties['servicename'] = true;
-            $this->servicename = $config['servicename'];
-            unset($config['servicename']);
+            $this->servicename = $value['servicename'];
+            unset($value['servicename']);
         }
 
-        if (array_key_exists('sessionMode', $config)) {
+        if (array_key_exists('sessionMode', $value)) {
             $this->_usedProperties['sessionMode'] = true;
-            $this->sessionMode = $config['sessionMode'];
-            unset($config['sessionMode']);
+            $this->sessionMode = $value['sessionMode'];
+            unset($value['sessionMode']);
         }
 
-        if (array_key_exists('server', $config)) {
+        if (array_key_exists('server', $value)) {
             $this->_usedProperties['server'] = true;
-            $this->server = $config['server'];
-            unset($config['server']);
+            $this->server = $value['server'];
+            unset($value['server']);
         }
 
-        if (array_key_exists('default_dbname', $config)) {
+        if (array_key_exists('default_dbname', $value)) {
             $this->_usedProperties['defaultDbname'] = true;
-            $this->defaultDbname = $config['default_dbname'];
-            unset($config['default_dbname']);
+            $this->defaultDbname = $value['default_dbname'];
+            unset($value['default_dbname']);
         }
 
-        if (array_key_exists('sslmode', $config)) {
+        if (array_key_exists('sslmode', $value)) {
             $this->_usedProperties['sslmode'] = true;
-            $this->sslmode = $config['sslmode'];
-            unset($config['sslmode']);
+            $this->sslmode = $value['sslmode'];
+            unset($value['sslmode']);
         }
 
-        if (array_key_exists('sslrootcert', $config)) {
+        if (array_key_exists('sslrootcert', $value)) {
             $this->_usedProperties['sslrootcert'] = true;
-            $this->sslrootcert = $config['sslrootcert'];
-            unset($config['sslrootcert']);
+            $this->sslrootcert = $value['sslrootcert'];
+            unset($value['sslrootcert']);
         }
 
-        if (array_key_exists('sslcert', $config)) {
+        if (array_key_exists('sslcert', $value)) {
             $this->_usedProperties['sslcert'] = true;
-            $this->sslcert = $config['sslcert'];
-            unset($config['sslcert']);
+            $this->sslcert = $value['sslcert'];
+            unset($value['sslcert']);
         }
 
-        if (array_key_exists('sslkey', $config)) {
+        if (array_key_exists('sslkey', $value)) {
             $this->_usedProperties['sslkey'] = true;
-            $this->sslkey = $config['sslkey'];
-            unset($config['sslkey']);
+            $this->sslkey = $value['sslkey'];
+            unset($value['sslkey']);
         }
 
-        if (array_key_exists('sslcrl', $config)) {
+        if (array_key_exists('sslcrl', $value)) {
             $this->_usedProperties['sslcrl'] = true;
-            $this->sslcrl = $config['sslcrl'];
-            unset($config['sslcrl']);
+            $this->sslcrl = $value['sslcrl'];
+            unset($value['sslcrl']);
         }
 
-        if (array_key_exists('pooled', $config)) {
+        if (array_key_exists('pooled', $value)) {
             $this->_usedProperties['pooled'] = true;
-            $this->pooled = $config['pooled'];
-            unset($config['pooled']);
+            $this->pooled = $value['pooled'];
+            unset($value['pooled']);
         }
 
-        if (array_key_exists('MultipleActiveResultSets', $config)) {
+        if (array_key_exists('MultipleActiveResultSets', $value)) {
             $this->_usedProperties['multipleActiveResultSets'] = true;
-            $this->multipleActiveResultSets = $config['MultipleActiveResultSets'];
-            unset($config['MultipleActiveResultSets']);
+            $this->multipleActiveResultSets = $value['MultipleActiveResultSets'];
+            unset($value['MultipleActiveResultSets']);
         }
 
-        if (array_key_exists('use_savepoints', $config)) {
+        if (array_key_exists('use_savepoints', $value)) {
             $this->_usedProperties['useSavepoints'] = true;
-            $this->useSavepoints = $config['use_savepoints'];
-            unset($config['use_savepoints']);
+            $this->useSavepoints = $value['use_savepoints'];
+            unset($value['use_savepoints']);
         }
 
-        if (array_key_exists('instancename', $config)) {
+        if (array_key_exists('instancename', $value)) {
             $this->_usedProperties['instancename'] = true;
-            $this->instancename = $config['instancename'];
-            unset($config['instancename']);
+            $this->instancename = $value['instancename'];
+            unset($value['instancename']);
         }
 
-        if (array_key_exists('connectstring', $config)) {
+        if (array_key_exists('connectstring', $value)) {
             $this->_usedProperties['connectstring'] = true;
-            $this->connectstring = $config['connectstring'];
-            unset($config['connectstring']);
+            $this->connectstring = $value['connectstring'];
+            unset($value['connectstring']);
         }
 
-        if (array_key_exists('driver', $config)) {
+        if (array_key_exists('driver', $value)) {
             $this->_usedProperties['driver'] = true;
-            $this->driver = $config['driver'];
-            unset($config['driver']);
+            $this->driver = $value['driver'];
+            unset($value['driver']);
         }
 
-        if (array_key_exists('platform_service', $config)) {
+        if (array_key_exists('platform_service', $value)) {
             $this->_usedProperties['platformService'] = true;
-            $this->platformService = $config['platform_service'];
-            unset($config['platform_service']);
+            $this->platformService = $value['platform_service'];
+            unset($value['platform_service']);
         }
 
-        if (array_key_exists('auto_commit', $config)) {
+        if (array_key_exists('auto_commit', $value)) {
             $this->_usedProperties['autoCommit'] = true;
-            $this->autoCommit = $config['auto_commit'];
-            unset($config['auto_commit']);
+            $this->autoCommit = $value['auto_commit'];
+            unset($value['auto_commit']);
         }
 
-        if (array_key_exists('schema_filter', $config)) {
+        if (array_key_exists('schema_filter', $value)) {
             $this->_usedProperties['schemaFilter'] = true;
-            $this->schemaFilter = $config['schema_filter'];
-            unset($config['schema_filter']);
+            $this->schemaFilter = $value['schema_filter'];
+            unset($value['schema_filter']);
         }
 
-        if (array_key_exists('logging', $config)) {
+        if (array_key_exists('logging', $value)) {
             $this->_usedProperties['logging'] = true;
-            $this->logging = $config['logging'];
-            unset($config['logging']);
+            $this->logging = $value['logging'];
+            unset($value['logging']);
         }
 
-        if (array_key_exists('profiling', $config)) {
+        if (array_key_exists('profiling', $value)) {
             $this->_usedProperties['profiling'] = true;
-            $this->profiling = $config['profiling'];
-            unset($config['profiling']);
+            $this->profiling = $value['profiling'];
+            unset($value['profiling']);
         }
 
-        if (array_key_exists('profiling_collect_backtrace', $config)) {
+        if (array_key_exists('profiling_collect_backtrace', $value)) {
             $this->_usedProperties['profilingCollectBacktrace'] = true;
-            $this->profilingCollectBacktrace = $config['profiling_collect_backtrace'];
-            unset($config['profiling_collect_backtrace']);
+            $this->profilingCollectBacktrace = $value['profiling_collect_backtrace'];
+            unset($value['profiling_collect_backtrace']);
         }
 
-        if (array_key_exists('profiling_collect_schema_errors', $config)) {
+        if (array_key_exists('profiling_collect_schema_errors', $value)) {
             $this->_usedProperties['profilingCollectSchemaErrors'] = true;
-            $this->profilingCollectSchemaErrors = $config['profiling_collect_schema_errors'];
-            unset($config['profiling_collect_schema_errors']);
+            $this->profilingCollectSchemaErrors = $value['profiling_collect_schema_errors'];
+            unset($value['profiling_collect_schema_errors']);
         }
 
-        if (array_key_exists('disable_type_comments', $config)) {
+        if (array_key_exists('disable_type_comments', $value)) {
             $this->_usedProperties['disableTypeComments'] = true;
-            $this->disableTypeComments = $config['disable_type_comments'];
-            unset($config['disable_type_comments']);
+            $this->disableTypeComments = $value['disable_type_comments'];
+            unset($value['disable_type_comments']);
         }
 
-        if (array_key_exists('server_version', $config)) {
+        if (array_key_exists('server_version', $value)) {
             $this->_usedProperties['serverVersion'] = true;
-            $this->serverVersion = $config['server_version'];
-            unset($config['server_version']);
+            $this->serverVersion = $value['server_version'];
+            unset($value['server_version']);
         }
 
-        if (array_key_exists('idle_connection_ttl', $config)) {
+        if (array_key_exists('idle_connection_ttl', $value)) {
             $this->_usedProperties['idleConnectionTtl'] = true;
-            $this->idleConnectionTtl = $config['idle_connection_ttl'];
-            unset($config['idle_connection_ttl']);
+            $this->idleConnectionTtl = $value['idle_connection_ttl'];
+            unset($value['idle_connection_ttl']);
         }
 
-        if (array_key_exists('driver_class', $config)) {
+        if (array_key_exists('driver_class', $value)) {
             $this->_usedProperties['driverClass'] = true;
-            $this->driverClass = $config['driver_class'];
-            unset($config['driver_class']);
+            $this->driverClass = $value['driver_class'];
+            unset($value['driver_class']);
         }
 
-        if (array_key_exists('wrapper_class', $config)) {
+        if (array_key_exists('wrapper_class', $value)) {
             $this->_usedProperties['wrapperClass'] = true;
-            $this->wrapperClass = $config['wrapper_class'];
-            unset($config['wrapper_class']);
+            $this->wrapperClass = $value['wrapper_class'];
+            unset($value['wrapper_class']);
         }
 
-        if (array_key_exists('keep_slave', $config)) {
+        if (array_key_exists('keep_slave', $value)) {
             $this->_usedProperties['keepSlave'] = true;
-            $this->keepSlave = $config['keep_slave'];
-            unset($config['keep_slave']);
+            $this->keepSlave = $value['keep_slave'];
+            unset($value['keep_slave']);
         }
 
-        if (array_key_exists('keep_replica', $config)) {
+        if (array_key_exists('keep_replica', $value)) {
             $this->_usedProperties['keepReplica'] = true;
-            $this->keepReplica = $config['keep_replica'];
-            unset($config['keep_replica']);
+            $this->keepReplica = $value['keep_replica'];
+            unset($value['keep_replica']);
         }
 
-        if (array_key_exists('options', $config)) {
+        if (array_key_exists('options', $value)) {
             $this->_usedProperties['options'] = true;
-            $this->options = $config['options'];
-            unset($config['options']);
+            $this->options = $value['options'];
+            unset($value['options']);
         }
 
-        if (array_key_exists('mapping_types', $config)) {
+        if (array_key_exists('mapping_types', $value)) {
             $this->_usedProperties['mappingTypes'] = true;
-            $this->mappingTypes = $config['mapping_types'];
-            unset($config['mapping_types']);
+            $this->mappingTypes = $value['mapping_types'];
+            unset($value['mapping_types']);
         }
 
-        if (array_key_exists('default_table_options', $config)) {
+        if (array_key_exists('default_table_options', $value)) {
             $this->_usedProperties['defaultTableOptions'] = true;
-            $this->defaultTableOptions = $config['default_table_options'];
-            unset($config['default_table_options']);
+            $this->defaultTableOptions = $value['default_table_options'];
+            unset($value['default_table_options']);
         }
 
-        if (array_key_exists('schema_manager_factory', $config)) {
+        if (array_key_exists('schema_manager_factory', $value)) {
             $this->_usedProperties['schemaManagerFactory'] = true;
-            $this->schemaManagerFactory = $config['schema_manager_factory'];
-            unset($config['schema_manager_factory']);
+            $this->schemaManagerFactory = $value['schema_manager_factory'];
+            unset($value['schema_manager_factory']);
         }
 
-        if (array_key_exists('result_cache', $config)) {
+        if (array_key_exists('result_cache', $value)) {
             $this->_usedProperties['resultCache'] = true;
-            $this->resultCache = $config['result_cache'];
-            unset($config['result_cache']);
+            $this->resultCache = $value['result_cache'];
+            unset($value['result_cache']);
         }
 
-        if (array_key_exists('slaves', $config)) {
+        if (array_key_exists('slaves', $value)) {
             $this->_usedProperties['slaves'] = true;
-            $this->slaves = array_map(fn ($v) => \is_array($v) ? new \Symfony\Config\Doctrine\Dbal\ConnectionConfig\SlaveConfig($v) : $v, $config['slaves']);
-            unset($config['slaves']);
+            $this->slaves = array_map(fn ($v) => \is_array($v) ? new \Symfony\Config\Doctrine\Dbal\ConnectionConfig\SlaveConfig($v) : $v, $value['slaves']);
+            unset($value['slaves']);
         }
 
-        if (array_key_exists('replicas', $config)) {
+        if (array_key_exists('replicas', $value)) {
             $this->_usedProperties['replicas'] = true;
-            $this->replicas = array_map(fn ($v) => \is_array($v) ? new \Symfony\Config\Doctrine\Dbal\ConnectionConfig\ReplicaConfig($v) : $v, $config['replicas']);
-            unset($config['replicas']);
+            $this->replicas = array_map(fn ($v) => \is_array($v) ? new \Symfony\Config\Doctrine\Dbal\ConnectionConfig\ReplicaConfig($v) : $v, $value['replicas']);
+            unset($value['replicas']);
         }
 
-        if ($config) {
-            throw new InvalidConfigurationException(sprintf('The following keys are not supported by "%s": ', __CLASS__).implode(', ', array_keys($config)));
+        if ([] !== $value) {
+            throw new InvalidConfigurationException(sprintf('The following keys are not supported by "%s": ', __CLASS__).implode(', ', array_keys($value)));
         }
     }
 

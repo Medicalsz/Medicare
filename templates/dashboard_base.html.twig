@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Dashboard - Medicare{% endblock %}</title>
+    <link rel="icon" href="{{ asset('assets/img/logomedicare.png') }}">
+    
+    <!-- Font Awesome - Alternative CDN -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css">
+    
+    {% block stylesheets %}
+        <link rel="stylesheet" href="{{ asset('assets/css/topbar.css') }}">
+        <link rel="stylesheet" href="{{ asset('assets/css/sidebar.css') }}">
+        <link rel="stylesheet" href="{{ asset('assets/css/dashboard.css') }}">
+    {% endblock %}
+</head>
+<body>
+    {# TopBar - Composant réutilisable #}
+    {{ include('components/_topbar.html.twig') }}
+
+    {# Sidebar - Navigation verticale #}
+    {{ include('components/_sidebar.html.twig') }}
+
+    {# Overlay pour mobile (après sidebar pour z-index correct) #}
+    <div class="sidebar-overlay"></div>
+
+    {# Contenu principal du dashboard #}
+    <div class="dashboard-container">
+        {% block body %}{% endblock %}
+    </div>
+
+    {# Modal de succès de connexion #}
+    <div id="loginSuccessModal" class="auth-success-modal">
+        <div class="modal-content-wrapper">
+            <div class="success-checkmark">
+                <div class="check-icon">
+                    <span class="icon-line line-tip"></span>
+                    <span class="icon-line line-long"></span>
+                    <div class="icon-circle"></div>
+                    <div class="icon-fix"></div>
+                </div>
+            </div>
+            <h2>Connexion réussie !</h2>
+            <p>Bienvenue {{ app.user ? app.user.prenom ~ ' ' ~ app.user.nom : 'Utilisateur' }} !<br>Vous êtes maintenant connecté à votre espace Medicare.</p>
+        </div>
+    </div>
+    
+    <style>
+        /* Modal de succès - Styles inline pour dashboard */
+        .auth-success-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(5px);
+            z-index: 10000;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        .auth-success-modal.show {
+            display: flex !important;
+            align-items: center;
+            justify-content: center;
+            opacity: 1;
+            animation: fadeIn 0.3s ease;
+        }
+        
+        .modal-content-wrapper {
+            background: white;
+            border-radius: 20px;
+            padding: 50px 40px;
+            text-align: center;
+            max-width: 450px;
+            width: 90%;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            transform: scale(0.7);
+            animation: popIn 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        @keyframes popIn {
+            0% { transform: scale(0.7); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        
+        .modal-content-wrapper h2 {
+            color: #333;
+            font-size: 28px;
+            margin: 25px 0 15px;
+            font-weight: 600;
+        }
+        
+        .modal-content-wrapper p {
+            color: #666;
+            font-size: 16px;
+            line-height: 1.6;
+            margin: 0;
+        }
+        
+        .success-checkmark {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto;
+        }
+        
+        .check-icon {
+            width: 80px;
+            height: 80px;
+            position: relative;
+            border-radius: 50%;
+            box-sizing: content-box;
+            border: 4px solid #4CAF50;
+        }
+        
+        .icon-line {
+            height: 5px;
+            background-color: #4CAF50;
+            display: block;
+            border-radius: 2px;
+            position: absolute;
+            z-index: 10;
+        }
+        
+        .icon-line.line-tip {
+            top: 46px;
+            left: 14px;
+            width: 25px;
+            transform: rotate(45deg);
+            animation: icon-line-tip 0.75s;
+        }
+        
+        .icon-line.line-long {
+            top: 38px;
+            right: 8px;
+            width: 47px;
+            transform: rotate(-45deg);
+            animation: icon-line-long 0.75s;
+        }
+        
+        .icon-circle {
+            top: -4px;
+            left: -4px;
+            z-index: 10;
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            position: absolute;
+            box-sizing: content-box;
+            border: 4px solid rgba(76, 175, 80, .5);
+        }
+        
+        .icon-fix {
+            top: 8px;
+            width: 5px;
+            left: 26px;
+            z-index: 1;
+            height: 85px;
+            position: absolute;
+            transform: rotate(-45deg);
+            background-color: #FFFFFF;
+        }
+        
+        @keyframes icon-line-tip {
+            0% { width: 0; left: 1px; top: 19px; }
+            54% { width: 0; left: 1px; top: 19px; }
+            70% { width: 50px; left: -8px; top: 37px; }
+            84% { width: 17px; left: 21px; top: 48px; }
+            100% { width: 25px; left: 14px; top: 45px; }
+        }
+        
+        @keyframes icon-line-long {
+            0% { width: 0; right: 46px; top: 54px; }
+            65% { width: 0; right: 46px; top: 54px; }
+            84% { width: 55px; right: 0px; top: 35px; }
+            100% { width: 47px; right: 8px; top: 38px; }
+        }
+    </style>
+
+    {% block javascripts %}
+        <script>
+            // Afficher le modal de succès de connexion si le paramètre est présent
+            document.addEventListener('DOMContentLoaded', function() {
+                const urlParams = new URLSearchParams(window.location.search);
+                if (urlParams.get('login_success') === 'true') {
+                    const modal = document.getElementById('loginSuccessModal');
+                    if (modal) {
+                        modal.classList.add('show');
+                        
+                        // Masquer le modal après 3 secondes et supprimer le paramètre de l'URL
+                        setTimeout(function() {
+                            modal.classList.remove('show');
+                            // Nettoyer l'URL
+                            const newUrl = window.location.pathname;
+                            window.history.replaceState({}, document.title, newUrl);
+                        }, 3000);
+                    }
+                }
+            });
+        </script>
+    {% endblock %}
+</body>
+</html>

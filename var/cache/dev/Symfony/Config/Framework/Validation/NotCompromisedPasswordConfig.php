@@ -42,22 +42,22 @@ class NotCompromisedPasswordConfig
         return $this;
     }
 
-    public function __construct(array $config = [])
+    public function __construct(array $value = [])
     {
-        if (array_key_exists('enabled', $config)) {
+        if (array_key_exists('enabled', $value)) {
             $this->_usedProperties['enabled'] = true;
-            $this->enabled = $config['enabled'];
-            unset($config['enabled']);
+            $this->enabled = $value['enabled'];
+            unset($value['enabled']);
         }
 
-        if (array_key_exists('endpoint', $config)) {
+        if (array_key_exists('endpoint', $value)) {
             $this->_usedProperties['endpoint'] = true;
-            $this->endpoint = $config['endpoint'];
-            unset($config['endpoint']);
+            $this->endpoint = $value['endpoint'];
+            unset($value['endpoint']);
         }
 
-        if ($config) {
-            throw new InvalidConfigurationException(sprintf('The following keys are not supported by "%s": ', __CLASS__).implode(', ', array_keys($config)));
+        if ([] !== $value) {
+            throw new InvalidConfigurationException(sprintf('The following keys are not supported by "%s": ', __CLASS__).implode(', ', array_keys($value)));
         }
     }
 

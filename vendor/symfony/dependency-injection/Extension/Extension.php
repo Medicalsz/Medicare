@@ -30,8 +30,6 @@ abstract class Extension implements ExtensionInterface, ConfigurationExtensionIn
 
     /**
      * @return string|false
-     *
-     * @deprecated since Symfony 7.4, to be removed in Symfony 8.0 together with XML support.
      */
     public function getXsdValidationBasePath()
     {
@@ -40,8 +38,6 @@ abstract class Extension implements ExtensionInterface, ConfigurationExtensionIn
 
     /**
      * @return string
-     *
-     * @deprecated since Symfony 7.4, to be removed in Symfony 8.0 together with XML support.
      */
     public function getNamespace()
     {
@@ -96,7 +92,7 @@ abstract class Extension implements ExtensionInterface, ConfigurationExtensionIn
         }
 
         if (!$class->implementsInterface(ConfigurationInterface::class)) {
-            throw new LogicException(\sprintf('The extension configuration class "%s" must implement "%s".', $class->getName(), ConfigurationInterface::class));
+            throw new LogicException(sprintf('The extension configuration class "%s" must implement "%s".', $class->getName(), ConfigurationInterface::class));
         }
 
         if (!($constructor = $class->getConstructor()) || !$constructor->getNumberOfRequiredParameters()) {

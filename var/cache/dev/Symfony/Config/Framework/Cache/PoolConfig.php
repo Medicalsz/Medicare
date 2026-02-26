@@ -114,52 +114,52 @@ class PoolConfig
         return $this;
     }
 
-    public function __construct(array $config = [])
+    public function __construct(array $value = [])
     {
-        if (array_key_exists('adapters', $config)) {
+        if (array_key_exists('adapters', $value)) {
             $this->_usedProperties['adapters'] = true;
-            $this->adapters = $config['adapters'];
-            unset($config['adapters']);
+            $this->adapters = $value['adapters'];
+            unset($value['adapters']);
         }
 
-        if (array_key_exists('tags', $config)) {
+        if (array_key_exists('tags', $value)) {
             $this->_usedProperties['tags'] = true;
-            $this->tags = $config['tags'];
-            unset($config['tags']);
+            $this->tags = $value['tags'];
+            unset($value['tags']);
         }
 
-        if (array_key_exists('public', $config)) {
+        if (array_key_exists('public', $value)) {
             $this->_usedProperties['public'] = true;
-            $this->public = $config['public'];
-            unset($config['public']);
+            $this->public = $value['public'];
+            unset($value['public']);
         }
 
-        if (array_key_exists('default_lifetime', $config)) {
+        if (array_key_exists('default_lifetime', $value)) {
             $this->_usedProperties['defaultLifetime'] = true;
-            $this->defaultLifetime = $config['default_lifetime'];
-            unset($config['default_lifetime']);
+            $this->defaultLifetime = $value['default_lifetime'];
+            unset($value['default_lifetime']);
         }
 
-        if (array_key_exists('provider', $config)) {
+        if (array_key_exists('provider', $value)) {
             $this->_usedProperties['provider'] = true;
-            $this->provider = $config['provider'];
-            unset($config['provider']);
+            $this->provider = $value['provider'];
+            unset($value['provider']);
         }
 
-        if (array_key_exists('early_expiration_message_bus', $config)) {
+        if (array_key_exists('early_expiration_message_bus', $value)) {
             $this->_usedProperties['earlyExpirationMessageBus'] = true;
-            $this->earlyExpirationMessageBus = $config['early_expiration_message_bus'];
-            unset($config['early_expiration_message_bus']);
+            $this->earlyExpirationMessageBus = $value['early_expiration_message_bus'];
+            unset($value['early_expiration_message_bus']);
         }
 
-        if (array_key_exists('clearer', $config)) {
+        if (array_key_exists('clearer', $value)) {
             $this->_usedProperties['clearer'] = true;
-            $this->clearer = $config['clearer'];
-            unset($config['clearer']);
+            $this->clearer = $value['clearer'];
+            unset($value['clearer']);
         }
 
-        if ($config) {
-            throw new InvalidConfigurationException(sprintf('The following keys are not supported by "%s": ', __CLASS__).implode(', ', array_keys($config)));
+        if ([] !== $value) {
+            throw new InvalidConfigurationException(sprintf('The following keys are not supported by "%s": ', __CLASS__).implode(', ', array_keys($value)));
         }
     }
 

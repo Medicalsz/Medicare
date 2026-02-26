@@ -46,7 +46,7 @@ final class HttplugWaitLoop
         $this->streamFactory = $streamFactory;
     }
 
-    public function wait(?ResponseInterface $pendingResponse, ?float $maxDuration = null, ?float $idleTimeout = null): int
+    public function wait(?ResponseInterface $pendingResponse, float $maxDuration = null, float $idleTimeout = null): int
     {
         if (!$this->promisePool) {
             return 0;
@@ -145,11 +145,7 @@ final class HttplugWaitLoop
         }
 
         if ($body->isSeekable()) {
-            try {
-                $body->seek(0);
-            } catch (\RuntimeException) {
-                // ignore
-            }
+            $body->seek(0);
         }
 
         return $psrResponse->withBody($body);

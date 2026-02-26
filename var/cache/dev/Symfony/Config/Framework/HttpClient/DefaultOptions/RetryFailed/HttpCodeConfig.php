@@ -40,22 +40,22 @@ class HttpCodeConfig
         return $this;
     }
 
-    public function __construct(array $config = [])
+    public function __construct(array $value = [])
     {
-        if (array_key_exists('code', $config)) {
+        if (array_key_exists('code', $value)) {
             $this->_usedProperties['code'] = true;
-            $this->code = $config['code'];
-            unset($config['code']);
+            $this->code = $value['code'];
+            unset($value['code']);
         }
 
-        if (array_key_exists('methods', $config)) {
+        if (array_key_exists('methods', $value)) {
             $this->_usedProperties['methods'] = true;
-            $this->methods = $config['methods'];
-            unset($config['methods']);
+            $this->methods = $value['methods'];
+            unset($value['methods']);
         }
 
-        if ($config) {
-            throw new InvalidConfigurationException(sprintf('The following keys are not supported by "%s": ', __CLASS__).implode(', ', array_keys($config)));
+        if ([] !== $value) {
+            throw new InvalidConfigurationException(sprintf('The following keys are not supported by "%s": ', __CLASS__).implode(', ', array_keys($value)));
         }
     }
 

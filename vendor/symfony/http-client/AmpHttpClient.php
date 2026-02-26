@@ -64,7 +64,7 @@ final class AmpHttpClient implements HttpClientInterface, LoggerAwareInterface, 
      *
      * @see HttpClientInterface::OPTIONS_DEFAULTS for available options
      */
-    public function __construct(array $defaultOptions = [], ?callable $clientConfigurator = null, int $maxHostConnections = 6, int $maxPendingPushes = 50)
+    public function __construct(array $defaultOptions = [], callable $clientConfigurator = null, int $maxHostConnections = 6, int $maxPendingPushes = 50)
     {
         $this->defaultOptions['buffer'] ??= self::shouldBuffer(...);
 
@@ -118,7 +118,6 @@ final class AmpHttpClient implements HttpClientInterface, LoggerAwareInterface, 
         }
 
         $request = new Request(implode('', $url), $method);
-        $request->setBodySizeLimit(0);
 
         if ($options['http_version']) {
             $request->setProtocolVersions(match ((float) $options['http_version']) {
@@ -133,9 +132,9 @@ final class AmpHttpClient implements HttpClientInterface, LoggerAwareInterface, 
             $request->addHeader($h[0], $h[1]);
         }
 
-        $request->setTcpConnectTimeout(ceil(1000 * $options['timeout']));
-        $request->setTlsHandshakeTimeout(ceil(1000 * $options['timeout']));
-        $request->setTransferTimeout(ceil(1000 * $options['max_duration']));
+        $request->setTcpConnectTimeout(1000 * $options['timeout']);
+        $request->setTlsHandshakeTimeout(1000 * $options['timeout']);
+        $request->setTransferTimeout(1000 * $options['max_duration']);
         if (method_exists($request, 'setInactivityTimeout')) {
             $request->setInactivityTimeout(0);
         }
@@ -149,7 +148,7 @@ final class AmpHttpClient implements HttpClientInterface, LoggerAwareInterface, 
         return new AmpResponse($this->multi, $request, $options, $this->logger);
     }
 
-    public function stream(ResponseInterface|iterable $responses, ?float $timeout = null): ResponseStreamInterface
+    public function stream(ResponseInterface|iterable $responses, float $timeout = null): ResponseStreamInterface
     {
         if ($responses instanceof AmpResponse) {
             $responses = [$responses];
@@ -166,7 +165,7 @@ final class AmpHttpClient implements HttpClientInterface, LoggerAwareInterface, 
             foreach ($pushedResponses as [$pushedUrl, $pushDeferred]) {
                 $pushDeferred->fail(new CancelledException());
 
-                $this->logger?->debug(\sprintf('Unused pushed response: "%s"', $pushedUrl));
+                $this->logger?->debug(sprintf('Unused pushed response: "%s"', $pushedUrl));
             }
         }
 

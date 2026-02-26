@@ -39,7 +39,7 @@ final class PasswordStrength extends Constraint
 
     public int $minScore;
 
-    public function __construct(?array $options = null, ?int $minScore = null, ?array $groups = null, mixed $payload = null, ?string $message = null)
+    public function __construct(array $options = null, int $minScore = null, array $groups = null, mixed $payload = null, string $message = null)
     {
         $options['minScore'] ??= self::STRENGTH_MEDIUM;
 
@@ -49,7 +49,7 @@ final class PasswordStrength extends Constraint
         $this->message = $message ?? $this->message;
 
         if ($this->minScore < 1 || 4 < $this->minScore) {
-            throw new ConstraintDefinitionException(\sprintf('The parameter "minScore" of the "%s" constraint must be an integer between 1 and 4.', self::class));
+            throw new ConstraintDefinitionException(sprintf('The parameter "minScore" of the "%s" constraint must be an integer between 1 and 4.', self::class));
         }
     }
 }

@@ -117,13 +117,13 @@ class TranslatorConfig
     }
 
     /**
-     * @template TValue of array|bool
+     * @template TValue
      * @param TValue $value
      * @default {"enabled":false,"accents":true,"expansion_factor":1,"brackets":true,"parse_html":false,"localizable_html_attributes":[]}
      * @return \Symfony\Config\Framework\Translator\PseudoLocalizationConfig|$this
      * @psalm-return (TValue is array ? \Symfony\Config\Framework\Translator\PseudoLocalizationConfig : static)
      */
-    public function pseudoLocalization(array|bool $value = []): \Symfony\Config\Framework\Translator\PseudoLocalizationConfig|static
+    public function pseudoLocalization(array $value = []): \Symfony\Config\Framework\Translator\PseudoLocalizationConfig|static
     {
         if (!\is_array($value)) {
             $this->_usedProperties['pseudoLocalization'] = true;
@@ -144,7 +144,7 @@ class TranslatorConfig
 
     /**
      * Translation providers you can read/write your translations from
-     */
+    */
     public function provider(string $name, array $value = []): \Symfony\Config\Framework\Translator\ProviderConfig
     {
         if (!isset($this->providers[$name])) {
@@ -157,64 +157,64 @@ class TranslatorConfig
         return $this->providers[$name];
     }
 
-    public function __construct(array $config = [])
+    public function __construct(array $value = [])
     {
-        if (array_key_exists('enabled', $config)) {
+        if (array_key_exists('enabled', $value)) {
             $this->_usedProperties['enabled'] = true;
-            $this->enabled = $config['enabled'];
-            unset($config['enabled']);
+            $this->enabled = $value['enabled'];
+            unset($value['enabled']);
         }
 
-        if (array_key_exists('fallbacks', $config)) {
+        if (array_key_exists('fallbacks', $value)) {
             $this->_usedProperties['fallbacks'] = true;
-            $this->fallbacks = $config['fallbacks'];
-            unset($config['fallbacks']);
+            $this->fallbacks = $value['fallbacks'];
+            unset($value['fallbacks']);
         }
 
-        if (array_key_exists('logging', $config)) {
+        if (array_key_exists('logging', $value)) {
             $this->_usedProperties['logging'] = true;
-            $this->logging = $config['logging'];
-            unset($config['logging']);
+            $this->logging = $value['logging'];
+            unset($value['logging']);
         }
 
-        if (array_key_exists('formatter', $config)) {
+        if (array_key_exists('formatter', $value)) {
             $this->_usedProperties['formatter'] = true;
-            $this->formatter = $config['formatter'];
-            unset($config['formatter']);
+            $this->formatter = $value['formatter'];
+            unset($value['formatter']);
         }
 
-        if (array_key_exists('cache_dir', $config)) {
+        if (array_key_exists('cache_dir', $value)) {
             $this->_usedProperties['cacheDir'] = true;
-            $this->cacheDir = $config['cache_dir'];
-            unset($config['cache_dir']);
+            $this->cacheDir = $value['cache_dir'];
+            unset($value['cache_dir']);
         }
 
-        if (array_key_exists('default_path', $config)) {
+        if (array_key_exists('default_path', $value)) {
             $this->_usedProperties['defaultPath'] = true;
-            $this->defaultPath = $config['default_path'];
-            unset($config['default_path']);
+            $this->defaultPath = $value['default_path'];
+            unset($value['default_path']);
         }
 
-        if (array_key_exists('paths', $config)) {
+        if (array_key_exists('paths', $value)) {
             $this->_usedProperties['paths'] = true;
-            $this->paths = $config['paths'];
-            unset($config['paths']);
+            $this->paths = $value['paths'];
+            unset($value['paths']);
         }
 
-        if (array_key_exists('pseudo_localization', $config)) {
+        if (array_key_exists('pseudo_localization', $value)) {
             $this->_usedProperties['pseudoLocalization'] = true;
-            $this->pseudoLocalization = \is_array($config['pseudo_localization']) ? new \Symfony\Config\Framework\Translator\PseudoLocalizationConfig($config['pseudo_localization']) : $config['pseudo_localization'];
-            unset($config['pseudo_localization']);
+            $this->pseudoLocalization = \is_array($value['pseudo_localization']) ? new \Symfony\Config\Framework\Translator\PseudoLocalizationConfig($value['pseudo_localization']) : $value['pseudo_localization'];
+            unset($value['pseudo_localization']);
         }
 
-        if (array_key_exists('providers', $config)) {
+        if (array_key_exists('providers', $value)) {
             $this->_usedProperties['providers'] = true;
-            $this->providers = array_map(fn ($v) => new \Symfony\Config\Framework\Translator\ProviderConfig($v), $config['providers']);
-            unset($config['providers']);
+            $this->providers = array_map(fn ($v) => new \Symfony\Config\Framework\Translator\ProviderConfig($v), $value['providers']);
+            unset($value['providers']);
         }
 
-        if ($config) {
-            throw new InvalidConfigurationException(sprintf('The following keys are not supported by "%s": ', __CLASS__).implode(', ', array_keys($config)));
+        if ([] !== $value) {
+            throw new InvalidConfigurationException(sprintf('The following keys are not supported by "%s": ', __CLASS__).implode(', ', array_keys($value)));
         }
     }
 

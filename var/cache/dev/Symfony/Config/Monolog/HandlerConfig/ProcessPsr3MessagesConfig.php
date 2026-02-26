@@ -54,28 +54,28 @@ class ProcessPsr3MessagesConfig
         return $this;
     }
 
-    public function __construct(array $config = [])
+    public function __construct(array $value = [])
     {
-        if (array_key_exists('enabled', $config)) {
+        if (array_key_exists('enabled', $value)) {
             $this->_usedProperties['enabled'] = true;
-            $this->enabled = $config['enabled'];
-            unset($config['enabled']);
+            $this->enabled = $value['enabled'];
+            unset($value['enabled']);
         }
 
-        if (array_key_exists('date_format', $config)) {
+        if (array_key_exists('date_format', $value)) {
             $this->_usedProperties['dateFormat'] = true;
-            $this->dateFormat = $config['date_format'];
-            unset($config['date_format']);
+            $this->dateFormat = $value['date_format'];
+            unset($value['date_format']);
         }
 
-        if (array_key_exists('remove_used_context_fields', $config)) {
+        if (array_key_exists('remove_used_context_fields', $value)) {
             $this->_usedProperties['removeUsedContextFields'] = true;
-            $this->removeUsedContextFields = $config['remove_used_context_fields'];
-            unset($config['remove_used_context_fields']);
+            $this->removeUsedContextFields = $value['remove_used_context_fields'];
+            unset($value['remove_used_context_fields']);
         }
 
-        if ($config) {
-            throw new InvalidConfigurationException(sprintf('The following keys are not supported by "%s": ', __CLASS__).implode(', ', array_keys($config)));
+        if ([] !== $value) {
+            throw new InvalidConfigurationException(sprintf('The following keys are not supported by "%s": ', __CLASS__).implode(', ', array_keys($value)));
         }
     }
 

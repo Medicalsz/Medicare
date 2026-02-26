@@ -45,13 +45,13 @@ class Token
      */
     public function __toString(): string
     {
-        return \sprintf('%3d %-11s %s', $this->cursor, strtoupper($this->type), $this->value);
+        return sprintf('%3d %-11s %s', $this->cursor, strtoupper($this->type), $this->value);
     }
 
     /**
      * Tests the current token for a type and/or a value.
      */
-    public function test(string $type, ?string $value = null): bool
+    public function test(string $type, string $value = null): bool
     {
         return $this->type === $type && (null === $value || $this->value == $value);
     }

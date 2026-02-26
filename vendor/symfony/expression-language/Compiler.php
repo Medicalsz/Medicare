@@ -101,7 +101,7 @@ class Compiler implements ResetInterface
      */
     public function string(string $value): static
     {
-        $this->source .= \sprintf('"%s"', addcslashes($value, "\0\t\"\$\\"));
+        $this->source .= sprintf('"%s"', addcslashes($value, "\0\t\"\$\\"));
 
         return $this;
     }
@@ -114,7 +114,15 @@ class Compiler implements ResetInterface
     public function repr(mixed $value): static
     {
         if (\is_int($value) || \is_float($value)) {
-            $this->raw(var_export($value, true));
+            if (false !== $locale = setlocale(\LC_NUMERIC, 0)) {
+                setlocale(\LC_NUMERIC, 'C');
+            }
+
+            $this->raw($value);
+
+            if (false !== $locale) {
+                setlocale(\LC_NUMERIC, $locale);
+            }
         } elseif (null === $value) {
             $this->raw('null');
         } elseif (\is_bool($value)) {

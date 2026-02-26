@@ -1,4 +1,9 @@
-693f21,127.0.0.1,GET,http://127.0.0.1:8000/explore,1771579402,,200,request
-c30776,127.0.0.1,GET,http://127.0.0.1:8000/,1771915481,,200,request
-882c8b,127.0.0.1,GET,http://127.0.0.1:8000/explore,1771915491,a80604,500,request
-a80604,127.0.0.1,GET,http://127.0.0.1:8000/explore,1771915491,,500,request
+68195e,127.0.0.1,GET,http://127.0.0.1:8000/,1772117351,,200,request
+2e434a,127.0.0.1,GET,http://127.0.0.1:8000/register,1772117354,,200,request
+3ece5c,127.0.0.1,GET,http://127.0.0.1:8000/login,1772117362,,200,request
+f39bad,127.0.0.1,POST,http://127.0.0.1:8000/login,1772117379,,200,request
+df603a,127.0.0.1,GET,http://127.0.0.1:8000/dashboard,1772117385,862d95,500,request
+862d95,127.0.0.1,GET,http://127.0.0.1:8000/dashboard,1772117385,,500,request
+e96e10,127.0.0.1,GET,http://127.0.0.1:8000/,1772117400,,200,request
+262a62,127.0.0.1,GET,http://127.0.0.1:8000/uploads/profile_photos/WIN-20260219-20-47-17-Pro-699b8a553dfa4.jpg,1772117401,c772d4,404,request
+c772d4,127.0.0.1,GET,http://127.0.0.1:8000/uploads/profile_photos/WIN-20260219-20-47-17-Pro-699b8a553dfa4.jpg,1772117401,,404,request

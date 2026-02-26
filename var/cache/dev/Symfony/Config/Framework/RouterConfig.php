@@ -115,9 +115,9 @@ class RouterConfig
 
     /**
      * set to true to throw an exception when a parameter does not match the requirements
-     * set to false to disable exceptions when a parameter does not match the requirements (and return null instead)
-     * set to null to disable parameter checks against requirements
-     * 'true' is the preferred configuration in development mode, while 'false' or 'null' might be preferred in production
+    set to false to disable exceptions when a parameter does not match the requirements (and return null instead)
+    set to null to disable parameter checks against requirements
+    'true' is the preferred configuration in development mode, while 'false' or 'null' might be preferred in production
      * @default true
      * @param ParamConfigurator|mixed $value
      * @return $this
@@ -143,64 +143,64 @@ class RouterConfig
         return $this;
     }
 
-    public function __construct(array $config = [])
+    public function __construct(array $value = [])
     {
-        if (array_key_exists('enabled', $config)) {
+        if (array_key_exists('enabled', $value)) {
             $this->_usedProperties['enabled'] = true;
-            $this->enabled = $config['enabled'];
-            unset($config['enabled']);
+            $this->enabled = $value['enabled'];
+            unset($value['enabled']);
         }
 
-        if (array_key_exists('resource', $config)) {
+        if (array_key_exists('resource', $value)) {
             $this->_usedProperties['resource'] = true;
-            $this->resource = $config['resource'];
-            unset($config['resource']);
+            $this->resource = $value['resource'];
+            unset($value['resource']);
         }
 
-        if (array_key_exists('type', $config)) {
+        if (array_key_exists('type', $value)) {
             $this->_usedProperties['type'] = true;
-            $this->type = $config['type'];
-            unset($config['type']);
+            $this->type = $value['type'];
+            unset($value['type']);
         }
 
-        if (array_key_exists('cache_dir', $config)) {
+        if (array_key_exists('cache_dir', $value)) {
             $this->_usedProperties['cacheDir'] = true;
-            $this->cacheDir = $config['cache_dir'];
-            unset($config['cache_dir']);
+            $this->cacheDir = $value['cache_dir'];
+            unset($value['cache_dir']);
         }
 
-        if (array_key_exists('default_uri', $config)) {
+        if (array_key_exists('default_uri', $value)) {
             $this->_usedProperties['defaultUri'] = true;
-            $this->defaultUri = $config['default_uri'];
-            unset($config['default_uri']);
+            $this->defaultUri = $value['default_uri'];
+            unset($value['default_uri']);
         }
 
-        if (array_key_exists('http_port', $config)) {
+        if (array_key_exists('http_port', $value)) {
             $this->_usedProperties['httpPort'] = true;
-            $this->httpPort = $config['http_port'];
-            unset($config['http_port']);
+            $this->httpPort = $value['http_port'];
+            unset($value['http_port']);
         }
 
-        if (array_key_exists('https_port', $config)) {
+        if (array_key_exists('https_port', $value)) {
             $this->_usedProperties['httpsPort'] = true;
-            $this->httpsPort = $config['https_port'];
-            unset($config['https_port']);
+            $this->httpsPort = $value['https_port'];
+            unset($value['https_port']);
         }
 
-        if (array_key_exists('strict_requirements', $config)) {
+        if (array_key_exists('strict_requirements', $value)) {
             $this->_usedProperties['strictRequirements'] = true;
-            $this->strictRequirements = $config['strict_requirements'];
-            unset($config['strict_requirements']);
+            $this->strictRequirements = $value['strict_requirements'];
+            unset($value['strict_requirements']);
         }
 
-        if (array_key_exists('utf8', $config)) {
+        if (array_key_exists('utf8', $value)) {
             $this->_usedProperties['utf8'] = true;
-            $this->utf8 = $config['utf8'];
-            unset($config['utf8']);
+            $this->utf8 = $value['utf8'];
+            unset($value['utf8']);
         }
 
-        if ($config) {
-            throw new InvalidConfigurationException(sprintf('The following keys are not supported by "%s": ', __CLASS__).implode(', ', array_keys($config)));
+        if ([] !== $value) {
+            throw new InvalidConfigurationException(sprintf('The following keys are not supported by "%s": ', __CLASS__).implode(', ', array_keys($value)));
         }
     }
 
