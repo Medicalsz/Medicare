@@ -1,0 +1,47 @@
+{% extends "base_frontend.html.twig" %}
+
+{% block title %}Doctors - Medicare{% endblock %}
+
+{% block body %}
+<main class="main">
+    <section class="breadcrumbs">
+        <div class="container">
+            <h2>Our Doctors</h2>
+            <p>Meet our experienced medical professionals</p>
+        </div>
+    </section>
+
+    <section class="doctors-section">
+        <div class="container">
+            <h1>Medical Team</h1>
+            <p>Our team of experienced and qualified doctors are here to serve you.</p>
+            <div class="row mt-4">
+                <div class="col-md-4 mb-4">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">Dr. John Smith</h5>
+                            <p class="card-text">Cardiologist</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">Dr. Sarah Johnson</h5>
+                            <p class="card-text">Neurologist</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">Dr. Michael Brown</h5>
+                            <p class="card-text">Orthopedic Surgeon</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</main>
+{% endblock %}

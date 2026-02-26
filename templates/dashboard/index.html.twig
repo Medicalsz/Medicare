@@ -1,3 +1,27 @@
+<<<<<<< HEAD
+{% extends "base.html.twig" %}
+
+{% block title %}Dashboard - Medicare{% endblock %}
+
+{% block body %}
+<div class="container mt-5">
+    <h1>Dashboard</h1>
+    <p>Welcome, {{ app.user.username }}!</p>
+    
+    <div class="row mt-4">
+        <div class="col-md-6">
+            <h3>Navigation</h3>
+            <ul class="list-group">
+                <li class="list-group-item"><a href="{{ path('app_profile') }}">Profile</a></li>
+                <li class="list-group-item"><a href="{{ path('app_appointments') }}">My Appointments</a></li>
+                <li class="list-group-item"><a href="{{ path('app_consultations') }}">My Consultations</a></li>
+                <li class="list-group-item"><a href="{{ path('app_cabinets') }}">Medical Cabinets</a></li>
+                <li class="list-group-item"><a href="{{ path('app_demande_medecin') }}">Doctor Request</a></li>
+                <li class="list-group-item"><a href="{{ path('app_settings') }}">Settings</a></li>
+            </ul>
+        </div>
+    </div>
+=======
 {% extends 'dashboard_base.html.twig' %}
 
 {% block title %}Tableau de bord - Medicare{% endblock %}
@@ -56,5 +80,6 @@
         <a href="{{ path('app_demande_medecin') }}" class="btn btn-primary">Déposer une demande</a>
     </div>
     {% endif %}
+>>>>>>> origin/Collaboration-and-partnership
 </div>
 {% endblock %}
