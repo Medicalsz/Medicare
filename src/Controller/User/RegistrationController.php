@@ -2,7 +2,7 @@
 
 namespace App\Controller\User;
 
-use App\Entity\User\User;
+use App\Entity\User;
 use App\Entity\Medical\Patient;
 use App\Form\User\RegistrationFormType;
 use App\Security\EmailVerifier;

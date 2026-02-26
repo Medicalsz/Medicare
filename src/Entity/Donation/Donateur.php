@@ -2,8 +2,7 @@
 
 namespace App\Entity\Donation;
 
-use App\Entity\User\User;
-
+use App\Entity\User;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
@@ -31,11 +30,11 @@ class Donateur
     #[ORM\Column(length: 255)]
     private ?string $adresse = null;
 
-    #[ORM\ManyToOne(targetEntity: \App\Entity\User\User::class, inversedBy: 'donateurs')]
+    #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'donateurs')]
     #[ORM\JoinColumn(nullable: true)]
     private ?User $user = null;
 
-    #[ORM\OneToMany(mappedBy: 'donateur', targetEntity: \App\Entity\Donation\Don::class)]
+    #[ORM\OneToMany(mappedBy: 'donateur', targetEntity: Don::class)]
     private Collection $dons;
 
     public function __construct()
@@ -142,6 +141,3 @@ class Donateur
         return $this;
     }
 }
-
-
-

@@ -2,7 +2,7 @@
 
 namespace App\Entity\Medical;
 
-use App\Entity\User\User;
+use App\Entity\User;
 
 use Doctrine\ORM\Mapping as ORM;
 use App\Enum\Medical\StatutDemandeMedecin;
@@ -16,7 +16,7 @@ class DemandeMedecin
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\ManyToOne(targetEntity: \App\Entity\User\User::class)]
+    #[ORM\ManyToOne(targetEntity: User::class)]
     #[ORM\JoinColumn(nullable: false)]
     private ?User $user = null;
 
@@ -188,6 +188,3 @@ class DemandeMedecin
         return $this->statut === StatutDemandeMedecin::REJETEE;
     }
 }
-
-
-
