@@ -68,13 +68,17 @@ class Partner
     #[Assert\NotNull(message: 'Le statut est obligatoire')]
     private ?StatutPartenaire $statut = null;
 
-    #[ORM\OneToMany(targetEntity: \App\Entity\Partnership\Collaboration::class, mappedBy: 'partner', orphanRemoval: true)]
+    #[ORM\OneToMany(mappedBy: 'partner', targetEntity: Collaboration::class, orphanRemoval: true)]
     private Collection $collaborations;
+
+    #[ORM\OneToMany(mappedBy: 'partner', targetEntity: PartnerRating::class, orphanRemoval: true)]
+    private Collection $ratings;
 
     public function __construct()
     {
         $this->collaborations = new ArrayCollection();
         $this->datePartenariat = new \DateTimeImmutable();
+        $this->ratings = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -220,5 +224,51 @@ class Partner
         }
 
         return $this;
+    }
+
+    /**
+     * @return Collection<int, PartnerRating>
+     */
+    public function getRatings(): Collection
+    {
+        return $this->ratings;
+    }
+
+    public function addRating(PartnerRating $rating): static
+    {
+        if (!$this->ratings->contains($rating)) {
+            $this->ratings->add($rating);
+            $rating->setPartner($this);
+        }
+
+        return $this;
+    }
+
+    public function removeRating(PartnerRating $rating): static
+    {
+        if ($this->ratings->removeElement($rating)) {
+            // set the owning side to null (unless already changed)
+            if ($rating->getPartner() === $this) {
+                $rating->setPartner(null);
+            }
+        }
+
+        return $this;
+    }
+
+    public function getAverageRating(): ?float
+    {
+        $ratings = $this->getRatings();
+
+        if ($ratings->isEmpty()) {
+            return null;
+        }
+
+        $total = 0;
+        foreach ($ratings as $rating) {
+            $total += $rating->getRating();
+        }
+
+        return $total / $ratings->count();
     }
 }

@@ -2,12 +2,17 @@
 
 namespace App\Entity;
 
+use App\Entity\Donation\Donateur;
+use App\Repository\UserRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
-use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
+use Symfony\Component\Security\Core\User\UserInterface;
 
-#[ORM\Entity]
+#[ORM\Entity(repositoryClass: UserRepository::class)]
+#[ORM\Table(name: '`user`')]
 #[UniqueEntity(fields: ['email'], message: 'There is already an account with this email')]
 #[UniqueEntity(fields: ['username'], message: 'There is already an account with this username')]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
@@ -17,22 +22,28 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column(length: 100)]
-    private ?string $nom = null;
-
-    #[ORM\Column(length: 100)]
-    private ?string $prenom = null;
-
-    #[ORM\Column(length: 100, unique: true)]
-    private ?string $username = null;
-
     #[ORM\Column(length: 180, unique: true)]
     private ?string $email = null;
 
-    #[ORM\Column(length: 255)]
+    #[ORM\Column]
+    private array $roles = [];
+
+    /**
+     * @var string The hashed password
+     */
+    #[ORM\Column]
     private ?string $password = null;
 
-    #[ORM\Column(length: 20)]
+    #[ORM\Column(length: 255)]
+    private ?string $nom = null;
+
+    #[ORM\Column(length: 255)]
+    private ?string $prenom = null;
+
+    #[ORM\Column(length: 255, unique: true)]
+    private ?string $username = null;
+
+    #[ORM\Column(length: 255)]
     private ?string $numero = null;
 
     #[ORM\Column(length: 255, nullable: true)]
@@ -44,11 +55,82 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(type: 'boolean')]
     private $isVerified = false;
 
-    // ===== GETTERS & SETTERS =====
+    #[ORM\OneToMany(mappedBy: 'user', targetEntity: Donateur::class)]
+    private Collection $donateurs;
+
+    public function __construct()
+    {
+        $this->donateurs = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
         return $this->id;
+    }
+
+    public function getEmail(): ?string
+    {
+        return $this->email;
+    }
+
+    public function setEmail(string $email): static
+    {
+        $this->email = $email;
+
+        return $this;
+    }
+
+    /**
+     * A visual identifier that represents this user.
+     *
+     * @see UserInterface
+     */
+    public function getUserIdentifier(): string
+    {
+        return (string) $this->email;
+    }
+
+    /**
+     * @see UserInterface
+     */
+    public function getRoles(): array
+    {
+        $roles = $this->roles;
+        // guarantee every user at least has ROLE_USER
+        $roles[] = 'ROLE_USER';
+
+        return array_unique($roles);
+    }
+
+    public function setRoles(array $roles): static
+    {
+        $this->roles = $roles;
+
+        return $this;
+    }
+
+    /**
+     * @see PasswordAuthenticatedUserInterface
+     */
+    public function getPassword(): string
+    {
+        return $this->password;
+    }
+
+    public function setPassword(string $password): static
+    {
+        $this->password = $password;
+
+        return $this;
+    }
+
+    /**
+     * @see UserInterface
+     */
+    public function eraseCredentials(): void
+    {
+        // If you store any temporary, sensitive data on the user, clear it here
+        // $this->plainPassword = null;
     }
 
     public function getNom(): ?string
@@ -81,28 +163,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setUsername(string $username): static
     {
         $this->username = $username;
-        return $this;
-    }
-
-    public function getEmail(): ?string
-    {
-        return $this->email;
-    }
-
-    public function setEmail(string $email): static
-    {
-        $this->email = $email;
-        return $this;
-    }
-
-    public function getPassword(): ?string
-    {
-        return $this->password;
-    }
-
-    public function setPassword(string $password): static
-    {
-        $this->password = $password;
         return $this;
     }
 
@@ -139,28 +199,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    public function getRoles(): array
-    {
-        // All users have ROLE_USER by default
-        return ['ROLE_USER'];
-    }
-
-    public function setRoles(array $roles): static
-    {
-        // Roles are now fixed as ROLE_USER, but kept for compatibility
-        return $this;
-    }
-
-    public function getUserIdentifier(): string
-    {
-        return $this->username ?? $this->email;
-    }
-
-    public function eraseCredentials(): void
-    {
-        // If you store any temporary sensitive data, clean it here
-    }
-
     public function isVerified(): bool
     {
         return $this->isVerified;
@@ -169,6 +207,36 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setIsVerified(bool $isVerified): static
     {
         $this->isVerified = $isVerified;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Donateur>
+     */
+    public function getDonateurs(): Collection
+    {
+        return $this->donateurs;
+    }
+
+    public function addDonateur(Donateur $donateur): static
+    {
+        if (!$this->donateurs->contains($donateur)) {
+            $this->donateurs->add($donateur);
+            $donateur->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeDonateur(Donateur $donateur): static
+    {
+        if ($this->donateurs->removeElement($donateur)) {
+            // set the owning side to null (unless already changed)
+            if ($donateur->getUser() === $this) {
+                $donateur->setUser(null);
+            }
+        }
 
         return $this;
     }

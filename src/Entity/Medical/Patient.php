@@ -2,7 +2,7 @@
 
 namespace App\Entity\Medical;
 
-use App\Entity\User\User;
+use App\Entity\User;
 
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -22,9 +22,9 @@ class Patient
     #[ORM\Column(length: 10, nullable: true)]
     private ?string $groupeSanguin = null;
 
-    #[ORM\OneToOne(targetEntity: \App\Entity\User\User::class)]
+    #[ORM\OneToOne(targetEntity: User::class)]
     #[ORM\JoinColumn(nullable: false)]
-    private ?\App\Entity\User\User $user = null;
+    private ?User $user = null;
 
     #[ORM\OneToMany(mappedBy: "patient", targetEntity: \App\Entity\Medical\RendezVous::class)]
     private Collection $rendezVous;
@@ -89,6 +89,3 @@ class Patient
         return $this->consultations;
     }
 }
-
-
-

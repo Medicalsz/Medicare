@@ -3,71 +3,86 @@
 {% block title %}Détails Partenaire{% endblock %}
 
 {% block body %}
-<div class="container py-4">
+<div class="container py-5">
     <div class="row justify-content-center">
         <div class="col-lg-10">
-            <div class="d-flex align-items-center mb-4">
-                <a href="{{ path('app_partner_index') }}" class="btn btn-outline-secondary btn-sm rounded-circle me-3">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <a href="{{ path('app_partner_index') }}" class="btn btn-light border rounded-circle" style="width: 40px; height: 40px; line-height: 1;">
                     <i class="bi bi-arrow-left"></i>
                 </a>
-                <h1 class="h3 mb-0 text-gray-800">Profil du Partenaire</h1>
+                <h1 class="h3 mb-0 text-gray-800">Partner Profile</h1>
             </div>
 
-            <div class="card shadow-sm border-0 rounded-4 overflow-hidden mb-4">
-                <div class="card-header bg-primary text-white py-4">
-                    <div class="d-flex align-items-center">
-                        <div class="bg-white rounded-circle p-1 me-4 shadow-sm" style="width: 100px; height: 100px; overflow: hidden;">
-                            {% if partner.imageName %}
-                                <img src="{{ vich_uploader_asset(partner, 'imageFile') }}" alt="{{ partner.name }}" class="img-fluid w-100 h-100 object-fit-cover">
-                            {% else %}
-                                <div class="w-100 h-100 d-flex align-items-center justify-content-center bg-light text-secondary">
-                                    <i class="bi bi-building fs-1"></i>
-                                </div>
-                            {% endif %}
+            <div class="card shadow-sm border-0 rounded-4 mb-4">
+                <div class="card-body p-4 p-lg-5">
+                    <div class="row align-items-center">
+                        <div class="col-md-3 text-center mb-4 mb-md-0">
+                            <div class="bg-light rounded-circle p-2 mx-auto shadow-sm" style="width: 120px; height: 120px;">
+                                {% if partner.imageName %}
+                                    <img src="{{ vich_uploader_asset(partner, 'imageFile') }}" alt="{{ partner.name }}" class="img-fluid rounded-circle w-100 h-100 object-fit-cover">
+                                {% else %}
+                                    <div class="w-100 h-100 d-flex align-items-center justify-content-center bg-white rounded-circle border">
+                                        <i class="bi bi-building fs-1 text-secondary"></i>
+                                    </div>
+                                {% endif %}
+                            </div>
                         </div>
-                        <div>
+                        <div class="col-md-6">
                             <h2 class="h4 mb-1 fw-bold">{{ partner.name }}</h2>
-                            <span class="badge bg-white text-primary px-3 py-2 rounded-pill">
+                            <span class="badge bg-primary-soft text-primary rounded-pill fs-6 px-3 py-2 mb-3 d-inline-block">
                                 {{ partner.typePartenaire.value }}
                             </span>
+                            <div class="d-flex align-items-center">
+                                {% set average_rating = partner.getAverageRating() %}
+                                {% if average_rating is not null %}
+                                    <div class="star-rating me-2" title="{{ average_rating|round(1) }} out of 5 stars">
+                                        {% for i in 1..5 %}
+                                            <i class="bi bi-star{% if i <= average_rating %}-fill{% endif %}"></i>
+                                        {% endfor %}
+                                    </div>
+                                    <span class="fw-bold text-dark">{{ average_rating|round(1) }} / 5</span>
+                                {% else %}
+                                    <span class="text-muted">No ratings yet</span>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="col-md-3 text-md-end">
+                            <div class="d-flex justify-content-center justify-content-md-end gap-2">
+                                <a href="{{ path('app_partner_edit', {'id': partner.id}) }}" class="btn btn-outline-primary btn-sm px-3">
+                                    <i class="bi bi-pencil me-1"></i>Edit
+                                </a>
+                                {{ include('partner/_delete_form.html.twig', {'button_class': 'btn btn-outline-danger btn-sm px-3'}) }}
+                            </div>
                         </div>
                     </div>
-                </div>
-                <div class="card-body p-4">
+                    <hr class="my-4">
                     <div class="row g-4">
                         <div class="col-md-6">
-                            <div class="d-flex mb-4">
+                            <div class="d-flex">
                                 <div class="feature-icon bg-light text-primary rounded-3 p-3 me-3">
-                                    <i class="bi bi-geo-alt fs-4"></i>
+                                    <i class="bi bi-geo-alt fs-5"></i>
                                 </div>
                                 <div>
-                                    <label class="text-muted small text-uppercase fw-bold">Adresse</label>
+                                    <label class="text-muted small text-uppercase fw-bold">Address</label>
                                     <p class="mb-0 fw-medium">{{ partner.adresse }}</p>
                                 </div>
                             </div>
+                        </div>
+                        <div class="col-md-6">
                             <div class="d-flex">
                                 <div class="feature-icon bg-light text-primary rounded-3 p-3 me-3">
-                                    <i class="bi bi-calendar-check fs-4"></i>
+                                    <i class="bi bi-telephone fs-5"></i>
                                 </div>
                                 <div>
-                                    <label class="text-muted small text-uppercase fw-bold">Partenaire depuis</label>
-                                    <p class="mb-0 fw-medium">{{ partner.datePartenariat|date('d F Y') }}</p>
+                                    <label class="text-muted small text-uppercase fw-bold">Phone</label>
+                                    <p class="mb-0 fw-medium">{{ partner.telephone }}</p>
                                 </div>
                             </div>
                         </div>
                         <div class="col-md-6">
-                            <div class="d-flex mb-4">
-                                <div class="feature-icon bg-light text-primary rounded-3 p-3 me-3">
-                                    <i class="bi bi-telephone fs-4"></i>
-                                </div>
-                                <div>
-                                    <label class="text-muted small text-uppercase fw-bold">Téléphone</label>
-                                    <p class="mb-0 fw-medium">{{ partner.telephone }}</p>
-                                </div>
-                            </div>
                             <div class="d-flex">
                                 <div class="feature-icon bg-light text-primary rounded-3 p-3 me-3">
-                                    <i class="bi bi-envelope fs-4"></i>
+                                    <i class="bi bi-envelope fs-5"></i>
                                 </div>
                                 <div>
                                     <label class="text-muted small text-uppercase fw-bold">Email</label>
@@ -75,60 +90,137 @@
                                 </div>
                             </div>
                         </div>
-                    </div>
-
-                    <hr class="my-4 opacity-25">
-
-                    <div class="d-flex justify-content-between align-items-center">
-                        <div class="d-flex align-items-center">
-                            <span class="text-muted me-3">Statut actuel:</span>
-                            <span class="badge 
-                                {% if partner.statut.value == 'ACTIF' %}bg-success
-                                {% elseif partner.statut.value == 'SUSPENDU' %}bg-warning
-                                {% else %}bg-danger{% endif %} px-4 py-2">
-                                {{ partner.statut.value }}
-                            </span>
-                        </div>
-                        <div class="gap-2 d-flex">
-                            <a href="{{ path('app_partner_edit', {'id': partner.id}) }}" class="btn btn-primary px-4 shadow-sm">
-                                <i class="bi bi-pencil me-2"></i>Modifier
-                            </a>
-                            {{ include('partner/_delete_form.html.twig', {'button_class': 'btn btn-outline-danger px-4'}) }}
+                        <div class="col-md-6">
+                            <div class="d-flex">
+                                <div class="feature-icon bg-light text-primary rounded-3 p-3 me-3">
+                                    <i class="bi bi-calendar-check fs-5"></i>
+                                </div>
+                                <div>
+                                    <label class="text-muted small text-uppercase fw-bold">Partner Since</label>
+                                    <p class="mb-0 fw-medium">{{ partner.datePartenariat|date('d F Y') }}</p>
+                                </div>
+                            </div>
                         </div>
                     </div>
-                </div>
-            </div>
-            <div class="card shadow-sm border-0 rounded-4 overflow-hidden mb-4">
-                <div class="card-header bg-light py-3">
-                    <h3 class="h6 mb-0 text-gray-800">AI-Powered Suggestions</h3>
-                </div>
-                <div class="card-body p-4">
-                    <p class="text-muted">Click the button below to generate creative collaboration ideas for this partner based on their profile.</p>
-                    <button id="suggest-btn" class="btn btn-info text-white">
-                        <i class="bi bi-magic me-2"></i>Get Suggestions
-                    </button>
-                    <div id="suggestions-container" class="mt-4" style="display: none;">
-                        <h4 class="h6">Here are a few ideas:</h4>
-                        <ul id="suggestions-list" class="list-group list-group-flush">
-                            <!-- Suggestions will be injected here -->
-                        </ul>
-                    </div>
-                    <div id="loading-spinner" class="mt-4 text-center" style="display: none;">
-                        <div class="spinner-border text-primary" role="status">
-                            <span class="visually-hidden">Loading...</span>
-                        </div>
-                        <p class="mt-2">Generating ideas...</p>
+                     <hr class="my-4">
+                     <div class="d-flex align-items-center">
+                        <span class="text-muted me-3">Status:</span>
+                        <span class="badge 
+                            {% if partner.statut.value == 'ACTIF' %}bg-success-soft text-success
+                            {% elseif partner.statut.value == 'SUSPENDU' %}bg-warning-soft text-warning
+                            {% else %}bg-danger-soft text-danger{% endif %} fs-6 px-3 py-2">
+                            {{ partner.statut.value }}
+                        </span>
                     </div>
                 </div>
             </div>
 
+            <div class="row">
+                <div class="col-lg-6">
+                    <div class="card shadow-sm border-0 rounded-4 mb-4">
+                        <div class="card-header bg-white border-0 py-3">
+                            <h3 class="h6 mb-0 text-gray-800">Rate this Partner</h3>
+                        </div>
+                        <div class="card-body p-4">
+                            {% if is_granted('ROLE_USER') %}
+                                {{ form_start(rating_form, {'attr': {'class': 'rating-form'}}) }}
+                                <div class="mb-3 text-center">
+                                    <label class="form-label fs-6 mb-3">{{ form_label(rating_form.rating) }}</label>
+                                    <div class="rating-stars justify-content-center">
+                                        {{ form_widget(rating_form.rating) }}
+                                    </div>
+                                    <div class="text-danger mt-2">
+                                        {{ form_errors(rating_form.rating) }}
+                                    </div>
+                                </div>
+                                <div class="mb-3">
+                                    {{ form_label(rating_form.comment, 'Feedback', {'label_attr': {'class': 'form-label fs-6'}}) }}
+                                    {{ form_widget(rating_form.comment, {
+                                        'attr': {'placeholder': 'Share your experience...', 'rows': 4}
+                                    }) }}
+                                    <div class="text-danger mt-2">
+                                        {{ form_errors(rating_form.comment) }}
+                                    </div>
+                                </div>
+                                <button type="submit" class="btn btn-primary w-100">Submit Rating</button>
+                                {{ form_end(rating_form) }}
+                            {% else %}
+                                <p class="text-muted text-center mb-0">
+                                    You must be <a href="{{ path('app_login') }}">logged in</a> to rate this partner.
+                                </p>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <div class="card shadow-sm border-0 rounded-4 mb-4">
+                        <div class="card-header bg-white border-0 py-3">
+                            <h3 class="h6 mb-0 text-gray-800">AI-Powered Suggestions</h3>
+                        </div>
+                        <div class="card-body p-4">
+                            <p class="text-muted">Click to generate creative collaboration ideas for this partner.</p>
+                            <button id="suggest-btn" class="btn btn-info text-white w-100">
+                                <i class="bi bi-magic me-2"></i>Get Suggestions
+                            </button>
+                            <div id="loading-spinner" class="mt-4 text-center" style="display: none;">
+                                <div class="spinner-border text-primary" role="status">
+                                    <span class="visually-hidden">Loading...</span>
+                                </div>
+                                <p class="mt-2">Generating ideas...</p>
+                            </div>
+                            <div id="suggestions-container" class="mt-4" style="display: none;">
+                                <h4 class="h6">Here are a few ideas:</h4>
+                                <ul id="suggestions-list" class="list-group list-group-flush">
+                                    <!-- Suggestions will be injected here -->
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </div>
 
 <style>
+    body { background-color: #f8f9fa; }
+    .bg-primary-soft { background-color: rgba(var(--bs-primary-rgb), 0.1); }
+    .bg-success-soft { background-color: rgba(var(--bs-success-rgb), 0.1); }
+    .bg-warning-soft { background-color: rgba(var(--bs-warning-rgb), 0.1); }
+    .bg-danger-soft { background-color: rgba(var(--bs-danger-rgb), 0.1); }
     .object-fit-cover { object-fit: cover; }
-    .feature-icon { width: 60px; height: 60px; display: flex; align-items: center; justify-content: center; }
+    .feature-icon { width: 50px; height: 50px; display: flex; align-items: center; justify-content: center; }
+    
+    .star-rating {
+        color: #ffc107;
+        font-size: 1.2rem;
+    }
+
+    .rating-form .rating-stars > div {
+        display: flex;
+        flex-direction: row-reverse;
+        justify-content: center;
+    }
+    .rating-form .rating-stars input[type="radio"] {
+        display: none;
+    }
+    .rating-form .rating-stars label {
+        font-size: 0; /* Hide original label text */
+        color: #e0e0e0;
+        cursor: pointer;
+        transition: color 0.2s, transform 0.2s;
+        padding: 0 0.2em;
+    }
+    .rating-form .rating-stars label:hover,
+    .rating-form .rating-stars label:hover ~ label,
+    .rating-form .rating-stars input[type="radio"]:checked ~ label {
+        color: #ffc107;
+        transform: scale(1.1);
+    }
+    .rating-form .rating-stars label::before {
+        content: '★';
+        font-size: 2.5rem;
+    }
 </style>
 
 <script>
