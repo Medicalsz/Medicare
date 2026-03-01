@@ -1,0 +1,217 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Interactive Dataset Dashboard{% endblock %}
+
+{% block body %}
+<main class="container mt-5 pt-5">
+
+    {% if data.error is defined %}
+        <div class="alert alert-danger">
+            <strong>An error occurred:</strong> {{ data.error }}
+        </div>
+    {% else %}
+        {# Section for Interactive Charts #}
+        <div class="row">
+            <div class="col-lg-8 mb-4">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0">Condition Distribution</h5>
+                    </div>
+                    <div class="card-body">
+                        <canvas id="conditionChart"></canvas>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4 mb-4">
+                <div class="row">
+                    <div class="col-12 mb-4">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5 class="card-title mb-0">Gender Distribution</h5>
+                            </div>
+                            <div class="card-body">
+                                <canvas id="genderChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12 mb-4">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5 class="card-title mb-0">Blood Type Distribution</h5>
+                            </div>
+                            <div class="card-body">
+                                <canvas id="bloodTypeChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {# Section for Summary Stats #}
+        <div class="row mb-4">
+            <div class="col-md-4">
+                <div class="card text-center">
+                    <div class="card-body">
+                        <h5 class="card-title">Total Patients</h5>
+                        <p class="card-text fs-4">{{ data.stats.total_patients }}</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card text-center">
+                    <div class="card-body">
+                        <h5 class="card-title">Average Patient Age</h5>
+                        <p class="card-text fs-4">{{ data.stats.average_age }}</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card text-center">
+                    <div class="card-body">
+                        <h5 class="card-title">Unique Conditions</h5>
+                        <p class="card-text fs-4">{{ data.stats.unique_conditions }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {# Section for Raw Data and Table #}
+        <div class="row">
+            <div class="col-md-12 mb-4">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0">Dataset Head</h5>
+                    </div>
+                    <div class="card-body">
+                        {# The 'raw' filter is used to render the HTML table from the Python script #}
+                        {{ data.head|raw }}
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+</main>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    {# Add Chart.js from a CDN #}
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    {% if data.error is not defined %}
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Data from our controller
+            const conditionData = {{ data.condition_chart.data|json_encode|raw }};
+            const conditionLabels = {{ data.condition_chart.labels|json_encode|raw }};
+            const genderData = {{ data.gender_chart.data|json_encode|raw }};
+            const genderLabels = {{ data.gender_chart.labels|json_encode|raw }};
+            const bloodTypeData = {{ data.blood_type_chart.data|json_encode|raw }};
+            const bloodTypeLabels = {{ data.blood_type_chart.labels|json_encode|raw }};
+
+            // --- Create Condition Bar Chart ---
+            const conditionCtx = document.getElementById('conditionChart').getContext('2d');
+            new Chart(conditionCtx, {
+                type: 'bar',
+                data: {
+                    labels: conditionLabels,
+                    datasets: [{
+                        label: '# of Patients',
+                        data: conditionData,
+                        backgroundColor: 'rgba(54, 162, 235, 0.6)',
+                        borderColor: 'rgba(54, 162, 235, 1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                stepSize: 1
+                            }
+                        }
+                    },
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    }
+                }
+            });
+
+            // --- Create Gender Doughnut Chart ---
+            const genderCtx = document.getElementById('genderChart').getContext('2d');
+            new Chart(genderCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: genderLabels,
+                    datasets: [{
+                        data: genderData,
+                        backgroundColor: [
+                            'rgba(255, 99, 132, 0.6)',
+                            'rgba(54, 162, 235, 0.6)',
+                        ],
+                        borderColor: [
+                            'rgba(255, 99, 132, 1)',
+                            'rgba(54, 162, 235, 1)',
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                        }
+                    }
+                }
+            });
+
+            // --- Create Blood Type Doughnut Chart ---
+            const bloodTypeCtx = document.getElementById('bloodTypeChart').getContext('2d');
+            new Chart(bloodTypeCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: bloodTypeLabels,
+                    datasets: [{
+                        data: bloodTypeData,
+                        backgroundColor: [
+                            'rgba(255, 99, 132, 0.6)',
+                            'rgba(54, 162, 235, 0.6)',
+                            'rgba(255, 206, 86, 0.6)',
+                            'rgba(75, 192, 192, 0.6)',
+                            'rgba(153, 102, 255, 0.6)',
+                            'rgba(255, 159, 64, 0.6)',
+                            'rgba(199, 199, 199, 0.6)',
+                            'rgba(83, 102, 255, 0.6)'
+                        ],
+                        borderColor: [
+                            'rgba(255, 99, 132, 1)',
+                            'rgba(54, 162, 235, 1)',
+                            'rgba(255, 206, 86, 1)',
+                            'rgba(75, 192, 192, 1)',
+                            'rgba(153, 102, 255, 1)',
+                            'rgba(255, 159, 64, 1)',
+                            'rgba(199, 199, 199, 1)',
+                            'rgba(83, 102, 255, 1)'
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                        }
+                    }
+                }
+            });
+        });
+    </script>
+    {% endif %}
+{% endblock %}
