@@ -121,6 +121,6 @@ class __TwigTemplate_b1e61d639ea6594e67f6c2ddeac5095d extends Template
 
     <a href=\"{{ path('<?= \$route_name ?>_index') }}\">back to list</a>
 {% endblock %}
-", "@Maker/crud/templates/new.tpl.php", "C:\\Users\\LENOVO\\Documents\\PI\\Medicare\\vendor\\symfony\\maker-bundle\\templates\\crud\\templates\\new.tpl.php");
+", "@Maker/crud/templates/new.tpl.php", "C:\\Users\\LENOVO\\Documents\\gestion user\\Medicare\\vendor\\symfony\\maker-bundle\\templates\\crud\\templates\\new.tpl.php");
     }
 }

@@ -109,6 +109,6 @@ class __TwigTemplate_e19f873cda945b4f768c4f146177ba85 extends Template
 <p>
     Cheers!
 </p>
-", "@Maker/registration/twig_email.tpl.php", "C:\\Users\\LENOVO\\Documents\\PI\\Medicare\\vendor\\symfony\\maker-bundle\\templates\\registration\\twig_email.tpl.php");
+", "@Maker/registration/twig_email.tpl.php", "C:\\Users\\LENOVO\\Documents\\gestion user\\Medicare\\vendor\\symfony\\maker-bundle\\templates\\registration\\twig_email.tpl.php");
     }
 }

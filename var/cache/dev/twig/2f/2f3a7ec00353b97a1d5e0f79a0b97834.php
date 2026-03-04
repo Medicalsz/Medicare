@@ -422,6 +422,6 @@ class __TwigTemplate_2b10763c7da4daf5500fe3f62906f055 extends Template
 
     </div>
 {%- endif %}
-", "@WebProfiler/Profiler/_request_summary.html.twig", "C:\\Users\\LENOVO\\Documents\\PI\\Medicare\\vendor\\symfony\\web-profiler-bundle\\Resources\\views\\Profiler\\_request_summary.html.twig");
+", "@WebProfiler/Profiler/_request_summary.html.twig", "C:\\Users\\LENOVO\\Documents\\gestion user\\Medicare\\vendor\\symfony\\web-profiler-bundle\\Resources\\views\\Profiler\\_request_summary.html.twig");
     }
 }

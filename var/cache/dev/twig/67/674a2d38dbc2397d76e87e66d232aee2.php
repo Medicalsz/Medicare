@@ -181,6 +181,6 @@ class __TwigTemplate_e0dd4dcc37efe96e5465b667eae60eeb extends Template
 {% block panel %}
     {{ render(controller('web_profiler.controller.router::panelAction', { token: token })) }}
 {% endblock %}
-", "@WebProfiler/Collector/router.html.twig", "C:\\Users\\LENOVO\\Documents\\PI\\Medicare\\vendor\\symfony\\web-profiler-bundle\\Resources\\views\\Collector\\router.html.twig");
+", "@WebProfiler/Collector/router.html.twig", "C:\\Users\\LENOVO\\Documents\\gestion user\\Medicare\\vendor\\symfony\\web-profiler-bundle\\Resources\\views\\Collector\\router.html.twig");
     }
 }

@@ -31,7 +31,9 @@ class __TwigTemplate_9765b4606721af934d9661f5f9212279 extends Template
 
         $this->blocks = [
             'title' => [$this, 'block_title'],
+            'stylesheets' => [$this, 'block_stylesheets'],
             'body' => [$this, 'block_body'],
+            'javascripts' => [$this, 'block_javascripts'],
         ];
     }
 
@@ -73,7 +75,7 @@ class __TwigTemplate_9765b4606721af934d9661f5f9212279 extends Template
         $__internal_6f47bbe9983af81f1e7450e9a3e3768f = $this->extensions["Symfony\\Bridge\\Twig\\Extension\\ProfilerExtension"];
         $__internal_6f47bbe9983af81f1e7450e9a3e3768f->enter($__internal_6f47bbe9983af81f1e7450e9a3e3768f_prof = new \Twig\Profiler\Profile($this->getTemplateName(), "block", "title"));
 
-        yield "Modifier le Profil - Medicare";
+        yield "Modifier mon profil - Medicare";
         
         $__internal_6f47bbe9983af81f1e7450e9a3e3768f->leave($__internal_6f47bbe9983af81f1e7450e9a3e3768f_prof);
 
@@ -87,6 +89,66 @@ class __TwigTemplate_9765b4606721af934d9661f5f9212279 extends Template
     /**
      * @return iterable<null|scalar|\Stringable>
      */
+    public function block_stylesheets(array $context, array $blocks = []): iterable
+    {
+        $macros = $this->macros;
+        $__internal_5a27a8ba21ca79b61932376b2fa922d2 = $this->extensions["Symfony\\Bundle\\WebProfilerBundle\\Twig\\WebProfilerExtension"];
+        $__internal_5a27a8ba21ca79b61932376b2fa922d2->enter($__internal_5a27a8ba21ca79b61932376b2fa922d2_prof = new \Twig\Profiler\Profile($this->getTemplateName(), "block", "stylesheets"));
+
+        $__internal_6f47bbe9983af81f1e7450e9a3e3768f = $this->extensions["Symfony\\Bridge\\Twig\\Extension\\ProfilerExtension"];
+        $__internal_6f47bbe9983af81f1e7450e9a3e3768f->enter($__internal_6f47bbe9983af81f1e7450e9a3e3768f_prof = new \Twig\Profiler\Profile($this->getTemplateName(), "block", "stylesheets"));
+
+        // line 6
+        yield "<style>
+    .edit-profile-main {
+        padding: 40px 0;
+        background: #f8f9fa;
+        min-height: calc(100vh - 200px);
+    }
+    .edit-card {
+        background: white;
+        border-radius: 16px;
+        box-shadow: 0 5px 30px rgba(0, 0, 0, 0.05);
+        padding: 30px;
+        max-width: 800px;
+        margin: 0 auto;
+    }
+    .current-photo {
+        width: 150px;
+        height: 150px;
+        border-radius: 50%;
+        object-fit: cover;
+        margin-bottom: 20px;
+        border: 4px solid #10b981;
+    }
+    #crop-container {
+        max-width: 100%;
+        max-height: 400px;
+        margin-bottom: 20px;
+    }
+    .preview-container {
+        width: 150px;
+        height: 150px;
+        overflow: hidden;
+        border-radius: 50%;
+        border: 2px solid #10b981;
+        margin: 10px auto;
+    }
+</style>
+";
+        
+        $__internal_6f47bbe9983af81f1e7450e9a3e3768f->leave($__internal_6f47bbe9983af81f1e7450e9a3e3768f_prof);
+
+        
+        $__internal_5a27a8ba21ca79b61932376b2fa922d2->leave($__internal_5a27a8ba21ca79b61932376b2fa922d2_prof);
+
+        yield from [];
+    }
+
+    // line 44
+    /**
+     * @return iterable<null|scalar|\Stringable>
+     */
     public function block_body(array $context, array $blocks = []): iterable
     {
         $macros = $this->macros;
@@ -96,358 +158,274 @@ class __TwigTemplate_9765b4606721af934d9661f5f9212279 extends Template
         $__internal_6f47bbe9983af81f1e7450e9a3e3768f = $this->extensions["Symfony\\Bridge\\Twig\\Extension\\ProfilerExtension"];
         $__internal_6f47bbe9983af81f1e7450e9a3e3768f->enter($__internal_6f47bbe9983af81f1e7450e9a3e3768f_prof = new \Twig\Profiler\Profile($this->getTemplateName(), "block", "body"));
 
-        // line 6
-        yield "<main class=\"main\" style=\"padding-top: 100px; background: #f8fafc; min-height: 100vh;\">
-    <div class=\"container py-5\">
-        <div class=\"row justify-content-center\">
-            <div class=\"col-lg-10\">
-                <div class=\"card border-0 shadow-sm rounded-4 overflow-hidden\">
-                    <div class=\"card-header bg-white border-bottom py-4 px-4 px-md-5\">
-                        <div class=\"d-flex align-items-center justify-content-between\">
-                            <h1 class=\"h3 fw-bold mb-0\">Modifier votre profil</h1>
-                            <a href=\"";
-        // line 14
-        yield $this->extensions['Symfony\Bridge\Twig\Extension\RoutingExtension']->getPath("app_profile");
-        yield "\" class=\"btn btn-outline-secondary btn-sm\">
-                                <i class=\"bi bi-x-lg me-1\"></i> Annuler
-                            </a>
+        // line 45
+        yield "<main class=\"edit-profile-main\">
+    <div class=\"container\">
+        <div class=\"edit-card\">
+            <h2 class=\"mb-4\"><i class=\"bi bi-person-gear text-success\"></i> Modifier mon profil</h2>
+            
+            ";
+        // line 50
+        yield         $this->env->getRuntime('Symfony\Component\Form\FormRenderer')->renderBlock((isset($context["form"]) || array_key_exists("form", $context) ? $context["form"] : (function () { throw new RuntimeError('Variable "form" does not exist.', 50, $this->source); })()), 'form_start', ["attr" => ["id" => "profile-form"]]);
+        yield "
+                <div class=\"text-center mb-4\">
+                    ";
+        // line 52
+        if ((($tmp = CoreExtension::getAttribute($this->env, $this->source, (isset($context["user"]) || array_key_exists("user", $context) ? $context["user"] : (function () { throw new RuntimeError('Variable "user" does not exist.', 52, $this->source); })()), "photo", [], "any", false, false, false, 52)) && $tmp instanceof Markup ? (string) $tmp : $tmp)) {
+            // line 53
+            yield "                        <img src=\"";
+            yield $this->env->getRuntime('Twig\Runtime\EscaperRuntime')->escape(CoreExtension::getAttribute($this->env, $this->source, (isset($context["user"]) || array_key_exists("user", $context) ? $context["user"] : (function () { throw new RuntimeError('Variable "user" does not exist.', 53, $this->source); })()), "photo", [], "any", false, false, false, 53), "html", null, true);
+            yield "\" alt=\"Photo actuelle\" class=\"current-photo\" id=\"photo-preview\">
+                    ";
+        } else {
+            // line 55
+            yield "                        <div class=\"current-photo d-flex align-items-center justify-content-center bg-light mx-auto\">
+                            <i class=\"bi bi-person-fill text-secondary\" style=\"font-size: 80px;\"></i>
                         </div>
+                    ";
+        }
+        // line 59
+        yield "                    
+                    <div class=\"mb-3\">
+                        ";
+        // line 61
+        yield $this->env->getRuntime('Symfony\Component\Form\FormRenderer')->searchAndRenderBlock(CoreExtension::getAttribute($this->env, $this->source, (isset($context["form"]) || array_key_exists("form", $context) ? $context["form"] : (function () { throw new RuntimeError('Variable "form" does not exist.', 61, $this->source); })()), "photo", [], "any", false, false, false, 61), 'label', ["label_attr" => ["class" => "form-label"], "label" => "Changer ma photo de profil"]);
+        yield "
+                        ";
+        // line 62
+        yield $this->env->getRuntime('Symfony\Component\Form\FormRenderer')->searchAndRenderBlock(CoreExtension::getAttribute($this->env, $this->source, (isset($context["form"]) || array_key_exists("form", $context) ? $context["form"] : (function () { throw new RuntimeError('Variable "form" does not exist.', 62, $this->source); })()), "photo", [], "any", false, false, false, 62), 'widget', ["attr" => ["class" => "form-control", "accept" => "image/*", "id" => "photo-input"]]);
+        yield "
+                        <div class=\"form-text\">JPG, PNG ou WebP. Max 2Mo.</div>
+                    </div>
+                </div>
+
+                <div class=\"row g-3\">
+                    <div class=\"col-md-12\">
+                        ";
+        // line 69
+        yield $this->env->getRuntime('Symfony\Component\Form\FormRenderer')->searchAndRenderBlock(CoreExtension::getAttribute($this->env, $this->source, (isset($context["form"]) || array_key_exists("form", $context) ? $context["form"] : (function () { throw new RuntimeError('Variable "form" does not exist.', 69, $this->source); })()), "username", [], "any", false, false, false, 69), 'row');
+        yield "
+                    </div>
+                    <div class=\"col-md-6\">
+                        ";
+        // line 72
+        yield $this->env->getRuntime('Symfony\Component\Form\FormRenderer')->searchAndRenderBlock(CoreExtension::getAttribute($this->env, $this->source, (isset($context["form"]) || array_key_exists("form", $context) ? $context["form"] : (function () { throw new RuntimeError('Variable "form" does not exist.', 72, $this->source); })()), "prenom", [], "any", false, false, false, 72), 'row');
+        yield "
+                    </div>
+                    <div class=\"col-md-6\">
+                        ";
+        // line 75
+        yield $this->env->getRuntime('Symfony\Component\Form\FormRenderer')->searchAndRenderBlock(CoreExtension::getAttribute($this->env, $this->source, (isset($context["form"]) || array_key_exists("form", $context) ? $context["form"] : (function () { throw new RuntimeError('Variable "form" does not exist.', 75, $this->source); })()), "nom", [], "any", false, false, false, 75), 'row');
+        yield "
+                    </div>
+                    <div class=\"col-md-6\">
+                        ";
+        // line 78
+        yield $this->env->getRuntime('Symfony\Component\Form\FormRenderer')->searchAndRenderBlock(CoreExtension::getAttribute($this->env, $this->source, (isset($context["form"]) || array_key_exists("form", $context) ? $context["form"] : (function () { throw new RuntimeError('Variable "form" does not exist.', 78, $this->source); })()), "numero", [], "any", false, false, false, 78), 'row');
+        yield "
                     </div>
                     
-                    <div class=\"card-body p-4 p-md-5\">
-                        ";
-        // line 21
-        yield         $this->env->getRuntime('Symfony\Component\Form\FormRenderer')->renderBlock((isset($context["form"]) || array_key_exists("form", $context) ? $context["form"] : (function () { throw new RuntimeError('Variable "form" does not exist.', 21, $this->source); })()), 'form_start', ["attr" => ["class" => "needs-validation", "novalidate" => "novalidate"]]);
-        yield "
-                        
-                        <div class=\"row g-4\">
-                            <!-- Photo Upload Section -->
-                            <div class=\"col-12 text-center mb-4\">
-                                <div class=\"profile-photo-preview mb-3\">
-                                    ";
-        // line 27
-        if ((($tmp = CoreExtension::getAttribute($this->env, $this->source, (isset($context["user"]) || array_key_exists("user", $context) ? $context["user"] : (function () { throw new RuntimeError('Variable "user" does not exist.', 27, $this->source); })()), "photo", [], "any", false, false, false, 27)) && $tmp instanceof Markup ? (string) $tmp : $tmp)) {
-            // line 28
-            yield "                                        <img src=\"";
-            yield $this->env->getRuntime('Twig\Runtime\EscaperRuntime')->escape(CoreExtension::getAttribute($this->env, $this->source, (isset($context["user"]) || array_key_exists("user", $context) ? $context["user"] : (function () { throw new RuntimeError('Variable "user" does not exist.', 28, $this->source); })()), "photo", [], "any", false, false, false, 28), "html", null, true);
-            yield "\" alt=\"Preview\" id=\"photoPreview\" class=\"rounded-circle shadow-sm\" style=\"width: 150px; height: 150px; object-fit: cover; border: 4px solid white;\">
-                                    ";
-        } else {
-            // line 30
-            yield "                                        <div id=\"photoPlaceholder\" class=\"rounded-circle shadow-sm bg-light d-flex align-items-center justify-content-center mx-auto\" style=\"width: 150px; height: 150px; border: 4px solid white;\">
-                                            <i class=\"bi bi-person text-secondary\" style=\"font-size: 80px;\"></i>
-                                        </div>
-                                        <img id=\"photoPreview\" class=\"rounded-circle shadow-sm d-none\" style=\"width: 150px; height: 150px; object-fit: cover; border: 4px solid white;\">
-                                    ";
-        }
-        // line 35
-        yield "                                </div>
-                                <div class=\"upload-btn-wrapper\">
-                                    ";
-        // line 37
-        yield $this->env->getRuntime('Symfony\Component\Form\FormRenderer')->searchAndRenderBlock(CoreExtension::getAttribute($this->env, $this->source, (isset($context["form"]) || array_key_exists("form", $context) ? $context["form"] : (function () { throw new RuntimeError('Variable "form" does not exist.', 37, $this->source); })()), "photo", [], "any", false, false, false, 37), 'widget', ["attr" => ["class" => "d-none", "onchange" => "previewImage(this)"]]);
-        yield "
-                                    <button type=\"button\" class=\"btn btn-sm btn-primary px-4\" onclick=\"document.getElementById('";
-        // line 38
-        yield $this->env->getRuntime('Twig\Runtime\EscaperRuntime')->escape(CoreExtension::getAttribute($this->env, $this->source, CoreExtension::getAttribute($this->env, $this->source, CoreExtension::getAttribute($this->env, $this->source, (isset($context["form"]) || array_key_exists("form", $context) ? $context["form"] : (function () { throw new RuntimeError('Variable "form" does not exist.', 38, $this->source); })()), "photo", [], "any", false, false, false, 38), "vars", [], "any", false, false, false, 38), "id", [], "any", false, false, false, 38), "html", null, true);
-        yield "').click()\">
-                                        <i class=\"bi bi-camera me-2\"></i> Changer la photo
-                                    </button>
-                                </div>
-                                ";
-        // line 42
-        yield $this->env->getRuntime('Symfony\Component\Form\FormRenderer')->searchAndRenderBlock(CoreExtension::getAttribute($this->env, $this->source, (isset($context["form"]) || array_key_exists("form", $context) ? $context["form"] : (function () { throw new RuntimeError('Variable "form" does not exist.', 42, $this->source); })()), "photo", [], "any", false, false, false, 42), 'errors');
-        yield "
-                            </div>
-
-                            <hr class=\"mt-2 mb-4\">
-
-                            <!-- Basic Info -->
-                            <div class=\"col-md-6 mb-3\">
-                                ";
-        // line 49
-        yield $this->env->getRuntime('Symfony\Component\Form\FormRenderer')->searchAndRenderBlock(CoreExtension::getAttribute($this->env, $this->source, (isset($context["form"]) || array_key_exists("form", $context) ? $context["form"] : (function () { throw new RuntimeError('Variable "form" does not exist.', 49, $this->source); })()), "prenom", [], "any", false, false, false, 49), 'label', ["label_attr" => ["class" => "form-label fw-semibold"]]);
-        yield "
-                                ";
-        // line 50
-        yield $this->env->getRuntime('Symfony\Component\Form\FormRenderer')->searchAndRenderBlock(CoreExtension::getAttribute($this->env, $this->source, (isset($context["form"]) || array_key_exists("form", $context) ? $context["form"] : (function () { throw new RuntimeError('Variable "form" does not exist.', 50, $this->source); })()), "prenom", [], "any", false, false, false, 50), 'widget', ["attr" => ["class" => "form-control border-0 bg-light-subtle rounded-3 py-2"]]);
-        yield "
-                                ";
-        // line 51
-        yield $this->env->getRuntime('Symfony\Component\Form\FormRenderer')->searchAndRenderBlock(CoreExtension::getAttribute($this->env, $this->source, (isset($context["form"]) || array_key_exists("form", $context) ? $context["form"] : (function () { throw new RuntimeError('Variable "form" does not exist.', 51, $this->source); })()), "prenom", [], "any", false, false, false, 51), 'errors');
-        yield "
-                            </div>
-                            <div class=\"col-md-6 mb-3\">
-                                ";
-        // line 54
-        yield $this->env->getRuntime('Symfony\Component\Form\FormRenderer')->searchAndRenderBlock(CoreExtension::getAttribute($this->env, $this->source, (isset($context["form"]) || array_key_exists("form", $context) ? $context["form"] : (function () { throw new RuntimeError('Variable "form" does not exist.', 54, $this->source); })()), "nom", [], "any", false, false, false, 54), 'label', ["label_attr" => ["class" => "form-label fw-semibold"]]);
-        yield "
-                                ";
-        // line 55
-        yield $this->env->getRuntime('Symfony\Component\Form\FormRenderer')->searchAndRenderBlock(CoreExtension::getAttribute($this->env, $this->source, (isset($context["form"]) || array_key_exists("form", $context) ? $context["form"] : (function () { throw new RuntimeError('Variable "form" does not exist.', 55, $this->source); })()), "nom", [], "any", false, false, false, 55), 'widget', ["attr" => ["class" => "form-control border-0 bg-light-subtle rounded-3 py-2"]]);
-        yield "
-                                ";
-        // line 56
-        yield $this->env->getRuntime('Symfony\Component\Form\FormRenderer')->searchAndRenderBlock(CoreExtension::getAttribute($this->env, $this->source, (isset($context["form"]) || array_key_exists("form", $context) ? $context["form"] : (function () { throw new RuntimeError('Variable "form" does not exist.', 56, $this->source); })()), "nom", [], "any", false, false, false, 56), 'errors');
-        yield "
-                            </div>
-
-                            <div class=\"col-md-6 mb-3\">
-                                ";
-        // line 60
-        yield $this->env->getRuntime('Symfony\Component\Form\FormRenderer')->searchAndRenderBlock(CoreExtension::getAttribute($this->env, $this->source, (isset($context["form"]) || array_key_exists("form", $context) ? $context["form"] : (function () { throw new RuntimeError('Variable "form" does not exist.', 60, $this->source); })()), "numero", [], "any", false, false, false, 60), 'label', ["label_attr" => ["class" => "form-label fw-semibold"]]);
-        yield "
-                                ";
-        // line 61
-        yield $this->env->getRuntime('Symfony\Component\Form\FormRenderer')->searchAndRenderBlock(CoreExtension::getAttribute($this->env, $this->source, (isset($context["form"]) || array_key_exists("form", $context) ? $context["form"] : (function () { throw new RuntimeError('Variable "form" does not exist.', 61, $this->source); })()), "numero", [], "any", false, false, false, 61), 'widget', ["attr" => ["class" => "form-control border-0 bg-light-subtle rounded-3 py-2"]]);
-        yield "
-                                ";
-        // line 62
-        yield $this->env->getRuntime('Symfony\Component\Form\FormRenderer')->searchAndRenderBlock(CoreExtension::getAttribute($this->env, $this->source, (isset($context["form"]) || array_key_exists("form", $context) ? $context["form"] : (function () { throw new RuntimeError('Variable "form" does not exist.', 62, $this->source); })()), "numero", [], "any", false, false, false, 62), 'errors');
-        yield "
-                            </div>
-                            <div class=\"col-md-6 mb-3\">
-                                ";
-        // line 65
-        yield $this->env->getRuntime('Symfony\Component\Form\FormRenderer')->searchAndRenderBlock(CoreExtension::getAttribute($this->env, $this->source, (isset($context["form"]) || array_key_exists("form", $context) ? $context["form"] : (function () { throw new RuntimeError('Variable "form" does not exist.', 65, $this->source); })()), "adresse", [], "any", false, false, false, 65), 'label', ["label_attr" => ["class" => "form-label fw-semibold"]]);
-        yield "
-                                ";
-        // line 66
-        yield $this->env->getRuntime('Symfony\Component\Form\FormRenderer')->searchAndRenderBlock(CoreExtension::getAttribute($this->env, $this->source, (isset($context["form"]) || array_key_exists("form", $context) ? $context["form"] : (function () { throw new RuntimeError('Variable "form" does not exist.', 66, $this->source); })()), "adresse", [], "any", false, false, false, 66), 'widget', ["attr" => ["class" => "form-control border-0 bg-light-subtle rounded-3 py-2"]]);
-        yield "
-                                ";
-        // line 67
-        yield $this->env->getRuntime('Symfony\Component\Form\FormRenderer')->searchAndRenderBlock(CoreExtension::getAttribute($this->env, $this->source, (isset($context["form"]) || array_key_exists("form", $context) ? $context["form"] : (function () { throw new RuntimeError('Variable "form" does not exist.', 67, $this->source); })()), "adresse", [], "any", false, false, false, 67), 'errors');
-        yield "
-                            </div>
-
-                            <!-- Doctor Specific Fields -->
+                    ";
+        // line 81
+        if (CoreExtension::getAttribute($this->env, $this->source, ($context["form"] ?? null), "specialite", [], "any", true, true, false, 81)) {
+            // line 82
+            yield "                        <div class=\"col-md-6\">
                             ";
-        // line 71
-        if (CoreExtension::getAttribute($this->env, $this->source, ($context["form"] ?? null), "specialite", [], "any", true, true, false, 71)) {
-            // line 72
-            yield "                                <div class=\"col-md-6 mb-3\">
-                                    ";
-            // line 73
-            yield $this->env->getRuntime('Symfony\Component\Form\FormRenderer')->searchAndRenderBlock(CoreExtension::getAttribute($this->env, $this->source, (isset($context["form"]) || array_key_exists("form", $context) ? $context["form"] : (function () { throw new RuntimeError('Variable "form" does not exist.', 73, $this->source); })()), "specialite", [], "any", false, false, false, 73), 'label', ["label_attr" => ["class" => "form-label fw-semibold"]]);
-            yield "
-                                    ";
-            // line 74
-            yield $this->env->getRuntime('Symfony\Component\Form\FormRenderer')->searchAndRenderBlock(CoreExtension::getAttribute($this->env, $this->source, (isset($context["form"]) || array_key_exists("form", $context) ? $context["form"] : (function () { throw new RuntimeError('Variable "form" does not exist.', 74, $this->source); })()), "specialite", [], "any", false, false, false, 74), 'widget', ["attr" => ["class" => "form-control border-0 bg-light-subtle rounded-3 py-2"]]);
-            yield "
-                                    ";
-            // line 75
-            yield $this->env->getRuntime('Symfony\Component\Form\FormRenderer')->searchAndRenderBlock(CoreExtension::getAttribute($this->env, $this->source, (isset($context["form"]) || array_key_exists("form", $context) ? $context["form"] : (function () { throw new RuntimeError('Variable "form" does not exist.', 75, $this->source); })()), "specialite", [], "any", false, false, false, 75), 'errors');
-            yield "
-                                </div>
-                                <div class=\"col-md-6 mb-3\">
-                                    ";
-            // line 78
-            yield $this->env->getRuntime('Symfony\Component\Form\FormRenderer')->searchAndRenderBlock(CoreExtension::getAttribute($this->env, $this->source, (isset($context["form"]) || array_key_exists("form", $context) ? $context["form"] : (function () { throw new RuntimeError('Variable "form" does not exist.', 78, $this->source); })()), "cabinet", [], "any", false, false, false, 78), 'label', ["label_attr" => ["class" => "form-label fw-semibold"]]);
-            yield "
-                                    ";
-            // line 79
-            yield $this->env->getRuntime('Symfony\Component\Form\FormRenderer')->searchAndRenderBlock(CoreExtension::getAttribute($this->env, $this->source, (isset($context["form"]) || array_key_exists("form", $context) ? $context["form"] : (function () { throw new RuntimeError('Variable "form" does not exist.', 79, $this->source); })()), "cabinet", [], "any", false, false, false, 79), 'widget', ["attr" => ["class" => "form-control border-0 bg-light-subtle rounded-3 py-2"]]);
-            yield "
-                                    ";
-            // line 80
-            yield $this->env->getRuntime('Symfony\Component\Form\FormRenderer')->searchAndRenderBlock(CoreExtension::getAttribute($this->env, $this->source, (isset($context["form"]) || array_key_exists("form", $context) ? $context["form"] : (function () { throw new RuntimeError('Variable "form" does not exist.', 80, $this->source); })()), "cabinet", [], "any", false, false, false, 80), 'errors');
-            yield "
-                                </div>
-                                <div class=\"col-md-6 mb-3\">
-                                    ";
             // line 83
-            yield $this->env->getRuntime('Symfony\Component\Form\FormRenderer')->searchAndRenderBlock(CoreExtension::getAttribute($this->env, $this->source, (isset($context["form"]) || array_key_exists("form", $context) ? $context["form"] : (function () { throw new RuntimeError('Variable "form" does not exist.', 83, $this->source); })()), "ville", [], "any", false, false, false, 83), 'label', ["label_attr" => ["class" => "form-label fw-semibold"]]);
+            yield $this->env->getRuntime('Symfony\Component\Form\FormRenderer')->searchAndRenderBlock(CoreExtension::getAttribute($this->env, $this->source, (isset($context["form"]) || array_key_exists("form", $context) ? $context["form"] : (function () { throw new RuntimeError('Variable "form" does not exist.', 83, $this->source); })()), "specialite", [], "any", false, false, false, 83), 'row');
             yield "
-                                    ";
-            // line 84
-            yield $this->env->getRuntime('Symfony\Component\Form\FormRenderer')->searchAndRenderBlock(CoreExtension::getAttribute($this->env, $this->source, (isset($context["form"]) || array_key_exists("form", $context) ? $context["form"] : (function () { throw new RuntimeError('Variable "form" does not exist.', 84, $this->source); })()), "ville", [], "any", false, false, false, 84), 'widget', ["attr" => ["class" => "form-control border-0 bg-light-subtle rounded-3 py-2"]]);
-            yield "
-                                    ";
-            // line 85
-            yield $this->env->getRuntime('Symfony\Component\Form\FormRenderer')->searchAndRenderBlock(CoreExtension::getAttribute($this->env, $this->source, (isset($context["form"]) || array_key_exists("form", $context) ? $context["form"] : (function () { throw new RuntimeError('Variable "form" does not exist.', 85, $this->source); })()), "ville", [], "any", false, false, false, 85), 'errors');
-            yield "
-                                </div>
-                                <div class=\"col-md-6 mb-3\">
-                                    ";
-            // line 88
-            yield $this->env->getRuntime('Symfony\Component\Form\FormRenderer')->searchAndRenderBlock(CoreExtension::getAttribute($this->env, $this->source, (isset($context["form"]) || array_key_exists("form", $context) ? $context["form"] : (function () { throw new RuntimeError('Variable "form" does not exist.', 88, $this->source); })()), "delegation", [], "any", false, false, false, 88), 'label', ["label_attr" => ["class" => "form-label fw-semibold"]]);
-            yield "
-                                    ";
-            // line 89
-            yield $this->env->getRuntime('Symfony\Component\Form\FormRenderer')->searchAndRenderBlock(CoreExtension::getAttribute($this->env, $this->source, (isset($context["form"]) || array_key_exists("form", $context) ? $context["form"] : (function () { throw new RuntimeError('Variable "form" does not exist.', 89, $this->source); })()), "delegation", [], "any", false, false, false, 89), 'widget', ["attr" => ["class" => "form-control border-0 bg-light-subtle rounded-3 py-2"]]);
-            yield "
-                                    ";
-            // line 90
-            yield $this->env->getRuntime('Symfony\Component\Form\FormRenderer')->searchAndRenderBlock(CoreExtension::getAttribute($this->env, $this->source, (isset($context["form"]) || array_key_exists("form", $context) ? $context["form"] : (function () { throw new RuntimeError('Variable "form" does not exist.', 90, $this->source); })()), "delegation", [], "any", false, false, false, 90), 'errors');
-            yield "
-                                </div>
-                                <div class=\"col-md-12 mb-3\">
-                                    ";
-            // line 93
-            yield $this->env->getRuntime('Symfony\Component\Form\FormRenderer')->searchAndRenderBlock(CoreExtension::getAttribute($this->env, $this->source, (isset($context["form"]) || array_key_exists("form", $context) ? $context["form"] : (function () { throw new RuntimeError('Variable "form" does not exist.', 93, $this->source); })()), "prixConsultation", [], "any", false, false, false, 93), 'label', ["label_attr" => ["class" => "form-label fw-semibold"]]);
-            yield "
-                                    ";
-            // line 94
-            yield $this->env->getRuntime('Symfony\Component\Form\FormRenderer')->searchAndRenderBlock(CoreExtension::getAttribute($this->env, $this->source, (isset($context["form"]) || array_key_exists("form", $context) ? $context["form"] : (function () { throw new RuntimeError('Variable "form" does not exist.', 94, $this->source); })()), "prixConsultation", [], "any", false, false, false, 94), 'widget', ["attr" => ["class" => "form-control border-0 bg-light-subtle rounded-3 py-2"]]);
-            yield "
-                                    ";
-            // line 95
-            yield $this->env->getRuntime('Symfony\Component\Form\FormRenderer')->searchAndRenderBlock(CoreExtension::getAttribute($this->env, $this->source, (isset($context["form"]) || array_key_exists("form", $context) ? $context["form"] : (function () { throw new RuntimeError('Variable "form" does not exist.', 95, $this->source); })()), "prixConsultation", [], "any", false, false, false, 95), 'errors');
-            yield "
-                                </div>
-                                <div class=\"col-12 mb-3\">
-                                    ";
-            // line 98
-            yield $this->env->getRuntime('Symfony\Component\Form\FormRenderer')->searchAndRenderBlock(CoreExtension::getAttribute($this->env, $this->source, (isset($context["form"]) || array_key_exists("form", $context) ? $context["form"] : (function () { throw new RuntimeError('Variable "form" does not exist.', 98, $this->source); })()), "bio", [], "any", false, false, false, 98), 'label', ["label_attr" => ["class" => "form-label fw-semibold"]]);
-            yield "
-                                    ";
-            // line 99
-            yield $this->env->getRuntime('Symfony\Component\Form\FormRenderer')->searchAndRenderBlock(CoreExtension::getAttribute($this->env, $this->source, (isset($context["form"]) || array_key_exists("form", $context) ? $context["form"] : (function () { throw new RuntimeError('Variable "form" does not exist.', 99, $this->source); })()), "bio", [], "any", false, false, false, 99), 'widget', ["attr" => ["class" => "form-control border-0 bg-light-subtle rounded-3", "rows" => 5]]);
-            yield "
-                                    ";
-            // line 100
-            yield $this->env->getRuntime('Symfony\Component\Form\FormRenderer')->searchAndRenderBlock(CoreExtension::getAttribute($this->env, $this->source, (isset($context["form"]) || array_key_exists("form", $context) ? $context["form"] : (function () { throw new RuntimeError('Variable "form" does not exist.', 100, $this->source); })()), "bio", [], "any", false, false, false, 100), 'errors');
-            yield "
-                                </div>
-                            ";
-        }
-        // line 103
-        yield "
-                            <div class=\"col-12 mt-4 pt-4 border-top\">
-                                <button type=\"submit\" class=\"btn btn-primary px-5 py-2 rounded-3 fw-bold\">
-                                    Enregistrer les modifications
-                                </button>
-                            </div>
                         </div>
-                        
+                        <div class=\"col-md-6\">
+                            ";
+            // line 86
+            yield $this->env->getRuntime('Symfony\Component\Form\FormRenderer')->searchAndRenderBlock(CoreExtension::getAttribute($this->env, $this->source, (isset($context["form"]) || array_key_exists("form", $context) ? $context["form"] : (function () { throw new RuntimeError('Variable "form" does not exist.', 86, $this->source); })()), "ville", [], "any", false, false, false, 86), 'row');
+            yield "
+                        </div>
+                        <div class=\"col-md-6\">
+                            ";
+            // line 89
+            yield $this->env->getRuntime('Symfony\Component\Form\FormRenderer')->searchAndRenderBlock(CoreExtension::getAttribute($this->env, $this->source, (isset($context["form"]) || array_key_exists("form", $context) ? $context["form"] : (function () { throw new RuntimeError('Variable "form" does not exist.', 89, $this->source); })()), "cabinet", [], "any", false, false, false, 89), 'row');
+            yield "
+                        </div>
+                        <div class=\"col-md-6\">
+                            ";
+            // line 92
+            yield $this->env->getRuntime('Symfony\Component\Form\FormRenderer')->searchAndRenderBlock(CoreExtension::getAttribute($this->env, $this->source, (isset($context["form"]) || array_key_exists("form", $context) ? $context["form"] : (function () { throw new RuntimeError('Variable "form" does not exist.', 92, $this->source); })()), "prixConsultation", [], "any", false, false, false, 92), 'row');
+            yield "
+                        </div>
+                        <div class=\"col-md-12\">
+                            ";
+            // line 95
+            yield $this->env->getRuntime('Symfony\Component\Form\FormRenderer')->searchAndRenderBlock(CoreExtension::getAttribute($this->env, $this->source, (isset($context["form"]) || array_key_exists("form", $context) ? $context["form"] : (function () { throw new RuntimeError('Variable "form" does not exist.', 95, $this->source); })()), "bio", [], "any", false, false, false, 95), 'row');
+            yield "
+                        </div>
+                    ";
+        }
+        // line 98
+        yield "
+                    <div class=\"col-md-12\">
                         ";
-        // line 111
-        yield         $this->env->getRuntime('Symfony\Component\Form\FormRenderer')->renderBlock((isset($context["form"]) || array_key_exists("form", $context) ? $context["form"] : (function () { throw new RuntimeError('Variable "form" does not exist.', 111, $this->source); })()), 'form_end');
+        // line 100
+        yield $this->env->getRuntime('Symfony\Component\Form\FormRenderer')->searchAndRenderBlock(CoreExtension::getAttribute($this->env, $this->source, (isset($context["form"]) || array_key_exists("form", $context) ? $context["form"] : (function () { throw new RuntimeError('Variable "form" does not exist.', 100, $this->source); })()), "adresse", [], "any", false, false, false, 100), 'row');
         yield "
                     </div>
                 </div>
-            </div>
+
+                <div class=\"mt-4 border-top pt-4\">
+                    <h5 class=\"mb-3\"><i class=\"bi bi-shield-lock\"></i> Paramètres de confidentialité</h5>
+                    <div class=\"row g-3\">
+                        <div class=\"col-md-4\">
+                            ";
+        // line 108
+        yield $this->env->getRuntime('Symfony\Component\Form\FormRenderer')->searchAndRenderBlock(CoreExtension::getAttribute($this->env, $this->source, (isset($context["form"]) || array_key_exists("form", $context) ? $context["form"] : (function () { throw new RuntimeError('Variable "form" does not exist.', 108, $this->source); })()), "emailPrivacy", [], "any", false, false, false, 108), 'row');
+        yield "
+                        </div>
+                        <div class=\"col-md-4\">
+                            ";
+        // line 111
+        yield $this->env->getRuntime('Symfony\Component\Form\FormRenderer')->searchAndRenderBlock(CoreExtension::getAttribute($this->env, $this->source, (isset($context["form"]) || array_key_exists("form", $context) ? $context["form"] : (function () { throw new RuntimeError('Variable "form" does not exist.', 111, $this->source); })()), "phonePrivacy", [], "any", false, false, false, 111), 'row');
+        yield "
+                        </div>
+                        <div class=\"col-md-4\">
+                            ";
+        // line 114
+        yield $this->env->getRuntime('Symfony\Component\Form\FormRenderer')->searchAndRenderBlock(CoreExtension::getAttribute($this->env, $this->source, (isset($context["form"]) || array_key_exists("form", $context) ? $context["form"] : (function () { throw new RuntimeError('Variable "form" does not exist.', 114, $this->source); })()), "addressPrivacy", [], "any", false, false, false, 114), 'row');
+        yield "
+                        </div>
+                    </div>
+                </div>
+
+                <input type=\"hidden\" name=\"cropped_image\" id=\"cropped-image-input\">
+
+                <div class=\"mt-4 d-flex justify-content-between\">
+                    <a href=\"";
+        // line 122
+        yield $this->extensions['Symfony\Bridge\Twig\Extension\RoutingExtension']->getPath("app_profile");
+        yield "\" class=\"btn btn-outline-secondary\">
+                        <i class=\"bi bi-arrow-left\"></i> Retour
+                    </a>
+                    <button type=\"submit\" class=\"btn btn-success btn-lg\">
+                        <i class=\"bi bi-check-lg\"></i> Enregistrer les modifications
+                    </button>
+                </div>
+            ";
+        // line 129
+        yield         $this->env->getRuntime('Symfony\Component\Form\FormRenderer')->renderBlock((isset($context["form"]) || array_key_exists("form", $context) ? $context["form"] : (function () { throw new RuntimeError('Variable "form" does not exist.', 129, $this->source); })()), 'form_end', ["render_rest" => false]);
+        yield "
         </div>
     </div>
 </main>
 
-    <input type=\"hidden\" name=\"cropped_image\" id=\"croppedImageData\">
-
-    <!-- Cropping Modal -->
-    <div class=\"modal fade\" id=\"cropModal\" tabindex=\"-1\" aria-labelledby=\"cropModalLabel\" aria-hidden=\"true\" data-bs-backdrop=\"static\">
-        <div class=\"modal-dialog modal-lg modal-dialog-centered\">
-            <div class=\"modal-content border-0 shadow-lg rounded-4\">
-                <div class=\"modal-header border-bottom py-3\">
-                    <h5 class=\"modal-title fw-bold\" id=\"cropModalLabel\">Recadrer la photo</h5>
-                    <button type=\"button\" class=\"btn-close\" data-bs-dismiss=\"modal\" aria-label=\"Close\"></button>
+<!-- Modal pour le recadrage -->
+<div class=\"modal fade\" id=\"cropModal\" tabindex=\"-1\" aria-labelledby=\"cropModalLabel\" aria-hidden=\"true\">
+    <div class=\"modal-dialog modal-lg modal-dialog-centered\">
+        <div class=\"modal-content\">
+            <div class=\"modal-header\">
+                <h5 class=\"modal-title\" id=\"cropModalLabel\">Recadrer la photo</h5>
+                <button type=\"button\" class=\"btn-close\" data-bs-dismiss=\"modal\" aria-label=\"Close\"></button>
+            </div>
+            <div class=\"modal-body\">
+                <div id=\"crop-container\">
+                    <img id=\"image-to-crop\" style=\"max-width: 100%;\">
                 </div>
-                <div class=\"modal-body p-0\">
-                    <div class=\"img-container\" style=\"max-height: 500px; background: #000;\">
-                        <img id=\"cropperImage\" src=\"\" style=\"max-width: 100%; display: block;\">
-                    </div>
+                <div class=\"text-center\">
+                    <h6>Aperçu</h6>
+                    <div class=\"preview-container\"></div>
                 </div>
-                <div class=\"modal-footer border-top py-3\">
-                    <button type=\"button\" class=\"btn btn-secondary px-4\" data-bs-dismiss=\"modal\">Annuler</button>
-                    <button type=\"button\" class=\"btn btn-primary px-4\" id=\"cropButton\">
-                        <i class=\"bi bi-crop me-2\"></i> Recadrer et Enregistrer
-                    </button>
-                </div>
+            </div>
+            <div class=\"modal-footer\">
+                <button type=\"button\" class=\"btn btn-secondary\" data-bs-dismiss=\"modal\">Annuler</button>
+                <button type=\"button\" class=\"btn btn-success\" id=\"crop-button\">Appliquer le recadrage</button>
             </div>
         </div>
     </div>
+</div>
+";
+        
+        $__internal_6f47bbe9983af81f1e7450e9a3e3768f->leave($__internal_6f47bbe9983af81f1e7450e9a3e3768f_prof);
 
-    <script>
-        let cropper;
-        const cropModalEl = document.getElementById('cropModal');
-        const cropModal = new bootstrap.Modal(cropModalEl);
-        const cropperImage = document.getElementById('cropperImage');
-        const cropButton = document.getElementById('cropButton');
-        const photoPreview = document.getElementById('photoPreview');
-        const photoPlaceholder = document.getElementById('photoPlaceholder');
-        const croppedImageData = document.getElementById('croppedImageData');
+        
+        $__internal_5a27a8ba21ca79b61932376b2fa922d2->leave($__internal_5a27a8ba21ca79b61932376b2fa922d2_prof);
 
-        function previewImage(input) {
-            if (input.files && input.files[0]) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    cropperImage.src = e.target.result;
-                    cropModal.show();
-                }
-                reader.readAsDataURL(input.files[0]);
-            }
+        yield from [];
+    }
+
+    // line 160
+    /**
+     * @return iterable<null|scalar|\Stringable>
+     */
+    public function block_javascripts(array $context, array $blocks = []): iterable
+    {
+        $macros = $this->macros;
+        $__internal_5a27a8ba21ca79b61932376b2fa922d2 = $this->extensions["Symfony\\Bundle\\WebProfilerBundle\\Twig\\WebProfilerExtension"];
+        $__internal_5a27a8ba21ca79b61932376b2fa922d2->enter($__internal_5a27a8ba21ca79b61932376b2fa922d2_prof = new \Twig\Profiler\Profile($this->getTemplateName(), "block", "javascripts"));
+
+        $__internal_6f47bbe9983af81f1e7450e9a3e3768f = $this->extensions["Symfony\\Bridge\\Twig\\Extension\\ProfilerExtension"];
+        $__internal_6f47bbe9983af81f1e7450e9a3e3768f->enter($__internal_6f47bbe9983af81f1e7450e9a3e3768f_prof = new \Twig\Profiler\Profile($this->getTemplateName(), "block", "javascripts"));
+
+        // line 161
+        yield "<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const photoInput = document.getElementById('photo-input');
+    const imageToCrop = document.getElementById('image-to-crop');
+    const cropModal = new bootstrap.Modal(document.getElementById('cropModal'));
+    const cropButton = document.getElementById('crop-button');
+    const croppedImageInput = document.getElementById('cropped-image-input');
+    const photoPreview = document.getElementById('photo-preview') || document.querySelector('.current-photo');
+    let cropper;
+
+    photoInput.addEventListener('change', function(e) {
+        const files = e.target.files;
+        if (files && files.length > 0) {
+            const file = files[0];
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                imageToCrop.src = e.target.result;
+                cropModal.show();
+            };
+            reader.readAsDataURL(file);
         }
+    });
 
-        cropModalEl.addEventListener('shown.bs.modal', function () {
-            cropper = new Cropper(cropperImage, {
-                aspectRatio: 1,
-                viewMode: 1,
-                guides: true,
-                center: true,
-                highlight: false,
-                cropBoxMovable: true,
-                cropBoxResizable: true,
-                toggleDragModeOnDblclick: false,
-            });
+    document.getElementById('cropModal').addEventListener('shown.bs.modal', function() {
+        cropper = new Cropper(imageToCrop, {
+            aspectRatio: 1,
+            viewMode: 1,
+            preview: '.preview-container',
         });
+    });
 
-        cropModalEl.addEventListener('hidden.bs.modal', function () {
-            if (cropper) {
-                cropper.destroy();
-                cropper = null;
-            }
+    document.getElementById('cropModal').addEventListener('hidden.bs.modal', function() {
+        if (cropper) {
+            cropper.destroy();
+            cropper = null;
+        }
+    });
+
+    cropButton.addEventListener('click', function() {
+        const canvas = cropper.getCroppedCanvas({
+            width: 400,
+            height: 400,
         });
-
-        cropButton.addEventListener('click', function() {
-            if (cropper) {
-                const canvas = cropper.getCroppedCanvas({
-                    width: 500,
-                    height: 500,
-                });
-                
-                const dataURL = canvas.toDataURL('image/jpeg', 0.9);
-                
-                // Update preview
-                photoPreview.src = dataURL;
-                photoPreview.classList.remove('d-none');
-                if (photoPlaceholder) {
-                    photoPlaceholder.classList.add('d-none');
-                }
-                
-                // Store data
-                croppedImageData.value = dataURL;
-                
-                cropModal.hide();
-            }
-        });
-    </script>
-
-<style>
-    .bg-light-subtle {
-        background-color: #f1f5f9;
-    }
-    .form-control:focus {
-        background-color: #fff;
-        box-shadow: 0 0 0 0.25rem rgba(14, 165, 233, 0.1);
-        border-color: #0ea5e9;
-    }
-    .btn-primary {
-        background-color: #0ea5e9;
-        border-color: #0ea5e9;
-    }
-    .btn-primary:hover {
-        background-color: #0284c7;
-        border-color: #0284c7;
-    }
-    .btn-outline-primary {
-        color: #0ea5e9;
-        border-color: #0ea5e9;
-    }
-    .btn-outline-primary:hover {
-        background-color: #0ea5e9;
-        border-color: #0ea5e9;
-    }
-</style>
+        
+        const base64Image = canvas.toDataURL('image/jpeg');
+        croppedImageInput.value = base64Image;
+        
+        if (photoPreview.tagName === 'IMG') {
+            photoPreview.src = base64Image;
+        } else {
+            // Replace placeholder with img
+            const img = document.createElement('img');
+            img.src = base64Image;
+            img.className = 'current-photo';
+            img.id = 'photo-preview';
+            photoPreview.parentNode.replaceChild(img, photoPreview);
+        }
+        
+        cropModal.hide();
+    });
+});
+</script>
 ";
         
         $__internal_6f47bbe9983af81f1e7450e9a3e3768f->leave($__internal_6f47bbe9983af81f1e7450e9a3e3768f_prof);
@@ -479,246 +457,234 @@ class __TwigTemplate_9765b4606721af934d9661f5f9212279 extends Template
      */
     public function getDebugInfo(): array
     {
-        return array (  326 => 111,  316 => 103,  310 => 100,  306 => 99,  302 => 98,  296 => 95,  292 => 94,  288 => 93,  282 => 90,  278 => 89,  274 => 88,  268 => 85,  264 => 84,  260 => 83,  254 => 80,  250 => 79,  246 => 78,  240 => 75,  236 => 74,  232 => 73,  229 => 72,  227 => 71,  220 => 67,  216 => 66,  212 => 65,  206 => 62,  202 => 61,  198 => 60,  191 => 56,  187 => 55,  183 => 54,  177 => 51,  173 => 50,  169 => 49,  159 => 42,  152 => 38,  148 => 37,  144 => 35,  137 => 30,  131 => 28,  129 => 27,  120 => 21,  110 => 14,  100 => 6,  87 => 5,  64 => 3,  41 => 1,);
+        return array (  367 => 161,  354 => 160,  313 => 129,  303 => 122,  292 => 114,  286 => 111,  280 => 108,  269 => 100,  265 => 98,  259 => 95,  253 => 92,  247 => 89,  241 => 86,  235 => 83,  232 => 82,  230 => 81,  224 => 78,  218 => 75,  212 => 72,  206 => 69,  196 => 62,  192 => 61,  188 => 59,  182 => 55,  176 => 53,  174 => 52,  169 => 50,  162 => 45,  149 => 44,  102 => 6,  89 => 5,  66 => 3,  43 => 1,);
     }
 
     public function getSourceContext(): Source
     {
         return new Source("{% extends 'base_frontend.html.twig' %}
 
-{% block title %}Modifier le Profil - Medicare{% endblock %}
+{% block title %}Modifier mon profil - Medicare{% endblock %}
+
+{% block stylesheets %}
+<style>
+    .edit-profile-main {
+        padding: 40px 0;
+        background: #f8f9fa;
+        min-height: calc(100vh - 200px);
+    }
+    .edit-card {
+        background: white;
+        border-radius: 16px;
+        box-shadow: 0 5px 30px rgba(0, 0, 0, 0.05);
+        padding: 30px;
+        max-width: 800px;
+        margin: 0 auto;
+    }
+    .current-photo {
+        width: 150px;
+        height: 150px;
+        border-radius: 50%;
+        object-fit: cover;
+        margin-bottom: 20px;
+        border: 4px solid #10b981;
+    }
+    #crop-container {
+        max-width: 100%;
+        max-height: 400px;
+        margin-bottom: 20px;
+    }
+    .preview-container {
+        width: 150px;
+        height: 150px;
+        overflow: hidden;
+        border-radius: 50%;
+        border: 2px solid #10b981;
+        margin: 10px auto;
+    }
+</style>
+{% endblock %}
 
 {% block body %}
-<main class=\"main\" style=\"padding-top: 100px; background: #f8fafc; min-height: 100vh;\">
-    <div class=\"container py-5\">
-        <div class=\"row justify-content-center\">
-            <div class=\"col-lg-10\">
-                <div class=\"card border-0 shadow-sm rounded-4 overflow-hidden\">
-                    <div class=\"card-header bg-white border-bottom py-4 px-4 px-md-5\">
-                        <div class=\"d-flex align-items-center justify-content-between\">
-                            <h1 class=\"h3 fw-bold mb-0\">Modifier votre profil</h1>
-                            <a href=\"{{ path('app_profile') }}\" class=\"btn btn-outline-secondary btn-sm\">
-                                <i class=\"bi bi-x-lg me-1\"></i> Annuler
-                            </a>
+<main class=\"edit-profile-main\">
+    <div class=\"container\">
+        <div class=\"edit-card\">
+            <h2 class=\"mb-4\"><i class=\"bi bi-person-gear text-success\"></i> Modifier mon profil</h2>
+            
+            {{ form_start(form, {'attr': {'id': 'profile-form'}}) }}
+                <div class=\"text-center mb-4\">
+                    {% if user.photo %}
+                        <img src=\"{{ user.photo }}\" alt=\"Photo actuelle\" class=\"current-photo\" id=\"photo-preview\">
+                    {% else %}
+                        <div class=\"current-photo d-flex align-items-center justify-content-center bg-light mx-auto\">
+                            <i class=\"bi bi-person-fill text-secondary\" style=\"font-size: 80px;\"></i>
                         </div>
-                    </div>
+                    {% endif %}
                     
-                    <div class=\"card-body p-4 p-md-5\">
-                        {{ form_start(form, {'attr': {'class': 'needs-validation', 'novalidate': 'novalidate'}}) }}
-                        
-                        <div class=\"row g-4\">
-                            <!-- Photo Upload Section -->
-                            <div class=\"col-12 text-center mb-4\">
-                                <div class=\"profile-photo-preview mb-3\">
-                                    {% if user.photo %}
-                                        <img src=\"{{ user.photo }}\" alt=\"Preview\" id=\"photoPreview\" class=\"rounded-circle shadow-sm\" style=\"width: 150px; height: 150px; object-fit: cover; border: 4px solid white;\">
-                                    {% else %}
-                                        <div id=\"photoPlaceholder\" class=\"rounded-circle shadow-sm bg-light d-flex align-items-center justify-content-center mx-auto\" style=\"width: 150px; height: 150px; border: 4px solid white;\">
-                                            <i class=\"bi bi-person text-secondary\" style=\"font-size: 80px;\"></i>
-                                        </div>
-                                        <img id=\"photoPreview\" class=\"rounded-circle shadow-sm d-none\" style=\"width: 150px; height: 150px; object-fit: cover; border: 4px solid white;\">
-                                    {% endif %}
-                                </div>
-                                <div class=\"upload-btn-wrapper\">
-                                    {{ form_widget(form.photo, {'attr': {'class': 'd-none', 'onchange': 'previewImage(this)'}}) }}
-                                    <button type=\"button\" class=\"btn btn-sm btn-primary px-4\" onclick=\"document.getElementById('{{ form.photo.vars.id }}').click()\">
-                                        <i class=\"bi bi-camera me-2\"></i> Changer la photo
-                                    </button>
-                                </div>
-                                {{ form_errors(form.photo) }}
-                            </div>
-
-                            <hr class=\"mt-2 mb-4\">
-
-                            <!-- Basic Info -->
-                            <div class=\"col-md-6 mb-3\">
-                                {{ form_label(form.prenom, null, {'label_attr': {'class': 'form-label fw-semibold'}}) }}
-                                {{ form_widget(form.prenom, {'attr': {'class': 'form-control border-0 bg-light-subtle rounded-3 py-2'}}) }}
-                                {{ form_errors(form.prenom) }}
-                            </div>
-                            <div class=\"col-md-6 mb-3\">
-                                {{ form_label(form.nom, null, {'label_attr': {'class': 'form-label fw-semibold'}}) }}
-                                {{ form_widget(form.nom, {'attr': {'class': 'form-control border-0 bg-light-subtle rounded-3 py-2'}}) }}
-                                {{ form_errors(form.nom) }}
-                            </div>
-
-                            <div class=\"col-md-6 mb-3\">
-                                {{ form_label(form.numero, null, {'label_attr': {'class': 'form-label fw-semibold'}}) }}
-                                {{ form_widget(form.numero, {'attr': {'class': 'form-control border-0 bg-light-subtle rounded-3 py-2'}}) }}
-                                {{ form_errors(form.numero) }}
-                            </div>
-                            <div class=\"col-md-6 mb-3\">
-                                {{ form_label(form.adresse, null, {'label_attr': {'class': 'form-label fw-semibold'}}) }}
-                                {{ form_widget(form.adresse, {'attr': {'class': 'form-control border-0 bg-light-subtle rounded-3 py-2'}}) }}
-                                {{ form_errors(form.adresse) }}
-                            </div>
-
-                            <!-- Doctor Specific Fields -->
-                            {% if form.specialite is defined %}
-                                <div class=\"col-md-6 mb-3\">
-                                    {{ form_label(form.specialite, null, {'label_attr': {'class': 'form-label fw-semibold'}}) }}
-                                    {{ form_widget(form.specialite, {'attr': {'class': 'form-control border-0 bg-light-subtle rounded-3 py-2'}}) }}
-                                    {{ form_errors(form.specialite) }}
-                                </div>
-                                <div class=\"col-md-6 mb-3\">
-                                    {{ form_label(form.cabinet, null, {'label_attr': {'class': 'form-label fw-semibold'}}) }}
-                                    {{ form_widget(form.cabinet, {'attr': {'class': 'form-control border-0 bg-light-subtle rounded-3 py-2'}}) }}
-                                    {{ form_errors(form.cabinet) }}
-                                </div>
-                                <div class=\"col-md-6 mb-3\">
-                                    {{ form_label(form.ville, null, {'label_attr': {'class': 'form-label fw-semibold'}}) }}
-                                    {{ form_widget(form.ville, {'attr': {'class': 'form-control border-0 bg-light-subtle rounded-3 py-2'}}) }}
-                                    {{ form_errors(form.ville) }}
-                                </div>
-                                <div class=\"col-md-6 mb-3\">
-                                    {{ form_label(form.delegation, null, {'label_attr': {'class': 'form-label fw-semibold'}}) }}
-                                    {{ form_widget(form.delegation, {'attr': {'class': 'form-control border-0 bg-light-subtle rounded-3 py-2'}}) }}
-                                    {{ form_errors(form.delegation) }}
-                                </div>
-                                <div class=\"col-md-12 mb-3\">
-                                    {{ form_label(form.prixConsultation, null, {'label_attr': {'class': 'form-label fw-semibold'}}) }}
-                                    {{ form_widget(form.prixConsultation, {'attr': {'class': 'form-control border-0 bg-light-subtle rounded-3 py-2'}}) }}
-                                    {{ form_errors(form.prixConsultation) }}
-                                </div>
-                                <div class=\"col-12 mb-3\">
-                                    {{ form_label(form.bio, null, {'label_attr': {'class': 'form-label fw-semibold'}}) }}
-                                    {{ form_widget(form.bio, {'attr': {'class': 'form-control border-0 bg-light-subtle rounded-3', 'rows': 5}}) }}
-                                    {{ form_errors(form.bio) }}
-                                </div>
-                            {% endif %}
-
-                            <div class=\"col-12 mt-4 pt-4 border-top\">
-                                <button type=\"submit\" class=\"btn btn-primary px-5 py-2 rounded-3 fw-bold\">
-                                    Enregistrer les modifications
-                                </button>
-                            </div>
-                        </div>
-                        
-                        {{ form_end(form) }}
+                    <div class=\"mb-3\">
+                        {{ form_label(form.photo, 'Changer ma photo de profil', {'label_attr': {'class': 'form-label'}}) }}
+                        {{ form_widget(form.photo, {'attr': {'class': 'form-control', 'accept': 'image/*', 'id': 'photo-input'}}) }}
+                        <div class=\"form-text\">JPG, PNG ou WebP. Max 2Mo.</div>
                     </div>
                 </div>
-            </div>
+
+                <div class=\"row g-3\">
+                    <div class=\"col-md-12\">
+                        {{ form_row(form.username) }}
+                    </div>
+                    <div class=\"col-md-6\">
+                        {{ form_row(form.prenom) }}
+                    </div>
+                    <div class=\"col-md-6\">
+                        {{ form_row(form.nom) }}
+                    </div>
+                    <div class=\"col-md-6\">
+                        {{ form_row(form.numero) }}
+                    </div>
+                    
+                    {% if form.specialite is defined %}
+                        <div class=\"col-md-6\">
+                            {{ form_row(form.specialite) }}
+                        </div>
+                        <div class=\"col-md-6\">
+                            {{ form_row(form.ville) }}
+                        </div>
+                        <div class=\"col-md-6\">
+                            {{ form_row(form.cabinet) }}
+                        </div>
+                        <div class=\"col-md-6\">
+                            {{ form_row(form.prixConsultation) }}
+                        </div>
+                        <div class=\"col-md-12\">
+                            {{ form_row(form.bio) }}
+                        </div>
+                    {% endif %}
+
+                    <div class=\"col-md-12\">
+                        {{ form_row(form.adresse) }}
+                    </div>
+                </div>
+
+                <div class=\"mt-4 border-top pt-4\">
+                    <h5 class=\"mb-3\"><i class=\"bi bi-shield-lock\"></i> Paramètres de confidentialité</h5>
+                    <div class=\"row g-3\">
+                        <div class=\"col-md-4\">
+                            {{ form_row(form.emailPrivacy) }}
+                        </div>
+                        <div class=\"col-md-4\">
+                            {{ form_row(form.phonePrivacy) }}
+                        </div>
+                        <div class=\"col-md-4\">
+                            {{ form_row(form.addressPrivacy) }}
+                        </div>
+                    </div>
+                </div>
+
+                <input type=\"hidden\" name=\"cropped_image\" id=\"cropped-image-input\">
+
+                <div class=\"mt-4 d-flex justify-content-between\">
+                    <a href=\"{{ path('app_profile') }}\" class=\"btn btn-outline-secondary\">
+                        <i class=\"bi bi-arrow-left\"></i> Retour
+                    </a>
+                    <button type=\"submit\" class=\"btn btn-success btn-lg\">
+                        <i class=\"bi bi-check-lg\"></i> Enregistrer les modifications
+                    </button>
+                </div>
+            {{ form_end(form, {'render_rest': false}) }}
         </div>
     </div>
 </main>
 
-    <input type=\"hidden\" name=\"cropped_image\" id=\"croppedImageData\">
-
-    <!-- Cropping Modal -->
-    <div class=\"modal fade\" id=\"cropModal\" tabindex=\"-1\" aria-labelledby=\"cropModalLabel\" aria-hidden=\"true\" data-bs-backdrop=\"static\">
-        <div class=\"modal-dialog modal-lg modal-dialog-centered\">
-            <div class=\"modal-content border-0 shadow-lg rounded-4\">
-                <div class=\"modal-header border-bottom py-3\">
-                    <h5 class=\"modal-title fw-bold\" id=\"cropModalLabel\">Recadrer la photo</h5>
-                    <button type=\"button\" class=\"btn-close\" data-bs-dismiss=\"modal\" aria-label=\"Close\"></button>
+<!-- Modal pour le recadrage -->
+<div class=\"modal fade\" id=\"cropModal\" tabindex=\"-1\" aria-labelledby=\"cropModalLabel\" aria-hidden=\"true\">
+    <div class=\"modal-dialog modal-lg modal-dialog-centered\">
+        <div class=\"modal-content\">
+            <div class=\"modal-header\">
+                <h5 class=\"modal-title\" id=\"cropModalLabel\">Recadrer la photo</h5>
+                <button type=\"button\" class=\"btn-close\" data-bs-dismiss=\"modal\" aria-label=\"Close\"></button>
+            </div>
+            <div class=\"modal-body\">
+                <div id=\"crop-container\">
+                    <img id=\"image-to-crop\" style=\"max-width: 100%;\">
                 </div>
-                <div class=\"modal-body p-0\">
-                    <div class=\"img-container\" style=\"max-height: 500px; background: #000;\">
-                        <img id=\"cropperImage\" src=\"\" style=\"max-width: 100%; display: block;\">
-                    </div>
+                <div class=\"text-center\">
+                    <h6>Aperçu</h6>
+                    <div class=\"preview-container\"></div>
                 </div>
-                <div class=\"modal-footer border-top py-3\">
-                    <button type=\"button\" class=\"btn btn-secondary px-4\" data-bs-dismiss=\"modal\">Annuler</button>
-                    <button type=\"button\" class=\"btn btn-primary px-4\" id=\"cropButton\">
-                        <i class=\"bi bi-crop me-2\"></i> Recadrer et Enregistrer
-                    </button>
-                </div>
+            </div>
+            <div class=\"modal-footer\">
+                <button type=\"button\" class=\"btn btn-secondary\" data-bs-dismiss=\"modal\">Annuler</button>
+                <button type=\"button\" class=\"btn btn-success\" id=\"crop-button\">Appliquer le recadrage</button>
             </div>
         </div>
     </div>
-
-    <script>
-        let cropper;
-        const cropModalEl = document.getElementById('cropModal');
-        const cropModal = new bootstrap.Modal(cropModalEl);
-        const cropperImage = document.getElementById('cropperImage');
-        const cropButton = document.getElementById('cropButton');
-        const photoPreview = document.getElementById('photoPreview');
-        const photoPlaceholder = document.getElementById('photoPlaceholder');
-        const croppedImageData = document.getElementById('croppedImageData');
-
-        function previewImage(input) {
-            if (input.files && input.files[0]) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    cropperImage.src = e.target.result;
-                    cropModal.show();
-                }
-                reader.readAsDataURL(input.files[0]);
-            }
-        }
-
-        cropModalEl.addEventListener('shown.bs.modal', function () {
-            cropper = new Cropper(cropperImage, {
-                aspectRatio: 1,
-                viewMode: 1,
-                guides: true,
-                center: true,
-                highlight: false,
-                cropBoxMovable: true,
-                cropBoxResizable: true,
-                toggleDragModeOnDblclick: false,
-            });
-        });
-
-        cropModalEl.addEventListener('hidden.bs.modal', function () {
-            if (cropper) {
-                cropper.destroy();
-                cropper = null;
-            }
-        });
-
-        cropButton.addEventListener('click', function() {
-            if (cropper) {
-                const canvas = cropper.getCroppedCanvas({
-                    width: 500,
-                    height: 500,
-                });
-                
-                const dataURL = canvas.toDataURL('image/jpeg', 0.9);
-                
-                // Update preview
-                photoPreview.src = dataURL;
-                photoPreview.classList.remove('d-none');
-                if (photoPlaceholder) {
-                    photoPlaceholder.classList.add('d-none');
-                }
-                
-                // Store data
-                croppedImageData.value = dataURL;
-                
-                cropModal.hide();
-            }
-        });
-    </script>
-
-<style>
-    .bg-light-subtle {
-        background-color: #f1f5f9;
-    }
-    .form-control:focus {
-        background-color: #fff;
-        box-shadow: 0 0 0 0.25rem rgba(14, 165, 233, 0.1);
-        border-color: #0ea5e9;
-    }
-    .btn-primary {
-        background-color: #0ea5e9;
-        border-color: #0ea5e9;
-    }
-    .btn-primary:hover {
-        background-color: #0284c7;
-        border-color: #0284c7;
-    }
-    .btn-outline-primary {
-        color: #0ea5e9;
-        border-color: #0ea5e9;
-    }
-    .btn-outline-primary:hover {
-        background-color: #0ea5e9;
-        border-color: #0ea5e9;
-    }
-</style>
+</div>
 {% endblock %}
-", "frontend/edit_profile.html.twig", "C:\\Users\\LENOVO\\Documents\\PI\\Medicare\\templates\\frontend\\edit_profile.html.twig");
+
+{% block javascripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const photoInput = document.getElementById('photo-input');
+    const imageToCrop = document.getElementById('image-to-crop');
+    const cropModal = new bootstrap.Modal(document.getElementById('cropModal'));
+    const cropButton = document.getElementById('crop-button');
+    const croppedImageInput = document.getElementById('cropped-image-input');
+    const photoPreview = document.getElementById('photo-preview') || document.querySelector('.current-photo');
+    let cropper;
+
+    photoInput.addEventListener('change', function(e) {
+        const files = e.target.files;
+        if (files && files.length > 0) {
+            const file = files[0];
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                imageToCrop.src = e.target.result;
+                cropModal.show();
+            };
+            reader.readAsDataURL(file);
+        }
+    });
+
+    document.getElementById('cropModal').addEventListener('shown.bs.modal', function() {
+        cropper = new Cropper(imageToCrop, {
+            aspectRatio: 1,
+            viewMode: 1,
+            preview: '.preview-container',
+        });
+    });
+
+    document.getElementById('cropModal').addEventListener('hidden.bs.modal', function() {
+        if (cropper) {
+            cropper.destroy();
+            cropper = null;
+        }
+    });
+
+    cropButton.addEventListener('click', function() {
+        const canvas = cropper.getCroppedCanvas({
+            width: 400,
+            height: 400,
+        });
+        
+        const base64Image = canvas.toDataURL('image/jpeg');
+        croppedImageInput.value = base64Image;
+        
+        if (photoPreview.tagName === 'IMG') {
+            photoPreview.src = base64Image;
+        } else {
+            // Replace placeholder with img
+            const img = document.createElement('img');
+            img.src = base64Image;
+            img.className = 'current-photo';
+            img.id = 'photo-preview';
+            photoPreview.parentNode.replaceChild(img, photoPreview);
+        }
+        
+        cropModal.hide();
+    });
+});
+</script>
+{% endblock %}
+", "frontend/edit_profile.html.twig", "C:\\Users\\LENOVO\\Documents\\gestion user\\Medicare\\templates\\frontend\\edit_profile.html.twig");
     }
 }

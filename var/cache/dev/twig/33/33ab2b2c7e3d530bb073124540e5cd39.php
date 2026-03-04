@@ -269,6 +269,6 @@ class ResetPasswordControllerTest extends WebTestCase
         self::assertTrue(\$passwordHasher->isPasswordValid(\$user, 'newStrongPassword'));
     }
 }
-", "@Maker/resetPassword/Test.ResetPasswordController.tpl.php", "C:\\Users\\LENOVO\\Documents\\PI\\Medicare\\vendor\\symfony\\maker-bundle\\templates\\resetPassword\\Test.ResetPasswordController.tpl.php");
+", "@Maker/resetPassword/Test.ResetPasswordController.tpl.php", "C:\\Users\\LENOVO\\Documents\\gestion user\\Medicare\\vendor\\symfony\\maker-bundle\\templates\\resetPassword\\Test.ResetPasswordController.tpl.php");
     }
 }

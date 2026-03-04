@@ -101,6 +101,6 @@ final class <?= \$class_name; ?> implements MiddlewareInterface
         return \$stack->next()->handle(\$envelope, \$stack);
     }
 }
-", "@Maker/middleware/Middleware.tpl.php", "C:\\Users\\LENOVO\\Documents\\PI\\Medicare\\vendor\\symfony\\maker-bundle\\templates\\middleware\\Middleware.tpl.php");
+", "@Maker/middleware/Middleware.tpl.php", "C:\\Users\\LENOVO\\Documents\\gestion user\\Medicare\\vendor\\symfony\\maker-bundle\\templates\\middleware\\Middleware.tpl.php");
     }
 }

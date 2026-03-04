@@ -175,6 +175,6 @@ class <?= \$class_name; ?><?= \"\\n\" ?>
         \$this->entityManager->flush();
     }
 }
-", "@Maker/verifyEmail/EmailVerifier.tpl.php", "C:\\Users\\LENOVO\\Documents\\PI\\Medicare\\vendor\\symfony\\maker-bundle\\templates\\verifyEmail\\EmailVerifier.tpl.php");
+", "@Maker/verifyEmail/EmailVerifier.tpl.php", "C:\\Users\\LENOVO\\Documents\\gestion user\\Medicare\\vendor\\symfony\\maker-bundle\\templates\\verifyEmail\\EmailVerifier.tpl.php");
     }
 }

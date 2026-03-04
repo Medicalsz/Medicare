@@ -105,6 +105,6 @@ class <?= \$class_name ?> extends ApiTestCase
         \$this->assertJsonContains(['@id' => '/']);
     }
 }
-", "@Maker/test/ApiTestCase.tpl.php", "C:\\Users\\LENOVO\\Documents\\PI\\Medicare\\vendor\\symfony\\maker-bundle\\templates\\test\\ApiTestCase.tpl.php");
+", "@Maker/test/ApiTestCase.tpl.php", "C:\\Users\\LENOVO\\Documents\\gestion user\\Medicare\\vendor\\symfony\\maker-bundle\\templates\\test\\ApiTestCase.tpl.php");
     }
 }

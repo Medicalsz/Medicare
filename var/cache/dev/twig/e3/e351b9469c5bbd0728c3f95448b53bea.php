@@ -113,6 +113,6 @@ class <?= \$class_name ?> implements EventSubscriberInterface
         ];
     }
 }
-", "@Maker/event/Subscriber.tpl.php", "C:\\Users\\LENOVO\\Documents\\PI\\Medicare\\vendor\\symfony\\maker-bundle\\templates\\event\\Subscriber.tpl.php");
+", "@Maker/event/Subscriber.tpl.php", "C:\\Users\\LENOVO\\Documents\\gestion user\\Medicare\\vendor\\symfony\\maker-bundle\\templates\\event\\Subscriber.tpl.php");
     }
 }

@@ -155,6 +155,6 @@ class <?= \$class_name ?> implements NormalizerInterface
 <?php endif ?>
     }
 }
-", "@Maker/serializer/Normalizer.tpl.php", "C:\\Users\\LENOVO\\Documents\\PI\\Medicare\\vendor\\symfony\\maker-bundle\\templates\\serializer\\Normalizer.tpl.php");
+", "@Maker/serializer/Normalizer.tpl.php", "C:\\Users\\LENOVO\\Documents\\gestion user\\Medicare\\vendor\\symfony\\maker-bundle\\templates\\serializer\\Normalizer.tpl.php");
     }
 }

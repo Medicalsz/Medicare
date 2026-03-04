@@ -454,6 +454,6 @@ class __TwigTemplate_d489008aca72315c363d2f9e8307e989 extends Template
     {% block javascripts %}{% endblock %}
 </body>
 </html>
-", "base_admin.html.twig", "C:\\Users\\LENOVO\\Documents\\PI\\Medicare\\templates\\base_admin.html.twig");
+", "base_admin.html.twig", "C:\\Users\\LENOVO\\Documents\\gestion user\\Medicare\\templates\\base_admin.html.twig");
     }
 }

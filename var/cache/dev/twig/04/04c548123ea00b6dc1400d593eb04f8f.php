@@ -263,10 +263,14 @@ class __TwigTemplate_dc7710655c2b3be29a66470a4208d48f extends Template
                     </form>
 
                     <div class=\"login-footer\">
+                        <p>Don't have an account? <a href=\"";
+        // line 205
+        yield $this->extensions['Symfony\Bridge\Twig\Extension\RoutingExtension']->getPath("app_register");
+        yield "\">Sign Up</a></p>
                         <p class=\"copyright\">&copy; 2025 Medicare. All rights reserved.</p>
                         <p class=\"developed-by\">Developed by <a href=\"#\">Nomade Team</a></p>
                         <p><a href=\"";
-        // line 207
+        // line 208
         yield $this->extensions['Symfony\Bridge\Twig\Extension\RoutingExtension']->getPath("app_home");
         yield "\">Back to Home</a></p>
                     </div>
@@ -307,7 +311,7 @@ class __TwigTemplate_dc7710655c2b3be29a66470a4208d48f extends Template
      */
     public function getDebugInfo(): array
     {
-        return array (  270 => 207,  259 => 199,  255 => 198,  240 => 186,  232 => 180,  225 => 175,  223 => 174,  48 => 1,);
+        return array (  274 => 208,  268 => 205,  259 => 199,  255 => 198,  240 => 186,  232 => 180,  225 => 175,  223 => 174,  48 => 1,);
     }
 
     public function getSourceContext(): Source
@@ -516,6 +520,7 @@ class __TwigTemplate_dc7710655c2b3be29a66470a4208d48f extends Template
                     </form>
 
                     <div class=\"login-footer\">
+                        <p>Don't have an account? <a href=\"{{ path('app_register') }}\">Sign Up</a></p>
                         <p class=\"copyright\">&copy; 2025 Medicare. All rights reserved.</p>
                         <p class=\"developed-by\">Developed by <a href=\"#\">Nomade Team</a></p>
                         <p><a href=\"{{ path('app_home') }}\">Back to Home</a></p>
@@ -526,6 +531,6 @@ class __TwigTemplate_dc7710655c2b3be29a66470a4208d48f extends Template
     </main>
 </body>
 </html>
-", "security/login.html.twig", "C:\\Users\\LENOVO\\Documents\\PI\\Medicare\\templates\\security\\login.html.twig");
+", "security/login.html.twig", "C:\\Users\\LENOVO\\Documents\\gestion user\\Medicare\\templates\\security\\login.html.twig");
     }
 }

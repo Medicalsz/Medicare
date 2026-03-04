@@ -169,6 +169,6 @@ class <?= \$class_name; ?> extends AbstractLoginFormAuthenticator
         return \$this->urlGenerator->generate(self::LOGIN_ROUTE);
     }
 }
-", "@Maker/authenticator/LoginFormAuthenticator.tpl.php", "C:\\Users\\LENOVO\\Documents\\PI\\Medicare\\vendor\\symfony\\maker-bundle\\templates\\authenticator\\LoginFormAuthenticator.tpl.php");
+", "@Maker/authenticator/LoginFormAuthenticator.tpl.php", "C:\\Users\\LENOVO\\Documents\\gestion user\\Medicare\\vendor\\symfony\\maker-bundle\\templates\\authenticator\\LoginFormAuthenticator.tpl.php");
     }
 }

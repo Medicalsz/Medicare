@@ -14,7 +14,7 @@ class OidcUserInfoConfig
     private $claim;
     private $client;
     private $_usedProperties = [];
-
+    
     /**
      * Base URI of the userinfo endpoint on the OIDC server.
      * @default null
@@ -25,10 +25,10 @@ class OidcUserInfoConfig
     {
         $this->_usedProperties['baseUri'] = true;
         $this->baseUri = $value;
-
+    
         return $this;
     }
-
+    
     /**
      * Claim which contains the user identifier (e.g. sub, email, etc.).
      * @default 'sub'
@@ -39,10 +39,10 @@ class OidcUserInfoConfig
     {
         $this->_usedProperties['claim'] = true;
         $this->claim = $value;
-
+    
         return $this;
     }
-
+    
     /**
      * HttpClient service id to use to call the OIDC server.
      * @default null
@@ -53,10 +53,10 @@ class OidcUserInfoConfig
     {
         $this->_usedProperties['client'] = true;
         $this->client = $value;
-
+    
         return $this;
     }
-
+    
     public function __construct(array $config = [])
     {
         if (array_key_exists('base_uri', $config)) {
@@ -64,24 +64,24 @@ class OidcUserInfoConfig
             $this->baseUri = $config['base_uri'];
             unset($config['base_uri']);
         }
-
+    
         if (array_key_exists('claim', $config)) {
             $this->_usedProperties['claim'] = true;
             $this->claim = $config['claim'];
             unset($config['claim']);
         }
-
+    
         if (array_key_exists('client', $config)) {
             $this->_usedProperties['client'] = true;
             $this->client = $config['client'];
             unset($config['client']);
         }
-
+    
         if ($config) {
             throw new InvalidConfigurationException(sprintf('The following keys are not supported by "%s": ', __CLASS__).implode(', ', array_keys($config)));
         }
     }
-
+    
     public function toArray(): array
     {
         $output = [];
@@ -94,7 +94,7 @@ class OidcUserInfoConfig
         if (isset($this->_usedProperties['client'])) {
             $output['client'] = $this->client;
         }
-
+    
         return $output;
     }
 

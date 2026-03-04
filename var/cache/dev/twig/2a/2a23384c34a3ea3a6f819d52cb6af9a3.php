@@ -133,6 +133,6 @@ final class <?= \$class_name; ?> implements ScheduleProviderInterface
         ;
     }
 }
-", "@Maker/scheduler/Schedule.tpl.php", "C:\\Users\\LENOVO\\Documents\\PI\\Medicare\\vendor\\symfony\\maker-bundle\\templates\\scheduler\\Schedule.tpl.php");
+", "@Maker/scheduler/Schedule.tpl.php", "C:\\Users\\LENOVO\\Documents\\gestion user\\Medicare\\vendor\\symfony\\maker-bundle\\templates\\scheduler\\Schedule.tpl.php");
     }
 }

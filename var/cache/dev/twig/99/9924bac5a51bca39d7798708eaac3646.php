@@ -241,6 +241,6 @@ class __TwigTemplate_ffb8a8cbefd25fc30c563a9855fc7d78 extends Template
     </section>
 </main>
 {% endblock %}
-", "frontend/privacy.html.twig", "C:\\Users\\LENOVO\\Documents\\PI\\Medicare\\templates\\frontend\\privacy.html.twig");
+", "frontend/privacy.html.twig", "C:\\Users\\LENOVO\\Documents\\gestion user\\Medicare\\templates\\frontend\\privacy.html.twig");
     }
 }

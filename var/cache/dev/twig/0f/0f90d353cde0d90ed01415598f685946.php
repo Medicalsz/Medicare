@@ -135,6 +135,6 @@ class <?= \$class_name ?> extends <?= \$panther_is_available ? 'PantherTestCase'
 <?php endif ?>
     }
 }
-", "@Maker/test/Functional.tpl.php", "C:\\Users\\LENOVO\\Documents\\PI\\Medicare\\vendor\\symfony\\maker-bundle\\templates\\test\\Functional.tpl.php");
+", "@Maker/test/Functional.tpl.php", "C:\\Users\\LENOVO\\Documents\\gestion user\\Medicare\\vendor\\symfony\\maker-bundle\\templates\\test\\Functional.tpl.php");
     }
 }

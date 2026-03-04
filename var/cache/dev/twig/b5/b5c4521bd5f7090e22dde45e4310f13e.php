@@ -600,6 +600,6 @@ class __TwigTemplate_feec207a396ffde17a2bb7e6b138180a extends Template
     </div>
 </section>
 {% endblock %}
-", "home/index.html.twig", "C:\\Users\\LENOVO\\Documents\\PI\\Medicare\\templates\\home\\index.html.twig");
+", "home/index.html.twig", "C:\\Users\\LENOVO\\Documents\\gestion user\\Medicare\\templates\\home\\index.html.twig");
     }
 }

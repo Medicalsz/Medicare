@@ -101,6 +101,6 @@ class <?= \$class_name ?> extends TestCase
         \$this->assertTrue(true);
     }
 }
-", "@Maker/test/Unit.tpl.php", "C:\\Users\\LENOVO\\Documents\\PI\\Medicare\\vendor\\symfony\\maker-bundle\\templates\\test\\Unit.tpl.php");
+", "@Maker/test/Unit.tpl.php", "C:\\Users\\LENOVO\\Documents\\gestion user\\Medicare\\vendor\\symfony\\maker-bundle\\templates\\test\\Unit.tpl.php");
     }
 }

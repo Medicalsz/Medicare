@@ -97,6 +97,6 @@ final class <?= \$class_name.\"\\n\" ?>
 {
     use DefaultActionTrait;
 }
-", "@Maker/twig/LiveComponent.tpl.php", "C:\\Users\\LENOVO\\Documents\\PI\\Medicare\\vendor\\symfony\\maker-bundle\\templates\\twig\\LiveComponent.tpl.php");
+", "@Maker/twig/LiveComponent.tpl.php", "C:\\Users\\LENOVO\\Documents\\gestion user\\Medicare\\vendor\\symfony\\maker-bundle\\templates\\twig\\LiveComponent.tpl.php");
     }
 }

@@ -1,0 +1,223 @@
+{% extends 'base_frontend.html.twig' %}
+
+{% block title %}Modifier mon profil - Medicare{% endblock %}
+
+{% block stylesheets %}
+<style>
+    .edit-profile-main {
+        padding: 40px 0;
+        background: #f8f9fa;
+        min-height: calc(100vh - 200px);
+    }
+    .edit-card {
+        background: white;
+        border-radius: 16px;
+        box-shadow: 0 5px 30px rgba(0, 0, 0, 0.05);
+        padding: 30px;
+        max-width: 800px;
+        margin: 0 auto;
+    }
+    .current-photo {
+        width: 150px;
+        height: 150px;
+        border-radius: 50%;
+        object-fit: cover;
+        margin-bottom: 20px;
+        border: 4px solid #10b981;
+    }
+    #crop-container {
+        max-width: 100%;
+        max-height: 400px;
+        margin-bottom: 20px;
+    }
+    .preview-container {
+        width: 150px;
+        height: 150px;
+        overflow: hidden;
+        border-radius: 50%;
+        border: 2px solid #10b981;
+        margin: 10px auto;
+    }
+</style>
+{% endblock %}
+
+{% block body %}
+<main class="edit-profile-main">
+    <div class="container">
+        <div class="edit-card">
+            <h2 class="mb-4"><i class="bi bi-person-gear text-success"></i> Modifier mon profil</h2>
+            
+            {{ form_start(form, {'attr': {'id': 'profile-form'}}) }}
+                <div class="text-center mb-4">
+                    {% if user.photo %}
+                        <img src="{{ user.photo }}" alt="Photo actuelle" class="current-photo" id="photo-preview">
+                    {% else %}
+                        <div class="current-photo d-flex align-items-center justify-content-center bg-light mx-auto">
+                            <i class="bi bi-person-fill text-secondary" style="font-size: 80px;"></i>
+                        </div>
+                    {% endif %}
+                    
+                    <div class="mb-3">
+                        {{ form_label(form.photo, 'Changer ma photo de profil', {'label_attr': {'class': 'form-label'}}) }}
+                        {{ form_widget(form.photo, {'attr': {'class': 'form-control', 'accept': 'image/*', 'id': 'photo-input'}}) }}
+                        <div class="form-text">JPG, PNG ou WebP. Max 2Mo.</div>
+                    </div>
+                </div>
+
+                <div class="row g-3">
+                    <div class="col-md-12">
+                        {{ form_row(form.username) }}
+                    </div>
+                    <div class="col-md-6">
+                        {{ form_row(form.prenom) }}
+                    </div>
+                    <div class="col-md-6">
+                        {{ form_row(form.nom) }}
+                    </div>
+                    <div class="col-md-6">
+                        {{ form_row(form.numero) }}
+                    </div>
+                    
+                    {% if form.specialite is defined %}
+                        <div class="col-md-6">
+                            {{ form_row(form.specialite) }}
+                        </div>
+                        <div class="col-md-6">
+                            {{ form_row(form.ville) }}
+                        </div>
+                        <div class="col-md-6">
+                            {{ form_row(form.cabinet) }}
+                        </div>
+                        <div class="col-md-6">
+                            {{ form_row(form.prixConsultation) }}
+                        </div>
+                        <div class="col-md-12">
+                            {{ form_row(form.bio) }}
+                        </div>
+                    {% endif %}
+
+                    <div class="col-md-12">
+                        {{ form_row(form.adresse) }}
+                    </div>
+                </div>
+
+                <div class="mt-4 border-top pt-4">
+                    <h5 class="mb-3"><i class="bi bi-shield-lock"></i> Paramètres de confidentialité</h5>
+                    <div class="row g-3">
+                        <div class="col-md-4">
+                            {{ form_row(form.emailPrivacy) }}
+                        </div>
+                        <div class="col-md-4">
+                            {{ form_row(form.phonePrivacy) }}
+                        </div>
+                        <div class="col-md-4">
+                            {{ form_row(form.addressPrivacy) }}
+                        </div>
+                    </div>
+                </div>
+
+                <input type="hidden" name="cropped_image" id="cropped-image-input">
+
+                <div class="mt-4 d-flex justify-content-between">
+                    <a href="{{ path('app_profile') }}" class="btn btn-outline-secondary">
+                        <i class="bi bi-arrow-left"></i> Retour
+                    </a>
+                    <button type="submit" class="btn btn-success btn-lg">
+                        <i class="bi bi-check-lg"></i> Enregistrer les modifications
+                    </button>
+                </div>
+            {{ form_end(form, {'render_rest': false}) }}
+        </div>
+    </div>
+</main>
+
+<!-- Modal pour le recadrage -->
+<div class="modal fade" id="cropModal" tabindex="-1" aria-labelledby="cropModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="cropModalLabel">Recadrer la photo</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div id="crop-container">
+                    <img id="image-to-crop" style="max-width: 100%;">
+                </div>
+                <div class="text-center">
+                    <h6>Aperçu</h6>
+                    <div class="preview-container"></div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                <button type="button" class="btn btn-success" id="crop-button">Appliquer le recadrage</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block javascripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const photoInput = document.getElementById('photo-input');
+    const imageToCrop = document.getElementById('image-to-crop');
+    const cropModal = new bootstrap.Modal(document.getElementById('cropModal'));
+    const cropButton = document.getElementById('crop-button');
+    const croppedImageInput = document.getElementById('cropped-image-input');
+    const photoPreview = document.getElementById('photo-preview') || document.querySelector('.current-photo');
+    let cropper;
+
+    photoInput.addEventListener('change', function(e) {
+        const files = e.target.files;
+        if (files && files.length > 0) {
+            const file = files[0];
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                imageToCrop.src = e.target.result;
+                cropModal.show();
+            };
+            reader.readAsDataURL(file);
+        }
+    });
+
+    document.getElementById('cropModal').addEventListener('shown.bs.modal', function() {
+        cropper = new Cropper(imageToCrop, {
+            aspectRatio: 1,
+            viewMode: 1,
+            preview: '.preview-container',
+        });
+    });
+
+    document.getElementById('cropModal').addEventListener('hidden.bs.modal', function() {
+        if (cropper) {
+            cropper.destroy();
+            cropper = null;
+        }
+    });
+
+    cropButton.addEventListener('click', function() {
+        const canvas = cropper.getCroppedCanvas({
+            width: 400,
+            height: 400,
+        });
+        
+        const base64Image = canvas.toDataURL('image/jpeg');
+        croppedImageInput.value = base64Image;
+        
+        if (photoPreview.tagName === 'IMG') {
+            photoPreview.src = base64Image;
+        } else {
+            // Replace placeholder with img
+            const img = document.createElement('img');
+            img.src = base64Image;
+            img.className = 'current-photo';
+            img.id = 'photo-preview';
+            photoPreview.parentNode.replaceChild(img, photoPreview);
+        }
+        
+        cropModal.hide();
+    });
+});
+</script>
+{% endblock %}

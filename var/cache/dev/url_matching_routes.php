@@ -19,7 +19,8 @@ return [
         '/admin/logout' => [[['_route' => 'app_admin_logout', '_controller' => 'App\\Controller\\AdminSecurityController::logout'], null, null, null, false, false, null]],
         '/admin/medecins' => [[['_route' => 'admin_medecins_index', '_controller' => 'App\\Controller\\Admin\\MedecinController::index'], null, null, null, true, false, null]],
         '/dashboard' => [[['_route' => 'app_dashboard', '_controller' => 'App\\Controller\\DashboardController::index'], null, null, null, false, false, null]],
-        '/settings' => [[['_route' => 'app_settings', '_controller' => 'App\\Controller\\DashboardController::settings'], null, null, null, false, false, null]],
+        '/settings' => [[['_route' => 'app_settings', '_controller' => 'App\\Controller\\DashboardController::settings'], null, ['GET' => 0, 'POST' => 1], null, false, false, null]],
+        '/settings/delete-account' => [[['_route' => 'app_delete_account', '_controller' => 'App\\Controller\\DashboardController::deleteAccount'], null, ['POST' => 0], null, false, false, null]],
         '/appointments' => [[['_route' => 'app_appointments', '_controller' => 'App\\Controller\\DashboardController::appointments'], null, null, null, false, false, null]],
         '/cabinets' => [[['_route' => 'app_cabinets', '_controller' => 'App\\Controller\\DashboardController::cabinets'], null, null, null, false, false, null]],
         '/consultations' => [[['_route' => 'app_consultations', '_controller' => 'App\\Controller\\DashboardController::consultations'], null, null, null, false, false, null]],
@@ -38,7 +39,7 @@ return [
         '/privacy' => [[['_route' => 'app_privacy', '_controller' => 'App\\Controller\\FrontendController::privacy'], null, null, null, false, false, null]],
         '/' => [[['_route' => 'app_home', '_controller' => 'App\\Controller\\HomeController::index'], null, null, null, false, false, null]],
         '/profile' => [[['_route' => 'app_profile', '_controller' => 'App\\Controller\\ProfileController::index'], null, null, null, false, false, null]],
-        '/medecin/edit-profile' => [[['_route' => 'app_medecin_edit_profile', '_controller' => 'App\\Controller\\ProfileController::editProfile'], null, null, null, false, false, null]],
+        '/profile/edit' => [[['_route' => 'app_profile_edit', '_controller' => 'App\\Controller\\ProfileController::edit'], null, null, null, false, false, null]],
         '/register' => [[['_route' => 'app_register', '_controller' => 'App\\Controller\\RegistrationController::register'], null, null, null, false, false, null]],
         '/medecin/register' => [[['_route' => 'app_medecin_register', '_controller' => 'App\\Controller\\RegistrationController::medecinRegister'], null, null, null, false, false, null]],
         '/clear-registration-message' => [[['_route' => 'app_clear_registration_message', '_controller' => 'App\\Controller\\RegistrationController::clearRegistrationMessage'], null, null, null, false, false, null]],
@@ -73,6 +74,7 @@ return [
                 .')'
                 .'|/department/(\\d+)(*:310)'
                 .'|/service/(\\d+)(*:332)'
+                .'|/([^/]++)(*:349)'
             .')/?$}sDu',
     ],
     [ // $dynamicRoutes
@@ -88,8 +90,9 @@ return [
         261 => [[['_route' => 'admin_medecins_unverify', '_controller' => 'App\\Controller\\Admin\\MedecinController::unverify'], ['id'], null, null, false, true, null]],
         284 => [[['_route' => 'admin_medecins_delete', '_controller' => 'App\\Controller\\Admin\\MedecinController::delete'], ['id'], null, null, false, true, null]],
         310 => [[['_route' => 'app_department_details', '_controller' => 'App\\Controller\\FrontendController::departmentDetails'], ['id'], null, null, false, true, null]],
-        332 => [
-            [['_route' => 'app_service_details', '_controller' => 'App\\Controller\\FrontendController::serviceDetails'], ['id'], null, null, false, true, null],
+        332 => [[['_route' => 'app_service_details', '_controller' => 'App\\Controller\\FrontendController::serviceDetails'], ['id'], null, null, false, true, null]],
+        349 => [
+            [['_route' => 'app_profile_public', '_controller' => 'App\\Controller\\ProfileController::showPublicProfile'], ['username'], null, null, false, true, null],
             [null, null, null, null, false, false, 0],
         ],
     ],

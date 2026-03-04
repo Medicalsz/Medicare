@@ -16,7 +16,7 @@ class FormConfig
     private $csrfProtection;
     private $legacyErrorMessages;
     private $_usedProperties = [];
-
+    
     /**
      * @default true
      * @param ParamConfigurator|bool $value
@@ -26,10 +26,10 @@ class FormConfig
     {
         $this->_usedProperties['enabled'] = true;
         $this->enabled = $value;
-
+    
         return $this;
     }
-
+    
     /**
      * @template TValue of array|bool
      * @param TValue $value
@@ -42,20 +42,20 @@ class FormConfig
         if (!\is_array($value)) {
             $this->_usedProperties['csrfProtection'] = true;
             $this->csrfProtection = $value;
-
+    
             return $this;
         }
-
+    
         if (!$this->csrfProtection instanceof \Symfony\Config\Framework\Form\CsrfProtectionConfig) {
             $this->_usedProperties['csrfProtection'] = true;
             $this->csrfProtection = new \Symfony\Config\Framework\Form\CsrfProtectionConfig($value);
         } elseif (0 < \func_num_args()) {
             throw new InvalidConfigurationException('The node created by "csrfProtection()" has already been initialized. You cannot pass values the second time you call csrfProtection().');
         }
-
+    
         return $this->csrfProtection;
     }
-
+    
     /**
      * @default null
      * @param ParamConfigurator|bool $value
@@ -66,10 +66,10 @@ class FormConfig
     {
         $this->_usedProperties['legacyErrorMessages'] = true;
         $this->legacyErrorMessages = $value;
-
+    
         return $this;
     }
-
+    
     public function __construct(array $config = [])
     {
         if (array_key_exists('enabled', $config)) {
@@ -77,24 +77,24 @@ class FormConfig
             $this->enabled = $config['enabled'];
             unset($config['enabled']);
         }
-
+    
         if (array_key_exists('csrf_protection', $config)) {
             $this->_usedProperties['csrfProtection'] = true;
             $this->csrfProtection = \is_array($config['csrf_protection']) ? new \Symfony\Config\Framework\Form\CsrfProtectionConfig($config['csrf_protection']) : $config['csrf_protection'];
             unset($config['csrf_protection']);
         }
-
+    
         if (array_key_exists('legacy_error_messages', $config)) {
             $this->_usedProperties['legacyErrorMessages'] = true;
             $this->legacyErrorMessages = $config['legacy_error_messages'];
             unset($config['legacy_error_messages']);
         }
-
+    
         if ($config) {
             throw new InvalidConfigurationException(sprintf('The following keys are not supported by "%s": ', __CLASS__).implode(', ', array_keys($config)));
         }
     }
-
+    
     public function toArray(): array
     {
         $output = [];
@@ -107,7 +107,7 @@ class FormConfig
         if (isset($this->_usedProperties['legacyErrorMessages'])) {
             $output['legacy_error_messages'] = $this->legacyErrorMessages;
         }
-
+    
         return $output;
     }
 

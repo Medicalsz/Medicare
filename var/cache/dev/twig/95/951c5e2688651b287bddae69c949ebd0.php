@@ -117,6 +117,6 @@ class <?= \$class_name ?> extends WebTestCase
 <?php endif ?>
     }
 }
-", "@Maker/test/WebTestCase.tpl.php", "C:\\Users\\LENOVO\\Documents\\PI\\Medicare\\vendor\\symfony\\maker-bundle\\templates\\test\\WebTestCase.tpl.php");
+", "@Maker/test/WebTestCase.tpl.php", "C:\\Users\\LENOVO\\Documents\\gestion user\\Medicare\\vendor\\symfony\\maker-bundle\\templates\\test\\WebTestCase.tpl.php");
     }
 }

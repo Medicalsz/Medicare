@@ -161,6 +161,6 @@ class <?= \$class_name; ?> extends Command
         return Command::SUCCESS;
     }
 }
-", "@Maker/command/Command.tpl.php", "C:\\Users\\LENOVO\\Documents\\PI\\Medicare\\vendor\\symfony\\maker-bundle\\templates\\command\\Command.tpl.php");
+", "@Maker/command/Command.tpl.php", "C:\\Users\\LENOVO\\Documents\\gestion user\\Medicare\\vendor\\symfony\\maker-bundle\\templates\\command\\Command.tpl.php");
     }
 }

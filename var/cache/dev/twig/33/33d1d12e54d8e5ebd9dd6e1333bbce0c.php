@@ -325,6 +325,6 @@ namespace <?= \$namespace ?>;
         \$this->markTestIncomplete('This test was generated');
     }
 }
-", "@Maker/crud/test/Test.EntityManager.tpl.php", "C:\\Users\\LENOVO\\Documents\\PI\\Medicare\\vendor\\symfony\\maker-bundle\\templates\\crud\\test\\Test.EntityManager.tpl.php");
+", "@Maker/crud/test/Test.EntityManager.tpl.php", "C:\\Users\\LENOVO\\Documents\\gestion user\\Medicare\\vendor\\symfony\\maker-bundle\\templates\\crud\\test\\Test.EntityManager.tpl.php");
     }
 }

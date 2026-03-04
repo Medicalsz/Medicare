@@ -206,6 +206,6 @@ class __TwigTemplate_9819fffbee7bc2826e2f09975f2c1ac2 extends Template
 {% block remove %}
     <turbo-stream action=\"remove\" target=\"<?= \$class_name ?>_{{ id }}\"></turbo-stream>
 {% endblock %}
-", "@Maker/doctrine/broadcast_twig_template.tpl.php", "C:\\Users\\LENOVO\\Documents\\PI\\Medicare\\vendor\\symfony\\maker-bundle\\templates\\doctrine\\broadcast_twig_template.tpl.php");
+", "@Maker/doctrine/broadcast_twig_template.tpl.php", "C:\\Users\\LENOVO\\Documents\\gestion user\\Medicare\\vendor\\symfony\\maker-bundle\\templates\\doctrine\\broadcast_twig_template.tpl.php");
     }
 }

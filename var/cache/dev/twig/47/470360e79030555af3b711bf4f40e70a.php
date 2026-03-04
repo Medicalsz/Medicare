@@ -97,6 +97,6 @@ class __TwigTemplate_943ef5a927ce63610d6dea44c1435467 extends Template
     <path d=\"M20 12h2\" />
     <path d=\"M12 20v2\" />
 </svg>
-", "@WebProfiler/Icon/settings-theme-light.svg", "C:\\Users\\LENOVO\\Documents\\PI\\Medicare\\vendor\\symfony\\web-profiler-bundle\\Resources\\views\\Icon\\settings-theme-light.svg");
+", "@WebProfiler/Icon/settings-theme-light.svg", "C:\\Users\\LENOVO\\Documents\\gestion user\\Medicare\\vendor\\symfony\\web-profiler-bundle\\Resources\\views\\Icon\\settings-theme-light.svg");
     }
 }

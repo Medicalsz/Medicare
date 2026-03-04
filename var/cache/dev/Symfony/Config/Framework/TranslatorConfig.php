@@ -23,7 +23,7 @@ class TranslatorConfig
     private $pseudoLocalization;
     private $providers;
     private $_usedProperties = [];
-
+    
     /**
      * @default true
      * @param ParamConfigurator|bool $value
@@ -33,10 +33,10 @@ class TranslatorConfig
     {
         $this->_usedProperties['enabled'] = true;
         $this->enabled = $value;
-
+    
         return $this;
     }
-
+    
     /**
      * @param ParamConfigurator|list<ParamConfigurator|mixed>|string $value
      *
@@ -46,10 +46,10 @@ class TranslatorConfig
     {
         $this->_usedProperties['fallbacks'] = true;
         $this->fallbacks = $value;
-
+    
         return $this;
     }
-
+    
     /**
      * @default false
      * @param ParamConfigurator|bool $value
@@ -59,10 +59,10 @@ class TranslatorConfig
     {
         $this->_usedProperties['logging'] = true;
         $this->logging = $value;
-
+    
         return $this;
     }
-
+    
     /**
      * @default 'translator.formatter.default'
      * @param ParamConfigurator|mixed $value
@@ -72,10 +72,10 @@ class TranslatorConfig
     {
         $this->_usedProperties['formatter'] = true;
         $this->formatter = $value;
-
+    
         return $this;
     }
-
+    
     /**
      * @default '%kernel.cache_dir%/translations'
      * @param ParamConfigurator|mixed $value
@@ -85,10 +85,10 @@ class TranslatorConfig
     {
         $this->_usedProperties['cacheDir'] = true;
         $this->cacheDir = $value;
-
+    
         return $this;
     }
-
+    
     /**
      * The default path used to load translations
      * @default '%kernel.project_dir%/translations'
@@ -99,10 +99,10 @@ class TranslatorConfig
     {
         $this->_usedProperties['defaultPath'] = true;
         $this->defaultPath = $value;
-
+    
         return $this;
     }
-
+    
     /**
      * @param ParamConfigurator|list<ParamConfigurator|mixed> $value
      *
@@ -112,10 +112,10 @@ class TranslatorConfig
     {
         $this->_usedProperties['paths'] = true;
         $this->paths = $value;
-
+    
         return $this;
     }
-
+    
     /**
      * @template TValue of array|bool
      * @param TValue $value
@@ -128,20 +128,20 @@ class TranslatorConfig
         if (!\is_array($value)) {
             $this->_usedProperties['pseudoLocalization'] = true;
             $this->pseudoLocalization = $value;
-
+    
             return $this;
         }
-
+    
         if (!$this->pseudoLocalization instanceof \Symfony\Config\Framework\Translator\PseudoLocalizationConfig) {
             $this->_usedProperties['pseudoLocalization'] = true;
             $this->pseudoLocalization = new \Symfony\Config\Framework\Translator\PseudoLocalizationConfig($value);
         } elseif (0 < \func_num_args()) {
             throw new InvalidConfigurationException('The node created by "pseudoLocalization()" has already been initialized. You cannot pass values the second time you call pseudoLocalization().');
         }
-
+    
         return $this->pseudoLocalization;
     }
-
+    
     /**
      * Translation providers you can read/write your translations from
      */
@@ -153,10 +153,10 @@ class TranslatorConfig
         } elseif (1 < \func_num_args()) {
             throw new InvalidConfigurationException('The node created by "provider()" has already been initialized. You cannot pass values the second time you call provider().');
         }
-
+    
         return $this->providers[$name];
     }
-
+    
     public function __construct(array $config = [])
     {
         if (array_key_exists('enabled', $config)) {
@@ -164,60 +164,60 @@ class TranslatorConfig
             $this->enabled = $config['enabled'];
             unset($config['enabled']);
         }
-
+    
         if (array_key_exists('fallbacks', $config)) {
             $this->_usedProperties['fallbacks'] = true;
             $this->fallbacks = $config['fallbacks'];
             unset($config['fallbacks']);
         }
-
+    
         if (array_key_exists('logging', $config)) {
             $this->_usedProperties['logging'] = true;
             $this->logging = $config['logging'];
             unset($config['logging']);
         }
-
+    
         if (array_key_exists('formatter', $config)) {
             $this->_usedProperties['formatter'] = true;
             $this->formatter = $config['formatter'];
             unset($config['formatter']);
         }
-
+    
         if (array_key_exists('cache_dir', $config)) {
             $this->_usedProperties['cacheDir'] = true;
             $this->cacheDir = $config['cache_dir'];
             unset($config['cache_dir']);
         }
-
+    
         if (array_key_exists('default_path', $config)) {
             $this->_usedProperties['defaultPath'] = true;
             $this->defaultPath = $config['default_path'];
             unset($config['default_path']);
         }
-
+    
         if (array_key_exists('paths', $config)) {
             $this->_usedProperties['paths'] = true;
             $this->paths = $config['paths'];
             unset($config['paths']);
         }
-
+    
         if (array_key_exists('pseudo_localization', $config)) {
             $this->_usedProperties['pseudoLocalization'] = true;
             $this->pseudoLocalization = \is_array($config['pseudo_localization']) ? new \Symfony\Config\Framework\Translator\PseudoLocalizationConfig($config['pseudo_localization']) : $config['pseudo_localization'];
             unset($config['pseudo_localization']);
         }
-
+    
         if (array_key_exists('providers', $config)) {
             $this->_usedProperties['providers'] = true;
             $this->providers = array_map(fn ($v) => new \Symfony\Config\Framework\Translator\ProviderConfig($v), $config['providers']);
             unset($config['providers']);
         }
-
+    
         if ($config) {
             throw new InvalidConfigurationException(sprintf('The following keys are not supported by "%s": ', __CLASS__).implode(', ', array_keys($config)));
         }
     }
-
+    
     public function toArray(): array
     {
         $output = [];
@@ -248,7 +248,7 @@ class TranslatorConfig
         if (isset($this->_usedProperties['providers'])) {
             $output['providers'] = array_map(fn ($v) => $v->toArray(), $this->providers);
         }
-
+    
         return $output;
     }
 

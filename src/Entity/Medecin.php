@@ -47,7 +47,7 @@ class Medecin implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(length: 100, nullable: true)]
     private ?string $delegation = null;
 
-    #[ORM\Column(type: 'float', nullable: true)]
+    #[ORM\Column(name: 'prixConsultation', type: 'float', nullable: true)]
     private ?float $prixConsultation = null;
 
     #[ORM\Column(length: 255, nullable: true)]
@@ -56,7 +56,19 @@ class Medecin implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $certificate = null;
 
-    #[ORM\Column(type: 'boolean')]
+    #[ORM\Column(length: 100, unique: true, nullable: true)]
+    private ?string $username = null;
+
+    #[ORM\Column(name: 'email_privacy', length: 20, options: ['default' => 'public'])]
+    private ?string $emailPrivacy = 'public';
+
+    #[ORM\Column(name: 'phone_privacy', length: 20, options: ['default' => 'public'])]
+    private ?string $phonePrivacy = 'public';
+
+    #[ORM\Column(name: 'address_privacy', length: 20, options: ['default' => 'public'])]
+    private ?string $addressPrivacy = 'public';
+
+    #[ORM\Column(name: 'isVerified', type: 'boolean')]
     private $isVerified = false;
 
     // ===== GETTERS & SETTERS =====
@@ -115,7 +127,7 @@ class Medecin implements UserInterface, PasswordAuthenticatedUserInterface
         return $this->numero;
     }
 
-    public function setNumero(string $numero): static
+    public function setNumero(?string $numero): static
     {
         $this->numero = $numero;
         return $this;
@@ -231,6 +243,50 @@ class Medecin implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
+    public function getUsername(): ?string
+    {
+        return $this->username;
+    }
+
+    public function setUsername(?string $username): static
+    {
+        $this->username = $username;
+        return $this;
+    }
+
+    public function getEmailPrivacy(): ?string
+    {
+        return $this->emailPrivacy;
+    }
+
+    public function setEmailPrivacy(?string $emailPrivacy): static
+    {
+        $this->emailPrivacy = $emailPrivacy ?? 'public';
+        return $this;
+    }
+
+    public function getPhonePrivacy(): ?string
+    {
+        return $this->phonePrivacy;
+    }
+
+    public function setPhonePrivacy(?string $phonePrivacy): static
+    {
+        $this->phonePrivacy = $phonePrivacy ?? 'public';
+        return $this;
+    }
+
+    public function getAddressPrivacy(): ?string
+    {
+        return $this->addressPrivacy;
+    }
+
+    public function setAddressPrivacy(?string $addressPrivacy): static
+    {
+        $this->addressPrivacy = $addressPrivacy ?? 'public';
+        return $this;
+    }
+
     public function getFullName(): string
     {
         return $this->prenom . ' ' . $this->nom;
@@ -243,7 +299,7 @@ class Medecin implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function getUserIdentifier(): string
     {
-        return $this->email;
+        return $this->username ?? $this->email;
     }
 
     public function eraseCredentials(): void

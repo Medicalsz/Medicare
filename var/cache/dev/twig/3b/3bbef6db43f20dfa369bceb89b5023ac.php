@@ -113,6 +113,6 @@ class <?= \$class_name ?> extends PantherTestCase
 <?php endif ?>
     }
 }
-", "@Maker/test/PantherTestCase.tpl.php", "C:\\Users\\LENOVO\\Documents\\PI\\Medicare\\vendor\\symfony\\maker-bundle\\templates\\test\\PantherTestCase.tpl.php");
+", "@Maker/test/PantherTestCase.tpl.php", "C:\\Users\\LENOVO\\Documents\\gestion user\\Medicare\\vendor\\symfony\\maker-bundle\\templates\\test\\PantherTestCase.tpl.php");
     }
 }

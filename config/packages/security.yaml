@@ -19,7 +19,7 @@ security:
         medecins:
             entity:
                 class: App\Entity\Medecin
-                property: email
+                property: username
         
         admins:
             entity:

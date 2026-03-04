@@ -223,6 +223,6 @@ class RegistrationControllerTest extends WebTestCase
         self::assertTrue(static::getContainer()->get(<?= \$repository_class_name ?>::class)->findAll()[0]->isVerified());
     }
 }
-", "@Maker/registration/Test.WithVerify.tpl.php", "C:\\Users\\LENOVO\\Documents\\PI\\Medicare\\vendor\\symfony\\maker-bundle\\templates\\registration\\Test.WithVerify.tpl.php");
+", "@Maker/registration/Test.WithVerify.tpl.php", "C:\\Users\\LENOVO\\Documents\\gestion user\\Medicare\\vendor\\symfony\\maker-bundle\\templates\\registration\\Test.WithVerify.tpl.php");
     }
 }

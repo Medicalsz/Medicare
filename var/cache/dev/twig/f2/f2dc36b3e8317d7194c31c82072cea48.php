@@ -324,6 +324,6 @@ class __TwigTemplate_4b440babc974d4a12399aee9993fc8f6 extends Template
         </button>
     </div>
 </nav>
-", "partials/admin/_navbar.html.twig", "C:\\Users\\LENOVO\\Documents\\PI\\Medicare\\templates\\partials\\admin\\_navbar.html.twig");
+", "partials/admin/_navbar.html.twig", "C:\\Users\\LENOVO\\Documents\\gestion user\\Medicare\\templates\\partials\\admin\\_navbar.html.twig");
     }
 }

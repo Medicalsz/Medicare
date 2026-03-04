@@ -170,6 +170,6 @@ class __TwigTemplate_ccdbd0b0cab0e26ab9ef42a81ab02f8a extends Template
     </section>
 </main>
 {% endblock %}
-", "frontend/department-details.html.twig", "C:\\Users\\LENOVO\\Documents\\PI\\Medicare\\templates\\frontend\\department-details.html.twig");
+", "frontend/department-details.html.twig", "C:\\Users\\LENOVO\\Documents\\gestion user\\Medicare\\templates\\frontend\\department-details.html.twig");
     }
 }

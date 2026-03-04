@@ -35,7 +35,7 @@ class TwigConfig implements \Symfony\Component\Config\Builder\ConfigBuilderInter
     private $mailer;
     private $_usedProperties = [];
     private $_hasDeprecatedCalls = false;
-
+    
     /**
      * @param ParamConfigurator|list<ParamConfigurator|mixed> $value
      *
@@ -47,10 +47,10 @@ class TwigConfig implements \Symfony\Component\Config\Builder\ConfigBuilderInter
         $this->_hasDeprecatedCalls = true;
         $this->_usedProperties['formThemes'] = true;
         $this->formThemes = $value;
-
+    
         return $this;
     }
-
+    
     /**
      * @template TValue of mixed
      * @param TValue $value
@@ -66,20 +66,20 @@ class TwigConfig implements \Symfony\Component\Config\Builder\ConfigBuilderInter
         if (!\is_array($value)) {
             $this->_usedProperties['globals'] = true;
             $this->globals[$key] = $value;
-
+    
             return $this;
         }
-
+    
         if (!isset($this->globals[$key]) || !$this->globals[$key] instanceof \Symfony\Config\Twig\GlobalConfig) {
             $this->_usedProperties['globals'] = true;
             $this->globals[$key] = new \Symfony\Config\Twig\GlobalConfig($value);
         } elseif (1 < \func_num_args()) {
             throw new InvalidConfigurationException('The node created by "global()" has already been initialized. You cannot pass values the second time you call global().');
         }
-
+    
         return $this->globals[$key];
     }
-
+    
     /**
      * @default 'name'
      * @param ParamConfigurator|mixed $value
@@ -93,10 +93,10 @@ class TwigConfig implements \Symfony\Component\Config\Builder\ConfigBuilderInter
         $this->_hasDeprecatedCalls = true;
         $this->_usedProperties['autoescape'] = true;
         $this->autoescape = $value;
-
+    
         return $this;
     }
-
+    
     /**
      * @default null
      * @param ParamConfigurator|mixed $value
@@ -108,10 +108,10 @@ class TwigConfig implements \Symfony\Component\Config\Builder\ConfigBuilderInter
         $this->_hasDeprecatedCalls = true;
         $this->_usedProperties['autoescapeService'] = true;
         $this->autoescapeService = $value;
-
+    
         return $this;
     }
-
+    
     /**
      * @default null
      * @param ParamConfigurator|mixed $value
@@ -123,10 +123,10 @@ class TwigConfig implements \Symfony\Component\Config\Builder\ConfigBuilderInter
         $this->_hasDeprecatedCalls = true;
         $this->_usedProperties['autoescapeServiceMethod'] = true;
         $this->autoescapeServiceMethod = $value;
-
+    
         return $this;
     }
-
+    
     /**
      * @example Twig\Template
      * @default null
@@ -139,10 +139,10 @@ class TwigConfig implements \Symfony\Component\Config\Builder\ConfigBuilderInter
         $this->_hasDeprecatedCalls = true;
         $this->_usedProperties['baseTemplateClass'] = true;
         $this->baseTemplateClass = $value;
-
+    
         return $this;
     }
-
+    
     /**
      * @default '%kernel.cache_dir%/twig'
      * @param ParamConfigurator|mixed $value
@@ -154,10 +154,10 @@ class TwigConfig implements \Symfony\Component\Config\Builder\ConfigBuilderInter
         $this->_hasDeprecatedCalls = true;
         $this->_usedProperties['cache'] = true;
         $this->cache = $value;
-
+    
         return $this;
     }
-
+    
     /**
      * @default '%kernel.charset%'
      * @param ParamConfigurator|mixed $value
@@ -169,10 +169,10 @@ class TwigConfig implements \Symfony\Component\Config\Builder\ConfigBuilderInter
         $this->_hasDeprecatedCalls = true;
         $this->_usedProperties['charset'] = true;
         $this->charset = $value;
-
+    
         return $this;
     }
-
+    
     /**
      * @default '%kernel.debug%'
      * @param ParamConfigurator|bool $value
@@ -184,10 +184,10 @@ class TwigConfig implements \Symfony\Component\Config\Builder\ConfigBuilderInter
         $this->_hasDeprecatedCalls = true;
         $this->_usedProperties['debug'] = true;
         $this->debug = $value;
-
+    
         return $this;
     }
-
+    
     /**
      * @default '%kernel.debug%'
      * @param ParamConfigurator|bool $value
@@ -199,10 +199,10 @@ class TwigConfig implements \Symfony\Component\Config\Builder\ConfigBuilderInter
         $this->_hasDeprecatedCalls = true;
         $this->_usedProperties['strictVariables'] = true;
         $this->strictVariables = $value;
-
+    
         return $this;
     }
-
+    
     /**
      * @default null
      * @param ParamConfigurator|mixed $value
@@ -214,10 +214,10 @@ class TwigConfig implements \Symfony\Component\Config\Builder\ConfigBuilderInter
         $this->_hasDeprecatedCalls = true;
         $this->_usedProperties['autoReload'] = true;
         $this->autoReload = $value;
-
+    
         return $this;
     }
-
+    
     /**
      * @default null
      * @param ParamConfigurator|int $value
@@ -229,10 +229,10 @@ class TwigConfig implements \Symfony\Component\Config\Builder\ConfigBuilderInter
         $this->_hasDeprecatedCalls = true;
         $this->_usedProperties['optimizations'] = true;
         $this->optimizations = $value;
-
+    
         return $this;
     }
-
+    
     /**
      * The default path used to load templates
      * @default '%kernel.project_dir%/templates'
@@ -245,10 +245,10 @@ class TwigConfig implements \Symfony\Component\Config\Builder\ConfigBuilderInter
         $this->_hasDeprecatedCalls = true;
         $this->_usedProperties['defaultPath'] = true;
         $this->defaultPath = $value;
-
+    
         return $this;
     }
-
+    
     /**
      * @param ParamConfigurator|list<ParamConfigurator|mixed>|string $value
      *
@@ -260,10 +260,10 @@ class TwigConfig implements \Symfony\Component\Config\Builder\ConfigBuilderInter
         $this->_hasDeprecatedCalls = true;
         $this->_usedProperties['fileNamePattern'] = true;
         $this->fileNamePattern = $value;
-
+    
         return $this;
     }
-
+    
     /**
      * @return $this
      * @deprecated since Symfony 7.4
@@ -273,10 +273,10 @@ class TwigConfig implements \Symfony\Component\Config\Builder\ConfigBuilderInter
         $this->_hasDeprecatedCalls = true;
         $this->_usedProperties['paths'] = true;
         $this->paths[$paths] = $value;
-
+    
         return $this;
     }
-
+    
     /**
      * The default format options used by the date filter
      * @default {"format":"F j, Y H:i","interval_format":"%d days","timezone":null}
@@ -291,10 +291,10 @@ class TwigConfig implements \Symfony\Component\Config\Builder\ConfigBuilderInter
         } elseif (0 < \func_num_args()) {
             throw new InvalidConfigurationException('The node created by "date()" has already been initialized. You cannot pass values the second time you call date().');
         }
-
+    
         return $this->date;
     }
-
+    
     /**
      * The default format options for the number_format filter
      * @default {"decimals":0,"decimal_point":".","thousands_separator":","}
@@ -309,10 +309,10 @@ class TwigConfig implements \Symfony\Component\Config\Builder\ConfigBuilderInter
         } elseif (0 < \func_num_args()) {
             throw new InvalidConfigurationException('The node created by "numberFormat()" has already been initialized. You cannot pass values the second time you call numberFormat().');
         }
-
+    
         return $this->numberFormat;
     }
-
+    
     /**
      * @deprecated since Symfony 7.4
      */
@@ -325,15 +325,15 @@ class TwigConfig implements \Symfony\Component\Config\Builder\ConfigBuilderInter
         } elseif (0 < \func_num_args()) {
             throw new InvalidConfigurationException('The node created by "mailer()" has already been initialized. You cannot pass values the second time you call mailer().');
         }
-
+    
         return $this->mailer;
     }
-
+    
     public function getExtensionAlias(): string
     {
         return 'twig';
     }
-
+    
     public function __construct(array $config = [])
     {
         if (array_key_exists('form_themes', $config)) {
@@ -341,114 +341,114 @@ class TwigConfig implements \Symfony\Component\Config\Builder\ConfigBuilderInter
             $this->formThemes = $config['form_themes'];
             unset($config['form_themes']);
         }
-
+    
         if (array_key_exists('globals', $config)) {
             $this->_usedProperties['globals'] = true;
             $this->globals = array_map(fn ($v) => \is_array($v) ? new \Symfony\Config\Twig\GlobalConfig($v) : $v, $config['globals']);
             unset($config['globals']);
         }
-
+    
         if (array_key_exists('autoescape', $config)) {
             $this->_usedProperties['autoescape'] = true;
             $this->autoescape = $config['autoescape'];
             unset($config['autoescape']);
         }
-
+    
         if (array_key_exists('autoescape_service', $config)) {
             $this->_usedProperties['autoescapeService'] = true;
             $this->autoescapeService = $config['autoescape_service'];
             unset($config['autoescape_service']);
         }
-
+    
         if (array_key_exists('autoescape_service_method', $config)) {
             $this->_usedProperties['autoescapeServiceMethod'] = true;
             $this->autoescapeServiceMethod = $config['autoescape_service_method'];
             unset($config['autoescape_service_method']);
         }
-
+    
         if (array_key_exists('base_template_class', $config)) {
             $this->_usedProperties['baseTemplateClass'] = true;
             $this->baseTemplateClass = $config['base_template_class'];
             unset($config['base_template_class']);
         }
-
+    
         if (array_key_exists('cache', $config)) {
             $this->_usedProperties['cache'] = true;
             $this->cache = $config['cache'];
             unset($config['cache']);
         }
-
+    
         if (array_key_exists('charset', $config)) {
             $this->_usedProperties['charset'] = true;
             $this->charset = $config['charset'];
             unset($config['charset']);
         }
-
+    
         if (array_key_exists('debug', $config)) {
             $this->_usedProperties['debug'] = true;
             $this->debug = $config['debug'];
             unset($config['debug']);
         }
-
+    
         if (array_key_exists('strict_variables', $config)) {
             $this->_usedProperties['strictVariables'] = true;
             $this->strictVariables = $config['strict_variables'];
             unset($config['strict_variables']);
         }
-
+    
         if (array_key_exists('auto_reload', $config)) {
             $this->_usedProperties['autoReload'] = true;
             $this->autoReload = $config['auto_reload'];
             unset($config['auto_reload']);
         }
-
+    
         if (array_key_exists('optimizations', $config)) {
             $this->_usedProperties['optimizations'] = true;
             $this->optimizations = $config['optimizations'];
             unset($config['optimizations']);
         }
-
+    
         if (array_key_exists('default_path', $config)) {
             $this->_usedProperties['defaultPath'] = true;
             $this->defaultPath = $config['default_path'];
             unset($config['default_path']);
         }
-
+    
         if (array_key_exists('file_name_pattern', $config)) {
             $this->_usedProperties['fileNamePattern'] = true;
             $this->fileNamePattern = $config['file_name_pattern'];
             unset($config['file_name_pattern']);
         }
-
+    
         if (array_key_exists('paths', $config)) {
             $this->_usedProperties['paths'] = true;
             $this->paths = $config['paths'];
             unset($config['paths']);
         }
-
+    
         if (array_key_exists('date', $config)) {
             $this->_usedProperties['date'] = true;
             $this->date = new \Symfony\Config\Twig\DateConfig($config['date']);
             unset($config['date']);
         }
-
+    
         if (array_key_exists('number_format', $config)) {
             $this->_usedProperties['numberFormat'] = true;
             $this->numberFormat = new \Symfony\Config\Twig\NumberFormatConfig($config['number_format']);
             unset($config['number_format']);
         }
-
+    
         if (array_key_exists('mailer', $config)) {
             $this->_usedProperties['mailer'] = true;
             $this->mailer = new \Symfony\Config\Twig\MailerConfig($config['mailer']);
             unset($config['mailer']);
         }
-
+    
         if ($config) {
             throw new InvalidConfigurationException(sprintf('The following keys are not supported by "%s": ', __CLASS__).implode(', ', array_keys($config)));
         }
     }
-
+    
     public function toArray(): array
     {
         $output = [];
@@ -509,7 +509,7 @@ class TwigConfig implements \Symfony\Component\Config\Builder\ConfigBuilderInter
         if ($this->_hasDeprecatedCalls) {
             trigger_deprecation('symfony/config', '7.4', 'Calling any fluent method on "%s" is deprecated; pass the configuration to the constructor instead.', $this::class);
         }
-
+    
         return $output;
     }
 

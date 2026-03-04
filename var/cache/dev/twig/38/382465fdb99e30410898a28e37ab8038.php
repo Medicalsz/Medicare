@@ -1248,6 +1248,6 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 </script>
 {% endblock %}
-", "registration/medecin_register.html.twig", "C:\\Users\\LENOVO\\Documents\\PI\\Medicare\\templates\\registration\\medecin_register.html.twig");
+", "registration/medecin_register.html.twig", "C:\\Users\\LENOVO\\Documents\\gestion user\\Medicare\\templates\\registration\\medecin_register.html.twig");
     }
 }

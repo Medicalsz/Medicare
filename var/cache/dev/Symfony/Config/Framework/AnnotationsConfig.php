@@ -15,7 +15,7 @@ class AnnotationsConfig
     private $fileCacheDir;
     private $debug;
     private $_usedProperties = [];
-
+    
     /**
      * @default false
      * @param ParamConfigurator|bool $value
@@ -25,10 +25,10 @@ class AnnotationsConfig
     {
         $this->_usedProperties['enabled'] = true;
         $this->enabled = $value;
-
+    
         return $this;
     }
-
+    
     /**
      * @default 'php_array'
      * @param ParamConfigurator|'none'|'php_array'|'file' $value
@@ -38,10 +38,10 @@ class AnnotationsConfig
     {
         $this->_usedProperties['cache'] = true;
         $this->cache = $value;
-
+    
         return $this;
     }
-
+    
     /**
      * @default '%kernel.cache_dir%/annotations'
      * @param ParamConfigurator|mixed $value
@@ -51,10 +51,10 @@ class AnnotationsConfig
     {
         $this->_usedProperties['fileCacheDir'] = true;
         $this->fileCacheDir = $value;
-
+    
         return $this;
     }
-
+    
     /**
      * @default true
      * @param ParamConfigurator|bool $value
@@ -64,10 +64,10 @@ class AnnotationsConfig
     {
         $this->_usedProperties['debug'] = true;
         $this->debug = $value;
-
+    
         return $this;
     }
-
+    
     public function __construct(array $config = [])
     {
         if (array_key_exists('enabled', $config)) {
@@ -75,30 +75,30 @@ class AnnotationsConfig
             $this->enabled = $config['enabled'];
             unset($config['enabled']);
         }
-
+    
         if (array_key_exists('cache', $config)) {
             $this->_usedProperties['cache'] = true;
             $this->cache = $config['cache'];
             unset($config['cache']);
         }
-
+    
         if (array_key_exists('file_cache_dir', $config)) {
             $this->_usedProperties['fileCacheDir'] = true;
             $this->fileCacheDir = $config['file_cache_dir'];
             unset($config['file_cache_dir']);
         }
-
+    
         if (array_key_exists('debug', $config)) {
             $this->_usedProperties['debug'] = true;
             $this->debug = $config['debug'];
             unset($config['debug']);
         }
-
+    
         if ($config) {
             throw new InvalidConfigurationException(sprintf('The following keys are not supported by "%s": ', __CLASS__).implode(', ', array_keys($config)));
         }
     }
-
+    
     public function toArray(): array
     {
         $output = [];
@@ -114,7 +114,7 @@ class AnnotationsConfig
         if (isset($this->_usedProperties['debug'])) {
             $output['debug'] = $this->debug;
         }
-
+    
         return $output;
     }
 

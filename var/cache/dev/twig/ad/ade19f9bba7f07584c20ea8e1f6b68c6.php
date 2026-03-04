@@ -515,6 +515,6 @@ class __TwigTemplate_848c03f72553aa5c1fd490475bc8e697 extends Template
     </div>
 </div>
 {% endblock %}
-", "admin/dashboard.html.twig", "C:\\Users\\LENOVO\\Documents\\PI\\Medicare\\templates\\admin\\dashboard.html.twig");
+", "admin/dashboard.html.twig", "C:\\Users\\LENOVO\\Documents\\gestion user\\Medicare\\templates\\admin\\dashboard.html.twig");
     }
 }

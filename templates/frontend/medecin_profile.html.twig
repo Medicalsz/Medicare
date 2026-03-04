@@ -42,13 +42,19 @@
         </div>
 
         <div class="profile-content">
+            {% set is_owner = app.user and app.user.id == medecin.id %}
+            {% set viewer_is_doctor = is_granted('ROLE_MEDECIN') %}
+            {% set can_see_address = medecin.addressPrivacy == 'public' or is_owner or (medecin.addressPrivacy == 'doctors' and viewer_is_doctor) %}
+            {% set can_see_phone   = medecin.phonePrivacy   == 'public' or is_owner or (medecin.phonePrivacy   == 'doctors' and viewer_is_doctor) %}
+            {% set can_see_email   = medecin.emailPrivacy   == 'public' or is_owner or (medecin.emailPrivacy   == 'doctors' and viewer_is_doctor) %}
+
             <div class="profile-sidebar">
                 <div class="info-card">
                     <h3><i class="bi bi-hospital"></i> Cabinet</h3>
                     <p>{{ medecin.cabinet }}</p>
                 </div>
                 
-                {% if medecin.adresse %}
+                {% if medecin.adresse and can_see_address %}
                 <div class="info-card">
                     <h3><i class="bi bi-geo-alt"></i> Adresse</h3>
                     <p>{{ medecin.adresse }}</p>
@@ -58,17 +64,19 @@
                 </div>
                 {% endif %}
                 
-                {% if medecin.numero %}
+                {% if medecin.numero and can_see_phone %}
                 <div class="info-card">
                     <h3><i class="bi bi-telephone"></i> Téléphone</h3>
                     <p>{{ medecin.numero }}</p>
                 </div>
                 {% endif %}
                 
+                {% if can_see_email %}
                 <div class="info-card">
                     <h3><i class="bi bi-envelope"></i> Email</h3>
                     <p>{{ medecin.email }}</p>
                 </div>
+                {% endif %}
                 
                 {% if medecin.prixConsultation %}
                 <div class="info-card">
@@ -106,6 +114,11 @@
         </div>
         
         <div class="profile-actions">
+            {% if is_owner %}
+                <a href="{{ path('app_profile_edit') }}" class="btn-appointment me-3">
+                    <i class="bi bi-pencil"></i> Modifier mon profil
+                </a>
+            {% endif %}
             <a href="{{ path('app_profile') }}" class="btn-back">
                 <i class="bi bi-arrow-left"></i> Retour au profil
             </a>

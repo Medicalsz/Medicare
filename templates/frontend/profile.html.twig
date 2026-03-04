@@ -4,58 +4,6 @@
 
 {% block body_class %}profile-page{% endblock %}
 
-{% block header %}
-    <header id="header" class="header sticky-top">
-        <div class="topbar d-flex align-items-center">
-            <div class="container d-flex justify-content-center justify-content-md-between">
-                <div class="d-none d-md-flex align-items-center">
-                    <i class="bi bi-envelope me-1"></i> <a href="mailto:contact@medicare.com">contact@medicare.com</a>
-                    <span class="ms-3"><i class="bi bi-phone me-1"></i> +1 555 911 2468</span>
-                </div>
-                <div class="d-flex align-items-center">
-                    <a href="#" class="ms-2"><i class="bi bi-facebook"></i></a>
-                    <a href="#" class="ms-2"><i class="bi bi-twitter-x"></i></a>
-                    <a href="#" class="ms-2"><i class="bi bi-instagram"></i></a>
-                    <a href="#" class="ms-2"><i class="bi bi-linkedin"></i></a>
-                </div>
-            </div>
-        </div>
-        
-        <div class="branding d-flex align-items-center">
-            <div class="container d-flex align-items-center justify-content-between">
-                <div class="d-flex align-items-center">
-                    <a href="{{ path('app_home') }}" class="logo d-flex align-items-center me-auto">
-                        <h1 class="sitename">Medicare</h1>
-                    </a>
-                </div>
-                
-                <nav class="navmenu">
-                    <ul>
-                        <li><a href="{{ path('app_home') }}">Accueil</a></li>
-                        <li><a href="{{ path('app_about') }}">À propos</a></li>
-                        <li><a href="{{ path('app_services') }}">Services</a></li>
-                        <li><a href="{{ path('app_departments') }}">Départements</a></li>
-                        <li><a href="{{ path('app_doctors') }}">Médecins</a></li>
-                        <li><a href="{{ path('app_contact') }}">Contact</a></li>
-                        {% if app.user %}
-                            <li><a href="{{ path('app_profile') }}" class="active">Mon Profil</a></li>
-                            <li><a href="{{ path('app_logout') }}" class="btn-logout">Déconnexion</a></li>
-                        {% else %}
-                            <li><a href="{{ path('app_login') }}">Connexion</a></li>
-                            <li><a href="{{ path('app_register') }}" class="btn-register">S'inscrire</a></li>
-                        {% endif %}
-                    </ul>
-                    <i class="mobile-nav-toggle d-xl-none bi bi-list"></i>
-                </nav>
-                
-                <div class="d-none d-md-flex align-items-center">
-                    <a href="{{ path('app_appointment') }}" class="appointment-btn ms-2">Rendez-vous</a>
-                </div>
-            </div>
-        </div>
-    </header>
-{% endblock %}
-
 {% block body %}
 <main class="profile-main">
     <div class="page-title">
@@ -79,10 +27,10 @@
                             <img src="{{ user.photo }}" alt="{{ user.prenom }} {{ user.nom }}" class="profile-avatar">
                         {% else %}
                             <div class="profile-avatar-placeholder">
-                                <i class="mdi mdi-account"></i>
+                                <i class="bi bi-person"></i>
                             </div>
                             <div class="avatar-alert">
-                                <i class="mdi mdi-alert-circle"></i>
+                                <i class="bi bi-exclamation-triangle"></i>
                                 <span>Photo de profil non définie</span>
                             </div>
                         {% endif %}
@@ -91,26 +39,27 @@
                     <div class="profile-info">
                         <h2>{{ user.prenom }} {{ user.nom }}</h2>
                         
-                        {% if 'ROLE_MEDECIN' in user.roles %}
+                        {% set is_doctor = 'ROLE_MEDECIN' in user.roles %}
+                        {% if is_doctor %}
                             <p class="profile-role">
-                                <i class="mdi mdi-doctor"></i> Médecin
+                                <i class="bi bi-doctor"></i> Médecin
                             </p>
                             {% if user.specialite %}
                                 <p class="profile-specialty">{{ user.specialite }}</p>
                             {% endif %}
                             {% if user.cabinet %}
                                 <p class="profile-cabinet">
-                                    <i class="mdi mdi-hospital-building"></i> {{ user.cabinet }}
+                                    <i class="bi bi-hospital"></i> {{ user.cabinet }}
                                 </p>
                             {% endif %}
                             {% if user.ville %}
                                 <p class="profile-location">
-                                    <i class="mdi mdi-map-marker"></i> {{ user.ville }}
+                                    <i class="bi bi-geo-alt"></i> {{ user.ville }}
                                 </p>
                             {% endif %}
                         {% else %}
                             <p class="profile-role">
-                                <i class="mdi mdi-account"></i> Patient
+                                <i class="bi bi-person"></i> Patient
                             </p>
                         {% endif %}
                     </div>
@@ -118,7 +67,7 @@
                 
                 <div class="profile-body">
                     <div class="profile-section-title">
-                        <h3><i class="mdi mdi-information"></i> Informations</h3>
+                        <h3><i class="bi bi-info-circle"></i> Informations</h3>
                     </div>
                     
                     <div class="info-grid">
@@ -132,43 +81,42 @@
                             <span>{{ user.prenom }}</span>
                         </div>
                         
-                        {% if 'ROLE_MEDECIN' in user.roles %}
+                        {% set is_owner = app.user and app.user.id == user.id %}
+                        {% set viewer_is_doctor = is_granted('ROLE_MEDECIN') %}
+                        {% set can_see_phone = user.phonePrivacy == 'public' or is_owner or (user.phonePrivacy == 'doctors' and viewer_is_doctor) %}
+                        {% set can_see_address = user.addressPrivacy == 'public' or is_owner or (user.addressPrivacy == 'doctors' and viewer_is_doctor) %}
+                        {% set can_see_email = user.emailPrivacy == 'public' or is_owner or (user.emailPrivacy == 'doctors' and viewer_is_doctor) %}
+
+                        {% if can_see_email %}
                             <div class="info-item">
                                 <label>Email</label>
                                 <span>{{ user.email }}</span>
                             </div>
-                            
-                            {% if user.numero %}
-                                <div class="info-item">
-                                    <label>Téléphone</label>
-                                    <span>{{ user.numero }}</span>
-                                </div>
-                            {% endif %}
-                            
-                            {% if user.bio %}
-                                <div class="info-item full-width">
-                                    <label>Biographie</label>
-                                    <span>{{ user.bio }}</span>
-                                </div>
-                            {% endif %}
-                        {% else %}
-                            {% if user.numero %}
-                                <div class="info-item">
-                                    <label>Téléphone</label>
-                                    <span>{{ user.numero }}</span>
-                                </div>
-                            {% endif %}
+                        {% endif %}
+
+                        {% if user.numero and can_see_phone %}
+                            <div class="info-item">
+                                <label>Téléphone</label>
+                                <span>{{ user.numero }}</span>
+                            </div>
+                        {% endif %}
+
+                        {% if user.adresse and can_see_address %}
+                            <div class="info-item full-width">
+                                <label>Adresse</label>
+                                <span>{{ user.adresse }}</span>
+                            </div>
                         {% endif %}
                     </div>
                 </div>
                 
-                {% if 'ROLE_MEDECIN' in user.roles %}
-                    <div class="profile-footer">
-                        <a href="{{ path('app_medecin_edit_profile') }}" class="btn-edit">
-                            <i class="mdi mdi-pencil"></i> Modifier le profil
+                <div class="profile-footer">
+                    {% if is_owner %}
+                        <a href="{{ path('app_profile_edit') }}" class="btn-edit">
+                            <i class="bi bi-pencil"></i> Modifier le profil
                         </a>
-                    </div>
-                {% endif %}
+                    {% endif %}
+                </div>
             </div>
         </div>
     </section>

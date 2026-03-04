@@ -233,6 +233,6 @@ class __TwigTemplate_1af3939ed3663238ff9b5eb4f0a4bf77 extends Template
 <a href=\"#\" id=\"scroll-top\" class=\"scroll-top d-flex align-items-center justify-content-center\"><i class=\"bi bi-arrow-up-short\"></i></a>
 
 <!-- Preloader -->
-<div id=\"preloader\"></div>", "partials/frontend_footer.html.twig", "C:\\Users\\LENOVO\\Documents\\PI\\Medicare\\templates\\partials\\frontend_footer.html.twig");
+<div id=\"preloader\"></div>", "partials/frontend_footer.html.twig", "C:\\Users\\LENOVO\\Documents\\gestion user\\Medicare\\templates\\partials\\frontend_footer.html.twig");
     }
 }

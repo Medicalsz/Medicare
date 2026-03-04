@@ -107,6 +107,6 @@ class <?= \$class_name ?> extends KernelTestCase
         // \$myCustomService = static::getContainer()->get(CustomService::class);
     }
 }
-", "@Maker/test/KernelTestCase.tpl.php", "C:\\Users\\LENOVO\\Documents\\PI\\Medicare\\vendor\\symfony\\maker-bundle\\templates\\test\\KernelTestCase.tpl.php");
+", "@Maker/test/KernelTestCase.tpl.php", "C:\\Users\\LENOVO\\Documents\\gestion user\\Medicare\\vendor\\symfony\\maker-bundle\\templates\\test\\KernelTestCase.tpl.php");
     }
 }

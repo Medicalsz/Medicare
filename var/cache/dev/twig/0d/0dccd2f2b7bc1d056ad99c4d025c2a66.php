@@ -1346,6 +1346,6 @@ document.addEventListener('DOMContentLoaded', function() {
 }
 </style>
 {% endblock %}
-", "frontend/home.html.twig", "C:\\Users\\LENOVO\\Documents\\PI\\Medicare\\templates\\frontend\\home.html.twig");
+", "frontend/home.html.twig", "C:\\Users\\LENOVO\\Documents\\gestion user\\Medicare\\templates\\frontend\\home.html.twig");
     }
 }

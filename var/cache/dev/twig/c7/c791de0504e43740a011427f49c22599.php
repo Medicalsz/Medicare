@@ -151,6 +151,6 @@ class <?= \$class_name ?> extends AbstractAuthenticator
 //         */
 //    }
 }
-", "@Maker/authenticator/EmptyAuthenticator.tpl.php", "C:\\Users\\LENOVO\\Documents\\PI\\Medicare\\vendor\\symfony\\maker-bundle\\templates\\authenticator\\EmptyAuthenticator.tpl.php");
+", "@Maker/authenticator/EmptyAuthenticator.tpl.php", "C:\\Users\\LENOVO\\Documents\\gestion user\\Medicare\\vendor\\symfony\\maker-bundle\\templates\\authenticator\\EmptyAuthenticator.tpl.php");
     }
 }

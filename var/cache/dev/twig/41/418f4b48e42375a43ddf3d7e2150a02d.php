@@ -128,6 +128,6 @@ class __TwigTemplate_344b9d111be1e59d5b07dfee6396cf21 extends Template
 
     {{ include('<?= \$templates_path ?>/_delete_form.html.twig') }}
 {% endblock %}
-", "@Maker/crud/templates/edit.tpl.php", "C:\\Users\\LENOVO\\Documents\\PI\\Medicare\\vendor\\symfony\\maker-bundle\\templates\\crud\\templates\\edit.tpl.php");
+", "@Maker/crud/templates/edit.tpl.php", "C:\\Users\\LENOVO\\Documents\\gestion user\\Medicare\\vendor\\symfony\\maker-bundle\\templates\\crud\\templates\\edit.tpl.php");
     }
 }

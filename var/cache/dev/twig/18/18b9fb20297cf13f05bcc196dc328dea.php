@@ -93,6 +93,6 @@ use Symfony\\UX\\TwigComponent\\Attribute\\AsTwigComponent;
 final class <?= \$class_name.\"\\n\" ?>
 {
 }
-", "@Maker/twig/Component.tpl.php", "C:\\Users\\LENOVO\\Documents\\PI\\Medicare\\vendor\\symfony\\maker-bundle\\templates\\twig\\Component.tpl.php");
+", "@Maker/twig/Component.tpl.php", "C:\\Users\\LENOVO\\Documents\\gestion user\\Medicare\\vendor\\symfony\\maker-bundle\\templates\\twig\\Component.tpl.php");
     }
 }

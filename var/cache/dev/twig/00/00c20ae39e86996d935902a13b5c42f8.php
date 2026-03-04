@@ -111,6 +111,6 @@ final class <?= \$class_name.\"\\n\" ?>
     // ) {
     // }
 }
-", "@Maker/message/Message.tpl.php", "C:\\Users\\LENOVO\\Documents\\PI\\Medicare\\vendor\\symfony\\maker-bundle\\templates\\message\\Message.tpl.php");
+", "@Maker/message/Message.tpl.php", "C:\\Users\\LENOVO\\Documents\\gestion user\\Medicare\\vendor\\symfony\\maker-bundle\\templates\\message\\Message.tpl.php");
     }
 }

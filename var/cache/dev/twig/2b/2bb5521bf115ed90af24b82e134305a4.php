@@ -203,6 +203,6 @@ class __TwigTemplate_4ce113406948860b021233c2795f4f79 extends Template
     </section>
 </main>
 {% endblock %}
-", "frontend/services.html.twig", "C:\\Users\\LENOVO\\Documents\\PI\\Medicare\\templates\\frontend\\services.html.twig");
+", "frontend/services.html.twig", "C:\\Users\\LENOVO\\Documents\\gestion user\\Medicare\\templates\\frontend\\services.html.twig");
     }
 }

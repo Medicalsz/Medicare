@@ -101,6 +101,6 @@ final class <?= \$class_name ?>
         // do something with your message
     }
 }
-", "@Maker/message/MessageHandler.tpl.php", "C:\\Users\\LENOVO\\Documents\\PI\\Medicare\\vendor\\symfony\\maker-bundle\\templates\\message\\MessageHandler.tpl.php");
+", "@Maker/message/MessageHandler.tpl.php", "C:\\Users\\LENOVO\\Documents\\gestion user\\Medicare\\vendor\\symfony\\maker-bundle\\templates\\message\\MessageHandler.tpl.php");
     }
 }

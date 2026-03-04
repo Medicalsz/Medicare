@@ -85,6 +85,6 @@ class __TwigTemplate_1a18ebcee7f4c526e83f8f57e2bd8f3c extends Template
     <line x1=\"7\" y1=\"7\" x2=\"7\" y2=\"17\"></line>
     <line x1=\"4\" y1=\"8\" x2=\"4\" y2=\"16\"></line>
 </svg>
-", "@DoctrineMigrations/Collector/icon-v3.svg", "C:\\Users\\LENOVO\\Documents\\PI\\Medicare\\vendor\\doctrine\\doctrine-migrations-bundle\\templates\\Collector\\icon-v3.svg");
+", "@DoctrineMigrations/Collector/icon-v3.svg", "C:\\Users\\LENOVO\\Documents\\gestion user\\Medicare\\vendor\\doctrine\\doctrine-migrations-bundle\\templates\\Collector\\icon-v3.svg");
     }
 }

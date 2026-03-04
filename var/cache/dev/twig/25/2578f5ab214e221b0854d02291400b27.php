@@ -185,6 +185,6 @@ class <?= \$class_name.\"\\n\" ?>
     }
 <?php endif ?>
 }
-", "@Maker/doctrine/Entity.tpl.php", "C:\\Users\\LENOVO\\Documents\\PI\\Medicare\\vendor\\symfony\\maker-bundle\\templates\\doctrine\\Entity.tpl.php");
+", "@Maker/doctrine/Entity.tpl.php", "C:\\Users\\LENOVO\\Documents\\gestion user\\Medicare\\vendor\\symfony\\maker-bundle\\templates\\doctrine\\Entity.tpl.php");
     }
 }

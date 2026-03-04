@@ -159,6 +159,6 @@ namespace <?= \$class_data->getNamespace(); ?>;
         return false;
     }
 }
-", "@Maker/security/Voter.tpl.php", "C:\\Users\\LENOVO\\Documents\\PI\\Medicare\\vendor\\symfony\\maker-bundle\\templates\\security\\Voter.tpl.php");
+", "@Maker/security/Voter.tpl.php", "C:\\Users\\LENOVO\\Documents\\gestion user\\Medicare\\vendor\\symfony\\maker-bundle\\templates\\security\\Voter.tpl.php");
     }
 }

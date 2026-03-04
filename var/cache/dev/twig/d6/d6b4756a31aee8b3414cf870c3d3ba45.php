@@ -277,6 +277,6 @@ class <?= \$class_name; ?> extends AbstractController
     }
 <?php endif; ?>
 }
-", "@Maker/registration/RegistrationController.tpl.php", "C:\\Users\\LENOVO\\Documents\\PI\\Medicare\\vendor\\symfony\\maker-bundle\\templates\\registration\\RegistrationController.tpl.php");
+", "@Maker/registration/RegistrationController.tpl.php", "C:\\Users\\LENOVO\\Documents\\gestion user\\Medicare\\vendor\\symfony\\maker-bundle\\templates\\registration\\RegistrationController.tpl.php");
     }
 }

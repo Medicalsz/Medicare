@@ -87,6 +87,6 @@ namespace <?= \$namespace; ?>;
 class <?= \$class_name.\"\\n\" ?>
 {
 }
-", "@Maker/Class.tpl.php", "C:\\Users\\LENOVO\\Documents\\PI\\Medicare\\vendor\\symfony\\maker-bundle\\templates\\Class.tpl.php");
+", "@Maker/Class.tpl.php", "C:\\Users\\LENOVO\\Documents\\gestion user\\Medicare\\vendor\\symfony\\maker-bundle\\templates\\Class.tpl.php");
     }
 }

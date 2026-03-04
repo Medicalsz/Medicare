@@ -16,7 +16,7 @@ class OidcConfig
     private $algorithm;
     private $key;
     private $_usedProperties = [];
-
+    
     /**
      * Claim which contains the user identifier (e.g.: sub, email..).
      * @default 'sub'
@@ -27,10 +27,10 @@ class OidcConfig
     {
         $this->_usedProperties['claim'] = true;
         $this->claim = $value;
-
+    
         return $this;
     }
-
+    
     /**
      * Audience set in the token, for validation purpose.
      * @default null
@@ -41,10 +41,10 @@ class OidcConfig
     {
         $this->_usedProperties['audience'] = true;
         $this->audience = $value;
-
+    
         return $this;
     }
-
+    
     /**
      * @param ParamConfigurator|list<ParamConfigurator|mixed> $value
      *
@@ -54,10 +54,10 @@ class OidcConfig
     {
         $this->_usedProperties['issuers'] = true;
         $this->issuers = $value;
-
+    
         return $this;
     }
-
+    
     /**
      * Algorithm used to sign the token.
      * @default null
@@ -68,10 +68,10 @@ class OidcConfig
     {
         $this->_usedProperties['algorithm'] = true;
         $this->algorithm = $value;
-
+    
         return $this;
     }
-
+    
     /**
      * JSON-encoded JWK used to sign the token (must contain a "kty" key).
      * @default null
@@ -82,10 +82,10 @@ class OidcConfig
     {
         $this->_usedProperties['key'] = true;
         $this->key = $value;
-
+    
         return $this;
     }
-
+    
     public function __construct(array $config = [])
     {
         if (array_key_exists('claim', $config)) {
@@ -93,36 +93,36 @@ class OidcConfig
             $this->claim = $config['claim'];
             unset($config['claim']);
         }
-
+    
         if (array_key_exists('audience', $config)) {
             $this->_usedProperties['audience'] = true;
             $this->audience = $config['audience'];
             unset($config['audience']);
         }
-
+    
         if (array_key_exists('issuers', $config)) {
             $this->_usedProperties['issuers'] = true;
             $this->issuers = $config['issuers'];
             unset($config['issuers']);
         }
-
+    
         if (array_key_exists('algorithm', $config)) {
             $this->_usedProperties['algorithm'] = true;
             $this->algorithm = $config['algorithm'];
             unset($config['algorithm']);
         }
-
+    
         if (array_key_exists('key', $config)) {
             $this->_usedProperties['key'] = true;
             $this->key = $config['key'];
             unset($config['key']);
         }
-
+    
         if ($config) {
             throw new InvalidConfigurationException(sprintf('The following keys are not supported by "%s": ', __CLASS__).implode(', ', array_keys($config)));
         }
     }
-
+    
     public function toArray(): array
     {
         $output = [];
@@ -141,7 +141,7 @@ class OidcConfig
         if (isset($this->_usedProperties['key'])) {
             $output['key'] = $this->key;
         }
-
+    
         return $output;
     }
 

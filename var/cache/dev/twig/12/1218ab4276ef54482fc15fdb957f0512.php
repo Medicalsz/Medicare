@@ -137,6 +137,6 @@ class <?= \$class_name ?> implements EncoderInterface, DecoderInterface
         return self::FORMAT === \$format;
     }
 }
-", "@Maker/serializer/Encoder.tpl.php", "C:\\Users\\LENOVO\\Documents\\PI\\Medicare\\vendor\\symfony\\maker-bundle\\templates\\serializer\\Encoder.tpl.php");
+", "@Maker/serializer/Encoder.tpl.php", "C:\\Users\\LENOVO\\Documents\\gestion user\\Medicare\\vendor\\symfony\\maker-bundle\\templates\\serializer\\Encoder.tpl.php");
     }
 }

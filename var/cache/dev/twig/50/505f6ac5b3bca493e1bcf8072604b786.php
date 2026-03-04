@@ -184,6 +184,6 @@ class <?= \$class_name ?> extends AbstractType
         \$resolver->setDefaults([]);
     }
 }
-", "@Maker/resetPassword/ChangePasswordFormType.tpl.php", "C:\\Users\\LENOVO\\Documents\\PI\\Medicare\\vendor\\symfony\\maker-bundle\\templates\\resetPassword\\ChangePasswordFormType.tpl.php");
+", "@Maker/resetPassword/ChangePasswordFormType.tpl.php", "C:\\Users\\LENOVO\\Documents\\gestion user\\Medicare\\vendor\\symfony\\maker-bundle\\templates\\resetPassword\\ChangePasswordFormType.tpl.php");
     }
 }

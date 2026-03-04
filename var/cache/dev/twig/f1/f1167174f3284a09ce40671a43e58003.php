@@ -199,124 +199,148 @@ class __TwigTemplate_e34481c1edb1ae136b824bb96a1bc81c extends Template
         </div>
 
         <div class=\"profile-content\">
+            ";
+        // line 45
+        $context["is_owner"] = (CoreExtension::getAttribute($this->env, $this->source, (isset($context["app"]) || array_key_exists("app", $context) ? $context["app"] : (function () { throw new RuntimeError('Variable "app" does not exist.', 45, $this->source); })()), "user", [], "any", false, false, false, 45) && (CoreExtension::getAttribute($this->env, $this->source, CoreExtension::getAttribute($this->env, $this->source, (isset($context["app"]) || array_key_exists("app", $context) ? $context["app"] : (function () { throw new RuntimeError('Variable "app" does not exist.', 45, $this->source); })()), "user", [], "any", false, false, false, 45), "id", [], "any", false, false, false, 45) == CoreExtension::getAttribute($this->env, $this->source, (isset($context["medecin"]) || array_key_exists("medecin", $context) ? $context["medecin"] : (function () { throw new RuntimeError('Variable "medecin" does not exist.', 45, $this->source); })()), "id", [], "any", false, false, false, 45)));
+        // line 46
+        yield "            ";
+        $context["viewer_is_doctor"] = $this->extensions['Symfony\Bridge\Twig\Extension\SecurityExtension']->isGranted("ROLE_MEDECIN");
+        // line 47
+        yield "            ";
+        $context["can_see_address"] = (((CoreExtension::getAttribute($this->env, $this->source, (isset($context["medecin"]) || array_key_exists("medecin", $context) ? $context["medecin"] : (function () { throw new RuntimeError('Variable "medecin" does not exist.', 47, $this->source); })()), "addressPrivacy", [], "any", false, false, false, 47) == "public") || (isset($context["is_owner"]) || array_key_exists("is_owner", $context) ? $context["is_owner"] : (function () { throw new RuntimeError('Variable "is_owner" does not exist.', 47, $this->source); })())) || ((CoreExtension::getAttribute($this->env, $this->source, (isset($context["medecin"]) || array_key_exists("medecin", $context) ? $context["medecin"] : (function () { throw new RuntimeError('Variable "medecin" does not exist.', 47, $this->source); })()), "addressPrivacy", [], "any", false, false, false, 47) == "doctors") && (isset($context["viewer_is_doctor"]) || array_key_exists("viewer_is_doctor", $context) ? $context["viewer_is_doctor"] : (function () { throw new RuntimeError('Variable "viewer_is_doctor" does not exist.', 47, $this->source); })())));
+        // line 48
+        yield "            ";
+        $context["can_see_phone"] = (((CoreExtension::getAttribute($this->env, $this->source, (isset($context["medecin"]) || array_key_exists("medecin", $context) ? $context["medecin"] : (function () { throw new RuntimeError('Variable "medecin" does not exist.', 48, $this->source); })()), "phonePrivacy", [], "any", false, false, false, 48) == "public") || (isset($context["is_owner"]) || array_key_exists("is_owner", $context) ? $context["is_owner"] : (function () { throw new RuntimeError('Variable "is_owner" does not exist.', 48, $this->source); })())) || ((CoreExtension::getAttribute($this->env, $this->source, (isset($context["medecin"]) || array_key_exists("medecin", $context) ? $context["medecin"] : (function () { throw new RuntimeError('Variable "medecin" does not exist.', 48, $this->source); })()), "phonePrivacy", [], "any", false, false, false, 48) == "doctors") && (isset($context["viewer_is_doctor"]) || array_key_exists("viewer_is_doctor", $context) ? $context["viewer_is_doctor"] : (function () { throw new RuntimeError('Variable "viewer_is_doctor" does not exist.', 48, $this->source); })())));
+        // line 49
+        yield "            ";
+        $context["can_see_email"] = (((CoreExtension::getAttribute($this->env, $this->source, (isset($context["medecin"]) || array_key_exists("medecin", $context) ? $context["medecin"] : (function () { throw new RuntimeError('Variable "medecin" does not exist.', 49, $this->source); })()), "emailPrivacy", [], "any", false, false, false, 49) == "public") || (isset($context["is_owner"]) || array_key_exists("is_owner", $context) ? $context["is_owner"] : (function () { throw new RuntimeError('Variable "is_owner" does not exist.', 49, $this->source); })())) || ((CoreExtension::getAttribute($this->env, $this->source, (isset($context["medecin"]) || array_key_exists("medecin", $context) ? $context["medecin"] : (function () { throw new RuntimeError('Variable "medecin" does not exist.', 49, $this->source); })()), "emailPrivacy", [], "any", false, false, false, 49) == "doctors") && (isset($context["viewer_is_doctor"]) || array_key_exists("viewer_is_doctor", $context) ? $context["viewer_is_doctor"] : (function () { throw new RuntimeError('Variable "viewer_is_doctor" does not exist.', 49, $this->source); })())));
+        // line 50
+        yield "
             <div class=\"profile-sidebar\">
                 <div class=\"info-card\">
                     <h3><i class=\"bi bi-hospital\"></i> Cabinet</h3>
                     <p>";
-        // line 48
-        yield $this->env->getRuntime('Twig\Runtime\EscaperRuntime')->escape(CoreExtension::getAttribute($this->env, $this->source, (isset($context["medecin"]) || array_key_exists("medecin", $context) ? $context["medecin"] : (function () { throw new RuntimeError('Variable "medecin" does not exist.', 48, $this->source); })()), "cabinet", [], "any", false, false, false, 48), "html", null, true);
+        // line 54
+        yield $this->env->getRuntime('Twig\Runtime\EscaperRuntime')->escape(CoreExtension::getAttribute($this->env, $this->source, (isset($context["medecin"]) || array_key_exists("medecin", $context) ? $context["medecin"] : (function () { throw new RuntimeError('Variable "medecin" does not exist.', 54, $this->source); })()), "cabinet", [], "any", false, false, false, 54), "html", null, true);
         yield "</p>
                 </div>
                 
                 ";
-        // line 51
-        if ((($tmp = CoreExtension::getAttribute($this->env, $this->source, (isset($context["medecin"]) || array_key_exists("medecin", $context) ? $context["medecin"] : (function () { throw new RuntimeError('Variable "medecin" does not exist.', 51, $this->source); })()), "adresse", [], "any", false, false, false, 51)) && $tmp instanceof Markup ? (string) $tmp : $tmp)) {
-            // line 52
+        // line 57
+        if ((CoreExtension::getAttribute($this->env, $this->source, (isset($context["medecin"]) || array_key_exists("medecin", $context) ? $context["medecin"] : (function () { throw new RuntimeError('Variable "medecin" does not exist.', 57, $this->source); })()), "adresse", [], "any", false, false, false, 57) && (isset($context["can_see_address"]) || array_key_exists("can_see_address", $context) ? $context["can_see_address"] : (function () { throw new RuntimeError('Variable "can_see_address" does not exist.', 57, $this->source); })()))) {
+            // line 58
             yield "                <div class=\"info-card\">
                     <h3><i class=\"bi bi-geo-alt\"></i> Adresse</h3>
                     <p>";
-            // line 54
-            yield $this->env->getRuntime('Twig\Runtime\EscaperRuntime')->escape(CoreExtension::getAttribute($this->env, $this->source, (isset($context["medecin"]) || array_key_exists("medecin", $context) ? $context["medecin"] : (function () { throw new RuntimeError('Variable "medecin" does not exist.', 54, $this->source); })()), "adresse", [], "any", false, false, false, 54), "html", null, true);
+            // line 60
+            yield $this->env->getRuntime('Twig\Runtime\EscaperRuntime')->escape(CoreExtension::getAttribute($this->env, $this->source, (isset($context["medecin"]) || array_key_exists("medecin", $context) ? $context["medecin"] : (function () { throw new RuntimeError('Variable "medecin" does not exist.', 60, $this->source); })()), "adresse", [], "any", false, false, false, 60), "html", null, true);
             yield "</p>
                     ";
-            // line 55
-            if ((($tmp = CoreExtension::getAttribute($this->env, $this->source, (isset($context["medecin"]) || array_key_exists("medecin", $context) ? $context["medecin"] : (function () { throw new RuntimeError('Variable "medecin" does not exist.', 55, $this->source); })()), "ville", [], "any", false, false, false, 55)) && $tmp instanceof Markup ? (string) $tmp : $tmp)) {
-                // line 56
+            // line 61
+            if ((($tmp = CoreExtension::getAttribute($this->env, $this->source, (isset($context["medecin"]) || array_key_exists("medecin", $context) ? $context["medecin"] : (function () { throw new RuntimeError('Variable "medecin" does not exist.', 61, $this->source); })()), "ville", [], "any", false, false, false, 61)) && $tmp instanceof Markup ? (string) $tmp : $tmp)) {
+                // line 62
                 yield "                        <p>";
-                yield $this->env->getRuntime('Twig\Runtime\EscaperRuntime')->escape(CoreExtension::getAttribute($this->env, $this->source, (isset($context["medecin"]) || array_key_exists("medecin", $context) ? $context["medecin"] : (function () { throw new RuntimeError('Variable "medecin" does not exist.', 56, $this->source); })()), "ville", [], "any", false, false, false, 56), "html", null, true);
+                yield $this->env->getRuntime('Twig\Runtime\EscaperRuntime')->escape(CoreExtension::getAttribute($this->env, $this->source, (isset($context["medecin"]) || array_key_exists("medecin", $context) ? $context["medecin"] : (function () { throw new RuntimeError('Variable "medecin" does not exist.', 62, $this->source); })()), "ville", [], "any", false, false, false, 62), "html", null, true);
                 yield ", ";
-                yield $this->env->getRuntime('Twig\Runtime\EscaperRuntime')->escape(CoreExtension::getAttribute($this->env, $this->source, (isset($context["medecin"]) || array_key_exists("medecin", $context) ? $context["medecin"] : (function () { throw new RuntimeError('Variable "medecin" does not exist.', 56, $this->source); })()), "delegation", [], "any", false, false, false, 56), "html", null, true);
+                yield $this->env->getRuntime('Twig\Runtime\EscaperRuntime')->escape(CoreExtension::getAttribute($this->env, $this->source, (isset($context["medecin"]) || array_key_exists("medecin", $context) ? $context["medecin"] : (function () { throw new RuntimeError('Variable "medecin" does not exist.', 62, $this->source); })()), "delegation", [], "any", false, false, false, 62), "html", null, true);
                 yield "</p>
                     ";
             }
-            // line 58
+            // line 64
             yield "                </div>
                 ";
         }
-        // line 60
+        // line 66
         yield "                
                 ";
-        // line 61
-        if ((($tmp = CoreExtension::getAttribute($this->env, $this->source, (isset($context["medecin"]) || array_key_exists("medecin", $context) ? $context["medecin"] : (function () { throw new RuntimeError('Variable "medecin" does not exist.', 61, $this->source); })()), "numero", [], "any", false, false, false, 61)) && $tmp instanceof Markup ? (string) $tmp : $tmp)) {
-            // line 62
+        // line 67
+        if ((CoreExtension::getAttribute($this->env, $this->source, (isset($context["medecin"]) || array_key_exists("medecin", $context) ? $context["medecin"] : (function () { throw new RuntimeError('Variable "medecin" does not exist.', 67, $this->source); })()), "numero", [], "any", false, false, false, 67) && (isset($context["can_see_phone"]) || array_key_exists("can_see_phone", $context) ? $context["can_see_phone"] : (function () { throw new RuntimeError('Variable "can_see_phone" does not exist.', 67, $this->source); })()))) {
+            // line 68
             yield "                <div class=\"info-card\">
                     <h3><i class=\"bi bi-telephone\"></i> Téléphone</h3>
                     <p>";
-            // line 64
-            yield $this->env->getRuntime('Twig\Runtime\EscaperRuntime')->escape(CoreExtension::getAttribute($this->env, $this->source, (isset($context["medecin"]) || array_key_exists("medecin", $context) ? $context["medecin"] : (function () { throw new RuntimeError('Variable "medecin" does not exist.', 64, $this->source); })()), "numero", [], "any", false, false, false, 64), "html", null, true);
+            // line 70
+            yield $this->env->getRuntime('Twig\Runtime\EscaperRuntime')->escape(CoreExtension::getAttribute($this->env, $this->source, (isset($context["medecin"]) || array_key_exists("medecin", $context) ? $context["medecin"] : (function () { throw new RuntimeError('Variable "medecin" does not exist.', 70, $this->source); })()), "numero", [], "any", false, false, false, 70), "html", null, true);
             yield "</p>
                 </div>
                 ";
         }
-        // line 67
+        // line 73
         yield "                
-                <div class=\"info-card\">
+                ";
+        // line 74
+        if ((($tmp = (isset($context["can_see_email"]) || array_key_exists("can_see_email", $context) ? $context["can_see_email"] : (function () { throw new RuntimeError('Variable "can_see_email" does not exist.', 74, $this->source); })())) && $tmp instanceof Markup ? (string) $tmp : $tmp)) {
+            // line 75
+            yield "                <div class=\"info-card\">
                     <h3><i class=\"bi bi-envelope\"></i> Email</h3>
                     <p>";
-        // line 70
-        yield $this->env->getRuntime('Twig\Runtime\EscaperRuntime')->escape(CoreExtension::getAttribute($this->env, $this->source, (isset($context["medecin"]) || array_key_exists("medecin", $context) ? $context["medecin"] : (function () { throw new RuntimeError('Variable "medecin" does not exist.', 70, $this->source); })()), "email", [], "any", false, false, false, 70), "html", null, true);
-        yield "</p>
+            // line 77
+            yield $this->env->getRuntime('Twig\Runtime\EscaperRuntime')->escape(CoreExtension::getAttribute($this->env, $this->source, (isset($context["medecin"]) || array_key_exists("medecin", $context) ? $context["medecin"] : (function () { throw new RuntimeError('Variable "medecin" does not exist.', 77, $this->source); })()), "email", [], "any", false, false, false, 77), "html", null, true);
+            yield "</p>
                 </div>
-                
                 ";
-        // line 73
-        if ((($tmp = CoreExtension::getAttribute($this->env, $this->source, (isset($context["medecin"]) || array_key_exists("medecin", $context) ? $context["medecin"] : (function () { throw new RuntimeError('Variable "medecin" does not exist.', 73, $this->source); })()), "prixConsultation", [], "any", false, false, false, 73)) && $tmp instanceof Markup ? (string) $tmp : $tmp)) {
-            // line 74
+        }
+        // line 80
+        yield "                
+                ";
+        // line 81
+        if ((($tmp = CoreExtension::getAttribute($this->env, $this->source, (isset($context["medecin"]) || array_key_exists("medecin", $context) ? $context["medecin"] : (function () { throw new RuntimeError('Variable "medecin" does not exist.', 81, $this->source); })()), "prixConsultation", [], "any", false, false, false, 81)) && $tmp instanceof Markup ? (string) $tmp : $tmp)) {
+            // line 82
             yield "                <div class=\"info-card\">
                     <h3><i class=\"bi bi-currency-euro\"></i> Consultation</h3>
                     <p class=\"price\">";
-            // line 76
-            yield $this->env->getRuntime('Twig\Runtime\EscaperRuntime')->escape(CoreExtension::getAttribute($this->env, $this->source, (isset($context["medecin"]) || array_key_exists("medecin", $context) ? $context["medecin"] : (function () { throw new RuntimeError('Variable "medecin" does not exist.', 76, $this->source); })()), "prixConsultation", [], "any", false, false, false, 76), "html", null, true);
+            // line 84
+            yield $this->env->getRuntime('Twig\Runtime\EscaperRuntime')->escape(CoreExtension::getAttribute($this->env, $this->source, (isset($context["medecin"]) || array_key_exists("medecin", $context) ? $context["medecin"] : (function () { throw new RuntimeError('Variable "medecin" does not exist.', 84, $this->source); })()), "prixConsultation", [], "any", false, false, false, 84), "html", null, true);
             yield " €</p>
                 </div>
                 ";
         }
-        // line 79
+        // line 87
         yield "            </div>
             
             <div class=\"profile-main-content\">
                 ";
-        // line 82
-        if ((($tmp = CoreExtension::getAttribute($this->env, $this->source, (isset($context["medecin"]) || array_key_exists("medecin", $context) ? $context["medecin"] : (function () { throw new RuntimeError('Variable "medecin" does not exist.', 82, $this->source); })()), "bio", [], "any", false, false, false, 82)) && $tmp instanceof Markup ? (string) $tmp : $tmp)) {
-            // line 83
+        // line 90
+        if ((($tmp = CoreExtension::getAttribute($this->env, $this->source, (isset($context["medecin"]) || array_key_exists("medecin", $context) ? $context["medecin"] : (function () { throw new RuntimeError('Variable "medecin" does not exist.', 90, $this->source); })()), "bio", [], "any", false, false, false, 90)) && $tmp instanceof Markup ? (string) $tmp : $tmp)) {
+            // line 91
             yield "                <div class=\"content-card\">
                     <h2><i class=\"bi bi-person-lines-fill\"></i> À propos</h2>
                     <p>";
-            // line 85
-            yield $this->env->getRuntime('Twig\Runtime\EscaperRuntime')->escape(CoreExtension::getAttribute($this->env, $this->source, (isset($context["medecin"]) || array_key_exists("medecin", $context) ? $context["medecin"] : (function () { throw new RuntimeError('Variable "medecin" does not exist.', 85, $this->source); })()), "bio", [], "any", false, false, false, 85), "html", null, true);
+            // line 93
+            yield $this->env->getRuntime('Twig\Runtime\EscaperRuntime')->escape(CoreExtension::getAttribute($this->env, $this->source, (isset($context["medecin"]) || array_key_exists("medecin", $context) ? $context["medecin"] : (function () { throw new RuntimeError('Variable "medecin" does not exist.', 93, $this->source); })()), "bio", [], "any", false, false, false, 93), "html", null, true);
             yield "</p>
                 </div>
                 ";
         }
-        // line 88
+        // line 96
         yield "                
                 ";
-        // line 89
-        if ((($tmp = CoreExtension::getAttribute($this->env, $this->source, (isset($context["medecin"]) || array_key_exists("medecin", $context) ? $context["medecin"] : (function () { throw new RuntimeError('Variable "medecin" does not exist.', 89, $this->source); })()), "certificate", [], "any", false, false, false, 89)) && $tmp instanceof Markup ? (string) $tmp : $tmp)) {
-            // line 90
+        // line 97
+        if ((($tmp = CoreExtension::getAttribute($this->env, $this->source, (isset($context["medecin"]) || array_key_exists("medecin", $context) ? $context["medecin"] : (function () { throw new RuntimeError('Variable "medecin" does not exist.', 97, $this->source); })()), "certificate", [], "any", false, false, false, 97)) && $tmp instanceof Markup ? (string) $tmp : $tmp)) {
+            // line 98
             yield "                <div class=\"content-card\">
                     <h2><i class=\"bi bi-file-earmark-medical\"></i> Certifications</h2>
                     <a href=\"";
-            // line 92
-            yield $this->env->getRuntime('Twig\Runtime\EscaperRuntime')->escape(CoreExtension::getAttribute($this->env, $this->source, (isset($context["medecin"]) || array_key_exists("medecin", $context) ? $context["medecin"] : (function () { throw new RuntimeError('Variable "medecin" does not exist.', 92, $this->source); })()), "certificate", [], "any", false, false, false, 92), "html", null, true);
+            // line 100
+            yield $this->env->getRuntime('Twig\Runtime\EscaperRuntime')->escape(CoreExtension::getAttribute($this->env, $this->source, (isset($context["medecin"]) || array_key_exists("medecin", $context) ? $context["medecin"] : (function () { throw new RuntimeError('Variable "medecin" does not exist.', 100, $this->source); })()), "certificate", [], "any", false, false, false, 100), "html", null, true);
             yield "\" target=\"_blank\" class=\"certificate-link\">
                         <i class=\"bi bi-file-pdf\"></i> Voir le certificat
                     </a>
                 </div>
                 ";
         }
-        // line 97
+        // line 105
         yield "                
                 <div class=\"content-card\">
                     <h2><i class=\"bi bi-calendar-check\"></i> Disponibilités</h2>
                     <p class=\"info-text\">Prenez rendez-vous pour consulter le Dr. ";
-        // line 100
-        yield $this->env->getRuntime('Twig\Runtime\EscaperRuntime')->escape(CoreExtension::getAttribute($this->env, $this->source, (isset($context["medecin"]) || array_key_exists("medecin", $context) ? $context["medecin"] : (function () { throw new RuntimeError('Variable "medecin" does not exist.', 100, $this->source); })()), "prenom", [], "any", false, false, false, 100), "html", null, true);
+        // line 108
+        yield $this->env->getRuntime('Twig\Runtime\EscaperRuntime')->escape(CoreExtension::getAttribute($this->env, $this->source, (isset($context["medecin"]) || array_key_exists("medecin", $context) ? $context["medecin"] : (function () { throw new RuntimeError('Variable "medecin" does not exist.', 108, $this->source); })()), "prenom", [], "any", false, false, false, 108), "html", null, true);
         yield " ";
-        yield $this->env->getRuntime('Twig\Runtime\EscaperRuntime')->escape(CoreExtension::getAttribute($this->env, $this->source, (isset($context["medecin"]) || array_key_exists("medecin", $context) ? $context["medecin"] : (function () { throw new RuntimeError('Variable "medecin" does not exist.', 100, $this->source); })()), "nom", [], "any", false, false, false, 100), "html", null, true);
+        yield $this->env->getRuntime('Twig\Runtime\EscaperRuntime')->escape(CoreExtension::getAttribute($this->env, $this->source, (isset($context["medecin"]) || array_key_exists("medecin", $context) ? $context["medecin"] : (function () { throw new RuntimeError('Variable "medecin" does not exist.', 108, $this->source); })()), "nom", [], "any", false, false, false, 108), "html", null, true);
         yield "</p>
                     <a href=\"";
-        // line 101
+        // line 109
         yield $this->extensions['Symfony\Bridge\Twig\Extension\RoutingExtension']->getPath("app_appointment");
         yield "\" class=\"btn-appointment\">
                         <i class=\"bi bi-calendar-plus\"></i> Prendre rendez-vous
@@ -326,8 +350,19 @@ class __TwigTemplate_e34481c1edb1ae136b824bb96a1bc81c extends Template
         </div>
         
         <div class=\"profile-actions\">
-            <a href=\"";
-        // line 109
+            ";
+        // line 117
+        if ((($tmp = (isset($context["is_owner"]) || array_key_exists("is_owner", $context) ? $context["is_owner"] : (function () { throw new RuntimeError('Variable "is_owner" does not exist.', 117, $this->source); })())) && $tmp instanceof Markup ? (string) $tmp : $tmp)) {
+            // line 118
+            yield "                <a href=\"";
+            yield $this->extensions['Symfony\Bridge\Twig\Extension\RoutingExtension']->getPath("app_profile_edit");
+            yield "\" class=\"btn-appointment me-3\">
+                    <i class=\"bi bi-pencil\"></i> Modifier mon profil
+                </a>
+            ";
+        }
+        // line 122
+        yield "            <a href=\"";
         yield $this->extensions['Symfony\Bridge\Twig\Extension\RoutingExtension']->getPath("app_profile");
         yield "\" class=\"btn-back\">
                 <i class=\"bi bi-arrow-left\"></i> Retour au profil
@@ -644,7 +679,7 @@ class __TwigTemplate_e34481c1edb1ae136b824bb96a1bc81c extends Template
      */
     public function getDebugInfo(): array
     {
-        return array (  331 => 109,  320 => 101,  314 => 100,  309 => 97,  301 => 92,  297 => 90,  295 => 89,  292 => 88,  286 => 85,  282 => 83,  280 => 82,  275 => 79,  269 => 76,  265 => 74,  263 => 73,  257 => 70,  252 => 67,  246 => 64,  242 => 62,  240 => 61,  237 => 60,  233 => 58,  225 => 56,  223 => 55,  219 => 54,  215 => 52,  213 => 51,  207 => 48,  197 => 40,  193 => 38,  189 => 36,  187 => 35,  183 => 34,  177 => 33,  172 => 30,  168 => 28,  164 => 26,  162 => 25,  159 => 24,  152 => 21,  149 => 20,  139 => 18,  137 => 17,  129 => 11,  116 => 10,  93 => 8,  70 => 6,  59 => 1,  57 => 4,  55 => 3,  42 => 1,);
+        return array (  365 => 122,  357 => 118,  355 => 117,  344 => 109,  338 => 108,  333 => 105,  325 => 100,  321 => 98,  319 => 97,  316 => 96,  310 => 93,  306 => 91,  304 => 90,  299 => 87,  293 => 84,  289 => 82,  287 => 81,  284 => 80,  278 => 77,  274 => 75,  272 => 74,  269 => 73,  263 => 70,  259 => 68,  257 => 67,  254 => 66,  250 => 64,  242 => 62,  240 => 61,  236 => 60,  232 => 58,  230 => 57,  224 => 54,  218 => 50,  215 => 49,  212 => 48,  209 => 47,  206 => 46,  204 => 45,  197 => 40,  193 => 38,  189 => 36,  187 => 35,  183 => 34,  177 => 33,  172 => 30,  168 => 28,  164 => 26,  162 => 25,  159 => 24,  152 => 21,  149 => 20,  139 => 18,  137 => 17,  129 => 11,  116 => 10,  93 => 8,  70 => 6,  59 => 1,  57 => 4,  55 => 3,  42 => 1,);
     }
 
     public function getSourceContext(): Source
@@ -693,13 +728,19 @@ class __TwigTemplate_e34481c1edb1ae136b824bb96a1bc81c extends Template
         </div>
 
         <div class=\"profile-content\">
+            {% set is_owner = app.user and app.user.id == medecin.id %}
+            {% set viewer_is_doctor = is_granted('ROLE_MEDECIN') %}
+            {% set can_see_address = medecin.addressPrivacy == 'public' or is_owner or (medecin.addressPrivacy == 'doctors' and viewer_is_doctor) %}
+            {% set can_see_phone   = medecin.phonePrivacy   == 'public' or is_owner or (medecin.phonePrivacy   == 'doctors' and viewer_is_doctor) %}
+            {% set can_see_email   = medecin.emailPrivacy   == 'public' or is_owner or (medecin.emailPrivacy   == 'doctors' and viewer_is_doctor) %}
+
             <div class=\"profile-sidebar\">
                 <div class=\"info-card\">
                     <h3><i class=\"bi bi-hospital\"></i> Cabinet</h3>
                     <p>{{ medecin.cabinet }}</p>
                 </div>
                 
-                {% if medecin.adresse %}
+                {% if medecin.adresse and can_see_address %}
                 <div class=\"info-card\">
                     <h3><i class=\"bi bi-geo-alt\"></i> Adresse</h3>
                     <p>{{ medecin.adresse }}</p>
@@ -709,17 +750,19 @@ class __TwigTemplate_e34481c1edb1ae136b824bb96a1bc81c extends Template
                 </div>
                 {% endif %}
                 
-                {% if medecin.numero %}
+                {% if medecin.numero and can_see_phone %}
                 <div class=\"info-card\">
                     <h3><i class=\"bi bi-telephone\"></i> Téléphone</h3>
                     <p>{{ medecin.numero }}</p>
                 </div>
                 {% endif %}
                 
+                {% if can_see_email %}
                 <div class=\"info-card\">
                     <h3><i class=\"bi bi-envelope\"></i> Email</h3>
                     <p>{{ medecin.email }}</p>
                 </div>
+                {% endif %}
                 
                 {% if medecin.prixConsultation %}
                 <div class=\"info-card\">
@@ -757,6 +800,11 @@ class __TwigTemplate_e34481c1edb1ae136b824bb96a1bc81c extends Template
         </div>
         
         <div class=\"profile-actions\">
+            {% if is_owner %}
+                <a href=\"{{ path('app_profile_edit') }}\" class=\"btn-appointment me-3\">
+                    <i class=\"bi bi-pencil\"></i> Modifier mon profil
+                </a>
+            {% endif %}
             <a href=\"{{ path('app_profile') }}\" class=\"btn-back\">
                 <i class=\"bi bi-arrow-left\"></i> Retour au profil
             </a>
@@ -1042,6 +1090,6 @@ class __TwigTemplate_e34481c1edb1ae136b824bb96a1bc81c extends Template
     }
 </style>
 {% endblock %}
-", "frontend/medecin_profile.html.twig", "C:\\Users\\LENOVO\\Documents\\PI\\Medicare\\templates\\frontend\\medecin_profile.html.twig");
+", "frontend/medecin_profile.html.twig", "C:\\Users\\LENOVO\\Documents\\gestion user\\Medicare\\templates\\frontend\\medecin_profile.html.twig");
     }
 }

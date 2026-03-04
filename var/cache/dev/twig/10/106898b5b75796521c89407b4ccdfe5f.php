@@ -123,6 +123,6 @@ class <?= \$class_name ?> extends AbstractExtension
         ];
     }
 }
-", "@Maker/twig/Extension.tpl.php", "C:\\Users\\LENOVO\\Documents\\PI\\Medicare\\vendor\\symfony\\maker-bundle\\templates\\twig\\Extension.tpl.php");
+", "@Maker/twig/Extension.tpl.php", "C:\\Users\\LENOVO\\Documents\\gestion user\\Medicare\\vendor\\symfony\\maker-bundle\\templates\\twig\\Extension.tpl.php");
     }
 }

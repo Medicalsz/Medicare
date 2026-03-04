@@ -195,6 +195,6 @@ class <?= \$class_name; ?> extends ServiceEntityRepository<?= \$with_password_up
 //    }
 <?php endif; ?>
 }
-", "@Maker/doctrine/Repository.tpl.php", "C:\\Users\\LENOVO\\Documents\\PI\\Medicare\\vendor\\symfony\\maker-bundle\\templates\\doctrine\\Repository.tpl.php");
+", "@Maker/doctrine/Repository.tpl.php", "C:\\Users\\LENOVO\\Documents\\gestion user\\Medicare\\vendor\\symfony\\maker-bundle\\templates\\doctrine\\Repository.tpl.php");
     }
 }

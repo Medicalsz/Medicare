@@ -13,7 +13,7 @@ class SymfonycastsVerifyEmailConfig implements \Symfony\Component\Config\Builder
     private $lifetime;
     private $_usedProperties = [];
     private $_hasDeprecatedCalls = false;
-
+    
     /**
      * The length of time in seconds that a signed URI is valid for after it is created.
      * @default 3600
@@ -26,15 +26,15 @@ class SymfonycastsVerifyEmailConfig implements \Symfony\Component\Config\Builder
         $this->_hasDeprecatedCalls = true;
         $this->_usedProperties['lifetime'] = true;
         $this->lifetime = $value;
-
+    
         return $this;
     }
-
+    
     public function getExtensionAlias(): string
     {
         return 'symfonycasts_verify_email';
     }
-
+    
     public function __construct(array $config = [])
     {
         if (array_key_exists('lifetime', $config)) {
@@ -42,12 +42,12 @@ class SymfonycastsVerifyEmailConfig implements \Symfony\Component\Config\Builder
             $this->lifetime = $config['lifetime'];
             unset($config['lifetime']);
         }
-
+    
         if ($config) {
             throw new InvalidConfigurationException(sprintf('The following keys are not supported by "%s": ', __CLASS__).implode(', ', array_keys($config)));
         }
     }
-
+    
     public function toArray(): array
     {
         $output = [];
@@ -57,7 +57,7 @@ class SymfonycastsVerifyEmailConfig implements \Symfony\Component\Config\Builder
         if ($this->_hasDeprecatedCalls) {
             trigger_deprecation('symfony/config', '7.4', 'Calling any fluent method on "%s" is deprecated; pass the configuration to the constructor instead.', $this::class);
         }
-
+    
         return $output;
     }
 

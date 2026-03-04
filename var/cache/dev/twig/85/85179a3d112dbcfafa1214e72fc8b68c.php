@@ -221,6 +221,6 @@ class <?= \$class_name ?> implements UserProviderInterface, PasswordUpgraderInte
         // 2. update the \$user object with \$user->setPassword(\$newHashedPassword);
     }
 }
-", "@Maker/security/UserProvider.tpl.php", "C:\\Users\\LENOVO\\Documents\\PI\\Medicare\\vendor\\symfony\\maker-bundle\\templates\\security\\UserProvider.tpl.php");
+", "@Maker/security/UserProvider.tpl.php", "C:\\Users\\LENOVO\\Documents\\gestion user\\Medicare\\vendor\\symfony\\maker-bundle\\templates\\security\\UserProvider.tpl.php");
     }
 }

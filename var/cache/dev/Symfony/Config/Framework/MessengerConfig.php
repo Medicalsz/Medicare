@@ -25,7 +25,7 @@ class MessengerConfig
     private $defaultBus;
     private $buses;
     private $_usedProperties = [];
-
+    
     /**
      * @default true
      * @param ParamConfigurator|bool $value
@@ -35,10 +35,10 @@ class MessengerConfig
     {
         $this->_usedProperties['enabled'] = true;
         $this->enabled = $value;
-
+    
         return $this;
     }
-
+    
     public function routing(string $message_class, array $value = []): \Symfony\Config\Framework\Messenger\RoutingConfig
     {
         if (!isset($this->routing[$message_class])) {
@@ -47,10 +47,10 @@ class MessengerConfig
         } elseif (1 < \func_num_args()) {
             throw new InvalidConfigurationException('The node created by "routing()" has already been initialized. You cannot pass values the second time you call routing().');
         }
-
+    
         return $this->routing[$message_class];
     }
-
+    
     /**
      * @default {"default_serializer":"messenger.transport.native_php_serializer","symfony_serializer":{"format":"json","context":[]}}
      */
@@ -62,10 +62,10 @@ class MessengerConfig
         } elseif (0 < \func_num_args()) {
             throw new InvalidConfigurationException('The node created by "serializer()" has already been initialized. You cannot pass values the second time you call serializer().');
         }
-
+    
         return $this->serializer;
     }
-
+    
     /**
      * @template TValue of string|array
      * @param TValue $value
@@ -77,20 +77,20 @@ class MessengerConfig
         if (!\is_array($value)) {
             $this->_usedProperties['transports'] = true;
             $this->transports[$name] = $value;
-
+    
             return $this;
         }
-
+    
         if (!isset($this->transports[$name]) || !$this->transports[$name] instanceof \Symfony\Config\Framework\Messenger\TransportConfig) {
             $this->_usedProperties['transports'] = true;
             $this->transports[$name] = new \Symfony\Config\Framework\Messenger\TransportConfig($value);
         } elseif (1 < \func_num_args()) {
             throw new InvalidConfigurationException('The node created by "transport()" has already been initialized. You cannot pass values the second time you call transport().');
         }
-
+    
         return $this->transports[$name];
     }
-
+    
     /**
      * Transport name to send failed messages to (after all retries have failed).
      * @default null
@@ -101,10 +101,10 @@ class MessengerConfig
     {
         $this->_usedProperties['failureTransport'] = true;
         $this->failureTransport = $value;
-
+    
         return $this;
     }
-
+    
     /**
      * Reset container services after each message.
      * @default true
@@ -116,10 +116,10 @@ class MessengerConfig
     {
         $this->_usedProperties['resetOnMessage'] = true;
         $this->resetOnMessage = $value;
-
+    
         return $this;
     }
-
+    
     /**
      * @param ParamConfigurator|list<ParamConfigurator|int> $value
      *
@@ -129,10 +129,10 @@ class MessengerConfig
     {
         $this->_usedProperties['stopWorkerOnSignals'] = true;
         $this->stopWorkerOnSignals = $value;
-
+    
         return $this;
     }
-
+    
     /**
      * @default null
      * @param ParamConfigurator|mixed $value
@@ -142,10 +142,10 @@ class MessengerConfig
     {
         $this->_usedProperties['defaultBus'] = true;
         $this->defaultBus = $value;
-
+    
         return $this;
     }
-
+    
     /**
      * @default {"messenger.bus.default":{"default_middleware":{"enabled":true,"allow_no_handlers":false,"allow_no_senders":true},"middleware":[]}}
      */
@@ -157,10 +157,10 @@ class MessengerConfig
         } elseif (1 < \func_num_args()) {
             throw new InvalidConfigurationException('The node created by "bus()" has already been initialized. You cannot pass values the second time you call bus().');
         }
-
+    
         return $this->buses[$name];
     }
-
+    
     public function __construct(array $config = [])
     {
         if (array_key_exists('enabled', $config)) {
@@ -168,60 +168,60 @@ class MessengerConfig
             $this->enabled = $config['enabled'];
             unset($config['enabled']);
         }
-
+    
         if (array_key_exists('routing', $config)) {
             $this->_usedProperties['routing'] = true;
             $this->routing = array_map(fn ($v) => \is_array($v) ? new \Symfony\Config\Framework\Messenger\RoutingConfig($v) : $v, $config['routing']);
             unset($config['routing']);
         }
-
+    
         if (array_key_exists('serializer', $config)) {
             $this->_usedProperties['serializer'] = true;
             $this->serializer = new \Symfony\Config\Framework\Messenger\SerializerConfig($config['serializer']);
             unset($config['serializer']);
         }
-
+    
         if (array_key_exists('transports', $config)) {
             $this->_usedProperties['transports'] = true;
             $this->transports = array_map(fn ($v) => \is_array($v) ? new \Symfony\Config\Framework\Messenger\TransportConfig($v) : $v, $config['transports']);
             unset($config['transports']);
         }
-
+    
         if (array_key_exists('failure_transport', $config)) {
             $this->_usedProperties['failureTransport'] = true;
             $this->failureTransport = $config['failure_transport'];
             unset($config['failure_transport']);
         }
-
+    
         if (array_key_exists('reset_on_message', $config)) {
             $this->_usedProperties['resetOnMessage'] = true;
             $this->resetOnMessage = $config['reset_on_message'];
             unset($config['reset_on_message']);
         }
-
+    
         if (array_key_exists('stop_worker_on_signals', $config)) {
             $this->_usedProperties['stopWorkerOnSignals'] = true;
             $this->stopWorkerOnSignals = $config['stop_worker_on_signals'];
             unset($config['stop_worker_on_signals']);
         }
-
+    
         if (array_key_exists('default_bus', $config)) {
             $this->_usedProperties['defaultBus'] = true;
             $this->defaultBus = $config['default_bus'];
             unset($config['default_bus']);
         }
-
+    
         if (array_key_exists('buses', $config)) {
             $this->_usedProperties['buses'] = true;
             $this->buses = array_map(fn ($v) => new \Symfony\Config\Framework\Messenger\BusConfig($v), $config['buses']);
             unset($config['buses']);
         }
-
+    
         if ($config) {
             throw new InvalidConfigurationException(sprintf('The following keys are not supported by "%s": ', __CLASS__).implode(', ', array_keys($config)));
         }
     }
-
+    
     public function toArray(): array
     {
         $output = [];
@@ -252,7 +252,7 @@ class MessengerConfig
         if (isset($this->_usedProperties['buses'])) {
             $output['buses'] = array_map(fn ($v) => $v->toArray(), $this->buses);
         }
-
+    
         return $output;
     }
 

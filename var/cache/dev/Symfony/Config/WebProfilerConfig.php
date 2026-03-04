@@ -15,7 +15,7 @@ class WebProfilerConfig implements \Symfony\Component\Config\Builder\ConfigBuild
     private $excludedAjaxPaths;
     private $_usedProperties = [];
     private $_hasDeprecatedCalls = false;
-
+    
     /**
      * @default false
      * @param ParamConfigurator|bool $value
@@ -27,10 +27,10 @@ class WebProfilerConfig implements \Symfony\Component\Config\Builder\ConfigBuild
         $this->_hasDeprecatedCalls = true;
         $this->_usedProperties['toolbar'] = true;
         $this->toolbar = $value;
-
+    
         return $this;
     }
-
+    
     /**
      * @default false
      * @param ParamConfigurator|bool $value
@@ -42,10 +42,10 @@ class WebProfilerConfig implements \Symfony\Component\Config\Builder\ConfigBuild
         $this->_hasDeprecatedCalls = true;
         $this->_usedProperties['interceptRedirects'] = true;
         $this->interceptRedirects = $value;
-
+    
         return $this;
     }
-
+    
     /**
      * @default '^/((index|app(_[\\w]+)?)\\.php/)?_wdt'
      * @param ParamConfigurator|mixed $value
@@ -57,15 +57,15 @@ class WebProfilerConfig implements \Symfony\Component\Config\Builder\ConfigBuild
         $this->_hasDeprecatedCalls = true;
         $this->_usedProperties['excludedAjaxPaths'] = true;
         $this->excludedAjaxPaths = $value;
-
+    
         return $this;
     }
-
+    
     public function getExtensionAlias(): string
     {
         return 'web_profiler';
     }
-
+    
     public function __construct(array $config = [])
     {
         if (array_key_exists('toolbar', $config)) {
@@ -73,24 +73,24 @@ class WebProfilerConfig implements \Symfony\Component\Config\Builder\ConfigBuild
             $this->toolbar = $config['toolbar'];
             unset($config['toolbar']);
         }
-
+    
         if (array_key_exists('intercept_redirects', $config)) {
             $this->_usedProperties['interceptRedirects'] = true;
             $this->interceptRedirects = $config['intercept_redirects'];
             unset($config['intercept_redirects']);
         }
-
+    
         if (array_key_exists('excluded_ajax_paths', $config)) {
             $this->_usedProperties['excludedAjaxPaths'] = true;
             $this->excludedAjaxPaths = $config['excluded_ajax_paths'];
             unset($config['excluded_ajax_paths']);
         }
-
+    
         if ($config) {
             throw new InvalidConfigurationException(sprintf('The following keys are not supported by "%s": ', __CLASS__).implode(', ', array_keys($config)));
         }
     }
-
+    
     public function toArray(): array
     {
         $output = [];
@@ -106,7 +106,7 @@ class WebProfilerConfig implements \Symfony\Component\Config\Builder\ConfigBuild
         if ($this->_hasDeprecatedCalls) {
             trigger_deprecation('symfony/config', '7.4', 'Calling any fluent method on "%s" is deprecated; pass the configuration to the constructor instead.', $this::class);
         }
-
+    
         return $output;
     }
 

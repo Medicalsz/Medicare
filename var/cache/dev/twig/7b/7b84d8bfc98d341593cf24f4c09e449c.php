@@ -107,6 +107,6 @@ namespace <?= \$class_data->getNamespace(); ?>;
         self::assertResponseIsSuccessful();
     }
 }
-", "@Maker/controller/test/Test.tpl.php", "C:\\Users\\LENOVO\\Documents\\PI\\Medicare\\vendor\\symfony\\maker-bundle\\templates\\controller\\test\\Test.tpl.php");
+", "@Maker/controller/test/Test.tpl.php", "C:\\Users\\LENOVO\\Documents\\gestion user\\Medicare\\vendor\\symfony\\maker-bundle\\templates\\controller\\test\\Test.tpl.php");
     }
 }

@@ -3,151 +3,448 @@
 {% block title %}Settings - Medicare{% endblock %}
 
 {% block body %}
-<div class="container mt-5">
+<div class="container mt-5 mb-5 pb-5">
     <div class="row">
-        <div class="col-md-8 offset-md-2">
-            <h1>Settings</h1>
-            <hr>
-            
-            <div class="card mb-4">
-                <div class="card-header">
-                    <h5 class="mb-0"><i class="bi bi-person-circle"></i> Account Settings</h5>
+        <div class="col-lg-8 offset-lg-2">
+            <div class="d-flex align-items-center justify-content-between mb-4">
+                <div>
+                    <h1 class="h3 mb-1 fw-bold"><i class="bi bi-gear-fill me-2 text-primary"></i>Settings</h1>
+                    <p class="text-muted mb-0">Manage your account preferences and profile information</p>
                 </div>
-                <div class="card-body">
-                    <p><strong>Email:</strong> {{ app.user.email }}</p>
-                    <p><strong>Name:</strong> 
-                        {% if app.user.prenom %}{{ app.user.prenom }}{% endif %}
-                        {% if app.user.nom %}{{ app.user.nom }}{% endif %}
-                    </p>
-                    <button class="btn btn-primary btn-sm">Change Password</button>
-                    <button class="btn btn-secondary btn-sm">Edit Profile</button>
-                </div>
+                <a href="{{ path('app_dashboard') }}" class="btn btn-outline-secondary btn-sm rounded-pill px-3">
+                    <i class="bi bi-arrow-left me-1"></i> Back
+                </a>
             </div>
 
-            <div class="card mb-4">
-                <div class="card-header">
-                    <h5 class="mb-0"><i class="bi bi-moon-stars"></i> Appearance</h5>
+            {% for label, messages in app.flashes %}
+                {% for message in messages %}
+                    <div class="alert alert-{{ label === 'error' ? 'danger' : label }} alert-dismissible fade show rounded-3 shadow-sm border-0 mb-4" role="alert">
+                        {% if label == 'success' %}
+                            <i class="bi bi-check-circle-fill me-2"></i>
+                        {% else %}
+                            <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                        {% endif %}
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                {% endfor %}
+            {% endfor %}
+
+            {% if message %}
+                <div class="alert alert-success alert-dismissible fade show rounded-3 shadow-sm border-0 mb-4" role="alert">
+                    <i class="bi bi-check-circle-fill me-2"></i> {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
                 </div>
-                <div class="card-body">
-                    <div class="form-check form-switch">
-                        <input class="form-check-input" type="checkbox" id="darkModeSwitch">
-                        <label class="form-check-label" for="darkModeSwitch">
-                            Dark Mode (Night Mode)
-                        </label>
+            {% endif %}
+
+            {{ form_start(form, {'attr': {'id': 'settingsForm'}}) }}
+            <input type="hidden" name="cropped_photo" id="croppedPhotoInput">
+
+            <!-- Profile Section -->
+            <div class="card mb-4 border-0 shadow-sm rounded-4 overflow-hidden">
+                <div class="card-header bg-white py-3 border-bottom border-light">
+                    <h5 class="mb-0 fw-bold"><i class="bi bi-person-fill me-2 text-primary"></i>Personal Information</h5>
+                </div>
+                <div class="card-body p-4">
+                    <!-- Photo Upload with Preview & Crop -->
+                    <div class="row align-items-center mb-4">
+                        <div class="col-auto">
+                            <div class="position-relative">
+                                <img src="{{ app.user.photo ?: asset('build/frontend/assets/img/default-avatar.png') }}" 
+                                     id="profile-preview" 
+                                     class="rounded-circle shadow-sm object-fit-cover" 
+                                     style="width: 100px; height: 100px; border: 3px solid #f8f9fa;">
+                                <label for="{{ form.photo.vars.id }}" class="btn btn-primary btn-sm rounded-circle position-absolute bottom-0 end-0 shadow-sm p-1" style="width: 32px; height: 32px;">
+                                    <i class="bi bi-camera-fill"></i>
+                                </label>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <h6 class="mb-1 fw-bold">Profile Photo</h6>
+                            <p class="text-muted small mb-1">JPG, PNG or WebP. Max 2MB.</p>
+                            <div class="d-flex gap-2">
+                                <label for="{{ form.photo.vars.id }}" class="btn btn-sm btn-outline-primary rounded-pill px-3">
+                                    <i class="bi bi-upload me-1"></i> Upload
+                                </label>
+                                <button type="button" class="btn btn-sm btn-outline-primary rounded-pill px-3" onclick="openCamera()">
+                                    <i class="bi bi-camera me-1"></i> Take Photo
+                                </button>
+                            </div>
+                            <div class="d-none">
+                                {{ form_widget(form.photo, {'attr': {'onchange': 'initCropper(this)'}}) }}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            {{ form_label(form.username, null, {'label_attr': {'class': 'form-label fw-semibold'}}) }}
+                            {{ form_widget(form.username) }}
+                            {{ form_errors(form.username) }}
+                        </div>
+                        <div class="col-md-6">
+                            {{ form_label(form.email, null, {'label_attr': {'class': 'form-label fw-semibold'}}) }}
+                            {{ form_widget(form.email) }}
+                            {{ form_errors(form.email) }}
+                        </div>
+                        <div class="col-md-6">
+                            {{ form_label(form.prenom, null, {'label_attr': {'class': 'form-label fw-semibold'}}) }}
+                            {{ form_widget(form.prenom) }}
+                        </div>
+                        <div class="col-md-6">
+                            {{ form_label(form.nom, null, {'label_attr': {'class': 'form-label fw-semibold'}}) }}
+                            {{ form_widget(form.nom) }}
+                        </div>
+                        <div class="col-md-12">
+                            {{ form_label(form.numero, null, {'label_attr': {'class': 'form-label fw-semibold'}}) }}
+                            {{ form_widget(form.numero) }}
+                        </div>
+                        <div class="col-md-12">
+                            {{ form_label(form.adresse, null, {'label_attr': {'class': 'form-label fw-semibold'}}) }}
+                            {{ form_widget(form.adresse) }}
+                        </div>
                     </div>
                 </div>
             </div>
 
-            <div class="card mb-4">
-                <div class="card-header">
-                    <h5 class="mb-0"><i class="bi bi-bell"></i> Notifications</h5>
+            {% if form.specialite is defined %}
+            <!-- Professional Section for Medecin -->
+            <div class="card mb-4 border-0 shadow-sm rounded-4 overflow-hidden">
+                <div class="card-header bg-white py-3 border-bottom border-light">
+                    <h5 class="mb-0 fw-bold"><i class="bi bi-briefcase-fill me-2 text-primary"></i>Professional Details</h5>
                 </div>
-                <div class="card-body">
-                    <div class="form-check mb-2">
-                        <input class="form-check-input" type="checkbox" id="emailNotifications" checked>
-                        <label class="form-check-label" for="emailNotifications">
-                            Email Notifications
-                        </label>
+                <div class="card-body p-4">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            {{ form_label(form.specialite, null, {'label_attr': {'class': 'form-label fw-semibold'}}) }}
+                            {{ form_widget(form.specialite) }}
+                        </div>
+                        <div class="col-md-6">
+                            {{ form_label(form.prixConsultation, null, {'label_attr': {'class': 'form-label fw-semibold'}}) }}
+                            <div class="input-group">
+                                {{ form_widget(form.prixConsultation) }}
+                                <span class="input-group-text">DT</span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            {{ form_label(form.ville, null, {'label_attr': {'class': 'form-label fw-semibold'}}) }}
+                            {{ form_widget(form.ville) }}
+                        </div>
+                        <div class="col-md-6">
+                            {{ form_label(form.cabinet, null, {'label_attr': {'class': 'form-label fw-semibold'}}) }}
+                            {{ form_widget(form.cabinet) }}
+                        </div>
+                        <div class="col-12">
+                            {{ form_label(form.bio, null, {'label_attr': {'class': 'form-label fw-semibold'}}) }}
+                            {{ form_widget(form.bio) }}
+                        </div>
                     </div>
-                    <div class="form-check mb-2">
-                        <input class="form-check-input" type="checkbox" id="appointmentReminders" checked>
-                        <label class="form-check-label" for="appointmentReminders">
-                            Appointment Reminders
-                        </label>
-                    </div>
-                    <div class="form-check">
-                        <input class="form-check-input" type="checkbox" id="newsUpdates" checked>
-                        <label class="form-check-label" for="newsUpdates">
-                            News and Updates
-                        </label>
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Appearance Section -->
+            <div class="card mb-4 border-0 shadow-sm rounded-4 overflow-hidden">
+                <div class="card-header bg-white py-3 border-bottom border-light">
+                    <h5 class="mb-0 fw-bold"><i class="bi bi-palette-fill me-2 text-primary"></i>Appearance</h5>
+                </div>
+                <div class="card-body p-4">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <div class="theme-card p-3 border rounded-3 position-relative cursor-pointer h-100" onclick="document.getElementById('themeLight').click()">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="theme_selector" id="themeLight" value="light">
+                                    <label class="form-check-label fw-bold" for="themeLight">Light Mode</label>
+                                </div>
+                                <div class="mt-2 text-center py-4 bg-light rounded-2">
+                                    <i class="bi bi-sun-fill fs-1 text-warning"></i>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="theme-card p-3 border rounded-3 position-relative cursor-pointer h-100 bg-dark text-white" onclick="document.getElementById('themeDark').click()">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="theme_selector" id="themeDark" value="dark">
+                                    <label class="form-check-label fw-bold" for="themeDark">Dark Mode</label>
+                                </div>
+                                <div class="mt-2 text-center py-4 rounded-2" style="background: #2d3748">
+                                    <i class="bi bi-moon-stars-fill fs-1 text-info"></i>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
 
-            <div class="card mb-4">
-                <div class="card-header">
-                    <h5 class="mb-0"><i class="bi bi-shield-lock"></i> Privacy & Security</h5>
+            <!-- Privacy Section -->
+            <div class="card mb-4 border-0 shadow-sm rounded-4 overflow-hidden">
+                <div class="card-header bg-white py-3 border-bottom border-light">
+                    <h5 class="mb-0 fw-bold"><i class="bi bi-shield-lock-fill me-2 text-primary"></i>Privacy Settings</h5>
                 </div>
-                <div class="card-body">
-                    <p>
-                        <a href="#">View Login Activity</a>
-                    </p>
-                    <p>
-                        <a href="#">Manage Connected Apps</a>
-                    </p>
-                    <button class="btn btn-danger btn-sm">Delete Account</button>
-                </div>
-            </div>
-
-            <div class="card">
-                <div class="card-header">
-                    <h5 class="mb-0"><i class="bi bi-info-circle"></i> About</h5>
-                </div>
-                <div class="card-body">
-                    <p><strong>Application:</strong> Medicare Healthcare System</p>
-                    <p><strong>Version:</strong> 1.0.0</p>
-                    <p>
-                        <a href="{{ path('app_privacy') }}">Privacy Policy</a> | 
-                        <a href="{{ path('app_terms') }}">Terms of Service</a>
-                    </p>
+                <div class="card-body p-4">
+                    <div class="row g-3">
+                        <div class="col-md-4">
+                            {{ form_label(form.emailPrivacy, null, {'label_attr': {'class': 'form-label fw-semibold'}}) }}
+                            {{ form_widget(form.emailPrivacy) }}
+                        </div>
+                        <div class="col-md-4">
+                            {{ form_label(form.phonePrivacy, null, {'label_attr': {'class': 'form-label fw-semibold'}}) }}
+                            {{ form_widget(form.phonePrivacy) }}
+                        </div>
+                        <div class="col-md-4">
+                            {{ form_label(form.addressPrivacy, null, {'label_attr': {'class': 'form-label fw-semibold'}}) }}
+                            {{ form_widget(form.addressPrivacy) }}
+                        </div>
+                    </div>
                 </div>
             </div>
 
-            <div class="mt-4">
-                <a href="{{ path('app_dashboard') }}" class="btn btn-secondary">Back to Dashboard</a>
+            <div class="d-grid mb-5">
+                <button type="submit" class="btn btn-primary btn-lg rounded-3 fw-bold py-3">
+                    <i class="bi bi-save me-2"></i> Save All Changes
+                </button>
+            </div>
+            {{ form_end(form) }}
+
+            <!-- Danger Zone -->
+            <div class="card border-danger border-opacity-50 shadow-sm rounded-4 overflow-hidden">
+                <div class="card-header bg-danger bg-opacity-10 py-3">
+                    <h5 class="mb-0 fw-bold text-danger"><i class="bi bi-exclamation-octagon-fill me-2"></i>Danger Zone</h5>
+                </div>
+                <div class="card-body p-4 text-center">
+                    <p class="text-muted">Once you delete your account, there is no going back. Please be certain.</p>
+                    <button type="button" class="btn btn-outline-danger btn-sm px-4 rounded-pill" data-bs-toggle="modal" data-bs-target="#deleteAccountModal">
+                        Delete Account Permanently
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Image Cropping Modal -->
+<div class="modal fade" id="cropModal" tabindex="-1" data-bs-backdrop="static">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content overflow-hidden rounded-4">
+            <div class="modal-header">
+                <h5 class="modal-title fw-bold">Crop Profile Photo</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body p-0">
+                <div class="img-container" style="max-height: 500px;">
+                    <img id="cropperImage" src="" style="max-width: 100%;">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary rounded-pill px-4" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary rounded-pill px-4" id="cropButton">
+                    <i class="bi bi-crop me-1"></i> Apply Crop
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Camera Modal -->
+<div class="modal fade" id="cameraModal" tabindex="-1" data-bs-backdrop="static">
+    <div class="modal-dialog modal-md modal-dialog-centered">
+        <div class="modal-content overflow-hidden rounded-4">
+            <div class="modal-header">
+                <h5 class="modal-title fw-bold">Take a Photo</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" onclick="stopCamera()"></button>
+            </div>
+            <div class="modal-body p-0 bg-dark position-relative" style="min-height: 300px;">
+                <video id="cameraVideo" class="w-100" autoplay playsinline></video>
+                <div class="position-absolute bottom-0 start-50 translate-middle-x mb-3">
+                    <button type="button" class="btn btn-light btn-lg rounded-circle shadow-lg" onclick="capturePhoto()" style="width: 60px; height: 60px;">
+                        <i class="bi bi-camera-fill fs-3"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="modal-footer justify-content-center">
+                <p class="text-muted small mb-0 font-italic">Center your face and click the button to capture.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Delete Account Modal -->
+<div class="modal fade" id="deleteAccountModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow rounded-4 overflow-hidden">
+            <div class="modal-header bg-danger text-white">
+                <h5 class="modal-title fw-bold">Delete Account</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body p-4">
+                <p class="text-secondary">This action is <strong>irreversible</strong>. To confirm, please type <span class="badge bg-light text-danger fs-6">DELETE</span> below:</p>
+                <input type="text" class="form-control mb-3" id="confirmDeleteInput" placeholder='Type "DELETE" here'>
+                <form action="{{ path('app_delete_account') }}" method="post" id="deleteForm">
+                    <input type="hidden" name="confirmation" value="DELETE">
+                    <button type="submit" class="btn btn-danger w-100 rounded-3 py-2 disabled" id="finalDeleteBtn">
+                        I understand, delete my account
+                    </button>
+                </form>
             </div>
         </div>
     </div>
 </div>
 
 <style>
-.card {
-    border: 1px solid #e5e7eb;
-    border-radius: 8px;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-}
+    .cursor-pointer { cursor: pointer; }
+    .theme-card { transition: all 0.3s ease; border-width: 2px !important; }
+    .theme-card:hover { transform: translateY(-2px); border-color: var(--bs-primary) !important; }
+    .theme-card input:checked + label { color: var(--bs-primary); }
+    
+    .dark-mode .card,
+    .dark-mode .modal-content {
+        background-color: #1a202c;
+        color: #f7fafc;
+        border-color: #2d3748 !important;
+    }
+    
+    .dark-mode .card-header {
+        background-color: #2d3748 !important;
+        border-color: #4a5568 !important;
+    }
+    
+    .dark-mode .form-control,
+    .dark-mode .form-select {
+        background-color: #2d3748;
+        border-color: #4a5568;
+        color: #f7fafc;
+    }
 
-.card-header {
-    background-color: #f9fafb;
-    border-bottom: 1px solid #e5e7eb;
-    padding: 1rem;
-}
+    .dark-mode .form-control:focus {
+        background-color: #313d4f;
+        color: #fff;
+    }
 
-.card-header h5 {
-    color: #10b981;
-    margin-bottom: 0;
-}
-
-.form-check-label {
-    cursor: pointer;
-}
-
-a {
-    color: #10b981;
-    text-decoration: none;
-}
-
-a:hover {
-    text-decoration: underline;
-}
+    #cameraVideo {
+        transform: scaleX(-1); /* Mirror effect */
+    }
 </style>
 
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-    const darkModeSwitch = document.getElementById('darkModeSwitch');
-    const currentTheme = localStorage.getItem('theme') || 'light';
-    
-    // Set checkbox state based on current theme
-    if (currentTheme === 'dark') {
-        darkModeSwitch.checked = true;
+let cropper = null;
+let stream = null;
+const cropModal = new bootstrap.Modal(document.getElementById('cropModal'));
+const cameraModal = new bootstrap.Modal(document.getElementById('cameraModal'));
+
+function initCropper(input) {
+    if (input.files && input.files[0]) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            startCropping(e.target.result);
+        };
+        reader.readAsDataURL(input.files[0]);
     }
+}
+
+function startCropping(imageSrc) {
+    document.getElementById('cropperImage').src = imageSrc;
+    cropModal.show();
+}
+
+async function openCamera() {
+    try {
+        stream = await navigator.mediaDevices.getUserMedia({ 
+            video: { 
+                facingMode: 'user',
+                width: { ideal: 640 },
+                height: { ideal: 640 }
+            } 
+        });
+        document.getElementById('cameraVideo').srcObject = stream;
+        cameraModal.show();
+    } catch (err) {
+        console.error("Camera error: ", err);
+        alert("Could not access camera. Please ensure you've given permission.");
+    }
+}
+
+function stopCamera() {
+    if (stream) {
+        stream.getTracks().forEach(track => track.stop());
+        stream = null;
+    }
+    cameraModal.hide();
+}
+
+function capturePhoto() {
+    const video = document.getElementById('cameraVideo');
+    const canvas = document.createElement('canvas');
+    canvas.width = video.videoWidth;
+    canvas.height = video.videoHeight;
+    const ctx = canvas.getContext('2d');
     
-    // Toggle theme when checkbox changes
-    darkModeSwitch.addEventListener('change', function() {
-        const newTheme = this.checked ? 'dark' : 'light';
-        document.documentElement.setAttribute('data-theme', newTheme);
-        localStorage.setItem('theme', newTheme);
+    // Maintain mirror effect for the capture
+    ctx.translate(canvas.width, 0);
+    ctx.scale(-1, 1);
+    ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+    
+    const imageSrc = canvas.toDataURL('image/jpeg');
+    stopCamera();
+    startCropping(imageSrc);
+}
+
+document.getElementById('cropModal').addEventListener('shown.bs.modal', function() {
+    const image = document.getElementById('cropperImage');
+    cropper = new Cropper(image, {
+        aspectRatio: 1,
+        viewMode: 2,
+        autoCropArea: 1,
     });
+});
+
+document.getElementById('cropModal').addEventListener('hidden.bs.modal', function() {
+    if (cropper) {
+        cropper.destroy();
+        cropper = null;
+    }
+});
+
+document.getElementById('cropButton').addEventListener('click', function() {
+    const canvas = cropper.getCroppedCanvas({
+        width: 400,
+        height: 400,
+    });
+    
+    const base64Image = canvas.toDataURL('image/jpeg');
+    document.getElementById('profile-preview').src = base64Image;
+    document.getElementById('croppedPhotoInput').value = base64Image;
+    cropModal.hide();
+});
+
+document.addEventListener('DOMContentLoaded', function() {
+    // Theme initialization
+    const theme = localStorage.getItem('theme') || 'light';
+    const lightRadio = document.getElementById('themeLight');
+    const darkRadio = document.getElementById('themeDark');
+    
+    if (theme === 'dark') darkRadio.checked = true;
+    else lightRadio.checked = true;
+
+    // Theme switching
+    [lightRadio, darkRadio].forEach(radio => {
+        radio.addEventListener('change', function() {
+            setGlobalTheme(this.value);
+        });
+    });
+
+    // Delete confirmation
+    const confirmInput = document.getElementById('confirmDeleteInput');
+    const deleteBtn = document.getElementById('finalDeleteBtn');
+    
+    if (confirmInput) {
+        confirmInput.addEventListener('input', function() {
+            if (this.value === 'DELETE') {
+                deleteBtn.classList.remove('disabled');
+            } else {
+                deleteBtn.classList.add('disabled');
+            }
+        });
+    }
 });
 </script>
 {% endblock %}

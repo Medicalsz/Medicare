@@ -111,93 +111,139 @@ class __TwigTemplate_6769f67cc7f8bda0c1ec2160ad7d9937 extends Template
         // line 28
         yield $this->env->getRuntime('Twig\Runtime\EscaperRuntime')->escape($this->extensions['Symfony\Bridge\Twig\Extension\AssetExtension']->getAssetUrl("build/frontend/assets/css/main.css"), "html", null, true);
         yield "\" rel=\"stylesheet\">
+    
+    <!-- Cropper.js -->
+    <link rel=\"stylesheet\" href=\"https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css\">
+    <script src=\"https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js\"></script>
 
     ";
-        // line 30
+        // line 34
         yield from $this->unwrap()->yieldBlock('stylesheets', $context, $blocks);
-        // line 31
-        yield "</head>
+        // line 35
+        yield "
+    <style>
+        /* Premium Dark Mode implementation using filters with image exclusion */
+        html.dark-mode {
+            filter: invert(1) hue-rotate(180deg);
+            background-color: #1a202c !important;
+        }
+
+        /* Exclude media from inversion so they look natural */
+        html.dark-mode img, 
+        html.dark-mode video, 
+        html.dark-mode iframe,
+        html.dark-mode .user-avatar,
+        html.dark-mode i,
+        html.dark-mode .no-invert {
+            filter: invert(1) hue-rotate(180deg);
+        }
+
+        /* Fix backgrounds for specific elements that might look weird */
+        html.dark-mode body {
+            background-color: #1a202c !important;
+        }
+    </style>
+
+    <script>
+        // Apply theme immediately to prevent flashing
+        (function() {
+            const theme = localStorage.getItem('theme') || 'light';
+            if (theme === 'dark') {
+                document.documentElement.classList.add('dark-mode');
+            }
+        })();
+
+        function setGlobalTheme(theme) {
+            localStorage.setItem('theme', theme);
+            if (theme === 'dark') {
+                document.documentElement.classList.add('dark-mode');
+            } else {
+                document.documentElement.classList.remove('dark-mode');
+            }
+        }
+    </script>
+</head>
 
 <body class=\"";
-        // line 33
+        // line 79
         yield from $this->unwrap()->yieldBlock('body_class', $context, $blocks);
         yield "\">
     ";
-        // line 34
-        $context["show_header"] = ((array_key_exists("show_header", $context)) ? (Twig\Extension\CoreExtension::default((isset($context["show_header"]) || array_key_exists("show_header", $context) ? $context["show_header"] : (function () { throw new RuntimeError('Variable "show_header" does not exist.', 34, $this->source); })()), true)) : (true));
-        // line 35
+        // line 80
+        $context["show_header"] = ((array_key_exists("show_header", $context)) ? (Twig\Extension\CoreExtension::default((isset($context["show_header"]) || array_key_exists("show_header", $context) ? $context["show_header"] : (function () { throw new RuntimeError('Variable "show_header" does not exist.', 80, $this->source); })()), true)) : (true));
+        // line 81
         yield "    ";
-        $context["show_footer"] = ((array_key_exists("show_footer", $context)) ? (Twig\Extension\CoreExtension::default((isset($context["show_footer"]) || array_key_exists("show_footer", $context) ? $context["show_footer"] : (function () { throw new RuntimeError('Variable "show_footer" does not exist.', 35, $this->source); })()), true)) : (true));
-        // line 36
+        $context["show_footer"] = ((array_key_exists("show_footer", $context)) ? (Twig\Extension\CoreExtension::default((isset($context["show_footer"]) || array_key_exists("show_footer", $context) ? $context["show_footer"] : (function () { throw new RuntimeError('Variable "show_footer" does not exist.', 81, $this->source); })()), true)) : (true));
+        // line 82
         yield "    ";
-        if ((($tmp = (isset($context["show_header"]) || array_key_exists("show_header", $context) ? $context["show_header"] : (function () { throw new RuntimeError('Variable "show_header" does not exist.', 36, $this->source); })())) && $tmp instanceof Markup ? (string) $tmp : $tmp)) {
-            // line 37
+        if ((($tmp = (isset($context["show_header"]) || array_key_exists("show_header", $context) ? $context["show_header"] : (function () { throw new RuntimeError('Variable "show_header" does not exist.', 82, $this->source); })())) && $tmp instanceof Markup ? (string) $tmp : $tmp)) {
+            // line 83
             yield "        ";
             yield from $this->unwrap()->yieldBlock('header', $context, $blocks);
-            // line 40
+            // line 86
             yield "    ";
         }
-        // line 41
+        // line 87
         yield "
     <main class=\"main\" style=\"padding-top: 80px;\">
         ";
-        // line 43
+        // line 89
         yield from $this->unwrap()->yieldBlock('flashes', $context, $blocks);
-        // line 87
+        // line 133
         yield "        ";
         yield from $this->unwrap()->yieldBlock('body', $context, $blocks);
-        // line 88
+        // line 134
         yield "    </main>
 
     ";
-        // line 90
+        // line 136
         yield from $this->unwrap()->yieldBlock('footer', $context, $blocks);
-        // line 95
+        // line 141
         yield "
     <!-- Vendor JS Files -->
     <script src=\"";
-        // line 97
+        // line 143
         yield $this->env->getRuntime('Twig\Runtime\EscaperRuntime')->escape($this->extensions['Symfony\Bridge\Twig\Extension\AssetExtension']->getAssetUrl("build/frontend/assets/vendor/bootstrap/js/bootstrap.bundle.min.js"), "html", null, true);
         yield "\"></script>
     <script src=\"";
-        // line 98
+        // line 144
         yield $this->env->getRuntime('Twig\Runtime\EscaperRuntime')->escape($this->extensions['Symfony\Bridge\Twig\Extension\AssetExtension']->getAssetUrl("build/frontend/assets/vendor/aos/aos.js"), "html", null, true);
         yield "\"></script>
     <script src=\"";
-        // line 99
+        // line 145
         yield $this->env->getRuntime('Twig\Runtime\EscaperRuntime')->escape($this->extensions['Symfony\Bridge\Twig\Extension\AssetExtension']->getAssetUrl("build/frontend/assets/vendor/glightbox/js/glightbox.min.js"), "html", null, true);
         yield "\"></script>
     <script src=\"";
-        // line 100
+        // line 146
         yield $this->env->getRuntime('Twig\Runtime\EscaperRuntime')->escape($this->extensions['Symfony\Bridge\Twig\Extension\AssetExtension']->getAssetUrl("build/frontend/assets/vendor/purecounter/purecounter_vanilla.js"), "html", null, true);
         yield "\"></script>
     <script src=\"";
-        // line 101
+        // line 147
         yield $this->env->getRuntime('Twig\Runtime\EscaperRuntime')->escape($this->extensions['Symfony\Bridge\Twig\Extension\AssetExtension']->getAssetUrl("build/frontend/assets/vendor/imagesloaded/imagesloaded.pkgd.min.js"), "html", null, true);
         yield "\"></script>
     <script src=\"";
-        // line 102
+        // line 148
         yield $this->env->getRuntime('Twig\Runtime\EscaperRuntime')->escape($this->extensions['Symfony\Bridge\Twig\Extension\AssetExtension']->getAssetUrl("build/frontend/assets/vendor/isotope-layout/isotope.pkgd.js"), "html", null, true);
         yield "\"></script>
     <script src=\"";
-        // line 103
+        // line 149
         yield $this->env->getRuntime('Twig\Runtime\EscaperRuntime')->escape($this->extensions['Symfony\Bridge\Twig\Extension\AssetExtension']->getAssetUrl("build/frontend/assets/vendor/swiper/swiper-bundle.min.js"), "html", null, true);
         yield "\"></script>
     <script src=\"";
-        // line 104
+        // line 150
         yield $this->env->getRuntime('Twig\Runtime\EscaperRuntime')->escape($this->extensions['Symfony\Bridge\Twig\Extension\AssetExtension']->getAssetUrl("build/frontend/assets/vendor/php-email-form/validate.js"), "html", null, true);
         yield "\"></script>
 
     <!-- Main JS File -->
     <script src=\"";
-        // line 107
+        // line 153
         yield $this->env->getRuntime('Twig\Runtime\EscaperRuntime')->escape($this->extensions['Symfony\Bridge\Twig\Extension\AssetExtension']->getAssetUrl("build/frontend/assets/js/main.js"), "html", null, true);
         yield "\"></script>
 
     ";
-        // line 109
+        // line 155
         yield from $this->unwrap()->yieldBlock('javascripts', $context, $blocks);
-        // line 110
+        // line 156
         yield "</body>
 
 </html>";
@@ -233,7 +279,7 @@ class __TwigTemplate_6769f67cc7f8bda0c1ec2160ad7d9937 extends Template
         yield from [];
     }
 
-    // line 30
+    // line 34
     /**
      * @return iterable<null|scalar|\Stringable>
      */
@@ -255,7 +301,7 @@ class __TwigTemplate_6769f67cc7f8bda0c1ec2160ad7d9937 extends Template
         yield from [];
     }
 
-    // line 33
+    // line 79
     /**
      * @return iterable<null|scalar|\Stringable>
      */
@@ -278,7 +324,7 @@ class __TwigTemplate_6769f67cc7f8bda0c1ec2160ad7d9937 extends Template
         yield from [];
     }
 
-    // line 37
+    // line 83
     /**
      * @return iterable<null|scalar|\Stringable>
      */
@@ -291,10 +337,10 @@ class __TwigTemplate_6769f67cc7f8bda0c1ec2160ad7d9937 extends Template
         $__internal_6f47bbe9983af81f1e7450e9a3e3768f = $this->extensions["Symfony\\Bridge\\Twig\\Extension\\ProfilerExtension"];
         $__internal_6f47bbe9983af81f1e7450e9a3e3768f->enter($__internal_6f47bbe9983af81f1e7450e9a3e3768f_prof = new \Twig\Profiler\Profile($this->getTemplateName(), "block", "header"));
 
-        // line 38
+        // line 84
         yield "            ";
-        yield from $this->load("partials/frontend_header.html.twig", 38)->unwrap()->yield($context);
-        // line 39
+        yield from $this->load("partials/frontend_header.html.twig", 84)->unwrap()->yield($context);
+        // line 85
         yield "        ";
         
         $__internal_6f47bbe9983af81f1e7450e9a3e3768f->leave($__internal_6f47bbe9983af81f1e7450e9a3e3768f_prof);
@@ -305,7 +351,7 @@ class __TwigTemplate_6769f67cc7f8bda0c1ec2160ad7d9937 extends Template
         yield from [];
     }
 
-    // line 43
+    // line 89
     /**
      * @return iterable<null|scalar|\Stringable>
      */
@@ -318,12 +364,12 @@ class __TwigTemplate_6769f67cc7f8bda0c1ec2160ad7d9937 extends Template
         $__internal_6f47bbe9983af81f1e7450e9a3e3768f = $this->extensions["Symfony\\Bridge\\Twig\\Extension\\ProfilerExtension"];
         $__internal_6f47bbe9983af81f1e7450e9a3e3768f->enter($__internal_6f47bbe9983af81f1e7450e9a3e3768f_prof = new \Twig\Profiler\Profile($this->getTemplateName(), "block", "flashes"));
 
-        // line 44
+        // line 90
         yield "            ";
         $context['_parent'] = $context;
-        $context['_seq'] = CoreExtension::ensureTraversable(CoreExtension::getAttribute($this->env, $this->source, (isset($context["app"]) || array_key_exists("app", $context) ? $context["app"] : (function () { throw new RuntimeError('Variable "app" does not exist.', 44, $this->source); })()), "flashes", ["success"], "method", false, false, false, 44));
+        $context['_seq'] = CoreExtension::ensureTraversable(CoreExtension::getAttribute($this->env, $this->source, (isset($context["app"]) || array_key_exists("app", $context) ? $context["app"] : (function () { throw new RuntimeError('Variable "app" does not exist.', 90, $this->source); })()), "flashes", ["success"], "method", false, false, false, 90));
         foreach ($context['_seq'] as $context["_key"] => $context["flash_success"]) {
-            // line 45
+            // line 91
             yield "                <div class=\"modal fade show\" id=\"successModal\" tabindex=\"-1\" aria-labelledby=\"successModalLabel\" aria-modal=\"true\" style=\"display: block;\">
                     <div class=\"modal-dialog modal-dialog-centered\">
                         <div class=\"modal-content\">
@@ -335,7 +381,7 @@ class __TwigTemplate_6769f67cc7f8bda0c1ec2160ad7d9937 extends Template
                             </div>
                             <div class=\"modal-body\">
                                 <p class=\"mb-0\">";
-            // line 55
+            // line 101
             yield $this->env->getRuntime('Twig\Runtime\EscaperRuntime')->escape($context["flash_success"], "html", null, true);
             yield "</p>
                             </div>
@@ -351,12 +397,12 @@ class __TwigTemplate_6769f67cc7f8bda0c1ec2160ad7d9937 extends Template
         $_parent = $context['_parent'];
         unset($context['_seq'], $context['_key'], $context['flash_success'], $context['_parent']);
         $context = array_intersect_key($context, $_parent) + $_parent;
-        // line 65
+        // line 111
         yield "            ";
         $context['_parent'] = $context;
-        $context['_seq'] = CoreExtension::ensureTraversable(CoreExtension::getAttribute($this->env, $this->source, (isset($context["app"]) || array_key_exists("app", $context) ? $context["app"] : (function () { throw new RuntimeError('Variable "app" does not exist.', 65, $this->source); })()), "flashes", ["error"], "method", false, false, false, 65));
+        $context['_seq'] = CoreExtension::ensureTraversable(CoreExtension::getAttribute($this->env, $this->source, (isset($context["app"]) || array_key_exists("app", $context) ? $context["app"] : (function () { throw new RuntimeError('Variable "app" does not exist.', 111, $this->source); })()), "flashes", ["error"], "method", false, false, false, 111));
         foreach ($context['_seq'] as $context["_key"] => $context["flash_error"]) {
-            // line 66
+            // line 112
             yield "                <div class=\"modal fade show\" id=\"errorModal\" tabindex=\"-1\" aria-labelledby=\"errorModalLabel\" aria-modal=\"true\" style=\"display: block;\">
                     <div class=\"modal-dialog modal-dialog-centered\">
                         <div class=\"modal-content\">
@@ -368,7 +414,7 @@ class __TwigTemplate_6769f67cc7f8bda0c1ec2160ad7d9937 extends Template
                             </div>
                             <div class=\"modal-body\">
                                 <p class=\"mb-0\">";
-            // line 76
+            // line 122
             yield $this->env->getRuntime('Twig\Runtime\EscaperRuntime')->escape($context["flash_error"], "html", null, true);
             yield "</p>
                             </div>
@@ -384,7 +430,7 @@ class __TwigTemplate_6769f67cc7f8bda0c1ec2160ad7d9937 extends Template
         $_parent = $context['_parent'];
         unset($context['_seq'], $context['_key'], $context['flash_error'], $context['_parent']);
         $context = array_intersect_key($context, $_parent) + $_parent;
-        // line 86
+        // line 132
         yield "        ";
         
         $__internal_6f47bbe9983af81f1e7450e9a3e3768f->leave($__internal_6f47bbe9983af81f1e7450e9a3e3768f_prof);
@@ -395,7 +441,7 @@ class __TwigTemplate_6769f67cc7f8bda0c1ec2160ad7d9937 extends Template
         yield from [];
     }
 
-    // line 87
+    // line 133
     /**
      * @return iterable<null|scalar|\Stringable>
      */
@@ -417,7 +463,7 @@ class __TwigTemplate_6769f67cc7f8bda0c1ec2160ad7d9937 extends Template
         yield from [];
     }
 
-    // line 90
+    // line 136
     /**
      * @return iterable<null|scalar|\Stringable>
      */
@@ -430,16 +476,16 @@ class __TwigTemplate_6769f67cc7f8bda0c1ec2160ad7d9937 extends Template
         $__internal_6f47bbe9983af81f1e7450e9a3e3768f = $this->extensions["Symfony\\Bridge\\Twig\\Extension\\ProfilerExtension"];
         $__internal_6f47bbe9983af81f1e7450e9a3e3768f->enter($__internal_6f47bbe9983af81f1e7450e9a3e3768f_prof = new \Twig\Profiler\Profile($this->getTemplateName(), "block", "footer"));
 
-        // line 91
+        // line 137
         yield "        ";
-        if ((($tmp = (isset($context["show_footer"]) || array_key_exists("show_footer", $context) ? $context["show_footer"] : (function () { throw new RuntimeError('Variable "show_footer" does not exist.', 91, $this->source); })())) && $tmp instanceof Markup ? (string) $tmp : $tmp)) {
-            // line 92
+        if ((($tmp = (isset($context["show_footer"]) || array_key_exists("show_footer", $context) ? $context["show_footer"] : (function () { throw new RuntimeError('Variable "show_footer" does not exist.', 137, $this->source); })())) && $tmp instanceof Markup ? (string) $tmp : $tmp)) {
+            // line 138
             yield "            ";
-            yield from $this->load("partials/frontend_footer.html.twig", 92)->unwrap()->yield($context);
-            // line 93
+            yield from $this->load("partials/frontend_footer.html.twig", 138)->unwrap()->yield($context);
+            // line 139
             yield "        ";
         }
-        // line 94
+        // line 140
         yield "    ";
         
         $__internal_6f47bbe9983af81f1e7450e9a3e3768f->leave($__internal_6f47bbe9983af81f1e7450e9a3e3768f_prof);
@@ -450,7 +496,7 @@ class __TwigTemplate_6769f67cc7f8bda0c1ec2160ad7d9937 extends Template
         yield from [];
     }
 
-    // line 109
+    // line 155
     /**
      * @return iterable<null|scalar|\Stringable>
      */
@@ -493,7 +539,7 @@ class __TwigTemplate_6769f67cc7f8bda0c1ec2160ad7d9937 extends Template
      */
     public function getDebugInfo(): array
     {
-        return array (  454 => 109,  443 => 94,  440 => 93,  437 => 92,  434 => 91,  421 => 90,  399 => 87,  388 => 86,  372 => 76,  360 => 66,  355 => 65,  339 => 55,  327 => 45,  322 => 44,  309 => 43,  298 => 39,  295 => 38,  282 => 37,  259 => 33,  237 => 30,  214 => 7,  201 => 110,  199 => 109,  194 => 107,  188 => 104,  184 => 103,  180 => 102,  176 => 101,  172 => 100,  168 => 99,  164 => 98,  160 => 97,  156 => 95,  154 => 90,  150 => 88,  147 => 87,  145 => 43,  141 => 41,  138 => 40,  135 => 37,  132 => 36,  129 => 35,  127 => 34,  123 => 33,  119 => 31,  117 => 30,  112 => 28,  106 => 25,  102 => 24,  98 => 23,  94 => 22,  90 => 21,  86 => 20,  75 => 12,  71 => 11,  64 => 7,  56 => 1,);
+        return array (  500 => 155,  489 => 140,  486 => 139,  483 => 138,  480 => 137,  467 => 136,  445 => 133,  434 => 132,  418 => 122,  406 => 112,  401 => 111,  385 => 101,  373 => 91,  368 => 90,  355 => 89,  344 => 85,  341 => 84,  328 => 83,  305 => 79,  283 => 34,  260 => 7,  247 => 156,  245 => 155,  240 => 153,  234 => 150,  230 => 149,  226 => 148,  222 => 147,  218 => 146,  214 => 145,  210 => 144,  206 => 143,  202 => 141,  200 => 136,  196 => 134,  193 => 133,  191 => 89,  187 => 87,  184 => 86,  181 => 83,  178 => 82,  175 => 81,  173 => 80,  169 => 79,  123 => 35,  121 => 34,  112 => 28,  106 => 25,  102 => 24,  98 => 23,  94 => 22,  90 => 21,  86 => 20,  75 => 12,  71 => 11,  64 => 7,  56 => 1,);
     }
 
     public function getSourceContext(): Source
@@ -526,8 +572,54 @@ class __TwigTemplate_6769f67cc7f8bda0c1ec2160ad7d9937 extends Template
 
     <!-- Main CSS File -->
     <link href=\"{{ asset('build/frontend/assets/css/main.css') }}\" rel=\"stylesheet\">
+    
+    <!-- Cropper.js -->
+    <link rel=\"stylesheet\" href=\"https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css\">
+    <script src=\"https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js\"></script>
 
     {% block stylesheets %}{% endblock %}
+
+    <style>
+        /* Premium Dark Mode implementation using filters with image exclusion */
+        html.dark-mode {
+            filter: invert(1) hue-rotate(180deg);
+            background-color: #1a202c !important;
+        }
+
+        /* Exclude media from inversion so they look natural */
+        html.dark-mode img, 
+        html.dark-mode video, 
+        html.dark-mode iframe,
+        html.dark-mode .user-avatar,
+        html.dark-mode i,
+        html.dark-mode .no-invert {
+            filter: invert(1) hue-rotate(180deg);
+        }
+
+        /* Fix backgrounds for specific elements that might look weird */
+        html.dark-mode body {
+            background-color: #1a202c !important;
+        }
+    </style>
+
+    <script>
+        // Apply theme immediately to prevent flashing
+        (function() {
+            const theme = localStorage.getItem('theme') || 'light';
+            if (theme === 'dark') {
+                document.documentElement.classList.add('dark-mode');
+            }
+        })();
+
+        function setGlobalTheme(theme) {
+            localStorage.setItem('theme', theme);
+            if (theme === 'dark') {
+                document.documentElement.classList.add('dark-mode');
+            } else {
+                document.documentElement.classList.remove('dark-mode');
+            }
+        }
+    </script>
 </head>
 
 <body class=\"{% block body_class %}index-page{% endblock %}\">
@@ -609,6 +701,6 @@ class __TwigTemplate_6769f67cc7f8bda0c1ec2160ad7d9937 extends Template
     {% block javascripts %}{% endblock %}
 </body>
 
-</html>", "base_frontend.html.twig", "C:\\Users\\LENOVO\\Documents\\PI\\Medicare\\templates\\base_frontend.html.twig");
+</html>", "base_frontend.html.twig", "C:\\Users\\LENOVO\\Documents\\gestion user\\Medicare\\templates\\base_frontend.html.twig");
     }
 }

@@ -167,6 +167,6 @@ export default class extends Controller {
         // this.fooTarget.removeEventListener('click', this._fooBar)
     }
 }
-", "@Maker/stimulus/Controller.tpl.php", "C:\\Users\\LENOVO\\Documents\\PI\\Medicare\\vendor\\symfony\\maker-bundle\\templates\\stimulus\\Controller.tpl.php");
+", "@Maker/stimulus/Controller.tpl.php", "C:\\Users\\LENOVO\\Documents\\gestion user\\Medicare\\vendor\\symfony\\maker-bundle\\templates\\stimulus\\Controller.tpl.php");
     }
 }

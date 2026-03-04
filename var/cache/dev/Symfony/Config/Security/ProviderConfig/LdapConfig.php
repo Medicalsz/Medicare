@@ -20,7 +20,7 @@ class LdapConfig
     private $filter;
     private $passwordAttribute;
     private $_usedProperties = [];
-
+    
     /**
      * @default 'ldap'
      * @param ParamConfigurator|mixed $value
@@ -30,10 +30,10 @@ class LdapConfig
     {
         $this->_usedProperties['service'] = true;
         $this->service = $value;
-
+    
         return $this;
     }
-
+    
     /**
      * @default null
      * @param ParamConfigurator|mixed $value
@@ -43,10 +43,10 @@ class LdapConfig
     {
         $this->_usedProperties['baseDn'] = true;
         $this->baseDn = $value;
-
+    
         return $this;
     }
-
+    
     /**
      * @default null
      * @param ParamConfigurator|mixed $value
@@ -56,10 +56,10 @@ class LdapConfig
     {
         $this->_usedProperties['searchDn'] = true;
         $this->searchDn = $value;
-
+    
         return $this;
     }
-
+    
     /**
      * @default null
      * @param ParamConfigurator|mixed $value
@@ -69,10 +69,10 @@ class LdapConfig
     {
         $this->_usedProperties['searchPassword'] = true;
         $this->searchPassword = $value;
-
+    
         return $this;
     }
-
+    
     /**
      * @param ParamConfigurator|list<ParamConfigurator|mixed> $value
      *
@@ -82,10 +82,10 @@ class LdapConfig
     {
         $this->_usedProperties['extraFields'] = true;
         $this->extraFields = $value;
-
+    
         return $this;
     }
-
+    
     /**
      * @param ParamConfigurator|list<ParamConfigurator|mixed>|string $value
      *
@@ -95,10 +95,10 @@ class LdapConfig
     {
         $this->_usedProperties['defaultRoles'] = true;
         $this->defaultRoles = $value;
-
+    
         return $this;
     }
-
+    
     /**
      * @default 'sAMAccountName'
      * @param ParamConfigurator|mixed $value
@@ -108,10 +108,10 @@ class LdapConfig
     {
         $this->_usedProperties['uidKey'] = true;
         $this->uidKey = $value;
-
+    
         return $this;
     }
-
+    
     /**
      * @default '({uid_key}={username})'
      * @param ParamConfigurator|mixed $value
@@ -121,10 +121,10 @@ class LdapConfig
     {
         $this->_usedProperties['filter'] = true;
         $this->filter = $value;
-
+    
         return $this;
     }
-
+    
     /**
      * @default null
      * @param ParamConfigurator|mixed $value
@@ -134,10 +134,10 @@ class LdapConfig
     {
         $this->_usedProperties['passwordAttribute'] = true;
         $this->passwordAttribute = $value;
-
+    
         return $this;
     }
-
+    
     public function __construct(array $config = [])
     {
         if (array_key_exists('service', $config)) {
@@ -145,60 +145,60 @@ class LdapConfig
             $this->service = $config['service'];
             unset($config['service']);
         }
-
+    
         if (array_key_exists('base_dn', $config)) {
             $this->_usedProperties['baseDn'] = true;
             $this->baseDn = $config['base_dn'];
             unset($config['base_dn']);
         }
-
+    
         if (array_key_exists('search_dn', $config)) {
             $this->_usedProperties['searchDn'] = true;
             $this->searchDn = $config['search_dn'];
             unset($config['search_dn']);
         }
-
+    
         if (array_key_exists('search_password', $config)) {
             $this->_usedProperties['searchPassword'] = true;
             $this->searchPassword = $config['search_password'];
             unset($config['search_password']);
         }
-
+    
         if (array_key_exists('extra_fields', $config)) {
             $this->_usedProperties['extraFields'] = true;
             $this->extraFields = $config['extra_fields'];
             unset($config['extra_fields']);
         }
-
+    
         if (array_key_exists('default_roles', $config)) {
             $this->_usedProperties['defaultRoles'] = true;
             $this->defaultRoles = $config['default_roles'];
             unset($config['default_roles']);
         }
-
+    
         if (array_key_exists('uid_key', $config)) {
             $this->_usedProperties['uidKey'] = true;
             $this->uidKey = $config['uid_key'];
             unset($config['uid_key']);
         }
-
+    
         if (array_key_exists('filter', $config)) {
             $this->_usedProperties['filter'] = true;
             $this->filter = $config['filter'];
             unset($config['filter']);
         }
-
+    
         if (array_key_exists('password_attribute', $config)) {
             $this->_usedProperties['passwordAttribute'] = true;
             $this->passwordAttribute = $config['password_attribute'];
             unset($config['password_attribute']);
         }
-
+    
         if ($config) {
             throw new InvalidConfigurationException(sprintf('The following keys are not supported by "%s": ', __CLASS__).implode(', ', array_keys($config)));
         }
     }
-
+    
     public function toArray(): array
     {
         $output = [];
@@ -229,7 +229,7 @@ class LdapConfig
         if (isset($this->_usedProperties['passwordAttribute'])) {
             $output['password_attribute'] = $this->passwordAttribute;
         }
-
+    
         return $output;
     }
 

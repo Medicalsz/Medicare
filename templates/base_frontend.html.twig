@@ -26,8 +26,54 @@
 
     <!-- Main CSS File -->
     <link href="{{ asset('build/frontend/assets/css/main.css') }}" rel="stylesheet">
+    
+    <!-- Cropper.js -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
 
     {% block stylesheets %}{% endblock %}
+
+    <style>
+        /* Premium Dark Mode implementation using filters with image exclusion */
+        html.dark-mode {
+            filter: invert(1) hue-rotate(180deg);
+            background-color: #1a202c !important;
+        }
+
+        /* Exclude media from inversion so they look natural */
+        html.dark-mode img, 
+        html.dark-mode video, 
+        html.dark-mode iframe,
+        html.dark-mode .user-avatar,
+        html.dark-mode i,
+        html.dark-mode .no-invert {
+            filter: invert(1) hue-rotate(180deg);
+        }
+
+        /* Fix backgrounds for specific elements that might look weird */
+        html.dark-mode body {
+            background-color: #1a202c !important;
+        }
+    </style>
+
+    <script>
+        // Apply theme immediately to prevent flashing
+        (function() {
+            const theme = localStorage.getItem('theme') || 'light';
+            if (theme === 'dark') {
+                document.documentElement.classList.add('dark-mode');
+            }
+        })();
+
+        function setGlobalTheme(theme) {
+            localStorage.setItem('theme', theme);
+            if (theme === 'dark') {
+                document.documentElement.classList.add('dark-mode');
+            } else {
+                document.documentElement.classList.remove('dark-mode');
+            }
+        }
+    </script>
 </head>
 
 <body class="{% block body_class %}index-page{% endblock %}">

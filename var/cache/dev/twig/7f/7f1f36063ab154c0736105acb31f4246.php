@@ -389,6 +389,6 @@ class <?= \$class_name ?> extends AbstractController
         return \$this->redirectToRoute('app_check_email');
     }
 }
-", "@Maker/resetPassword/ResetPasswordController.tpl.php", "C:\\Users\\LENOVO\\Documents\\PI\\Medicare\\vendor\\symfony\\maker-bundle\\templates\\resetPassword\\ResetPasswordController.tpl.php");
+", "@Maker/resetPassword/ResetPasswordController.tpl.php", "C:\\Users\\LENOVO\\Documents\\gestion user\\Medicare\\vendor\\symfony\\maker-bundle\\templates\\resetPassword\\ResetPasswordController.tpl.php");
     }
 }

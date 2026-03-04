@@ -56,6 +56,7 @@ class RegistrationController extends AbstractController
                 $request->getSession()->set('medecin_registration_data', [
                     'nom' => $user->getNom(),
                     'prenom' => $user->getPrenom(),
+                    'username' => $user->getUsername(),
                     'email' => $user->getEmail(),
                     'numero' => $user->getNumero(),
                     'plainPassword' => $plainPassword,
@@ -99,6 +100,7 @@ class RegistrationController extends AbstractController
         $medecin = new Medecin();
         $medecin->setNom($data['nom'] ?? '');
         $medecin->setPrenom($data['prenom'] ?? '');
+        $medecin->setUsername($data['username'] ?? null);
         $medecin->setEmail($data['email'] ?? '');
         $medecin->setNumero($data['numero'] ?? '');
 

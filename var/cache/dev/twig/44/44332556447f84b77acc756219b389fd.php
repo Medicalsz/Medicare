@@ -105,6 +105,6 @@ class <?= \$class_name ?> extends Fixture
         \$manager->flush();
     }
 }
-", "@Maker/doctrine/Fixtures.tpl.php", "C:\\Users\\LENOVO\\Documents\\PI\\Medicare\\vendor\\symfony\\maker-bundle\\templates\\doctrine\\Fixtures.tpl.php");
+", "@Maker/doctrine/Fixtures.tpl.php", "C:\\Users\\LENOVO\\Documents\\gestion user\\Medicare\\vendor\\symfony\\maker-bundle\\templates\\doctrine\\Fixtures.tpl.php");
     }
 }

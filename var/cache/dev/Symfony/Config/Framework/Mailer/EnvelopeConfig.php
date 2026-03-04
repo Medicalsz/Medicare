@@ -13,7 +13,7 @@ class EnvelopeConfig
     private $sender;
     private $recipients;
     private $_usedProperties = [];
-
+    
     /**
      * @default null
      * @param ParamConfigurator|mixed $value
@@ -23,10 +23,10 @@ class EnvelopeConfig
     {
         $this->_usedProperties['sender'] = true;
         $this->sender = $value;
-
+    
         return $this;
     }
-
+    
     /**
      * @param ParamConfigurator|list<ParamConfigurator|mixed> $value
      *
@@ -36,10 +36,10 @@ class EnvelopeConfig
     {
         $this->_usedProperties['recipients'] = true;
         $this->recipients = $value;
-
+    
         return $this;
     }
-
+    
     public function __construct(array $config = [])
     {
         if (array_key_exists('sender', $config)) {
@@ -47,18 +47,18 @@ class EnvelopeConfig
             $this->sender = $config['sender'];
             unset($config['sender']);
         }
-
+    
         if (array_key_exists('recipients', $config)) {
             $this->_usedProperties['recipients'] = true;
             $this->recipients = $config['recipients'];
             unset($config['recipients']);
         }
-
+    
         if ($config) {
             throw new InvalidConfigurationException(sprintf('The following keys are not supported by "%s": ', __CLASS__).implode(', ', array_keys($config)));
         }
     }
-
+    
     public function toArray(): array
     {
         $output = [];
@@ -68,7 +68,7 @@ class EnvelopeConfig
         if (isset($this->_usedProperties['recipients'])) {
             $output['recipients'] = $this->recipients;
         }
-
+    
         return $output;
     }
 

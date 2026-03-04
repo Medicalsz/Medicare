@@ -25,7 +25,7 @@ class ValidationConfig
     private $notCompromisedPassword;
     private $autoMapping;
     private $_usedProperties = [];
-
+    
     /**
      * @default true
      * @param ParamConfigurator|bool $value
@@ -35,10 +35,10 @@ class ValidationConfig
     {
         $this->_usedProperties['enabled'] = true;
         $this->enabled = $value;
-
+    
         return $this;
     }
-
+    
     /**
      * @default null
      * @param ParamConfigurator|mixed $value
@@ -48,10 +48,10 @@ class ValidationConfig
     {
         $this->_usedProperties['cache'] = true;
         $this->cache = $value;
-
+    
         return $this;
     }
-
+    
     /**
      * @default null
      * @param ParamConfigurator|bool $value
@@ -61,10 +61,10 @@ class ValidationConfig
     {
         $this->_usedProperties['enableAnnotations'] = true;
         $this->enableAnnotations = $value;
-
+    
         return $this;
     }
-
+    
     /**
      * @default true
      * @param ParamConfigurator|bool $value
@@ -74,10 +74,10 @@ class ValidationConfig
     {
         $this->_usedProperties['enableAttributes'] = true;
         $this->enableAttributes = $value;
-
+    
         return $this;
     }
-
+    
     /**
      * @param ParamConfigurator|list<ParamConfigurator|mixed> $value
      *
@@ -87,10 +87,10 @@ class ValidationConfig
     {
         $this->_usedProperties['staticMethod'] = true;
         $this->staticMethod = $value;
-
+    
         return $this;
     }
-
+    
     /**
      * @default 'validators'
      * @param ParamConfigurator|mixed $value
@@ -100,10 +100,10 @@ class ValidationConfig
     {
         $this->_usedProperties['translationDomain'] = true;
         $this->translationDomain = $value;
-
+    
         return $this;
     }
-
+    
     /**
      * @default null
      * @param ParamConfigurator|'html5'|'html5-allow-no-tld'|'strict'|'loose' $value
@@ -113,10 +113,10 @@ class ValidationConfig
     {
         $this->_usedProperties['emailValidationMode'] = true;
         $this->emailValidationMode = $value;
-
+    
         return $this;
     }
-
+    
     /**
      * @default {"paths":[]}
      */
@@ -128,10 +128,10 @@ class ValidationConfig
         } elseif (0 < \func_num_args()) {
             throw new InvalidConfigurationException('The node created by "mapping()" has already been initialized. You cannot pass values the second time you call mapping().');
         }
-
+    
         return $this->mapping;
     }
-
+    
     /**
      * @template TValue of array|bool
      * @param TValue $value
@@ -144,20 +144,20 @@ class ValidationConfig
         if (!\is_array($value)) {
             $this->_usedProperties['notCompromisedPassword'] = true;
             $this->notCompromisedPassword = $value;
-
+    
             return $this;
         }
-
+    
         if (!$this->notCompromisedPassword instanceof \Symfony\Config\Framework\Validation\NotCompromisedPasswordConfig) {
             $this->_usedProperties['notCompromisedPassword'] = true;
             $this->notCompromisedPassword = new \Symfony\Config\Framework\Validation\NotCompromisedPasswordConfig($value);
         } elseif (0 < \func_num_args()) {
             throw new InvalidConfigurationException('The node created by "notCompromisedPassword()" has already been initialized. You cannot pass values the second time you call notCompromisedPassword().');
         }
-
+    
         return $this->notCompromisedPassword;
     }
-
+    
     /**
      * A collection of namespaces for which auto-mapping will be enabled by default, or null to opt-in with the EnableAutoMapping constraint.
      * @example []
@@ -171,10 +171,10 @@ class ValidationConfig
         } elseif (1 < \func_num_args()) {
             throw new InvalidConfigurationException('The node created by "autoMapping()" has already been initialized. You cannot pass values the second time you call autoMapping().');
         }
-
+    
         return $this->autoMapping[$namespace];
     }
-
+    
     public function __construct(array $config = [])
     {
         if (array_key_exists('enabled', $config)) {
@@ -182,66 +182,66 @@ class ValidationConfig
             $this->enabled = $config['enabled'];
             unset($config['enabled']);
         }
-
+    
         if (array_key_exists('cache', $config)) {
             $this->_usedProperties['cache'] = true;
             $this->cache = $config['cache'];
             unset($config['cache']);
         }
-
+    
         if (array_key_exists('enable_annotations', $config)) {
             $this->_usedProperties['enableAnnotations'] = true;
             $this->enableAnnotations = $config['enable_annotations'];
             unset($config['enable_annotations']);
         }
-
+    
         if (array_key_exists('enable_attributes', $config)) {
             $this->_usedProperties['enableAttributes'] = true;
             $this->enableAttributes = $config['enable_attributes'];
             unset($config['enable_attributes']);
         }
-
+    
         if (array_key_exists('static_method', $config)) {
             $this->_usedProperties['staticMethod'] = true;
             $this->staticMethod = $config['static_method'];
             unset($config['static_method']);
         }
-
+    
         if (array_key_exists('translation_domain', $config)) {
             $this->_usedProperties['translationDomain'] = true;
             $this->translationDomain = $config['translation_domain'];
             unset($config['translation_domain']);
         }
-
+    
         if (array_key_exists('email_validation_mode', $config)) {
             $this->_usedProperties['emailValidationMode'] = true;
             $this->emailValidationMode = $config['email_validation_mode'];
             unset($config['email_validation_mode']);
         }
-
+    
         if (array_key_exists('mapping', $config)) {
             $this->_usedProperties['mapping'] = true;
             $this->mapping = new \Symfony\Config\Framework\Validation\MappingConfig($config['mapping']);
             unset($config['mapping']);
         }
-
+    
         if (array_key_exists('not_compromised_password', $config)) {
             $this->_usedProperties['notCompromisedPassword'] = true;
             $this->notCompromisedPassword = \is_array($config['not_compromised_password']) ? new \Symfony\Config\Framework\Validation\NotCompromisedPasswordConfig($config['not_compromised_password']) : $config['not_compromised_password'];
             unset($config['not_compromised_password']);
         }
-
+    
         if (array_key_exists('auto_mapping', $config)) {
             $this->_usedProperties['autoMapping'] = true;
             $this->autoMapping = array_map(fn ($v) => new \Symfony\Config\Framework\Validation\AutoMappingConfig($v), $config['auto_mapping']);
             unset($config['auto_mapping']);
         }
-
+    
         if ($config) {
             throw new InvalidConfigurationException(sprintf('The following keys are not supported by "%s": ', __CLASS__).implode(', ', array_keys($config)));
         }
     }
-
+    
     public function toArray(): array
     {
         $output = [];
@@ -275,7 +275,7 @@ class ValidationConfig
         if (isset($this->_usedProperties['autoMapping'])) {
             $output['auto_mapping'] = array_map(fn ($v) => $v->toArray(), $this->autoMapping);
         }
-
+    
         return $output;
     }
 

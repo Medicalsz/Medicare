@@ -87,6 +87,6 @@ class __TwigTemplate_f46eea46e55617cdf2632ec90045ef3e extends Template
         <span class=\"float-none float-sm-right d-block mt-1 mt-sm-0 text-center\">Hand-crafted & made with <i class=\"mdi mdi-heart text-danger\"></i></span>
     </div>
 </footer>
-", "partials/admin/_footer.html.twig", "C:\\Users\\LENOVO\\Documents\\PI\\Medicare\\templates\\partials\\admin\\_footer.html.twig");
+", "partials/admin/_footer.html.twig", "C:\\Users\\LENOVO\\Documents\\gestion user\\Medicare\\templates\\partials\\admin\\_footer.html.twig");
     }
 }

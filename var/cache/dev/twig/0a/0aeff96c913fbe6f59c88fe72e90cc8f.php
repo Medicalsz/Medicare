@@ -123,6 +123,6 @@ namespace <?= \$class_data->getNamespace(); ?>;
 <?php } ?>
     }
 }
-", "@Maker/controller/Controller.tpl.php", "C:\\Users\\LENOVO\\Documents\\PI\\Medicare\\vendor\\symfony\\maker-bundle\\templates\\controller\\Controller.tpl.php");
+", "@Maker/controller/Controller.tpl.php", "C:\\Users\\LENOVO\\Documents\\gestion user\\Medicare\\vendor\\symfony\\maker-bundle\\templates\\controller\\Controller.tpl.php");
     }
 }

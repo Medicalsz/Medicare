@@ -165,6 +165,6 @@ class RegistrationControllerTest extends WebTestCase
         self::assertCount(1, \$this->userRepository->findAll());
     }
 }
-", "@Maker/registration/Test.WithoutVerify.tpl.php", "C:\\Users\\LENOVO\\Documents\\PI\\Medicare\\vendor\\symfony\\maker-bundle\\templates\\registration\\Test.WithoutVerify.tpl.php");
+", "@Maker/registration/Test.WithoutVerify.tpl.php", "C:\\Users\\LENOVO\\Documents\\gestion user\\Medicare\\vendor\\symfony\\maker-bundle\\templates\\registration\\Test.WithoutVerify.tpl.php");
     }
 }

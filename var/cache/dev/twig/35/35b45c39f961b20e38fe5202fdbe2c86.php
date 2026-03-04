@@ -1010,6 +1010,6 @@ textarea.form-control {
 }
 </style>
 {% endblock %}
-", "registration/register.html.twig", "C:\\Users\\LENOVO\\Documents\\PI\\Medicare\\templates\\registration\\register.html.twig");
+", "registration/register.html.twig", "C:\\Users\\LENOVO\\Documents\\gestion user\\Medicare\\templates\\registration\\register.html.twig");
     }
 }

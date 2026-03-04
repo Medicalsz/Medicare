@@ -40,67 +40,48 @@ class CustomAuthenticator extends AbstractLoginFormAuthenticator
         $userIdentifier = null;
         $loggedInUser = null;
 
-        // Try to find user in User table by email
-        $user = $this->entityManager->getRepository(User::class)->findOneBy([
-            'email' => $username
-        ]);
+        // Try to find in User repository (Patients)
+        $user = $this->entityManager->getRepository(User::class)->findOneBy(['email' => $username]);
+        if (!$user) {
+            $user = $this->entityManager->getRepository(User::class)->findOneBy(['username' => $username]);
+        }
 
+        // If found in User repository
         if ($user) {
+            if (!$this->passwordHasher->isPasswordValid($user, $password)) {
+                throw new CustomUserMessageAuthenticationException('Email ou mot de passe incorrect');
+            }
             $userIdentifier = $user->getUsername() ?? $user->getEmail();
+            return new Passport(
+                new UserBadge($userIdentifier, function($identifier) {
+                    $u = $this->entityManager->getRepository(User::class)->findOneBy(['username' => $identifier]);
+                    return $u ?: $this->entityManager->getRepository(User::class)->findOneBy(['email' => $identifier]);
+                }),
+                new PasswordCredentials($password)
+            );
         }
 
-        // If not found by email, try by username
-        if (!$user) {
-            $user = $this->entityManager->getRepository(User::class)->findOneBy([
-                'username' => $username
-            ]);
-            
-            if ($user) {
-                $userIdentifier = $user->getUsername();
+        // Try to find in Medecin repository (Doctors)
+        $medecin = $this->entityManager->getRepository(Medecin::class)->findOneBy(['email' => $username]);
+        if (!$medecin) {
+            $medecin = $this->entityManager->getRepository(Medecin::class)->findOneBy(['username' => $username]);
+        }
+
+        if ($medecin) {
+            if (!$this->passwordHasher->isPasswordValid($medecin, $password)) {
+                throw new CustomUserMessageAuthenticationException('Email ou mot de passe incorrect');
             }
+            $userIdentifier = $medecin->getUsername() ?? $medecin->getEmail();
+            return new Passport(
+                new UserBadge($userIdentifier, function($identifier) {
+                    $m = $this->entityManager->getRepository(Medecin::class)->findOneBy(['username' => $identifier]);
+                    return $m ?: $this->entityManager->getRepository(Medecin::class)->findOneBy(['email' => $identifier]);
+                }),
+                new PasswordCredentials($password)
+            );
         }
 
-        // If not found in User table, try Medecin table
-        if (!$user) {
-            $medecin = $this->entityManager->getRepository(Medecin::class)->findOneBy([
-                'email' => $username
-            ]);
-
-            if ($medecin) {
-                // Validate password for medecin
-                if (!$this->passwordHasher->isPasswordValid($medecin, $password)) {
-                    throw new CustomUserMessageAuthenticationException('Email ou mot de passe incorrect');
-                }
-                
-                // Return passport with user badge containing the actual medecin
-                return new Passport(
-                    new UserBadge($medecin->getEmail(), function($email) {
-                        return $this->entityManager->getRepository(Medecin::class)->findOneBy(['email' => $email]);
-                    }),
-                    new PasswordCredentials($password)
-                );
-            }
-
-            throw new CustomUserMessageAuthenticationException('Email ou mot de passe incorrect');
-        }
-
-        // Validate password for user
-        if (!$this->passwordHasher->isPasswordValid($user, $password)) {
-            throw new CustomUserMessageAuthenticationException('Email ou mot de passe incorrect');
-        }
-
-        // Return the passport
-        return new Passport(
-            new UserBadge($userIdentifier, function($identifier) {
-                // Try to load from User table
-                $user = $this->entityManager->getRepository(User::class)->findOneBy(['username' => $identifier]);
-                if (!$user) {
-                    $user = $this->entityManager->getRepository(User::class)->findOneBy(['email' => $identifier]);
-                }
-                return $user;
-            }),
-            new PasswordCredentials($password)
-        );
+        throw new CustomUserMessageAuthenticationException('Email ou mot de passe incorrect');
     }
 
     public function onAuthenticationSuccess(Request $request, $token, string $firewallName): ?Response

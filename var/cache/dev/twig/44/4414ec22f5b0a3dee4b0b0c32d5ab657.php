@@ -91,6 +91,6 @@ namespace <?= \$namespace ?>;
 class <?= \$class_name; ?> extends AbstractController
 {
 }
-", "@Maker/authenticator/EmptySecurityController.tpl.php", "C:\\Users\\LENOVO\\Documents\\PI\\Medicare\\vendor\\symfony\\maker-bundle\\templates\\authenticator\\EmptySecurityController.tpl.php");
+", "@Maker/authenticator/EmptySecurityController.tpl.php", "C:\\Users\\LENOVO\\Documents\\gestion user\\Medicare\\vendor\\symfony\\maker-bundle\\templates\\authenticator\\EmptySecurityController.tpl.php");
     }
 }
