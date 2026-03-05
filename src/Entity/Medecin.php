@@ -71,6 +71,9 @@ class Medecin implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(name: 'isVerified', type: 'boolean')]
     private $isVerified = false;
 
+    #[ORM\Column(type: 'date', nullable: true)]
+    private ?\DateTimeInterface $dateNaissance = null;
+
     // ===== GETTERS & SETTERS =====
 
     public function getId(): ?int
@@ -305,5 +308,16 @@ class Medecin implements UserInterface, PasswordAuthenticatedUserInterface
     public function eraseCredentials(): void
     {
         // If you store any temporary sensitive data, clean it here
+    }
+
+    public function getDateNaissance(): ?\DateTimeInterface
+    {
+        return $this->dateNaissance;
+    }
+
+    public function setDateNaissance(?\DateTimeInterface $dateNaissance): static
+    {
+        $this->dateNaissance = $dateNaissance;
+        return $this;
     }
 }

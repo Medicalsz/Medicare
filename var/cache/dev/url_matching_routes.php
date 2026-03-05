@@ -14,7 +14,12 @@ return [
         '/_profiler/phpinfo' => [[['_route' => '_profiler_phpinfo', '_controller' => 'web_profiler.controller.profiler::phpinfoAction'], null, null, null, false, false, null]],
         '/_profiler/xdebug' => [[['_route' => '_profiler_xdebug', '_controller' => 'web_profiler.controller.profiler::xdebugAction'], null, null, null, false, false, null]],
         '/_profiler/open' => [[['_route' => '_profiler_open_file', '_controller' => 'web_profiler.controller.profiler::openAction'], null, null, null, false, false, null]],
+        '/admin' => [[['_route' => 'app_admin_index', '_controller' => 'App\\Controller\\AdminController::index'], null, null, null, false, false, null]],
         '/admin/dashboard' => [[['_route' => 'app_admin_dashboard', '_controller' => 'App\\Controller\\AdminController::dashboard'], null, null, null, false, false, null]],
+        '/admin/verify-all-medecins' => [[['_route' => 'app_admin_verify_all_medecins', '_controller' => 'App\\Controller\\AdminController::verifyAllMedecins'], null, ['POST' => 0], null, false, false, null]],
+        '/admin/users' => [[['_route' => 'app_admin_users_list', '_controller' => 'App\\Controller\\AdminController::listUsers'], null, null, null, false, false, null]],
+        '/admin/add-admin' => [[['_route' => 'app_admin_add', '_controller' => 'App\\Controller\\AdminController::addAdmin'], null, null, null, false, false, null]],
+        '/admin/notifications' => [[['_route' => 'app_admin_notifications', '_controller' => 'App\\Controller\\AdminController::notifications'], null, null, null, false, false, null]],
         '/admin/login' => [[['_route' => 'app_admin_login', '_controller' => 'App\\Controller\\AdminSecurityController::login'], null, null, null, false, false, null]],
         '/admin/logout' => [[['_route' => 'app_admin_logout', '_controller' => 'App\\Controller\\AdminSecurityController::logout'], null, null, null, false, false, null]],
         '/admin/medecins' => [[['_route' => 'admin_medecins_index', '_controller' => 'App\\Controller\\Admin\\MedecinController::index'], null, null, null, true, false, null]],
@@ -68,13 +73,17 @@ return [
                     .')'
                 .')'
                 .'|/admin/medecins/(?'
-                    .'|verify/([^/]++)(*:236)'
-                    .'|unverify/([^/]++)(*:261)'
-                    .'|delete/([^/]++)(*:284)'
+                    .'|([^/]++)/(?'
+                        .'|verify(*:239)'
+                        .'|unverify(*:255)'
+                    .')'
+                    .'|verify/([^/]++)(*:279)'
+                    .'|unverify/([^/]++)(*:304)'
+                    .'|delete/([^/]++)(*:327)'
                 .')'
-                .'|/department/(\\d+)(*:310)'
-                .'|/service/(\\d+)(*:332)'
-                .'|/([^/]++)(*:349)'
+                .'|/department/(\\d+)(*:353)'
+                .'|/service/(\\d+)(*:375)'
+                .'|/([^/]++)(*:392)'
             .')/?$}sDu',
     ],
     [ // $dynamicRoutes
@@ -86,12 +95,14 @@ return [
         168 => [[['_route' => '_profiler_exception', '_controller' => 'web_profiler.controller.exception_panel::body'], ['token'], null, null, false, false, null]],
         181 => [[['_route' => '_profiler_exception_css', '_controller' => 'web_profiler.controller.exception_panel::stylesheet'], ['token'], null, null, false, false, null]],
         191 => [[['_route' => '_profiler', '_controller' => 'web_profiler.controller.profiler::panelAction'], ['token'], null, null, false, true, null]],
-        236 => [[['_route' => 'admin_medecins_verify', '_controller' => 'App\\Controller\\Admin\\MedecinController::verify'], ['id'], null, null, false, true, null]],
-        261 => [[['_route' => 'admin_medecins_unverify', '_controller' => 'App\\Controller\\Admin\\MedecinController::unverify'], ['id'], null, null, false, true, null]],
-        284 => [[['_route' => 'admin_medecins_delete', '_controller' => 'App\\Controller\\Admin\\MedecinController::delete'], ['id'], null, null, false, true, null]],
-        310 => [[['_route' => 'app_department_details', '_controller' => 'App\\Controller\\FrontendController::departmentDetails'], ['id'], null, null, false, true, null]],
-        332 => [[['_route' => 'app_service_details', '_controller' => 'App\\Controller\\FrontendController::serviceDetails'], ['id'], null, null, false, true, null]],
-        349 => [
+        239 => [[['_route' => 'app_admin_medecins_verify', '_controller' => 'App\\Controller\\AdminController::verifyMedecin'], ['id'], ['GET' => 0], null, false, false, null]],
+        255 => [[['_route' => 'app_admin_medecins_unverify', '_controller' => 'App\\Controller\\AdminController::unverifyMedecin'], ['id'], ['GET' => 0], null, false, false, null]],
+        279 => [[['_route' => 'admin_medecins_verify', '_controller' => 'App\\Controller\\Admin\\MedecinController::verify'], ['id'], null, null, false, true, null]],
+        304 => [[['_route' => 'admin_medecins_unverify', '_controller' => 'App\\Controller\\Admin\\MedecinController::unverify'], ['id'], null, null, false, true, null]],
+        327 => [[['_route' => 'admin_medecins_delete', '_controller' => 'App\\Controller\\Admin\\MedecinController::delete'], ['id'], null, null, false, true, null]],
+        353 => [[['_route' => 'app_department_details', '_controller' => 'App\\Controller\\FrontendController::departmentDetails'], ['id'], null, null, false, true, null]],
+        375 => [[['_route' => 'app_service_details', '_controller' => 'App\\Controller\\FrontendController::serviceDetails'], ['id'], null, null, false, true, null]],
+        392 => [
             [['_route' => 'app_profile_public', '_controller' => 'App\\Controller\\ProfileController::showPublicProfile'], ['username'], null, null, false, true, null],
             [null, null, null, null, false, false, 0],
         ],

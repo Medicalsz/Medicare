@@ -53,22 +53,25 @@ class __TwigTemplate_00489dfb52b2b1fe3773b8702654269c extends Template
         yield $this->extensions['Symfony\Bridge\Twig\Extension\RoutingExtension']->getPath("app_admin_dashboard");
         yield "\">
                 <i class=\"mdi mdi-view-dashboard menu-icon\"></i>
-                <span class=\"menu-title\">Dashboard</span>
+                <span class=\"menu-title\">Tableau de Bord</span>
             </a>
         </li>
         <li class=\"nav-item\">
             <a class=\"nav-link\" href=\"";
         // line 10
+        yield $this->extensions['Symfony\Bridge\Twig\Extension\RoutingExtension']->getPath("app_admin_users_list");
+        yield "\">
+                <i class=\"mdi mdi-account-group menu-icon\"></i>
+                <span class=\"menu-title\">Utilisateurs</span>
+            </a>
+        </li>
+        <li class=\"nav-item\">
+            <a class=\"nav-link\" href=\"";
+        // line 16
         yield $this->extensions['Symfony\Bridge\Twig\Extension\RoutingExtension']->getPath("admin_medecins_index");
         yield "\">
                 <i class=\"mdi mdi-doctor menu-icon\"></i>
                 <span class=\"menu-title\">Médecins</span>
-            </a>
-        </li>
-        <li class=\"nav-item\">
-            <a class=\"nav-link\" href=\"#\">
-                <i class=\"mdi mdi-account-group menu-icon\"></i>
-                <span class=\"menu-title\">Patients</span>
             </a>
         </li>
         <li class=\"nav-item\">
@@ -79,25 +82,13 @@ class __TwigTemplate_00489dfb52b2b1fe3773b8702654269c extends Template
         </li>
         <li class=\"nav-item\">
             <a class=\"nav-link\" href=\"#\">
-                <i class=\"mdi mdi-hospital-building menu-icon\"></i>
-                <span class=\"menu-title\">Spécialités</span>
-            </a>
-        </li>
-        <li class=\"nav-item\">
-            <a class=\"nav-link\" href=\"#\">
-                <i class=\"mdi mdi-chart-bar menu-icon\"></i>
-                <span class=\"menu-title\">Statistiques</span>
-            </a>
-        </li>
-        <li class=\"nav-item\">
-            <a class=\"nav-link\" href=\"#\">
                 <i class=\"mdi mdi-cog menu-icon\"></i>
                 <span class=\"menu-title\">Paramètres</span>
             </a>
         </li>
         <li class=\"nav-item\">
             <a class=\"nav-link\" href=\"";
-        // line 46
+        // line 34
         yield $this->extensions['Symfony\Bridge\Twig\Extension\RoutingExtension']->getPath("app_admin_logout");
         yield "\">
                 <i class=\"mdi mdi-logout menu-icon\"></i>
@@ -137,7 +128,7 @@ class __TwigTemplate_00489dfb52b2b1fe3773b8702654269c extends Template
      */
     public function getDebugInfo(): array
     {
-        return array (  101 => 46,  62 => 10,  53 => 4,  48 => 1,);
+        return array (  92 => 34,  71 => 16,  62 => 10,  53 => 4,  48 => 1,);
     }
 
     public function getSourceContext(): Source
@@ -147,7 +138,13 @@ class __TwigTemplate_00489dfb52b2b1fe3773b8702654269c extends Template
         <li class=\"nav-item\">
             <a class=\"nav-link\" href=\"{{ path('app_admin_dashboard') }}\">
                 <i class=\"mdi mdi-view-dashboard menu-icon\"></i>
-                <span class=\"menu-title\">Dashboard</span>
+                <span class=\"menu-title\">Tableau de Bord</span>
+            </a>
+        </li>
+        <li class=\"nav-item\">
+            <a class=\"nav-link\" href=\"{{ path('app_admin_users_list') }}\">
+                <i class=\"mdi mdi-account-group menu-icon\"></i>
+                <span class=\"menu-title\">Utilisateurs</span>
             </a>
         </li>
         <li class=\"nav-item\">
@@ -158,26 +155,8 @@ class __TwigTemplate_00489dfb52b2b1fe3773b8702654269c extends Template
         </li>
         <li class=\"nav-item\">
             <a class=\"nav-link\" href=\"#\">
-                <i class=\"mdi mdi-account-group menu-icon\"></i>
-                <span class=\"menu-title\">Patients</span>
-            </a>
-        </li>
-        <li class=\"nav-item\">
-            <a class=\"nav-link\" href=\"#\">
                 <i class=\"mdi mdi-calendar-check menu-icon\"></i>
                 <span class=\"menu-title\">Rendez-vous</span>
-            </a>
-        </li>
-        <li class=\"nav-item\">
-            <a class=\"nav-link\" href=\"#\">
-                <i class=\"mdi mdi-hospital-building menu-icon\"></i>
-                <span class=\"menu-title\">Spécialités</span>
-            </a>
-        </li>
-        <li class=\"nav-item\">
-            <a class=\"nav-link\" href=\"#\">
-                <i class=\"mdi mdi-chart-bar menu-icon\"></i>
-                <span class=\"menu-title\">Statistiques</span>
             </a>
         </li>
         <li class=\"nav-item\">

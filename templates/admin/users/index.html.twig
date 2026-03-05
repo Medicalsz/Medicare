@@ -1,0 +1,130 @@
+{% extends 'base_admin.html.twig' %}
+
+{% block title %}Gestion des Utilisateurs - Medicare{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-lg-12">
+        <div class="card">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h4 class="card-title">Liste des Utilisateurs</h4>
+                    <div class="btn-group">
+                        <a href="{{ path('app_register') }}" class="btn btn-sm btn-success text-white">
+                            <i class="mdi mdi-account-plus"></i> Patient
+                        </a>
+                        <a href="{{ path('app_medecin_register') }}" class="btn btn-sm btn-primary">
+                            <i class="mdi mdi-doctor"></i> Médecin
+                        </a>
+                        <a href="#" class="btn btn-sm btn-info text-white">
+                            <i class="mdi mdi-security"></i> Admin
+                        </a>
+                    </div>
+                </div>
+                
+                <ul class="nav nav-tabs" id="myTab" role="tablist">
+                    <li class="nav-item">
+                        <a class="nav-link active" id="patients-tab" data-bs-toggle="tab" href="#patients" role="tab">Patients</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" id="doctors-tab" data-bs-toggle="tab" href="#doctors" role="tab">Médecins</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" id="admins-tab" data-bs-toggle="tab" href="#admins" role="tab">Administrateurs</a>
+                    </li>
+                </ul>
+
+                <div class="tab-content mt-3" id="myTabContent">
+                    <!-- Patients -->
+                    <div class="tab-pane fade show active" id="patients" role="tabpanel">
+                        <div class="table-responsive">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>Nom</th>
+                                        <th>Email</th>
+                                        <th>Ville</th>
+                                        <th>Statut</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for user in users %}
+                                    <tr>
+                                        <td>{{ user.prenom }} {{ user.nom }}</td>
+                                        <td>{{ user.email }}</td>
+                                        <td>{{ user.adresse }}</td>
+                                        <td>
+                                            <span class="badge {{ user.isVerified ? 'bg-success' : 'bg-secondary' }}">
+                                                {{ user.isVerified ? 'Vérifié' : 'Non vérifié' }}
+                                            </span>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Doctors -->
+                    <div class="tab-pane fade" id="doctors" role="tabpanel">
+                        <div class="table-responsive">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>Nom</th>
+                                        <th>Spécialité</th>
+                                        <th>Vérifié</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for medecin in medecins %}
+                                    <tr>
+                                        <td>Dr. {{ medecin.prenom }} {{ medecin.nom }}</td>
+                                        <td>{{ medecin.specialite }}</td>
+                                        <td>
+                                            <span class="badge {{ medecin.isVerified ? 'bg-success' : 'bg-warning' }}">
+                                                {{ medecin.isVerified ? 'Vérifié' : 'En attente' }}
+                                            </span>
+                                        </td>
+                                        <td>
+                                            {% if not medecin.isVerified %}
+                                                <a href="{{ path('app_admin_medecins_verify', {id: medecin.id}) }}" class="btn btn-xs btn-success text-white">Approuver</a>
+                                            {% else %}
+                                                <a href="{{ path('app_admin_medecins_unverify', {id: medecin.id}) }}" class="btn btn-xs btn-warning text-white">Révoquer</a>
+                                            {% endif %}
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Admins -->
+                    <div class="tab-pane fade" id="admins" role="tabpanel">
+                        <div class="table-responsive">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>Nom</th>
+                                        <th>Email</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for admin in admins %}
+                                    <tr>
+                                        <td>{{ admin.prenom }} {{ admin.nom }}</td>
+                                        <td>{{ admin.email }}</td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

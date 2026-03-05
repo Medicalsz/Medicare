@@ -1,0 +1,14 @@
+<li class="nav-item dropdown d-none d-lg-block">
+    <a class="nav-link count-indicator dropdown-toggle" id="notificationDropdown" href="#" data-bs-toggle="dropdown">
+        <i class="mdi mdi-bell-outline"></i>
+        {% if unverified_count > 0 %}
+        <span class="count bg-danger">{{ unverified_count }}</span>
+        {% endif %}
+    </a>
+    <div class="dropdown-menu dropdown-menu-right navbar-dropdown preview-list pb-0" aria-labelledby="notificationDropdown">
+        <a class="dropdown-item py-3 border-bottom" href="{{ path('app_admin_dashboard') }}">
+            <p class="mb-0 fw-medium float-start">Vous avez {{ unverified_count }} médecins en attente</p>
+            <span class="badge badge-pill badge-primary float-end">Voir</span>
+        </a>
+    </div>
+</li>

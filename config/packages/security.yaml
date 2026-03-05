@@ -43,6 +43,7 @@ security:
                 login_path: app_admin_login
                 check_path: app_admin_login
                 default_target_path: app_admin_dashboard
+                username_parameter: _email
             logout:
                 path: app_admin_logout
                 target: app_admin_login
@@ -57,9 +58,8 @@ security:
                 path: app_logout
                 target: app_login
 
-    # Access control
     access_control:
-        - { path: ^/admin/login$, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/admin/login$, roles: PUBLIC_ACCESS }
         - { path: ^/admin, roles: ROLE_ADMIN }
         - { path: ^/medecin/verification, roles: PUBLIC_ACCESS }
 

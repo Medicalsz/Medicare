@@ -111,6 +111,10 @@ class __TwigTemplate_4b440babc974d4a12399aee9993fc8f6 extends Template
             <li class=\"nav-item d-none d-lg-block\">
                 <div id=\"datepicker\"></div>
             </li>
+            ";
+        // line 52
+        yield $this->env->getRuntime('Symfony\Bridge\Twig\Extension\HttpKernelRuntime')->renderFragment(Symfony\Bridge\Twig\Extension\HttpKernelExtension::controller("App\\Controller\\AdminController::notifications"));
+        yield "
             <li class=\"nav-item dropdown d-none d-lg-block\">
                 <a class=\"nav-link\" id=\"appsDropdown\" href=\"#\" data-bs-toggle=\"dropdown\">
                     <i class=\"mdi mdi-apps\"></i>
@@ -121,7 +125,7 @@ class __TwigTemplate_4b440babc974d4a12399aee9993fc8f6 extends Template
                     </div>
                     <div class=\"dropdown-divider\"></div>
                     <a class=\"dropdown-item\" href=\"";
-        // line 61
+        // line 62
         yield $this->extensions['Symfony\Bridge\Twig\Extension\RoutingExtension']->getPath("app_admin_dashboard");
         yield "\">
                         <i class=\"mdi mdi-view-dashboard me-2\"></i> Dashboard
@@ -141,12 +145,12 @@ class __TwigTemplate_4b440babc974d4a12399aee9993fc8f6 extends Template
                 <a class=\"nav-link\" id=\"profileDropdown\" href=\"#\" data-bs-toggle=\"dropdown\">
                     <div class=\"navbar-profile\">
                         <img class=\"img-xs rounded-circle\" src=\"";
-        // line 78
+        // line 79
         yield $this->env->getRuntime('Twig\Runtime\EscaperRuntime')->escape($this->extensions['Symfony\Bridge\Twig\Extension\AssetExtension']->getAssetUrl("build/assets/backend/images/faces/face1.jpg"), "html", null, true);
         yield "\" alt=\"\">
                         <p class=\"mb-0 d-none d-sm-block navbar-profile-name\">";
-        // line 79
-        yield (((($tmp = CoreExtension::getAttribute($this->env, $this->source, (isset($context["app"]) || array_key_exists("app", $context) ? $context["app"] : (function () { throw new RuntimeError('Variable "app" does not exist.', 79, $this->source); })()), "user", [], "any", false, false, false, 79)) && $tmp instanceof Markup ? (string) $tmp : $tmp)) ? ($this->env->getRuntime('Twig\Runtime\EscaperRuntime')->escape(CoreExtension::getAttribute($this->env, $this->source, CoreExtension::getAttribute($this->env, $this->source, (isset($context["app"]) || array_key_exists("app", $context) ? $context["app"] : (function () { throw new RuntimeError('Variable "app" does not exist.', 79, $this->source); })()), "user", [], "any", false, false, false, 79), "email", [], "any", false, false, false, 79), "html", null, true)) : ("Admin"));
+        // line 80
+        yield (((($tmp = CoreExtension::getAttribute($this->env, $this->source, (isset($context["app"]) || array_key_exists("app", $context) ? $context["app"] : (function () { throw new RuntimeError('Variable "app" does not exist.', 80, $this->source); })()), "user", [], "any", false, false, false, 80)) && $tmp instanceof Markup ? (string) $tmp : $tmp)) ? ($this->env->getRuntime('Twig\Runtime\EscaperRuntime')->escape(CoreExtension::getAttribute($this->env, $this->source, CoreExtension::getAttribute($this->env, $this->source, (isset($context["app"]) || array_key_exists("app", $context) ? $context["app"] : (function () { throw new RuntimeError('Variable "app" does not exist.', 80, $this->source); })()), "user", [], "any", false, false, false, 80), "email", [], "any", false, false, false, 80), "html", null, true)) : ("Admin"));
         yield "</p>
                         <i class=\"mdi mdi-menu-down d-none d-sm-block\"></i>
                     </div>
@@ -163,7 +167,7 @@ class __TwigTemplate_4b440babc974d4a12399aee9993fc8f6 extends Template
                     </a>
                     <div class=\"dropdown-divider\"></div>
                     <a class=\"dropdown-item preview-item\" href=\"";
-        // line 94
+        // line 95
         yield $this->extensions['Symfony\Bridge\Twig\Extension\RoutingExtension']->getPath("app_admin_logout");
         yield "\">
                         <div class=\"preview-item-content d-flex align-items-center flex-grow\">
@@ -211,7 +215,7 @@ class __TwigTemplate_4b440babc974d4a12399aee9993fc8f6 extends Template
      */
     public function getDebugInfo(): array
     {
-        return array (  167 => 94,  149 => 79,  145 => 78,  125 => 61,  81 => 20,  71 => 13,  67 => 12,  62 => 10,  58 => 9,  48 => 1,);
+        return array (  171 => 95,  153 => 80,  149 => 79,  129 => 62,  116 => 52,  81 => 20,  71 => 13,  67 => 12,  62 => 10,  58 => 9,  48 => 1,);
     }
 
     public function getSourceContext(): Source
@@ -267,6 +271,7 @@ class __TwigTemplate_4b440babc974d4a12399aee9993fc8f6 extends Template
             <li class=\"nav-item d-none d-lg-block\">
                 <div id=\"datepicker\"></div>
             </li>
+            {{ render(controller('App\\\\Controller\\\\AdminController::notifications')) }}
             <li class=\"nav-item dropdown d-none d-lg-block\">
                 <a class=\"nav-link\" id=\"appsDropdown\" href=\"#\" data-bs-toggle=\"dropdown\">
                     <i class=\"mdi mdi-apps\"></i>
