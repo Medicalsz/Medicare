@@ -4,7 +4,7 @@
 
 {% block stylesheets %}
     {{ parent() }}
-    <link rel="stylesheet" href="{{ asset('assets/css/forum-modern.css') }}?v=20260221-2">
+    <link rel="stylesheet" href="{{ asset('assets/css/forum-modern.css') }}?v=20260305-1">
 {% endblock %}
 
 {% block javascripts %}
@@ -101,6 +101,10 @@
                     <option value="asc" {{ (filters.sort|default('desc')) == 'asc' ? 'selected' : '' }}>Plus ancien</option>
                 </select>
             </div>
+            <div class="col-md-3 forum-filter-field">
+                <label for="admin-filter-tag" class="form-label mb-1"><i class="fas fa-tag me-1"></i>Tag</label>
+                <input id="admin-filter-tag" type="text" name="tag" class="form-control" value="{{ filters.tag|default('') }}" placeholder="Ex: sport">
+            </div>
             <div class="col-md-3 d-flex gap-2 forum-filter-actions">
                 <button type="submit" class="btn btn-primary forum-filter-apply">
                     <i class="fas fa-search me-1"></i>Filtrer
@@ -174,6 +178,14 @@
                         {% set preview = topic.summary ?: topic.content %}
                         {{ preview|striptags|slice(0, 120) }}{% if preview|length > 120 %}...{% endif %}
                     </p>
+
+                    {% if topic.tags is not empty %}
+                        <div class="d-flex flex-wrap gap-1 mb-2">
+                            {% for tag in topic.tags|slice(0, 3) %}
+                                <span class="tag-badge">{{ tag }}</span>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
 
                     <p class="forum-showcase-date">
                         Dernier commentaire : {{ (latestComment ? latestComment.createdAt : topic.createdAt)|date('d/m/Y') }}

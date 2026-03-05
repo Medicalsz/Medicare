@@ -36,6 +36,9 @@ class ForumTopic
     #[ORM\Column(type: 'text', nullable: true)]
     private ?string $summary = null;
 
+    #[ORM\Column(type: 'json')]
+    private array $tags = [];
+
     #[ORM\ManyToOne(targetEntity: User::class)]
     #[ORM\JoinColumn(nullable: false)]
     private ?User $author = null;
@@ -202,6 +205,32 @@ class ForumTopic
     public function setSummary(?string $summary): self
     {
         $this->summary = $summary;
+        return $this;
+    }
+
+    /**
+     * @return list<string>
+     */
+    public function getTags(): array
+    {
+        return $this->tags;
+    }
+
+    /**
+     * @param list<string> $tags
+     */
+    public function setTags(array $tags): self
+    {
+        $normalized = [];
+        foreach ($tags as $tag) {
+            $clean = trim(mb_strtolower((string) $tag));
+            if ($clean === '') {
+                continue;
+            }
+            $normalized[] = $clean;
+        }
+        $this->tags = array_values(array_unique($normalized));
+
         return $this;
     }
 

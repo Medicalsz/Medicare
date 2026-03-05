@@ -17,6 +17,7 @@ use App\Service\ForumSummaryClient;
 use App\Service\NotificationService;
 use App\Service\ProfanityFilterService;
 use App\Service\RecommendationService;
+use App\Service\TagGeneratorService;
 use Doctrine\ORM\EntityManagerInterface;
 use DateTimeImmutable;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -47,6 +48,7 @@ class UserForumController extends AbstractController
         $rawFrom = trim((string) $request->query->get('from', ''));
         $rawTo = trim((string) $request->query->get('to', ''));
         $sort = strtolower((string) $request->query->get('sort', 'desc'));
+        $tag = trim((string) $request->query->get('tag', ''));
         if (!in_array($sort, ['asc', 'desc'], true)) {
             $sort = 'desc';
         }
@@ -71,6 +73,20 @@ class UserForumController extends AbstractController
             $topics,
             static fn (ForumTopic $topic): bool => $kind === 'video' ? $topic->isVideoType() : $topic->isTextType()
         ));
+        if ($tag !== '') {
+            $normalizedTag = mb_strtolower($tag);
+            $topics = array_values(array_filter(
+                $topics,
+                static function (ForumTopic $topic) use ($normalizedTag): bool {
+                    foreach ($topic->getTags() as $topicTag) {
+                        if (mb_strtolower($topicTag) === $normalizedTag) {
+                            return true;
+                        }
+                    }
+                    return false;
+                }
+            ));
+        }
         $topicIds = array_map(static fn (ForumTopic $topic) => (int) $topic->getId(), $topics);
         $reactionCounts = $reactionRepository->getCountsByTopicIds($topicIds);
         $userReactionMap = $reactionRepository->getUserReactionMap($user, $topicIds);
@@ -82,6 +98,7 @@ class UserForumController extends AbstractController
                 'from' => $from ? $from->format('Y-m-d') : ($rawFrom !== '' ? $rawFrom : ''),
                 'to' => $to ? $to->format('Y-m-d') : ($rawTo !== '' ? $rawTo : ''),
                 'sort' => $sort,
+                'tag' => $tag,
             ],
             'filter_summary' => $this->buildFilterSummary($from, $to, $sort),
             'reaction_counts' => $reactionCounts,
@@ -90,7 +107,7 @@ class UserForumController extends AbstractController
     }
 
     #[Route('/new', name: 'new', methods: ['GET', 'POST'])]
-    public function new(Request $request, EntityManagerInterface $em, ForumSummaryClient $summaryClient, NotificationService $notificationService, ProfanityFilterService $profanityFilter): Response
+    public function new(Request $request, EntityManagerInterface $em, ForumSummaryClient $summaryClient, NotificationService $notificationService, ProfanityFilterService $profanityFilter, TagGeneratorService $tagGenerator): Response
     {
         $this->denyUnlessForumMember();
 
@@ -116,6 +133,7 @@ class UserForumController extends AbstractController
                 $topic->setVideoUrl(null);
             }
             $topic->setSummary($summaryClient->summarize((string) $topic->getContent()));
+            $topic->setTags($tagGenerator->generateTags((string) $topic->getTitle(), (string) $topic->getContent()));
             $em->persist($topic);
             $em->flush();
             $notificationService->notifyNewTopic($topic);
