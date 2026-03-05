@@ -13,10 +13,12 @@ use App\Repository\ForumTopicReactionRepository;
 use App\Repository\ForumTopicRepository;
 use App\Service\ForumSummaryClient;
 use App\Service\NotificationService;
+use App\Service\ProfanityFilterService;
 use App\Service\RecommendationService;
 use Doctrine\ORM\EntityManagerInterface;
 use DateTimeImmutable;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Form\FormError;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -81,13 +83,25 @@ class ForumController extends AbstractController
     }
 
     #[Route('/new', name: 'new', methods: ['GET', 'POST'])]
-    public function new(Request $request, EntityManagerInterface $em, ForumSummaryClient $summaryClient, NotificationService $notificationService): Response
+    public function new(Request $request, EntityManagerInterface $em, ForumSummaryClient $summaryClient, NotificationService $notificationService, ProfanityFilterService $profanityFilter): Response
     {
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
 
         $topic = new ForumTopic();
         $form = $this->createForm(ForumTopicType::class, $topic);
         $form->handleRequest($request);
+
+        if ($form->isSubmitted()) {
+            $message = 'Votre message contient des mots inappropriés. Merci de respecter les règles du forum.';
+            $titleText = (string) $topic->getTitle();
+            $contentText = (string) $topic->getContent();
+            if ($titleText !== '' && $profanityFilter->containsProfanity($titleText)) {
+                $form->get('title')->addError(new FormError($message));
+            }
+            if ($contentText !== '' && $profanityFilter->containsProfanity($contentText)) {
+                $form->get('content')->addError(new FormError($message));
+            }
+        }
 
         if ($form->isSubmitted() && $form->isValid()) {
             $topic->setAuthor($this->getUser());
@@ -108,7 +122,7 @@ class ForumController extends AbstractController
     }
 
     #[Route('/{id}/edit', name: 'edit', methods: ['GET', 'POST'])]
-    public function edit(int $id, ForumTopicRepository $repo, Request $request, EntityManagerInterface $em, ForumSummaryClient $summaryClient): Response
+    public function edit(int $id, ForumTopicRepository $repo, Request $request, EntityManagerInterface $em, ForumSummaryClient $summaryClient, ProfanityFilterService $profanityFilter): Response
     {
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
 
@@ -119,6 +133,18 @@ class ForumController extends AbstractController
 
         $form = $this->createForm(ForumTopicType::class, $topic);
         $form->handleRequest($request);
+
+        if ($form->isSubmitted()) {
+            $message = 'Votre message contient des mots inappropriés. Merci de respecter les règles du forum.';
+            $titleText = (string) $topic->getTitle();
+            $contentText = (string) $topic->getContent();
+            if ($titleText !== '' && $profanityFilter->containsProfanity($titleText)) {
+                $form->get('title')->addError(new FormError($message));
+            }
+            if ($contentText !== '' && $profanityFilter->containsProfanity($contentText)) {
+                $form->get('content')->addError(new FormError($message));
+            }
+        }
 
         if ($form->isSubmitted() && $form->isValid()) {
             if ($topic->isTextType()) {
@@ -156,7 +182,7 @@ class ForumController extends AbstractController
     }
 
     #[Route('/{id}', name: 'show', methods: ['GET', 'POST'])]
-    public function show(int $id, ForumTopicRepository $repo, ForumTopicReactionRepository $reactionRepository, ForumCommentReactionRepository $commentReactionRepository, RecommendationService $recommendationService, NotificationService $notificationService, Request $request, EntityManagerInterface $em): Response
+    public function show(int $id, ForumTopicRepository $repo, ForumTopicReactionRepository $reactionRepository, ForumCommentReactionRepository $commentReactionRepository, RecommendationService $recommendationService, NotificationService $notificationService, ProfanityFilterService $profanityFilter, Request $request, EntityManagerInterface $em): Response
     {
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
 
@@ -171,6 +197,14 @@ class ForumController extends AbstractController
         $replyToId = (int) $request->query->get('replyTo', 0);
         $replyParent = $replyToId > 0 ? $this->findTopicCommentById($topic, $replyToId) : null;
         $postedParentId = (int) $request->request->get('parent_id', 0);
+
+        if ($form->isSubmitted()) {
+            $message = 'Votre message contient des mots inappropriés. Merci de respecter les règles du forum.';
+            $text = (string) $comment->getContent();
+            if ($text !== '' && $profanityFilter->containsProfanity($text)) {
+                $form->get('content')->addError(new FormError($message));
+            }
+        }
 
         if ($form->isSubmitted() && $form->isValid()) {
             $comment->setAuthor($this->getUser());
