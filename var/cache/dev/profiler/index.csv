@@ -23,3 +23,8 @@ df1d9c,127.0.0.1,GET,http://127.0.0.1:8000/assets/vendors/js/vendor.bundle.base.
 ed18d5,127.0.0.1,GET,http://127.0.0.1:8000/assets/js/hoverable-collapse.js,1772751985,,404,request
 fc7f40,127.0.0.1,GET,http://127.0.0.1:8000/assets/js/template.js,1772751985,1ceb7d,404,request
 1ceb7d,127.0.0.1,GET,http://127.0.0.1:8000/assets/js/template.js,1772751985,,404,request
+ecb43b,127.0.0.1,GET,http://127.0.0.1:8000/,1772783076,,200,request
+77c5ce,127.0.0.1,GET,http://127.0.0.1:8000/change-locale/fr,1772783117,,302,request
+15ab27,127.0.0.1,GET,http://127.0.0.1:8000/,1772783118,,200,request
+9bb177,127.0.0.1,GET,http://127.0.0.1:8000/change-locale/ar,1772783126,,302,request
+7589ba,127.0.0.1,GET,http://127.0.0.1:8000/,1772783126,,200,request
