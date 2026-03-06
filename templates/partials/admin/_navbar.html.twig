@@ -23,25 +23,25 @@
         </ul>
         <ul class="navbar-nav ms-auto">
             <li class="nav-item dropdown d-none d-lg-block">
-                <a class="nav-link dropdown-bordered dropdown-toggle dropdown-toggle-split" id="messageDropdown" href="#" data-bs-toggle="dropdown" aria-expanded="false"> Langue </a>
+                <a class="nav-link dropdown-bordered dropdown-toggle dropdown-toggle-split" id="messageDropdown" href="#" data-bs-toggle="dropdown" aria-expanded="false"> {{ 'select_language'|trans }} </a>
                 <div class="dropdown-menu dropdown-menu-right navbar-dropdown preview-list pb-0" aria-labelledby="messageDropdown">
                     <a class="dropdown-item py-3">
-                        <p class="mb-0 fw-medium float-start">Sélectionner la langue</p>
+                        <p class="mb-0 fw-medium float-start">{{ 'select_language'|trans }}</p>
                     </a>
                     <div class="dropdown-divider"></div>
-                    <a class="dropdown-item preview-item">
+                    <a class="dropdown-item preview-item" href="{{ path('change_locale', {locale: 'fr'}) }}">
                         <div class="preview-item-content flex-grow py-2">
-                            <p class="preview-subject ellipsis fw-medium text-dark">Français</p>
+                            <p class="preview-subject ellipsis fw-medium text-dark">{{ 'french'|trans }}</p>
                         </div>
                     </a>
-                    <a class="dropdown-item preview-item">
+                    <a class="dropdown-item preview-item" href="{{ path('change_locale', {locale: 'ar'}) }}">
                         <div class="preview-item-content flex-grow py-2">
-                            <p class="preview-subject ellipsis fw-medium text-dark">العربية</p>
+                            <p class="preview-subject ellipsis fw-medium text-dark">{{ 'arabic'|trans }}</p>
                         </div>
                     </a>
-                    <a class="dropdown-item preview-item">
+                    <a class="dropdown-item preview-item" href="{{ path('change_locale', {locale: 'en'}) }}">
                         <div class="preview-item-content flex-grow py-2">
-                            <p class="preview-subject ellipsis fw-medium text-dark">English</p>
+                            <p class="preview-subject ellipsis fw-medium text-dark">{{ 'english'|trans }}</p>
                         </div>
                     </a>
                 </div>

@@ -6,21 +6,38 @@
 
         <nav id="navmenu" class="navmenu">
             <ul>
-                <li><a href="{{ path('app_home') }}" {% if app.request.attributes.get('_route') == 'app_home' %}class="active"{% endif %}>Home</a></li>
-                <li><a href="{{ path('app_about') }}">About</a></li>
-                <li><a href="{{ path('app_services') }}">Services</a></li>
-                <li><a href="{{ path('app_departments') }}">Departments</a></li>
-                <li><a href="{{ path('app_explore') }}" {% if app.request.attributes.get('_route') == 'app_explore' %}class="active"{% endif %}>Explore</a></li>
+                <li><a href="{{ path('app_home') }}" {% if app.request.attributes.get('_route') == 'app_home' %}class="active"{% endif %}>{{ 'home'|trans }}</a></li>
+                <li><a href="{{ path('app_about') }}">{{ 'about'|trans }}</a></li>
+                <li><a href="{{ path('app_services') }}">{{ 'services'|trans }}</a></li>
+                <li><a href="{{ path('app_departments') }}">{{ 'departments'|trans }}</a></li>
+                <li><a href="{{ path('app_health_data') }}" {% if app.request.attributes.get('_route') == 'app_health_data' %}class="active"{% endif %}>{{ 'explore'|trans }}</a></li>
                 <li class="dropdown">
-                    <a href="#"><span>More Pages</span> <i class="bi bi-chevron-down toggle-dropdown"></i></a>
+                    <a href="#"><span>{{ 'more_pages'|trans }}</span> <i class="bi bi-chevron-down toggle-dropdown"></i></a>
                     <ul>
-                        <li><a href="{{ path('app_appointment') }}">Appointment</a></li>
-                        <li><a href="{{ path('app_testimonials') }}">Testimonials</a></li>
-                        <li><a href="{{ path('app_faq') }}">FAQ</a></li>
-                        <li><a href="{{ path('app_gallery') }}">Gallery</a></li>
+                      <li><a href="{{ path('app_appointment') }}">{{ 'appointment'|trans }}</a></li>
+                      <li><a href="{{ path('app_testimonials') }}">{{ 'testimonials'|trans }}</a></li>
+                      <li><a href="{{ path('app_faq') }}">{{ 'faq'|trans }}</a></li>
+                      <li><a href="{{ path('app_gallery') }}">{{ 'gallery'|trans }}</a></li>
                     </ul>
                 </li>
-                <li><a href="{{ path('app_contact') }}">Contact</a></li>
+                <li><a href="{{ path('app_contact') }}">{{ 'contact'|trans }}</a></li>
+                <li class="dropdown">
+                    <a href="javascript:void(0)">
+                        <i class="bi bi-translate"></i> 
+                        <span>{{ app.request.locale|upper }}</span> 
+                        <i class="bi bi-chevron-down toggle-dropdown"></i>
+                    </a>
+                    <ul>
+                        <li><a href="{{ path('change_locale', {locale: 'fr'}) }}">{{ 'french'|trans }}</a></li>
+                        <li><a href="{{ path('change_locale', {locale: 'en'}) }}">{{ 'english'|trans }}</a></li>
+                        <li><a href="{{ path('change_locale', {locale: 'ar'}) }}">{{ 'arabic'|trans }}</a></li>
+                    </ul>
+                </li>
+                <li>
+                    <a href="javascript:void(0)" id="audio-guide-btn" class="btn btn-sm btn-info text-white ms-2" style="border-radius: 20px; padding: 5px 15px;">
+                        <i class="bi bi-volume-up"></i> Audio Guide
+                    </a>
+                </li>
             </ul>
             <i class="mobile-nav-toggle d-xl-none bi bi-list"></i>
         </nav>
@@ -341,3 +358,4 @@
     }
 }
 </style>
+<script src="{{ asset('assets/js/accessibility.js') }}"></script>

@@ -271,6 +271,10 @@ class __TwigTemplate_dc7710655c2b3be29a66470a4208d48f extends Template
                         <p class=\"developed-by\">Developed by <a href=\"#\">Nomade Team</a></p>
                         <p><a href=\"";
         // line 208
+        yield $this->extensions['Symfony\Bridge\Twig\Extension\RoutingExtension']->getPath("app_forgot_password_request");
+        yield "\">Forgot password?</a></p>
+                        <p><a href=\"";
+        // line 209
         yield $this->extensions['Symfony\Bridge\Twig\Extension\RoutingExtension']->getPath("app_home");
         yield "\">Back to Home</a></p>
                     </div>
@@ -311,7 +315,7 @@ class __TwigTemplate_dc7710655c2b3be29a66470a4208d48f extends Template
      */
     public function getDebugInfo(): array
     {
-        return array (  274 => 208,  268 => 205,  259 => 199,  255 => 198,  240 => 186,  232 => 180,  225 => 175,  223 => 174,  48 => 1,);
+        return array (  278 => 209,  274 => 208,  268 => 205,  259 => 199,  255 => 198,  240 => 186,  232 => 180,  225 => 175,  223 => 174,  48 => 1,);
     }
 
     public function getSourceContext(): Source
@@ -523,6 +527,7 @@ class __TwigTemplate_dc7710655c2b3be29a66470a4208d48f extends Template
                         <p>Don't have an account? <a href=\"{{ path('app_register') }}\">Sign Up</a></p>
                         <p class=\"copyright\">&copy; 2025 Medicare. All rights reserved.</p>
                         <p class=\"developed-by\">Developed by <a href=\"#\">Nomade Team</a></p>
+                        <p><a href=\"{{ path('app_forgot_password_request') }}\">Forgot password?</a></p>
                         <p><a href=\"{{ path('app_home') }}\">Back to Home</a></p>
                     </div>
                 </div>

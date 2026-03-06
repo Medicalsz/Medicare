@@ -85,25 +85,49 @@ class __TwigTemplate_4b440babc974d4a12399aee9993fc8f6 extends Template
         </ul>
         <ul class=\"navbar-nav ms-auto\">
             <li class=\"nav-item dropdown d-none d-lg-block\">
-                <a class=\"nav-link dropdown-bordered dropdown-toggle dropdown-toggle-split\" id=\"messageDropdown\" href=\"#\" data-bs-toggle=\"dropdown\" aria-expanded=\"false\"> Langue </a>
+                <a class=\"nav-link dropdown-bordered dropdown-toggle dropdown-toggle-split\" id=\"messageDropdown\" href=\"#\" data-bs-toggle=\"dropdown\" aria-expanded=\"false\"> ";
+        // line 26
+        yield $this->env->getRuntime('Twig\Runtime\EscaperRuntime')->escape($this->extensions['Symfony\Bridge\Twig\Extension\TranslationExtension']->trans("select_language"), "html", null, true);
+        yield " </a>
                 <div class=\"dropdown-menu dropdown-menu-right navbar-dropdown preview-list pb-0\" aria-labelledby=\"messageDropdown\">
                     <a class=\"dropdown-item py-3\">
-                        <p class=\"mb-0 fw-medium float-start\">Sélectionner la langue</p>
+                        <p class=\"mb-0 fw-medium float-start\">";
+        // line 29
+        yield $this->env->getRuntime('Twig\Runtime\EscaperRuntime')->escape($this->extensions['Symfony\Bridge\Twig\Extension\TranslationExtension']->trans("select_language"), "html", null, true);
+        yield "</p>
                     </a>
                     <div class=\"dropdown-divider\"></div>
-                    <a class=\"dropdown-item preview-item\">
+                    <a class=\"dropdown-item preview-item\" href=\"";
+        // line 32
+        yield $this->extensions['Symfony\Bridge\Twig\Extension\RoutingExtension']->getPath("change_locale", ["locale" => "fr"]);
+        yield "\">
                         <div class=\"preview-item-content flex-grow py-2\">
-                            <p class=\"preview-subject ellipsis fw-medium text-dark\">Français</p>
+                            <p class=\"preview-subject ellipsis fw-medium text-dark\">";
+        // line 34
+        yield $this->env->getRuntime('Twig\Runtime\EscaperRuntime')->escape($this->extensions['Symfony\Bridge\Twig\Extension\TranslationExtension']->trans("french"), "html", null, true);
+        yield "</p>
                         </div>
                     </a>
-                    <a class=\"dropdown-item preview-item\">
+                    <a class=\"dropdown-item preview-item\" href=\"";
+        // line 37
+        yield $this->extensions['Symfony\Bridge\Twig\Extension\RoutingExtension']->getPath("change_locale", ["locale" => "ar"]);
+        yield "\">
                         <div class=\"preview-item-content flex-grow py-2\">
-                            <p class=\"preview-subject ellipsis fw-medium text-dark\">العربية</p>
+                            <p class=\"preview-subject ellipsis fw-medium text-dark\">";
+        // line 39
+        yield $this->env->getRuntime('Twig\Runtime\EscaperRuntime')->escape($this->extensions['Symfony\Bridge\Twig\Extension\TranslationExtension']->trans("arabic"), "html", null, true);
+        yield "</p>
                         </div>
                     </a>
-                    <a class=\"dropdown-item preview-item\">
+                    <a class=\"dropdown-item preview-item\" href=\"";
+        // line 42
+        yield $this->extensions['Symfony\Bridge\Twig\Extension\RoutingExtension']->getPath("change_locale", ["locale" => "en"]);
+        yield "\">
                         <div class=\"preview-item-content flex-grow py-2\">
-                            <p class=\"preview-subject ellipsis fw-medium text-dark\">English</p>
+                            <p class=\"preview-subject ellipsis fw-medium text-dark\">";
+        // line 44
+        yield $this->env->getRuntime('Twig\Runtime\EscaperRuntime')->escape($this->extensions['Symfony\Bridge\Twig\Extension\TranslationExtension']->trans("english"), "html", null, true);
+        yield "</p>
                         </div>
                     </a>
                 </div>
@@ -215,7 +239,7 @@ class __TwigTemplate_4b440babc974d4a12399aee9993fc8f6 extends Template
      */
     public function getDebugInfo(): array
     {
-        return array (  171 => 95,  153 => 80,  149 => 79,  129 => 62,  116 => 52,  81 => 20,  71 => 13,  67 => 12,  62 => 10,  58 => 9,  48 => 1,);
+        return array (  195 => 95,  177 => 80,  173 => 79,  153 => 62,  140 => 52,  129 => 44,  124 => 42,  118 => 39,  113 => 37,  107 => 34,  102 => 32,  96 => 29,  90 => 26,  81 => 20,  71 => 13,  67 => 12,  62 => 10,  58 => 9,  48 => 1,);
     }
 
     public function getSourceContext(): Source
@@ -245,25 +269,25 @@ class __TwigTemplate_4b440babc974d4a12399aee9993fc8f6 extends Template
         </ul>
         <ul class=\"navbar-nav ms-auto\">
             <li class=\"nav-item dropdown d-none d-lg-block\">
-                <a class=\"nav-link dropdown-bordered dropdown-toggle dropdown-toggle-split\" id=\"messageDropdown\" href=\"#\" data-bs-toggle=\"dropdown\" aria-expanded=\"false\"> Langue </a>
+                <a class=\"nav-link dropdown-bordered dropdown-toggle dropdown-toggle-split\" id=\"messageDropdown\" href=\"#\" data-bs-toggle=\"dropdown\" aria-expanded=\"false\"> {{ 'select_language'|trans }} </a>
                 <div class=\"dropdown-menu dropdown-menu-right navbar-dropdown preview-list pb-0\" aria-labelledby=\"messageDropdown\">
                     <a class=\"dropdown-item py-3\">
-                        <p class=\"mb-0 fw-medium float-start\">Sélectionner la langue</p>
+                        <p class=\"mb-0 fw-medium float-start\">{{ 'select_language'|trans }}</p>
                     </a>
                     <div class=\"dropdown-divider\"></div>
-                    <a class=\"dropdown-item preview-item\">
+                    <a class=\"dropdown-item preview-item\" href=\"{{ path('change_locale', {locale: 'fr'}) }}\">
                         <div class=\"preview-item-content flex-grow py-2\">
-                            <p class=\"preview-subject ellipsis fw-medium text-dark\">Français</p>
+                            <p class=\"preview-subject ellipsis fw-medium text-dark\">{{ 'french'|trans }}</p>
                         </div>
                     </a>
-                    <a class=\"dropdown-item preview-item\">
+                    <a class=\"dropdown-item preview-item\" href=\"{{ path('change_locale', {locale: 'ar'}) }}\">
                         <div class=\"preview-item-content flex-grow py-2\">
-                            <p class=\"preview-subject ellipsis fw-medium text-dark\">العربية</p>
+                            <p class=\"preview-subject ellipsis fw-medium text-dark\">{{ 'arabic'|trans }}</p>
                         </div>
                     </a>
-                    <a class=\"dropdown-item preview-item\">
+                    <a class=\"dropdown-item preview-item\" href=\"{{ path('change_locale', {locale: 'en'}) }}\">
                         <div class=\"preview-item-content flex-grow py-2\">
-                            <p class=\"preview-subject ellipsis fw-medium text-dark\">English</p>
+                            <p class=\"preview-subject ellipsis fw-medium text-dark\">{{ 'english'|trans }}</p>
                         </div>
                     </a>
                 </div>

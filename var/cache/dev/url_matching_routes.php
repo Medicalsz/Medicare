@@ -23,6 +23,7 @@ return [
         '/admin/login' => [[['_route' => 'app_admin_login', '_controller' => 'App\\Controller\\AdminSecurityController::login'], null, null, null, false, false, null]],
         '/admin/logout' => [[['_route' => 'app_admin_logout', '_controller' => 'App\\Controller\\AdminSecurityController::logout'], null, null, null, false, false, null]],
         '/admin/medecins' => [[['_route' => 'admin_medecins_index', '_controller' => 'App\\Controller\\Admin\\MedecinController::index'], null, null, null, true, false, null]],
+        '/explore/health-data' => [[['_route' => 'app_health_data', '_controller' => 'App\\Controller\\ApiController::index'], null, null, null, false, false, null]],
         '/dashboard' => [[['_route' => 'app_dashboard', '_controller' => 'App\\Controller\\DashboardController::index'], null, null, null, false, false, null]],
         '/settings' => [[['_route' => 'app_settings', '_controller' => 'App\\Controller\\DashboardController::settings'], null, ['GET' => 0, 'POST' => 1], null, false, false, null]],
         '/settings/delete-account' => [[['_route' => 'app_delete_account', '_controller' => 'App\\Controller\\DashboardController::deleteAccount'], null, ['POST' => 0], null, false, false, null]],
@@ -49,6 +50,8 @@ return [
         '/medecin/register' => [[['_route' => 'app_medecin_register', '_controller' => 'App\\Controller\\RegistrationController::medecinRegister'], null, null, null, false, false, null]],
         '/clear-registration-message' => [[['_route' => 'app_clear_registration_message', '_controller' => 'App\\Controller\\RegistrationController::clearRegistrationMessage'], null, null, null, false, false, null]],
         '/medecin/verification' => [[['_route' => 'app_medecin_verification', '_controller' => 'App\\Controller\\RegistrationController::medecinVerification'], null, null, null, false, false, null]],
+        '/reset-password' => [[['_route' => 'app_forgot_password_request', '_controller' => 'App\\Controller\\ResetPasswordController::request'], null, null, null, false, false, null]],
+        '/reset-password/check-email' => [[['_route' => 'app_check_email', '_controller' => 'App\\Controller\\ResetPasswordController::checkEmail'], null, null, null, false, false, null]],
         '/login' => [[['_route' => 'app_login', '_controller' => 'App\\Controller\\SecurityController::login'], null, null, null, false, false, null]],
         '/logout' => [[['_route' => 'app_logout', '_controller' => 'App\\Controller\\SecurityController::logout'], null, null, null, false, false, null]],
     ],
@@ -83,7 +86,9 @@ return [
                 .')'
                 .'|/department/(\\d+)(*:353)'
                 .'|/service/(\\d+)(*:375)'
-                .'|/([^/]++)(*:392)'
+                .'|/change\\-locale/([^/]++)(*:407)'
+                .'|/reset\\-password/reset(?:/([^/]++))?(*:451)'
+                .'|/([^/]++)(*:468)'
             .')/?$}sDu',
     ],
     [ // $dynamicRoutes
@@ -102,7 +107,9 @@ return [
         327 => [[['_route' => 'admin_medecins_delete', '_controller' => 'App\\Controller\\Admin\\MedecinController::delete'], ['id'], null, null, false, true, null]],
         353 => [[['_route' => 'app_department_details', '_controller' => 'App\\Controller\\FrontendController::departmentDetails'], ['id'], null, null, false, true, null]],
         375 => [[['_route' => 'app_service_details', '_controller' => 'App\\Controller\\FrontendController::serviceDetails'], ['id'], null, null, false, true, null]],
-        392 => [
+        407 => [[['_route' => 'change_locale', '_controller' => 'App\\Controller\\LocaleController::changeLocale'], ['locale'], null, null, false, true, null]],
+        451 => [[['_route' => 'app_reset_password', 'token' => null, '_controller' => 'App\\Controller\\ResetPasswordController::reset'], ['token'], null, null, false, true, null]],
+        468 => [
             [['_route' => 'app_profile_public', '_controller' => 'App\\Controller\\ProfileController::showPublicProfile'], ['username'], null, null, false, true, null],
             [null, null, null, null, false, false, 0],
         ],
