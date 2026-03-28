@@ -25,11 +25,11 @@ class Consultation
     #[ORM\Column(enumType: TypeConsultation::class)]
     private ?TypeConsultation $type = null;
 
-    #[ORM\ManyToOne]
+    #[ORM\ManyToOne(inversedBy: 'consultations')]
     #[ORM\JoinColumn(nullable: false)]
     private ?Medecin $medecin = null;
 
-    #[ORM\ManyToOne]
+    #[ORM\ManyToOne(inversedBy: 'consultations')]
     #[ORM\JoinColumn(nullable: false)]
     private ?Patient $patient = null;
 

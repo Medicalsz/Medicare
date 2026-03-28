@@ -1,274 +1,130 @@
-{% extends 'base.html.twig' %}
+{% extends 'frontend/base.html.twig' %}
 
 {% block title %}Connexion - Medicare{% endblock %}
 
+{% block body_class %}index-page auth-page{% endblock %}
+
+{% block stylesheets %}
+  {{ parent() }}
+  {% include 'auth/_auth_styles.html.twig' %}
+{% endblock %}
+
 {% block body %}
-<a href="{{ path('app_home') }}" class="auth-page-back-btn">
-    <i class="bi bi-arrow-left"></i>
-    <span class="back-text">Retour à l'accueil</span>
-</a>
+<div class="auth-page-wrapper">
+  <div class="container">
+    <a href="{{ path('app_home') }}" class="auth-page-back-btn">
+      <i class="bi bi-arrow-left"></i>
+      <span class="back-text">Retour à l'accueil</span>
+    </a>
 
-<div class="auth-container">
-    <div class="auth-header">
+    <div class="auth-container">
+      <div class="auth-header">
         <h1>Connexion</h1>
-        <p>Accédez à votre espace Medicare</p>
-    </div>
+        <p>Accédez à votre espace Medicare, partenaires et collaborateurs</p>
+      </div>
 
-    {% if error %}
+      {% if error %}
         <div class="alert alert-danger">
-            {% if error.messageKey == 'Invalid credentials.' %}
-                Email ou mot de passe incorrect. Veuillez réessayer.
-            {% else %}
-                {{ error.messageKey|trans(error.messageData, 'security') }}
-            {% endif %}
+          {% if error.messageKey == 'Invalid credentials.' %}
+            Email ou mot de passe incorrect. Veuillez réessayer.
+          {% else %}
+            {{ error.messageKey|trans(error.messageData, 'security') }}
+          {% endif %}
         </div>
-    {% endif %}
+      {% endif %}
 
-    {% if app.user %}
+      {% if app.user %}
         <div class="alert alert-success">
-            Vous êtes connecté en tant que {{ app.user.userIdentifier }}, 
-            <a href="{{ path('app_logout') }}">Se déconnecter</a>
+          Vous êtes connecté en tant que {{ app.user.userIdentifier }},
+          <a href="{{ path('app_logout') }}">Se déconnecter</a>
         </div>
-    {% endif %}
+      {% endif %}
 
-    <form method="post" class="login-form" novalidate>
+      <form method="post" class="login-form" novalidate>
         <div class="form-group">
-            <label for="inputEmail">Email</label>
-            <input type="email" 
-                   value="{{ last_username }}" 
-                   name="email" 
-                   id="inputEmail" 
-                   class="form-control{% if error %} is-invalid{% endif %}" 
-                   placeholder="votre.email@exemple.com"
-                   autocomplete="email" 
-                   pattern="[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}"
-                   required 
-                   autofocus>
-            <div class="invalid-feedback">
-                Veuillez saisir une adresse email valide
-            </div>
+          <label for="inputEmail">Email</label>
+          <input type="email"
+                 value="{{ last_username }}"
+                 name="email"
+                 id="inputEmail"
+                 class="form-control"
+                 placeholder="votre.email@exemple.com"
+                 autocomplete="email"
+                 required
+                 autofocus>
+          <div class="invalid-feedback">
+            Veuillez saisir une adresse email valide
+          </div>
         </div>
 
         <div class="form-group">
-            <label for="inputPassword">Mot de passe</label>
-            <input type="password" 
-                   name="password" 
-                   id="inputPassword" 
-                   class="form-control{% if error %} is-invalid{% endif %}" 
-                   placeholder="Votre mot de passe"
-                   autocomplete="current-password"
-                   minlength="6"
-                   required>
-            <div class="invalid-feedback">
-                Le mot de passe doit contenir au moins 6 caractères
-            </div>
+          <label for="inputPassword">Mot de passe</label>
+          <input type="password"
+                 name="password"
+                 id="inputPassword"
+                 class="form-control"
+                 placeholder="Votre mot de passe"
+                 autocomplete="current-password"
+                 required>
+          <div class="invalid-feedback">
+            Le mot de passe doit contenir au moins 6 caractères
+          </div>
         </div>
 
         <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
 
         <button class="btn-submit" type="submit">Se connecter</button>
-    </form>
+      </form>
 
-    <div class="auth-footer">
+      <div class="auth-footer">
         <p>Pas encore de compte ? <a href="{{ path('app_register') }}">S'inscrire</a></p>
+      </div>
     </div>
+  </div>
 </div>
 
 <style>
-    .auth-success-modal {
-        display: none;
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: rgba(0, 0, 0, 0.5);
-        backdrop-filter: blur(5px);
-        z-index: 10000;
-        opacity: 0;
-        transition: opacity 0.3s ease;
-    }
-    
-    .auth-success-modal.show {
-        display: flex !important;
-        align-items: center;
-        justify-content: center;
-        opacity: 1;
-    }
-    
-    .modal-content-wrapper {
-        background: white;
-        border-radius: 20px;
-        padding: 50px 40px;
-        text-align: center;
-        max-width: 450px;
-        width: 90%;
-        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-        transform: scale(0.7);
-        animation: popIn 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
-    }
-    
-    @keyframes popIn {
-        0% { transform: scale(0.7); opacity: 0; }
-        100% { transform: scale(1); opacity: 1; }
-    }
-    
-    .modal-content-wrapper h2 {
-        color: #333;
-        font-size: 28px;
-        margin: 25px 0 15px;
-        font-weight: 600;
-    }
-    
-    .modal-content-wrapper p {
-        color: #666;
-        font-size: 16px;
-        line-height: 1.6;
-        margin: 0;
-    }
-    
-    .success-checkmark {
-        width: 80px;
-        height: 80px;
-        margin: 0 auto;
-    }
-    
-    .check-icon {
-        width: 80px;
-        height: 80px;
-        position: relative;
-        border-radius: 50%;
-        box-sizing: content-box;
-        border: 4px solid #4CAF50;
-    }
-    
-    .icon-line {
-        height: 5px;
-        background-color: #4CAF50;
-        display: block;
-        border-radius: 2px;
-        position: absolute;
-        z-index: 10;
-    }
-    
-    .icon-line.line-tip {
-        top: 46px;
-        left: 14px;
-        width: 25px;
-        transform: rotate(45deg);
-    }
-    
-    .icon-line.line-long {
-        top: 38px;
-        right: 8px;
-        width: 47px;
-        transform: rotate(-45deg);
-    }
-    
-    .icon-circle {
-        top: -4px;
-        left: -4px;
-        z-index: 10;
-        width: 80px;
-        height: 80px;
-        border-radius: 50%;
-        position: absolute;
-        box-sizing: content-box;
-        border: 4px solid rgba(76, 175, 80, .5);
-    }
-    
-    .icon-fix {
-        top: 8px;
-        width: 5px;
-        left: 26px;
-        z-index: 1;
-        height: 85px;
-        position: absolute;
-        transform: rotate(-45deg);
-        background-color: #FFFFFF;
-    }
+.auth-success-modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); backdrop-filter: blur(5px); z-index: 10000; align-items: center; justify-content: center; opacity: 0; transition: opacity 0.3s; }
+.auth-success-modal.show { display: flex !important; opacity: 1; }
+.auth-success-modal .modal-content-wrapper { background: #fff; border-radius: 16px; padding: 40px; text-align: center; max-width: 400px; width: 90%; box-shadow: 0 20px 60px rgba(0,0,0,0.2); }
+.auth-success-modal h2 { color: var(--heading-color); font-size: 22px; margin: 16px 0 8px; }
+.auth-success-modal p { color: var(--default-color); font-size: 15px; margin: 0; }
+.success-checkmark { width: 64px; height: 64px; margin: 0 auto; border: 4px solid var(--accent-color); border-radius: 50%; position: relative; }
+.check-icon .icon-line { height: 4px; background: var(--accent-color); position: absolute; border-radius: 2px; }
+.icon-line.line-tip { top: 36px; left: 12px; width: 20px; transform: rotate(45deg); }
+.icon-line.line-long { top: 30px; right: 8px; width: 36px; transform: rotate(-45deg); }
 </style>
 
-<!-- Modal de succès -->
 <div id="successModal" class="auth-success-modal">
-    <div class="modal-content-wrapper">
-        <div class="success-checkmark">
-            <div class="check-icon">
-                <span class="icon-line line-tip"></span>
-                <span class="icon-line line-long"></span>
-                <div class="icon-circle"></div>
-                <div class="icon-fix"></div>
-            </div>
-        </div>
-        <h2>Connexion réussie !</h2>
-        <p>Vous allez être redirigé vers votre dashboard...</p>
-    </div>
+  <div class="modal-content-wrapper">
+    <div class="success-checkmark"><div class="check-icon"><span class="icon-line line-tip"></span><span class="icon-line line-long"></span></div></div>
+    <h2>Connexion réussie !</h2>
+    <p>Vous allez être redirigé...</p>
+  </div>
 </div>
 
 <script>
-// Validation du formulaire de connexion
 document.addEventListener('DOMContentLoaded', function() {
-    const loginForm = document.querySelector('.login-form');
-    const emailInput = document.getElementById('inputEmail');
-    const passwordInput = document.getElementById('inputPassword');
-
-    // Validation en temps réel
-    [emailInput, passwordInput].forEach(input => {
-        input.addEventListener('blur', function() {
-            validateField(this);
-        });
-
-        input.addEventListener('input', function() {
-            if (this.classList.contains('is-invalid')) {
-                validateField(this);
-            }
-        });
-    });
-
-    function validateField(field) {
-        if (field.validity.valid) {
-            field.classList.remove('is-invalid');
-            field.classList.add('is-valid');
-        } else {
-            field.classList.remove('is-valid');
-            field.classList.add('is-invalid');
-        }
-    }
-
-    // Validation à la soumission
-    loginForm.addEventListener('submit', function(event) {
-        let isValid = true;
-
-        [emailInput, passwordInput].forEach(input => {
-            validateField(input);
-            if (!input.validity.valid) {
-                isValid = false;
-            }
-        });
-
-        if (!isValid) {
-            event.preventDefault();
-            event.stopPropagation();
-        }
-
-        loginForm.classList.add('was-validated');
-    });
-
-    // Afficher le modal de succès si le paramètre success est présent
-    const urlParams = new URLSearchParams(window.location.search);
-    if (urlParams.get('success') === 'true') {
-        showSuccessModal();
-    }
+  var loginForm = document.querySelector('.login-form');
+  var emailInput = document.getElementById('inputEmail');
+  var passwordInput = document.getElementById('inputPassword');
+  function validateField(field) {
+    if (field.validity.valid) { field.classList.remove('is-invalid'); field.classList.add('is-valid'); }
+    else { field.classList.remove('is-valid'); field.classList.add('is-invalid'); }
+  }
+  [emailInput, passwordInput].forEach(function(input) {
+    input.addEventListener('blur', function() { validateField(this); });
+    input.addEventListener('input', function() { if (this.classList.contains('is-invalid')) validateField(this); });
+  });
+  loginForm.addEventListener('submit', function(e) {
+    [emailInput, passwordInput].forEach(validateField);
+    if (!emailInput.validity.valid || !passwordInput.validity.valid) { e.preventDefault(); }
+    loginForm.classList.add('was-validated');
+  });
+  if (new URLSearchParams(window.location.search).get('success') === 'true') {
+    document.getElementById('successModal').classList.add('show');
+    setTimeout(function() { window.location.href = '{{ path('app_home') }}'; }, 2000);
+  }
 });
-
-function showSuccessModal() {
-    const modal = document.getElementById('successModal');
-    modal.classList.add('show');
-    
-    // Rediriger après 2 secondes
-    setTimeout(function() {
-        window.location.href = '{{ path('app_home') }}';
-    }, 2000);
-}
 </script>
 {% endblock %}

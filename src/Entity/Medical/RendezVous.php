@@ -26,11 +26,11 @@ class RendezVous
     #[ORM\Column(enumType: StatutRendezVous::class)]
     private ?StatutRendezVous $statut = null;
 
-    #[ORM\ManyToOne]
+    #[ORM\ManyToOne(inversedBy: 'rendezVous')]
     #[ORM\JoinColumn(nullable: false)]
     private ?Medecin $medecin = null;
 
-    #[ORM\ManyToOne]
+    #[ORM\ManyToOne(inversedBy: 'rendezVous')]
     #[ORM\JoinColumn(nullable: false)]
     private ?Patient $patient = null;
 
