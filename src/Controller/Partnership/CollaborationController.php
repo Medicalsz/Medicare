@@ -22,9 +22,36 @@ class CollaborationController extends AbstractController
     #[Route('/', name: 'app_collaboration_index', methods: ['GET'])]
     public function index(CollaborationRepository $collaborationRepository, PaginatorInterface $paginator, Request $request): Response
     {
-        $query = $collaborationRepository->createQueryBuilder('c')
-            ->orderBy('c.id', 'DESC')
-            ->getQuery();
+        $search = trim((string) $request->query->get('q', ''));
+        $status = trim((string) $request->query->get('status', ''));
+        $sort = trim((string) $request->query->get('sort', 'newest'));
+        $dir = strtolower(trim((string) $request->query->get('dir', 'desc'))) === 'asc' ? 'ASC' : 'DESC';
+
+        $qb = $collaborationRepository->createQueryBuilder('c')
+            ->leftJoin('c.partner', 'p')
+            ->addSelect('p');
+
+        if ($search !== '') {
+            $qb
+                ->andWhere('LOWER(c.titre) LIKE :q OR LOWER(c.description) LIKE :q OR LOWER(p.name) LIKE :q OR LOWER(p.email) LIKE :q')
+                ->setParameter('q', '%' . mb_strtolower($search) . '%');
+        }
+
+        if ($status !== '') {
+            $qb->andWhere('c.statut = :status')->setParameter('status', $status);
+        }
+
+        $sortMap = [
+            'newest' => 'c.id',
+            'oldest' => 'c.id',
+            'title' => 'c.titre',
+            'start' => 'c.dateDebut',
+            'end' => 'c.dateFin',
+        ];
+        $sortField = $sortMap[$sort] ?? 'c.id';
+        $sortDir = $sort === 'oldest' ? 'ASC' : $dir;
+
+        $query = $qb->orderBy($sortField, $sortDir)->getQuery();
 
         $pagination = $paginator->paginate(
             $query,
@@ -48,6 +75,10 @@ class CollaborationController extends AbstractController
         return $this->render('collaboration/index.html.twig', [
             'collaborations' => $pagination,
             'expiringCollaborations' => $expiringCollaborations,
+            'q' => $search,
+            'status' => $status,
+            'sort' => $sort,
+            'dir' => strtolower($sortDir),
         ]);
     }
 

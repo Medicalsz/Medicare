@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta content="width=device-width, initial-scale=1.0" name="viewport">
+  <title>{% block title %}Medicare{% endblock %}</title>
+  <meta name="description" content="">
+  <meta name="keywords" content="">
+
+  <!-- Favicons -->
+  <link href="{{ asset('frontend/img/favicon.png') }}" rel="icon">
+  <link href="{{ asset('frontend/img/apple-touch-icon.png') }}" rel="apple-touch-icon">
+
+  <!-- Fonts -->
+  <link href="https://fonts.googleapis.com" rel="preconnect">
+  <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Ubuntu:ital,wght@0,300;0,400;0,500;0,700;1,300;1,400;1,500;1,700&display=swap" rel="stylesheet">
+
+  <!-- Vendor CSS Files -->
+  <link href="{{ asset('frontend/vendor/bootstrap/css/bootstrap.min.css') }}" rel="stylesheet">
+  <link href="{{ asset('frontend/vendor/bootstrap-icons/bootstrap-icons.css') }}" rel="stylesheet">
+  <link href="{{ asset('frontend/vendor/aos/aos.css') }}" rel="stylesheet">
+  <link href="{{ asset('frontend/vendor/glightbox/css/glightbox.min.css') }}" rel="stylesheet">
+  <link href="{{ asset('frontend/vendor/fontawesome-free/css/all.min.css') }}" rel="stylesheet">
+  <link href="{{ asset('frontend/vendor/swiper/swiper-bundle.min.css') }}" rel="stylesheet">
+
+  <!-- Main CSS File -->
+  <link href="{{ asset('frontend/css/main.css') }}" rel="stylesheet">
+
+  {% block stylesheets %}{% endblock %}
+</head>
+
+<body class="{% block body_class %}index-page{% endblock %}">
+
+  <header id="header" class="header d-flex align-items-center fixed-top">
+    <div class="container position-relative d-flex align-items-center justify-content-between">
+
+      <a href="{{ path('app_home') }}" class="logo d-flex align-items-center me-auto me-xl-0">
+        <h1 class="sitename">Medi<span>care</span></h1>
+      </a>
+
+      <nav id="navmenu" class="navmenu">
+        <ul>
+          <li><a href="{{ path('app_home') }}" {% if app.request.attributes.get('_route') == 'app_home' %}class="active"{% endif %}>Home</a></li>
+          <li><a href="{{ path('app_about') }}" {% if app.request.attributes.get('_route') == 'app_about' %}class="active"{% endif %}>About</a></li>
+          <li><a href="{{ path('app_departments') }}" {% if app.request.attributes.get('_route') starts with 'app_department' %}class="active"{% endif %}>Departments</a></li>
+          <li><a href="{{ path('app_services') }}" {% if app.request.attributes.get('_route') starts with 'app_service' %}class="active"{% endif %}>Services</a></li>
+          <li><a href="{{ path('app_doctors') }}" {% if app.request.attributes.get('_route') == 'app_doctors' %}class="active"{% endif %}>Doctors</a></li>
+          <li><a href="{{ path('app_products') }}" {% if app.request.attributes.get('_route') starts with 'app_product' %}class="active"{% endif %}>Products</a></li>
+          <li><a href="{{ path('app_front_partners') }}" {% if app.request.attributes.get('_route') == 'app_front_partners' %}class="active"{% endif %}>Partners</a></li>
+          <li><a href="{{ path('app_front_collaborations') }}" {% if app.request.attributes.get('_route') starts with 'app_front_collaboration' %}class="active"{% endif %}>Collaborations</a></li>
+          {% if app.user %}
+            <li>
+              <a href="{{ is_granted('ROLE_ADMIN') ? path('app_admin_forum_index') : path('app_user_forum_index') }}"
+                 {% if app.request.attributes.get('_route') starts with 'app_user_forum' or app.request.attributes.get('_route') starts with 'app_admin_forum' %}class="active"{% endif %}>
+                Forum
+              </a>
+            </li>
+          {% endif %}
+          <li><a href="{{ path('app_contact') }}" {% if app.request.attributes.get('_route') == 'app_contact' %}class="active"{% endif %}>Contact</a></li>
+        </ul>
+        <i class="mobile-nav-toggle d-xl-none bi bi-list"></i>
+      </nav>
+
+      {% if app.user %}
+        <a class="btn-getstarted" href="{{ path('app_logout') }}"><i class="bi bi-box-arrow-right"></i> Logout</a>
+      {% else %}
+        <a class="btn-getstarted" href="{{ path('app_login') }}"><i class="bi bi-box-arrow-in-right"></i> Login</a>
+      {% endif %}
+
+    </div>
+  </header>
+
+  <main class="main">
+    {% block body %}{% endblock %}
+  </main>
+
+  <footer id="footer" class="footer position-relative">
+    <div class="container footer-top">
+      <div class="row gy-4">
+        <div class="col-lg-4 col-md-6 footer-about">
+          <a href="{{ path('app_home') }}" class="logo d-flex align-items-center">
+            <span class="sitename">Medicare</span>
+          </a>
+          <div class="footer-contact pt-3">
+            <p>A108 Adam Street</p>
+            <p>New York, NY 535022</p>
+            <p class="mt-3"><strong>Phone:</strong> <span>+1 5589 55488 55</span></p>
+            <p><strong>Email:</strong> <span>info@example.com</span></p>
+          </div>
+          <div class="social-links d-flex mt-4">
+            <a href=""><i class="bi bi-twitter-x"></i></a>
+            <a href=""><i class="bi bi-facebook"></i></a>
+            <a href=""><i class="bi bi-instagram"></i></a>
+            <a href=""><i class="bi bi-linkedin"></i></a>
+          </div>
+        </div>
+
+        <div class="col-lg-2 col-md-3 footer-links">
+          <h4>Useful Links</h4>
+          <ul>
+            <li><a href="{{ path('app_home') }}">Home</a></li>
+            <li><a href="{{ path('app_about') }}">About us</a></li>
+            <li><a href="{{ path('app_services') }}">Services</a></li>
+            <li><a href="{{ path('app_terms') }}">Terms of service</a></li>
+            <li><a href="{{ path('app_privacy') }}">Privacy policy</a></li>
+          </ul>
+        </div>
+
+        <div class="col-lg-2 col-md-3 footer-links">
+          <h4>Our Services</h4>
+          <ul>
+            <li><a href="#">Cardiology</a></li>
+            <li><a href="#">Neurology</a></li>
+            <li><a href="#">Pediatrics</a></li>
+            <li><a href="#">Surgery</a></li>
+            <li><a href="#">Emergency</a></li>
+          </ul>
+        </div>
+
+        <div class="col-lg-2 col-md-3 footer-links">
+          <h4>Departments</h4>
+          <ul>
+            <li><a href="{{ path('app_departments') }}">All Departments</a></li>
+            <li><a href="{{ path('app_doctors') }}">Our Doctors</a></li>
+            <li><a href="{{ path('app_appointment') }}">Appointment</a></li>
+            <li><a href="{{ path('app_gallery') }}">Gallery</a></li>
+            <li><a href="{{ path('app_contact') }}">Contact</a></li>
+          </ul>
+        </div>
+
+        <div class="col-lg-2 col-md-3 footer-links">
+          <h4>Quick Links</h4>
+          <ul>
+            <li><a href="{{ path('app_faq') }}">FAQ</a></li>
+            <li><a href="{{ path('app_testimonials') }}">Testimonials</a></li>
+            <li><a href="{{ path('app_terms') }}">Terms</a></li>
+            <li><a href="{{ path('app_privacy') }}">Privacy</a></li>
+            <li><a href="{{ path('app_contact') }}">Support</a></li>
+          </ul>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="container copyright text-center mt-4">
+      <p>© <span>Copyright</span> <strong>Medicare</strong>&nbsp;<span>All Rights Reserved</span></p>
+    </div>
+
+  </footer>
+
+  <!-- Scroll Top -->
+  <a href="#" id="scroll-top" class="scroll-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
+
+  <!-- Preloader -->
+  <div id="preloader"></div>
+
+  <!-- Vendor JS Files -->
+  <script src="{{ asset('frontend/vendor/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
+  <script src="{{ asset('frontend/vendor/php-email-form/validate.js') }}"></script>
+  <script src="{{ asset('frontend/vendor/aos/aos.js') }}"></script>
+  <script src="{{ asset('frontend/vendor/glightbox/js/glightbox.min.js') }}"></script>
+  <script src="{{ asset('frontend/vendor/purecounter/purecounter_vanilla.js') }}"></script>
+  <script src="{{ asset('frontend/vendor/imagesloaded/imagesloaded.pkgd.min.js') }}"></script>
+  <script src="{{ asset('frontend/vendor/isotope-layout/isotope.pkgd.min.js') }}"></script>
+  <script src="{{ asset('frontend/vendor/swiper/swiper-bundle.min.js') }}"></script>
+
+  <!-- Main JS File -->
+  <script src="{{ asset('frontend/js/main.js') }}"></script>
+
+  {% block javascripts %}{% endblock %}
+</body>
+
+</html>

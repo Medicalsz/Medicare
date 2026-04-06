@@ -2,10 +2,7 @@
 
 namespace App\Entity;
 
-use App\Entity\Donation\Donateur;
 use App\Repository\UserRepository;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
@@ -45,14 +42,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(type: 'boolean')]
     private $isVerified = false;
 
-    #[ORM\OneToMany(mappedBy: 'user', targetEntity: Donateur::class)]
-    private Collection $donateurs;
-
-    public function __construct()
-    {
-        $this->donateurs = new ArrayCollection();
-    }
-
     public function getId(): ?int
     {
         return $this->id;
@@ -86,6 +75,15 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function getRoles(): array
     {
         $roles = $this->roles;
+
+        // A patient account must never inherit admin access, even if the DB roles were edited incorrectly.
+        if (in_array('ROLE_PATIENT', $roles, true)) {
+            $roles = array_values(array_filter(
+                $roles,
+                static fn (string $role): bool => $role !== 'ROLE_ADMIN'
+            ));
+        }
+
         // guarantee every user at least has ROLE_USER
         $roles[] = 'ROLE_USER';
 
@@ -94,7 +92,14 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function setRoles(array $roles): static
     {
-        $this->roles = $roles;
+        if (in_array('ROLE_PATIENT', $roles, true)) {
+            $roles = array_values(array_filter(
+                $roles,
+                static fn (string $role): bool => $role !== 'ROLE_ADMIN'
+            ));
+        }
+
+        $this->roles = array_values(array_unique($roles));
 
         return $this;
     }
@@ -171,33 +176,4 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    /**
-     * @return Collection<int, Donateur>
-     */
-    public function getDonateurs(): Collection
-    {
-        return $this->donateurs;
-    }
-
-    public function addDonateur(Donateur $donateur): static
-    {
-        if (!$this->donateurs->contains($donateur)) {
-            $this->donateurs->add($donateur);
-            $donateur->setUser($this);
-        }
-
-        return $this;
-    }
-
-    public function removeDonateur(Donateur $donateur): static
-    {
-        if ($this->donateurs->removeElement($donateur)) {
-            // set the owning side to null (unless already changed)
-            if ($donateur->getUser() === $this) {
-                $donateur->setUser(null);
-            }
-        }
-
-        return $this;
-    }
 }

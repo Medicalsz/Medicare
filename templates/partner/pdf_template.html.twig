@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="fr">
+<head>
+    <meta charset="utf-8">
+    <title>Partenaire #{{ partner.id }}</title>
+    <style>
+        body { font-family: DejaVu Sans, Arial, sans-serif; font-size: 12px; color: #111; }
+        .header { margin-bottom: 16px; }
+        .title { font-size: 18px; font-weight: 700; margin: 0 0 6px 0; }
+        .subtitle { font-size: 12px; color: #555; margin: 0; }
+        .box { border: 1px solid #ddd; border-radius: 6px; padding: 12px; margin-top: 12px; }
+        .row { display: table; width: 100%; }
+        .col { display: table-cell; vertical-align: top; width: 50%; padding-right: 10px; }
+        .label { color: #666; font-size: 11px; margin-bottom: 2px; }
+        .value { font-size: 12px; margin-bottom: 10px; }
+        .badge { display: inline-block; padding: 4px 8px; border-radius: 999px; background: #eef2ff; color: #3730a3; font-weight: 700; font-size: 11px; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <p class="title">Profil partenaire</p>
+        <p class="subtitle">Généré le {{ "now"|date("d/m/Y H:i") }}</p>
+    </div>
+
+    <div class="box">
+        <div class="row">
+            <div class="col">
+                <div class="label">Nom</div>
+                <div class="value"><strong>{{ partner.name }}</strong></div>
+
+                <div class="label">Type</div>
+                <div class="value">{{ partner.typePartenaire.value }}</div>
+
+                <div class="label">Statut</div>
+                <div class="value"><span class="badge">{{ partner.statut.value }}</span></div>
+
+                <div class="label">Date partenariat</div>
+                <div class="value">
+                    {% if partner.datePartenariat %}{{ partner.datePartenariat|date('d/m/Y') }}{% else %}-{% endif %}
+                </div>
+            </div>
+            <div class="col">
+                <div class="label">Email</div>
+                <div class="value">{{ partner.email }}</div>
+
+                <div class="label">Téléphone</div>
+                <div class="value">{{ partner.telephone }}</div>
+
+                <div class="label">Adresse</div>
+                <div class="value">{{ partner.adresse }}</div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+

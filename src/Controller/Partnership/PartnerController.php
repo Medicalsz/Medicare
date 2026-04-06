@@ -7,10 +7,13 @@ use App\Entity\Partnership\PartnerRating;
 use App\Form\Partnership\PartnerRatingType;
 use App\Form\Partnership\PartnerType;
 use App\Repository\Partnership\PartnerRepository;
+use Dompdf\Dompdf;
+use Dompdf\Options;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
@@ -22,9 +25,34 @@ final class PartnerController extends AbstractController
     #[Route(name: 'app_partner_index', methods: ['GET'])]
     public function index(PartnerRepository $partnerRepository, PaginatorInterface $paginator, Request $request): Response
     {
-        $query = $partnerRepository->createQueryBuilder('p')
-            ->orderBy('p.id', 'DESC')
-            ->getQuery();
+        $search = trim((string) $request->query->get('q', ''));
+        $status = trim((string) $request->query->get('status', ''));
+        $sort = trim((string) $request->query->get('sort', 'newest'));
+        $dir = strtolower(trim((string) $request->query->get('dir', 'desc'))) === 'asc' ? 'ASC' : 'DESC';
+
+        $qb = $partnerRepository->createQueryBuilder('p');
+
+        if ($search !== '') {
+            $qb
+                ->andWhere('LOWER(p.name) LIKE :q OR LOWER(p.email) LIKE :q OR p.telephone LIKE :q OR LOWER(p.adresse) LIKE :q')
+                ->setParameter('q', '%' . mb_strtolower($search) . '%');
+        }
+
+        if ($status !== '') {
+            // Enum is stored as string
+            $qb->andWhere('p.statut = :status')->setParameter('status', $status);
+        }
+
+        $sortMap = [
+            'newest' => 'p.id',
+            'oldest' => 'p.id',
+            'name' => 'p.name',
+            'date' => 'p.datePartenariat',
+        ];
+        $sortField = $sortMap[$sort] ?? 'p.id';
+        $sortDir = $sort === 'oldest' ? 'ASC' : $dir;
+
+        $query = $qb->orderBy($sortField, $sortDir)->getQuery();
 
         $pagination = $paginator->paginate(
             $query,
@@ -34,6 +62,10 @@ final class PartnerController extends AbstractController
 
         return $this->render('partner/index.html.twig', [
             'partners' => $pagination,
+            'q' => $search,
+            'status' => $status,
+            'sort' => $sort,
+            'dir' => strtolower($sortDir),
         ]);
     }
 
@@ -75,6 +107,35 @@ final class PartnerController extends AbstractController
             'partner' => $partner,
             'rating_form' => $ratingForm->createView(),
         ]);
+    }
+
+    #[Route('/{id}/pdf', name: 'app_partner_pdf', methods: ['GET'])]
+    public function exportPdf(Partner $partner): Response
+    {
+        $pdfOptions = new Options();
+        $pdfOptions->set('defaultFont', 'DejaVu Sans');
+
+        $dompdf = new Dompdf($pdfOptions);
+
+        $html = $this->renderView('partner/pdf_template.html.twig', [
+            'partner' => $partner,
+        ]);
+
+        $dompdf->loadHtml($html);
+        $dompdf->setPaper('A4', 'portrait');
+        $dompdf->render();
+
+        $pdfOutput = $dompdf->output();
+
+        $response = new Response($pdfOutput);
+        $disposition = $response->headers->makeDisposition(
+            ResponseHeaderBag::DISPOSITION_ATTACHMENT,
+            'partner-' . $partner->getId() . '.pdf'
+        );
+        $response->headers->set('Content-Disposition', $disposition);
+        $response->headers->set('Content-Type', 'application/pdf');
+
+        return $response;
     }
 
     #[Route('/{id}/edit', name: 'app_partner_edit', methods: ['GET', 'POST'])]

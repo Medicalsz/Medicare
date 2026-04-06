@@ -1,0 +1,257 @@
+{% extends 'admin/base.html.twig' %}
+
+{% block title %}Forum - Medicare{% endblock %}
+
+{% block plugin_css %}
+    {{ parent() }}
+    <link rel="stylesheet" href="{{ asset('assets/css/forum-modern.css') }}?v=20260305-1">
+{% endblock %}
+
+{% block custom_js %}
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const menuButtons = document.querySelectorAll('.forum-modern .forum-ellipsis-btn');
+
+            const closeAllMenus = function () {
+                document.querySelectorAll('.forum-modern .dropdown-menu.show').forEach(function (menu) {
+                    menu.classList.remove('show');
+                });
+                document.querySelectorAll('.forum-modern .forum-ellipsis-btn[aria-expanded="true"]').forEach(function (btn) {
+                    btn.setAttribute('aria-expanded', 'false');
+                });
+            };
+
+            menuButtons.forEach(function (button) {
+                button.addEventListener('click', function (event) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                    const dropdown = button.closest('.dropdown');
+                    const menu = dropdown ? dropdown.querySelector('.dropdown-menu') : null;
+                    const isOpen = menu && menu.classList.contains('show');
+                    closeAllMenus();
+                    if (menu && !isOpen) {
+                        menu.classList.add('show');
+                        button.setAttribute('aria-expanded', 'true');
+                    }
+                });
+            });
+
+            document.querySelectorAll('.forum-modern .dropdown-menu').forEach(function (menu) {
+                menu.addEventListener('click', function (event) {
+                    event.stopPropagation();
+                });
+            });
+
+            document.addEventListener('click', function () {
+                closeAllMenus();
+            });
+
+            document.addEventListener('keydown', function (event) {
+                if (event.key === 'Escape') {
+                    closeAllMenus();
+                }
+            });
+        });
+    </script>
+{% endblock %}
+
+{% block content %}
+<div class="forum-modern forum-page">
+    <div class="forum-header d-flex flex-column flex-lg-row justify-content-between align-items-lg-center gap-3 mb-4">
+        <div>
+            <p class="forum-kicker mb-1">Forum Medicare</p>
+            <h1 class="page-title mb-2">Discussions de la communaute</h1>
+            <p class="page-subtitle mb-0">Posez une question, partagez une experience, aidez les autres.</p>
+        </div>
+        <a href="{{ path('app_admin_forum_new') }}" class="btn btn-primary forum-cta">
+            <i class="fas fa-plus me-2"></i>Nouveau sujet
+        </a>
+    </div>
+    <div class="forum-kind-tabs mb-3">
+        <a href="{{ path('app_admin_forum_index', {kind: 'article'}) }}" class="forum-kind-tab {{ current_kind == 'article' ? 'active' : '' }}">
+            Articles
+        </a>
+        <a href="{{ path('app_admin_forum_index', {kind: 'video'}) }}" class="forum-kind-tab {{ current_kind == 'video' ? 'active' : '' }}">
+            Videos medicales
+        </a>
+    </div>
+    <form method="get" action="{{ path('app_admin_forum_index') }}" class="forum-filter-form mb-3">
+        <input type="hidden" name="kind" value="{{ current_kind }}">
+        <div class="forum-filter-head">
+            <div class="forum-filter-title">
+                <i class="fas fa-filter"></i>
+                <span>Filtrer les sujets</span>
+            </div>
+            <small>Affinez la periode et l'ordre d'affichage</small>
+        </div>
+        <div class="row g-2 align-items-end">
+            <div class="col-md-3 forum-filter-field">
+                <label for="admin-filter-from" class="form-label mb-1"><i class="far fa-calendar-alt me-1"></i>Date debut</label>
+                <input id="admin-filter-from" type="date" name="from" class="form-control" value="{{ filters.from|default('') }}">
+            </div>
+            <div class="col-md-3 forum-filter-field">
+                <label for="admin-filter-to" class="form-label mb-1"><i class="far fa-calendar-check me-1"></i>Date fin</label>
+                <input id="admin-filter-to" type="date" name="to" class="form-control" value="{{ filters.to|default('') }}">
+            </div>
+            <div class="col-md-3 forum-filter-field">
+                <label for="admin-filter-sort" class="form-label mb-1"><i class="fas fa-sort me-1"></i>Tri</label>
+                <select id="admin-filter-sort" name="sort" class="form-select">
+                    <option value="desc" {{ (filters.sort|default('desc')) == 'desc' ? 'selected' : '' }}>Plus recent</option>
+                    <option value="asc" {{ (filters.sort|default('desc')) == 'asc' ? 'selected' : '' }}>Plus ancien</option>
+                </select>
+            </div>
+            <div class="col-md-3 forum-filter-field">
+                <label for="admin-filter-tag" class="form-label mb-1"><i class="fas fa-tag me-1"></i>Tag</label>
+                <input id="admin-filter-tag" type="text" name="tag" class="form-control" value="{{ filters.tag|default('') }}" placeholder="Ex: sport">
+            </div>
+            <div class="col-md-3 d-flex gap-2 forum-filter-actions">
+                <button type="submit" class="btn btn-primary forum-filter-apply">
+                    <i class="fas fa-search me-1"></i>Filtrer
+                </button>
+                <a href="{{ path('app_admin_forum_index', {kind: current_kind}) }}" class="btn btn-outline-secondary forum-filter-reset">
+                    <i class="fas fa-undo-alt me-1"></i>Reinitialiser
+                </a>
+            </div>
+        </div>
+    </form>
+    {% if filter_summary %}
+        <div class="forum-filter-summary mb-3">
+            <i class="fas fa-info-circle"></i>
+            <span>{{ filter_summary }}</span>
+        </div>
+    {% endif %}
+
+    {% if topics is empty %}
+        <div class="forum-empty text-center py-5">
+            <div class="forum-empty-icon mb-3"><i class="fas fa-comments"></i></div>
+            <h2 class="h4 mb-2">Aucun sujet sur cette periode</h2>
+            <p class="text-muted mb-4">Essayez d'elargir la plage de dates ou reinitialisez le filtre.</p>
+            <a href="{{ path('app_admin_forum_new') }}" class="btn btn-primary">Creer un sujet</a>
+        </div>
+    {% else %}
+        <div class="forum-topic-grid forum-showcase-grid">
+            {% for topic in topics %}
+                {% set commentsCount = topic.comments|length %}
+                {% set latestComment = commentsCount > 0 ? (topic.comments|last) : null %}
+                {% set viewsCount = topic.content|length + (commentsCount * 17) %}
+                {% set reaction = user_reaction_map[topic.id] ?? null %}
+                {% set reactionCounts = reaction_counts[topic.id] ?? {'like': 0, 'love': 0, 'total': 0} %}
+                <article class="forum-topic-card forum-showcase-card">
+                    <div class="forum-topic-card-menu dropdown">
+                        <button class="btn btn-sm btn-light forum-ellipsis-btn" type="button" aria-expanded="false">...</button>
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            <li>
+                                <form method="post" action="{{ path('app_admin_forum_report_topic', {id: topic.id}) }}">
+                                    <input type="hidden" name="_token" value="{{ csrf_token('report_topic_' ~ topic.id) }}">
+                                    <input type="hidden" name="reason" value="Sujet signale par administrateur">
+                                    <button type="submit" class="dropdown-item">Signaler</button>
+                                </form>
+                            </li>
+                            <li>
+                                <form method="post" action="{{ path('app_admin_forum_hide', {id: topic.id}) }}">
+                                    <input type="hidden" name="_token" value="{{ csrf_token('hide_topic_' ~ topic.id) }}">
+                                    <button type="submit" class="dropdown-item">Masquer</button>
+                                </form>
+                            </li>
+                            <li>
+                                <form method="post" action="{{ path('app_admin_forum_delete', {id: topic.id}) }}" onsubmit="return confirm('Supprimer ce sujet ?');">
+                                    <input type="hidden" name="_token" value="{{ csrf_token('delete_topic_' ~ topic.id) }}">
+                                    <button type="submit" class="dropdown-item text-danger">Supprimer</button>
+                                </form>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <h3 class="forum-showcase-title">
+                        {{ topic.title|slice(0, 56) }}{% if topic.title|length > 56 %}...{% endif %}
+                    </h3>
+                    {% if topic.author and 'ROLE_ADMIN' in topic.author.roles %}
+                        <span class="badge bg-dark mb-2">Sujet admin</span>
+                    {% endif %}
+                    {% if topic.isVideoType %}
+                        <span class="forum-kind-badge mb-2"><i class="fas fa-play-circle me-1"></i>Video medicale</span>
+                        {% include 'dashboard/forum/_video_player.html.twig' with {topic: topic} %}
+                    {% endif %}
+
+                    <p class="forum-showcase-excerpt">
+                        {% set preview = topic.summary ?: topic.content %}
+                        {{ preview|striptags|slice(0, 120) }}{% if preview|length > 120 %}...{% endif %}
+                    </p>
+
+                    {% if topic.tags is not empty %}
+                        <div class="d-flex flex-wrap gap-1 mb-2">
+                            {% for tag in topic.tags|slice(0, 3) %}
+                                <span class="tag-badge">{{ tag }}</span>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+
+                    <p class="forum-showcase-date">
+                        Dernier commentaire : {{ (latestComment ? latestComment.createdAt : topic.createdAt)|date('d/m/Y') }}
+                    </p>
+                    {% if topic.isHidden %}
+                        <span class="badge bg-secondary-subtle text-secondary-emphasis mb-2">Masque</span>
+                    {% endif %}
+
+                    <div class="forum-showcase-avatars">
+                        {% set shown = 0 %}
+                        {% for comment in topic.comments|reverse %}
+                            {% if shown < 3 %}
+                                <span class="forum-avatar-mini" title="{{ comment.author.prenom }} {{ comment.author.nom }}">
+                                    {{ (comment.author.prenom|first ~ comment.author.nom|first)|upper }}
+                                </span>
+                                {% set shown = shown + 1 %}
+                            {% endif %}
+                        {% endfor %}
+                        {% if shown == 0 %}
+                            <span class="forum-avatar-mini" title="{{ topic.author.prenom }} {{ topic.author.nom }}">
+                                {{ (topic.author.prenom|first ~ topic.author.nom|first)|upper }}
+                            </span>
+                        {% endif %}
+                    </div>
+
+                    <div class="forum-showcase-footer">
+                        <div class="forum-showcase-metrics">
+                            <span><i class="bi bi-eye-fill"></i>{{ viewsCount }}</span>
+                            <span><i class="bi bi-chat-left-text-fill"></i>{{ commentsCount }}</span>
+                        </div>
+                        <div class="d-flex gap-2">
+                            <a href="{{ path('app_admin_forum_show', {id: topic.id}) }}" class="btn btn-sm btn-outline-secondary forum-btn-back">
+                                <i class="bi bi-eye-fill me-2"></i>Voir
+                            </a>
+                            <a href="{{ path('app_admin_forum_show', {id: topic.id}) }}" class="btn forum-comment-btn">
+                                <i class="bi bi-reply-fill me-2"></i>Commenter
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="forum-admin-row">
+                        <a href="{{ path('app_admin_forum_edit', {id: topic.id}) }}" class="btn btn-sm btn-outline-secondary">Modifier</a>
+                    </div>
+
+                    <div class="forum-reaction-bar mt-2">
+                        <form method="post" action="{{ path('app_user_forum_react', {id: topic.id}) }}" class="d-inline">
+                            <input type="hidden" name="_token" value="{{ csrf_token('react_topic_' ~ topic.id) }}">
+                            <input type="hidden" name="type" value="like">
+                            <button type="submit" class="forum-react-btn {{ reaction == 'like' ? 'active' : '' }}">
+                                👍 J'aime <span class="count">{{ reactionCounts.like }}</span>
+                            </button>
+                        </form>
+                        <form method="post" action="{{ path('app_user_forum_react', {id: topic.id}) }}" class="d-inline">
+                            <input type="hidden" name="_token" value="{{ csrf_token('react_topic_' ~ topic.id) }}">
+                            <input type="hidden" name="type" value="love">
+                            <button type="submit" class="forum-react-btn love {{ reaction == 'love' ? 'active' : '' }}">
+                                ❤️ J'adore <span class="count">{{ reactionCounts.love }}</span>
+                            </button>
+                        </form>
+                        {% if reaction %}
+                            <span class="badge bg-dark-subtle text-dark ms-2">Reaction admin</span>
+                        {% endif %}
+                    </div>
+                </article>
+            {% endfor %}
+        </div>
+    {% endif %}
+</div>
+{% endblock %}
+

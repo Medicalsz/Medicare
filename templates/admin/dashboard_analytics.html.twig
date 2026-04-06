@@ -1,0 +1,450 @@
+{% extends 'admin/base.html.twig' %}
+
+{% block title %}Analytics Dashboard - Admin Medicare{% endblock %}
+
+{% block plugin_css %}
+<style>
+  .stat-card {
+    border: none;
+    border-radius: 12px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+    transition: transform 0.2s, box-shadow 0.2s;
+    overflow: hidden;
+  }
+  .stat-card:hover { transform: translateY(-2px); box-shadow: 0 4px 20px rgba(0,0,0,0.1); }
+  .stat-card .card-body { padding: 20px; }
+  .stat-icon {
+    width: 48px; height: 48px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+  }
+  .stat-value { font-size: 28px; font-weight: 700; color: #1e293b; margin-top: 8px; }
+  .stat-label { font-size: 13px; color: #64748b; font-weight: 500; text-transform: uppercase; letter-spacing: 0.5px; }
+  .stat-change { font-size: 12px; font-weight: 600; }
+  .stat-change.positive { color: #16a34a; }
+  .stat-change.negative { color: #dc2626; }
+  .stat-change.neutral { color: #6b7280; }
+
+  .chart-card {
+    border: none;
+    border-radius: 12px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+  }
+  .chart-card .card-body { padding: 24px; }
+  .chart-card .card-title { font-size: 16px; font-weight: 600; color: #1e293b; }
+
+  .ai-analysis-card {
+    border: none;
+    border-radius: 12px;
+    background: linear-gradient(135deg, #f8fafc, #eef2ff);
+    box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+  }
+  .ai-section { padding: 12px 16px; border-radius: 8px; margin-bottom: 12px; }
+  .ai-section h6 { font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px; }
+  .ai-section p { font-size: 14px; margin-bottom: 0; line-height: 1.6; }
+  .ai-summary { background: #dbeafe; }
+  .ai-risks { background: #fef2f2; }
+  .ai-opportunities { background: #dcfce7; }
+  .ai-recommendations { background: #fef9c3; }
+  #aiAnalysisResult { display: none; }
+  #aiAnalysisResult.visible { display: block; animation: fade-in 0.5s ease; }
+  #aiLoader { display: none; }
+  #aiLoader.active { display: flex; }
+
+  @keyframes fade-in {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .top-product-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 0;
+    border-bottom: 1px solid #f1f5f9;
+  }
+  .top-product-row:last-child { border-bottom: none; }
+  .top-product-rank {
+    width: 28px; height: 28px;
+    border-radius: 50%;
+    background: #eef2ff;
+    color: #2563eb;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 13px;
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="content-wrapper">
+  <div class="row">
+    <div class="col-12">
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+          <h3 class="fw-bold mb-1">Analytics Dashboard</h3>
+          <p class="text-muted mb-0">Business performance overview</p>
+        </div>
+        <div class="d-flex gap-2">
+          <button class="btn btn-outline-primary btn-sm" id="refreshDataBtn">
+            <i class="mdi mdi-refresh"></i> Refresh
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Stats Cards -->
+  <div class="row mb-4">
+    <div class="col-xl-3 col-md-6 mb-3">
+      <div class="card stat-card">
+        <div class="card-body">
+          <div class="d-flex justify-content-between">
+            <div class="stat-icon" style="background: #dbeafe; color: #2563eb;">
+              <i class="mdi mdi-currency-usd"></i>
+            </div>
+            <span class="stat-change {{ growthRate >= 0 ? 'positive' : 'negative' }}">
+              <i class="mdi {{ growthRate >= 0 ? 'mdi-arrow-up' : 'mdi-arrow-down' }}"></i>
+              {{ growthRate }}%
+            </span>
+          </div>
+          <div class="stat-value">${{ totalRevenue|number_format(2) }}</div>
+          <div class="stat-label">Total Revenue</div>
+        </div>
+      </div>
+    </div>
+    <div class="col-xl-3 col-md-6 mb-3">
+      <div class="card stat-card">
+        <div class="card-body">
+          <div class="d-flex justify-content-between">
+            <div class="stat-icon" style="background: #dcfce7; color: #16a34a;">
+              <i class="mdi mdi-cart-outline"></i>
+            </div>
+          </div>
+          <div class="stat-value">{{ totalOrders }}</div>
+          <div class="stat-label">Total Orders</div>
+        </div>
+      </div>
+    </div>
+    <div class="col-xl-3 col-md-6 mb-3">
+      <div class="card stat-card">
+        <div class="card-body">
+          <div class="d-flex justify-content-between">
+            <div class="stat-icon" style="background: #fef9c3; color: #ca8a04;">
+              <i class="mdi mdi-basket"></i>
+            </div>
+          </div>
+          <div class="stat-value">${{ avgBasket|number_format(2) }}</div>
+          <div class="stat-label">Average Basket</div>
+        </div>
+      </div>
+    </div>
+    <div class="col-xl-3 col-md-6 mb-3">
+      <div class="card stat-card">
+        <div class="card-body">
+          <div class="d-flex justify-content-between">
+            <div class="stat-icon" style="background: #fce7f3; color: #db2777;">
+              <i class="mdi mdi-pill"></i>
+            </div>
+          </div>
+          <div class="stat-value">{{ totalProducts }}</div>
+          <div class="stat-label">Total Products</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row mb-4">
+    <div class="col-xl-3 col-md-6 mb-3">
+      <div class="card stat-card">
+        <div class="card-body">
+          <div class="d-flex justify-content-between">
+            <div class="stat-icon" style="background: #e0e7ff; color: #4338ca;">
+              <i class="mdi mdi-handshake"></i>
+            </div>
+          </div>
+          <div class="stat-value">{{ totalPartners }}</div>
+          <div class="stat-label">Total Partners</div>
+        </div>
+      </div>
+    </div>
+    <div class="col-xl-3 col-md-6 mb-3">
+      <div class="card stat-card">
+        <div class="card-body">
+          <div class="d-flex justify-content-between">
+            <div class="stat-icon" style="background: #ccfbf1; color: #0d9488;">
+              <i class="mdi mdi-account-group"></i>
+            </div>
+          </div>
+          <div class="stat-value">{{ totalCollaborations }}</div>
+          <div class="stat-label">Active Collaborations</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Charts Row -->
+  <div class="row mb-4">
+    <div class="col-12 mb-3">
+      <div class="card ai-analysis-card">
+        <div class="card-body p-4">
+          <div class="d-flex justify-content-between align-items-center mb-3">
+            <h6 class="mb-0 fw-bold"><i class="mdi mdi-robot"></i> AI Marketing Analysis</h6>
+            <button class="btn btn-primary btn-sm" id="aiAnalyzeBtn">
+              <i class="mdi mdi-brain"></i> Analyse IA du mois
+            </button>
+          </div>
+
+          <div id="aiLoader" class="justify-content-center align-items-center p-4">
+            <div class="spinner-border text-primary" role="status">
+              <span class="visually-hidden">Analyzing...</span>
+            </div>
+            <span class="ms-3 text-muted">AI is analyzing your data...</span>
+          </div>
+
+          <div id="aiAnalysisResult">
+            <div class="ai-section ai-summary">
+              <h6><i class="mdi mdi-text-box-outline"></i> Summary</h6>
+              <p id="aiSummary"></p>
+            </div>
+            <div class="ai-section ai-risks">
+              <h6><i class="mdi mdi-alert-outline"></i> Risks</h6>
+              <p id="aiRisks"></p>
+            </div>
+            <div class="ai-section ai-opportunities">
+              <h6><i class="mdi mdi-trending-up"></i> Opportunities</h6>
+              <p id="aiOpportunities"></p>
+            </div>
+            <div class="ai-section ai-recommendations">
+              <h6><i class="mdi mdi-lightbulb-outline"></i> Recommendations</h6>
+              <p id="aiRecommendations"></p>
+            </div>
+          </div>
+
+          <p id="aiPlaceholder" class="text-muted text-center mb-0" style="font-size: 13px;">
+            Click the button to generate an AI-powered analysis of this month's performance.
+          </p>
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-8 mb-3">
+      <div class="card chart-card">
+        <div class="card-body">
+          <h5 class="card-title">Revenue by Month</h5>
+          <div style="height: 350px;">
+            <canvas id="revenueChart"></canvas>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-4 mb-3">
+      <div class="card chart-card">
+        <div class="card-body">
+          <h5 class="card-title">Top Products</h5>
+          <div style="height: 350px;">
+            <canvas id="topProductsChart"></canvas>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row mb-4">
+    <div class="col-lg-8 mb-3">
+      <div class="card chart-card">
+        <div class="card-body">
+          <h5 class="card-title">Orders by Month</h5>
+          <div style="height: 300px;">
+            <canvas id="ordersChart"></canvas>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-4 mb-3">
+      <div class="card chart-card">
+        <div class="card-body">
+          <h5 class="card-title">Top Products by Revenue</h5>
+          {% for product in topProducts %}
+          <div class="top-product-row">
+            <div class="d-flex align-items-center gap-3">
+              <div class="top-product-rank">{{ loop.index }}</div>
+              <div>
+                <div class="fw-semibold" style="font-size: 14px;">{{ product.productName }}</div>
+                <div class="text-muted" style="font-size: 12px;">{{ product.orderCount }} orders</div>
+              </div>
+            </div>
+            <span class="fw-bold text-primary">${{ product.totalRevenue|number_format(2) }}</span>
+          </div>
+          {% else %}
+          <p class="text-muted text-center py-4">No order data yet.</p>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block plugin_js %}
+<script src="{{ asset('admin/vendors/chart.js/chart.umd.js') }}"></script>
+{% endblock %}
+
+{% block custom_js %}
+<script>
+// Chart data from backend
+const monthlyRevenue = {{ monthlyRevenue|json_encode|raw }};
+const topProducts = {{ topProducts|json_encode|raw }};
+const monthlyOrders = {{ monthlyOrders|json_encode|raw }};
+
+// Revenue Chart (Bar)
+(function() {
+  const labels = monthlyRevenue.map(r => r.month).reverse();
+  const data = monthlyRevenue.map(r => r.revenue).reverse();
+
+  const ctx = document.getElementById('revenueChart');
+  if (ctx) {
+    new Chart(ctx.getContext('2d'), {
+      type: 'bar',
+      data: {
+        labels: labels,
+        datasets: [{
+          label: 'Revenue ($)',
+          data: data,
+          backgroundColor: 'rgba(37, 99, 235, 0.7)',
+          borderColor: '#2563eb',
+          borderWidth: 1,
+          borderRadius: 6,
+          barPercentage: 0.6,
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: { legend: { display: false } },
+        scales: {
+          y: { beginAtZero: true, ticks: { callback: v => '$' + v.toLocaleString() } },
+          x: { grid: { display: false } }
+        }
+      }
+    });
+  }
+})();
+
+// Top Products Chart (Doughnut)
+(function() {
+  const labels = topProducts.map(p => p.productName);
+  const data = topProducts.map(p => p.totalRevenue);
+  const colors = ['#2563eb', '#16a34a', '#eab308', '#dc2626', '#8b5cf6'];
+
+  const ctx = document.getElementById('topProductsChart');
+  if (ctx) {
+    new Chart(ctx.getContext('2d'), {
+      type: 'doughnut',
+      data: {
+        labels: labels,
+        datasets: [{
+          data: data,
+          backgroundColor: colors,
+          borderWidth: 2,
+          borderColor: '#fff',
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        cutout: '65%',
+        plugins: {
+          legend: { position: 'bottom', labels: { boxWidth: 12, padding: 12, font: { size: 11 } } }
+        }
+      }
+    });
+  }
+})();
+
+// Orders Chart (Line)
+(function() {
+  const labels = monthlyOrders.map(o => o.month).reverse();
+  const data = monthlyOrders.map(o => o.count).reverse();
+
+  const ctx = document.getElementById('ordersChart');
+  if (ctx) {
+    new Chart(ctx.getContext('2d'), {
+      type: 'line',
+      data: {
+        labels: labels,
+        datasets: [{
+          label: 'Orders',
+          data: data,
+          borderColor: '#16a34a',
+          backgroundColor: 'rgba(22, 163, 74, 0.1)',
+          fill: true,
+          tension: 0.4,
+          pointRadius: 4,
+          pointBackgroundColor: '#16a34a',
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: { legend: { display: false } },
+        scales: {
+          y: { beginAtZero: true, ticks: { stepSize: 1 } },
+          x: { grid: { display: false } }
+        }
+      }
+    });
+  }
+})();
+
+// AI Analysis
+(function() {
+  const btn = document.getElementById('aiAnalyzeBtn');
+  const loader = document.getElementById('aiLoader');
+  const result = document.getElementById('aiAnalysisResult');
+  const placeholder = document.getElementById('aiPlaceholder');
+
+  if (btn) {
+    btn.addEventListener('click', async function() {
+      btn.disabled = true;
+      btn.innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span> Analyzing...';
+      loader.classList.add('active');
+      result.classList.remove('visible');
+      placeholder.style.display = 'none';
+
+      try {
+        const response = await fetch('/admin/api/ai-analysis', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-Requested-With': 'XMLHttpRequest'
+          }
+        });
+        const data = await response.json();
+
+        document.getElementById('aiSummary').textContent = data.summary || 'N/A';
+        document.getElementById('aiRisks').textContent = data.risks || 'N/A';
+        document.getElementById('aiOpportunities').textContent = data.opportunities || 'N/A';
+        document.getElementById('aiRecommendations').textContent = data.recommendations || 'N/A';
+
+        result.classList.add('visible');
+      } catch (err) {
+        placeholder.textContent = 'Failed to generate analysis. Please try again.';
+        placeholder.style.display = 'block';
+      }
+
+      loader.classList.remove('active');
+      btn.disabled = false;
+      btn.innerHTML = '<i class="mdi mdi-brain"></i> Analyse IA du mois';
+    });
+  }
+})();
+
+// Refresh button
+document.getElementById('refreshDataBtn')?.addEventListener('click', () => location.reload());
+</script>
+{% endblock %}

@@ -1,0 +1,91 @@
+{% extends 'frontend/base.html.twig' %}
+
+{% block title %}AI Image Generator{% endblock %}
+
+{% block body %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header">
+                    <h1 class="h3">AI Image Generator</h1>
+                </div>
+                <div class="card-body">
+                    <p>Describe the image you want to create. Be as specific as you like.</p>
+                    
+                    <form id="image-generator-form">
+                        <div class="mb-3">
+                            <label for="prompt" class="form-label">Image Description (Prompt)</label>
+                            <textarea class="form-control" id="prompt" name="prompt" rows="3" required></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Generate Image</button>
+                    </form>
+
+                    <div id="image-result" class="mt-4 text-center" style="display: none;">
+                        <h2 class="h4">Generated Image</h2>
+                        <div id="loading-spinner" class="spinner-border text-primary" role="status" style="display: none;">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
+                        <img id="generated-image" src="" alt="Generated Image" class="img-fluid rounded" style="display: none; max-width: 512px;">
+                        <p id="error-message" class="text-danger mt-2" style="display: none;"></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block javascripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const form = document.getElementById('image-generator-form');
+    const promptInput = document.getElementById('prompt');
+    const resultDiv = document.getElementById('image-result');
+    const spinner = document.getElementById('loading-spinner');
+    const image = document.getElementById('generated-image');
+    const errorMessage = document.getElementById('error-message');
+
+    form.addEventListener('submit', function (e) {
+        e.preventDefault();
+        const prompt = promptInput.value.trim();
+
+        if (prompt === '') {
+            return;
+        }
+
+        // Reset UI
+        resultDiv.style.display = 'block';
+        spinner.style.display = 'block';
+        image.style.display = 'none';
+        errorMessage.style.display = 'none';
+
+        fetch('{{ path('app_image_generator_generate') }}', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-Requested-With': 'XMLHttpRequest'
+            },
+            body: JSON.stringify({ prompt: prompt })
+        })
+        .then(response => response.json())
+        .then(data => {
+            spinner.style.display = 'none';
+            if (data.imageUrl) {
+                image.src = data.imageUrl;
+                image.style.display = 'block';
+            } else {
+                errorMessage.textContent = data.error || 'An unknown error occurred.';
+                errorMessage.style.display = 'block';
+            }
+        })
+        .catch(error => {
+            spinner.style.display = 'none';
+            console.error('Error:', error);
+            errorMessage.textContent = 'Failed to connect to the server. Please try again.';
+            errorMessage.style.display = 'block';
+        });
+    });
+});
+</script>
+{% endblock %}

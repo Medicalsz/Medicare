@@ -44,23 +44,38 @@ class LoginControllerAuthenticator extends AbstractLoginFormAuthenticator
 
     public function onAuthenticationSuccess(Request $request, TokenInterface $token, string $firewallName): ?Response
     {
-        if ($targetPath = $this->getTargetPath($request->getSession(), $firewallName)) {
+        $user = $token->getUser();
+        $roles = $user->getRoles();
+        $isAdmin = in_array('ROLE_ADMIN', $roles, true);
+
+        $targetPath = $this->getTargetPath($request->getSession(), $firewallName);
+        if (is_string($targetPath) && $this->isAllowedTargetPath($targetPath, $isAdmin)) {
             return new RedirectResponse($targetPath);
         }
 
-        // Vérifier si l'utilisateur est admin
-        $user = $token->getUser();
-        if (in_array('ROLE_ADMIN', $user->getRoles(), true)) {
-            // Redirection vers le dashboard admin
-            return new RedirectResponse($this->urlGenerator->generate('app_admin_dashboard', ['login_success' => 'true']));
+        if ($isAdmin) {
+            return new RedirectResponse($this->urlGenerator->generate('admin_dashboard'));
         }
 
-        // Redirection vers la page d'accueil pour les autres rôles (patients, etc.)
+        if (in_array('ROLE_USER', $roles, true)) {
+            return new RedirectResponse($this->urlGenerator->generate('app_user_forum_index'));
+        }
+
         return new RedirectResponse($this->urlGenerator->generate('app_home', ['login_success' => 'true']));
     }
 
     protected function getLoginUrl(Request $request): string
     {
         return $this->urlGenerator->generate(self::LOGIN_ROUTE);
+    }
+
+    private function isAllowedTargetPath(string $targetPath, bool $isAdmin): bool
+    {
+        if ($isAdmin) {
+            return true;
+        }
+
+        return !str_starts_with($targetPath, '/dashboard')
+            && !str_starts_with($targetPath, '/admin');
     }
 }

@@ -1,0 +1,137 @@
+{% extends 'user/base.html.twig' %}
+
+{% block title %}Nouveau sujet - Forum{% endblock %}
+
+{% block plugin_css %}
+    {{ parent() }}
+    <link rel="stylesheet" href="{{ asset('assets/css/forum-modern.css') }}?v=20260220-2">
+{% endblock %}
+
+{% block custom_js %}
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const typeInputs = document.querySelectorAll('input[name$="[type]"]');
+            const videoBlock = document.getElementById('video-url-block');
+            if (!typeInputs.length || !videoBlock) {
+                return;
+            }
+
+            const syncVideoBlock = function () {
+                let selectedValue = 'text';
+                typeInputs.forEach(function (input) {
+                    if (input.checked) {
+                        selectedValue = input.value;
+                    }
+                });
+                videoBlock.style.display = selectedValue === 'video' ? 'block' : 'none';
+            };
+
+            typeInputs.forEach(function (input) {
+                input.addEventListener('change', syncVideoBlock);
+            });
+
+            syncVideoBlock();
+        });
+    </script>
+{% endblock %}
+
+{% block content %}
+<div class="forum-modern forum-page forum-create-v2">
+    <div class="forum-create-glow" aria-hidden="true"></div>
+    <div class="forum-header forum-create-header d-flex flex-column flex-lg-row justify-content-between align-items-lg-center gap-3 mb-4">
+        <div>
+            <p class="forum-kicker mb-1">Forum Medicare</p>
+            <h1 class="page-title mb-2">Creer un sujet qui attire de bonnes reponses</h1>
+            <p class="page-subtitle mb-0">Un bon titre + un contexte clair = discussion utile pour toute la communaute.</p>
+        </div>
+        <a href="{{ path('app_user_forum_index') }}" class="btn btn-outline-secondary">Retour au forum</a>
+    </div>
+
+    <div class="forum-create-layout forum-create-layout-v2">
+        <section class="forum-form-card forum-create-form forum-editor-card">
+            <div class="forum-editor-head">
+                <span class="forum-editor-dot"></span>
+                <span class="forum-editor-dot"></span>
+                <span class="forum-editor-dot"></span>
+                <p class="mb-0">Nouvelle publication</p>
+            </div>
+
+            {{ form_start(form) }}
+                <div class="forum-field-block">
+                    {{ form_label(form.type, 'Type de sujet', {'label_attr': {'class': 'forum-label'}}) }}
+                    <div class="forum-type-choice">
+                        {{ form_widget(form.type) }}
+                    </div>
+                    <div class="forum-field-errors">{{ form_errors(form.type) }}</div>
+                </div>
+
+                <div class="forum-field-block">
+                    {{ form_label(form.title, 'Titre du sujet', {'label_attr': {'class': 'forum-label'}}) }}
+                    <div class="forum-field-shell">
+                        <span class="forum-field-icon"><i class="fas fa-heading"></i></span>
+                        {{ form_widget(form.title, {
+                            'attr': {
+                                'class': 'form-control forum-input forum-input-lg forum-input-neo',
+                                'placeholder': 'Ex: Comment preparer un rendez-vous medical ?'
+                            }
+                        }) }}
+                    </div>
+                    <small class="forum-input-hint">Essayez de rester court et specifique.</small>
+                    <div class="forum-field-errors">{{ form_errors(form.title) }}</div>
+                </div>
+
+                <div class="forum-field-block" id="video-url-block">
+                    {{ form_label(form.videoUrl, 'URL video', {'label_attr': {'class': 'forum-label'}}) }}
+                    <div class="forum-field-shell">
+                        <span class="forum-field-icon"><i class="fas fa-link"></i></span>
+                        {{ form_widget(form.videoUrl, {
+                            'attr': {
+                                'class': 'form-control forum-input forum-input-neo',
+                                'placeholder': 'https://www.youtube.com/watch?v=...'
+                            }
+                        }) }}
+                    </div>
+                    <small class="forum-input-hint">YouTube, Vimeo ou lien direct mp4/webm/ogg.</small>
+                    <div class="forum-field-errors">{{ form_errors(form.videoUrl) }}</div>
+                </div>
+
+                <div class="forum-field-block">
+                    {{ form_label(form.content, 'Votre message', {'label_attr': {'class': 'forum-label'}}) }}
+                    <div class="forum-field-shell forum-field-shell-lg">
+                        <span class="forum-field-icon"><i class="fas fa-pen"></i></span>
+                        {{ form_widget(form.content, {
+                            'attr': {
+                                'rows': 10,
+                                'class': 'form-control forum-textarea forum-input-neo forum-textarea-neo',
+                                'placeholder': 'Ajoutez le contexte, les symptomes, les questions precises, et ce que vous avez deja tente.'
+                            }
+                        }) }}
+                    </div>
+                    <small class="forum-input-hint">Structure conseillee: contexte, probleme, question.</small>
+                    <div class="forum-field-errors">{{ form_errors(form.content) }}</div>
+                </div>
+
+                <div class="forum-submit-row">
+                    <a href="{{ path('app_user_forum_index') }}" class="btn btn-outline-secondary">Annuler</a>
+                    <button type="submit" class="btn btn-primary forum-btn-publish">
+                        <i class="fas fa-paper-plane me-2"></i>Publier le sujet
+                    </button>
+                </div>
+            {{ form_end(form) }}
+        </section>
+
+        <aside class="forum-create-help forum-create-help-v2">
+            <h2>Checklist qualite</h2>
+            <ul class="forum-help-list forum-help-list-v2">
+                <li><i class="fas fa-check-circle"></i><span>Titre clair en une phrase.</span></li>
+                <li><i class="fas fa-check-circle"></i><span>Contexte medical utile ajoute.</span></li>
+                <li><i class="fas fa-check-circle"></i><span>Question finale bien explicite.</span></li>
+            </ul>
+            <div class="forum-help-note">
+                Les sujets bien rediges recoivent plus vite des reponses pertinentes.
+            </div>
+        </aside>
+    </div>
+</div>
+{% endblock %}
+

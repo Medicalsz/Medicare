@@ -1,8 +1,8 @@
-{% extends 'admin_base.html.twig' %}
+{% extends 'admin/base.html.twig' %}
 
 {% block title %}Gestion des Collaborations{% endblock %}
 
-{% block body %}
+{% block content %}
 <div class="container-fluid py-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <div>
@@ -13,6 +13,44 @@
             <i class="bi bi-plus-lg me-2"></i>Nouvelle Collaboration
         </a>
     </div>
+
+    <form method="get" class="card shadow-sm border-0 mb-4">
+        <div class="card-body">
+            <div class="row g-3 align-items-end">
+                <div class="col-12 col-lg-5">
+                    <label class="form-label small text-muted mb-1">Recherche</label>
+                    <div class="input-group">
+                        <span class="input-group-text bg-white"><i class="bi bi-search"></i></span>
+                        <input name="q" value="{{ q|default('') }}" class="form-control" placeholder="Titre, description, partenaire…">
+                    </div>
+                </div>
+                <div class="col-12 col-sm-6 col-lg-3">
+                    <label class="form-label small text-muted mb-1">Statut</label>
+                    <select name="status" class="form-select">
+                        <option value="">Tous</option>
+                        <option value="EN_COURS" {% if status|default('') == 'EN_COURS' %}selected{% endif %}>EN_COURS</option>
+                        <option value="EN_ATTENTE" {% if status|default('') == 'EN_ATTENTE' %}selected{% endif %}>EN_ATTENTE</option>
+                        <option value="TERMINEE" {% if status|default('') == 'TERMINEE' %}selected{% endif %}>TERMINEE</option>
+                    </select>
+                </div>
+                <div class="col-12 col-sm-6 col-lg-2">
+                    <label class="form-label small text-muted mb-1">Trier par</label>
+                    <select name="sort" class="form-select">
+                        <option value="newest" {% if sort|default('newest') == 'newest' %}selected{% endif %}>Plus récent</option>
+                        <option value="oldest" {% if sort|default('') == 'oldest' %}selected{% endif %}>Plus ancien</option>
+                        <option value="title" {% if sort|default('') == 'title' %}selected{% endif %}>Titre</option>
+                        <option value="start" {% if sort|default('') == 'start' %}selected{% endif %}>Date début</option>
+                        <option value="end" {% if sort|default('') == 'end' %}selected{% endif %}>Date fin</option>
+                    </select>
+                </div>
+                <div class="col-12 col-lg-2 d-flex gap-2">
+                    <input type="hidden" name="dir" value="{{ dir|default('desc') }}">
+                    <button class="btn btn-success w-100"><i class="bi bi-funnel me-2"></i>Appliquer</button>
+                    <a class="btn btn-outline-secondary" href="{{ path('app_collaboration_index') }}" title="Réinitialiser"><i class="bi bi-arrow-counterclockwise"></i></a>
+                </div>
+            </div>
+        </div>
+    </form>
 
     {% if expiringCollaborations is defined and expiringCollaborations|length > 0 %}
         <div class="mb-4">
@@ -39,7 +77,7 @@
         <div class="row row-cols-1 row-cols-md-2 row-cols-xxl-3 g-4">
             {% for collaboration in collaborations %}
                 <div class="col">
-                    <div class="card h-100 shadow-sm border-0 overflow-hidden transition-hover">
+                    <div class="card h-100 shadow-sm border-0 overflow-hidden transition-hover position-relative">
                         <div class="position-relative" style="height: 160px; overflow: hidden; background-color: #f8f9fa;">
                             {% if collaboration.imageName %}
                                 <img src="{{ vich_uploader_asset(collaboration, 'imageFile') }}" class="card-img-top w-100 h-100 object-fit-cover" alt="{{ collaboration.titre }}">
@@ -60,6 +98,7 @@
                         </div>
                         
                         <div class="card-body">
+                            <a href="{{ path('app_collaboration_show', {'id': collaboration.id}) }}" class="stretched-link" aria-label="Voir la collaboration"></a>
                             <div class="d-flex justify-content-between align-items-start mb-2">
                                 <h5 class="card-title fw-bold text-dark mb-0">{{ collaboration.titre }}</h5>
                                 <div class="dropdown">
@@ -82,9 +121,22 @@
                                 <p class="text-primary small mb-3">
                                     <i class="bi bi-building me-1"></i>{{ collaboration.partner.name }}
                                 </p>
-                                <a href="#" class="text-muted qr-code-trigger" data-bs-toggle="modal" data-bs-target="#qrCodeModal" data-collaboration-titre="{{ collaboration.titre }}" data-qr-code-path="{{ qr_code_data_uri(url('app_collaboration_show', {id: collaboration.id})) }}">
-                                    <i class="bi bi-qr-code-scan fs-5"></i>
-                                </a>
+                                <div class="d-flex gap-2 position-relative" style="z-index: 2;">
+                                    <a href="#" class="text-muted qr-trigger"
+                                       data-bs-toggle="modal"
+                                       data-bs-target="#qrModal"
+                                       data-qr-title="Profil collaboration"
+                                       data-qr-url="{{ absolute_url(path('app_collaboration_show', {id: collaboration.id})) }}"
+                                       title="QR Code">
+                                        <i class="bi bi-qr-code fs-5"></i>
+                                    </a>
+                                    <a href="{{ path('app_collaboration_pdf', {'id': collaboration.id}) }}" class="text-muted" title="Exporter PDF">
+                                        <i class="bi bi-file-earmark-pdf fs-5"></i>
+                                    </a>
+                                    <a href="#" class="text-muted copy-link-trigger" data-copy-url="{{ absolute_url(path('app_collaboration_show', {id: collaboration.id})) }}" title="Copier le lien">
+                                        <i class="bi bi-link-45deg copy-link-icon fs-5"></i>
+                                    </a>
+                                </div>
                             </div>
                             
                             <p class="card-text text-muted small mb-4">
@@ -125,20 +177,25 @@
     {% endif %}
 </div>
 
-<!-- Modal pour le QR Code -->
-<div class="modal fade" id="qrCodeModal" tabindex="-1" aria-labelledby="qrCodeModalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="qrCodeModalLabel">QR Code pour Collaboration</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body text-center">
-        <p id="modalCollaborationTitre" class="fw-bold"></p>
-        <img id="modalQrCodeImage" src="" alt="QR Code" class="img-fluid">
-      </div>
+<div class="modal fade" id="qrModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow">
+            <div class="modal-header">
+                <h5 class="modal-title" id="qrModalTitle">QR Code</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body text-center">
+                <div class="small text-muted mb-2" id="qrModalUrlText"></div>
+                <div class="d-flex justify-content-center">
+                    <img id="qrModalImg" alt="QR Code" style="width: 220px; height: 220px;">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Fermer</button>
+                <a class="btn btn-primary" id="qrModalOpenBtn" href="#" target="_blank" rel="noopener">Ouvrir le lien</a>
+            </div>
+        </div>
     </div>
-  </div>
 </div>
 
 <style>
@@ -152,26 +209,52 @@
     .x-small { font-size: 0.65rem; }
     .object-fit-cover { object-fit: cover; }
 </style>
+{% endblock %}
 
-{% block javascripts %}
-    {{ parent() }}
+{% block custom_js %}
     <script>
         document.addEventListener('DOMContentLoaded', function () {
-            const qrCodeModal = document.getElementById('qrCodeModal');
-            qrCodeModal.addEventListener('show.bs.modal', function (event) {
-                const trigger = event.relatedTarget;
-                const collaborationTitre = trigger.getAttribute('data-collaboration-titre');
-                const qrCodePath = trigger.getAttribute('data-qr-code-path');
-
-                const modalTitle = qrCodeModal.querySelector('.modal-title');
-                const modalCollaborationTitre = qrCodeModal.querySelector('#modalCollaborationTitre');
-                const modalQrCodeImage = qrCodeModal.querySelector('#modalQrCodeImage');
-
-                modalTitle.textContent = 'QR Code pour ' + collaborationTitre;
-                modalCollaborationTitre.textContent = collaborationTitre;
-                modalQrCodeImage.src = qrCodePath;
+            document.querySelectorAll('.copy-link-trigger').forEach(function(btn) {
+                btn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    var url = this.getAttribute('data-copy-url');
+                    if (navigator.clipboard && url) {
+                        navigator.clipboard.writeText(url).then(function() {
+                            var icon = btn.querySelector('.copy-link-icon');
+                            if (icon) { icon.classList.replace('bi-link-45deg', 'bi-check'); }
+                            setTimeout(function() {
+                                if (icon) { icon.classList.replace('bi-check', 'bi-link-45deg'); }
+                            }, 2000);
+                        });
+                    }
+                });
             });
+
+            var qrModal = document.getElementById('qrModal');
+            if (qrModal) {
+                qrModal.addEventListener('show.bs.modal', function (event) {
+                    var trigger = event.relatedTarget;
+                    if (!trigger) { return; }
+                    var url = trigger.getAttribute('data-qr-url') || '';
+                    var title = trigger.getAttribute('data-qr-title') || 'QR Code';
+
+                    var titleEl = document.getElementById('qrModalTitle');
+                    var urlTextEl = document.getElementById('qrModalUrlText');
+                    var imgEl = document.getElementById('qrModalImg');
+                    var openBtn = document.getElementById('qrModalOpenBtn');
+
+                    if (titleEl) { titleEl.textContent = title; }
+                    if (urlTextEl) { urlTextEl.textContent = url; }
+                    if (openBtn) { openBtn.setAttribute('href', url); }
+                    if (imgEl) { imgEl.removeAttribute('src'); }
+
+                    if (imgEl && url) {
+                        imgEl.alt = 'QR Code';
+                        imgEl.style.display = 'block';
+                        imgEl.src = 'https://api.qrserver.com/v1/create-qr-code/?size=220x220&margin=10&data=' + encodeURIComponent(url);
+                    }
+                });
+            }
         });
     </script>
-{% endblock %}
 {% endblock %}

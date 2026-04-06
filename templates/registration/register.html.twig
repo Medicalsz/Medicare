@@ -1,122 +1,125 @@
-{% extends 'base.html.twig' %}
+{% extends 'frontend/base.html.twig' %}
 
 {% block title %}Inscription - Medicare{% endblock %}
 
+{% block body_class %}index-page auth-page{% endblock %}
+
+{% block stylesheets %}
+  {{ parent() }}
+  {% include 'auth/_auth_styles.html.twig' %}
+{% endblock %}
+
 {% block body %}
-<a href="{{ path('app_home') }}" class="auth-page-back-btn">
-    <i class="bi bi-arrow-left"></i>
-    <span class="back-text">Retour à l'accueil</span>
-</a>
+<div class="auth-page-wrapper">
+  <div class="container">
+    <a href="{{ path('app_home') }}" class="auth-page-back-btn">
+      <i class="bi bi-arrow-left"></i>
+      <span class="back-text">Retour à l'accueil</span>
+    </a>
 
-<div class="auth-container">
-    <div class="auth-header">
+    <div class="auth-container auth-container--wide">
+      <div class="auth-header">
         <h1>Créer un compte</h1>
-        <p>Rejoignez Medicare pour prendre vos rendez-vous médicaux en ligne</p>
-    </div>
+        <p>Rejoignez Medicare pour gérer vos rendez-vous, partenariats et collaborations</p>
+      </div>
 
-    {% for flash_error in app.flashes('verify_email_error') %}
+      {% for flash_error in app.flashes('verify_email_error') %}
         <div class="alert alert-danger">{{ flash_error }}</div>
-    {% endfor %}
-
-    {% for flash_error in app.flashes('error') %}
+      {% endfor %}
+      {% for flash_error in app.flashes('error') %}
         <div class="alert alert-danger">{{ flash_error }}</div>
-    {% endfor %}
+      {% endfor %}
 
-    {{ form_start(registrationForm, {'attr': {'novalidate': 'novalidate'}}) }}
-        
+      {{ form_start(registrationForm, {'attr': {'novalidate': 'novalidate', 'class': 'auth-form'}}) }}
+
         {% if form_errors(registrationForm) %}
-            <div class="alert alert-danger">
-                {{ form_errors(registrationForm) }}
-            </div>
+          <div class="alert alert-danger form-errors">
+            {{ form_errors(registrationForm) }}
+          </div>
         {% endif %}
 
         <div class="form-row">
-            <div class="form-group">
-                {{ form_label(registrationForm.nom) }}
-                {{ form_widget(registrationForm.nom, {'attr': {'class': 'form-control'}}) }}
-                {{ form_errors(registrationForm.nom) }}
-            </div>
-            <div class="form-group">
-                {{ form_label(registrationForm.prenom) }}
-                {{ form_widget(registrationForm.prenom, {'attr': {'class': 'form-control'}}) }}
-                {{ form_errors(registrationForm.prenom) }}
-            </div>
+          <div class="form-group">
+            {{ form_label(registrationForm.nom) }}
+            {{ form_widget(registrationForm.nom, {'attr': {'class': 'form-control', 'placeholder': 'Votre nom'}}) }}
+            {{ form_errors(registrationForm.nom) }}
+          </div>
+          <div class="form-group">
+            {{ form_label(registrationForm.prenom) }}
+            {{ form_widget(registrationForm.prenom, {'attr': {'class': 'form-control', 'placeholder': 'Votre prénom'}}) }}
+            {{ form_errors(registrationForm.prenom) }}
+          </div>
         </div>
 
         <div class="form-row">
-            <div class="form-group">
-                {{ form_label(registrationForm.email) }}
-                {{ form_widget(registrationForm.email, {'attr': {'class': 'form-control'}}) }}
-                {{ form_errors(registrationForm.email) }}
-            </div>
-            <div class="form-group">
-                {{ form_label(registrationForm.numero) }}
-                {{ form_widget(registrationForm.numero, {'attr': {'class': 'form-control'}}) }}
-                {{ form_errors(registrationForm.numero) }}
-            </div>
+          <div class="form-group">
+            {{ form_label(registrationForm.email) }}
+            {{ form_widget(registrationForm.email, {'attr': {'class': 'form-control', 'placeholder': 'votre.email@exemple.com'}}) }}
+            {{ form_errors(registrationForm.email) }}
+          </div>
+          <div class="form-group">
+            {{ form_label(registrationForm.numero) }}
+            {{ form_widget(registrationForm.numero, {'attr': {'class': 'form-control', 'placeholder': '+216 XX XXX XXX'}}) }}
+            {{ form_errors(registrationForm.numero) }}
+          </div>
         </div>
 
         <div class="form-row">
-            <div class="form-group">
-                {{ form_label(registrationForm.plainPassword) }}
-                {{ form_widget(registrationForm.plainPassword, {'attr': {'class': 'form-control'}}) }}
-                {{ form_errors(registrationForm.plainPassword) }}
-            </div>
-            <div class="form-group">
-                {{ form_label(registrationForm.confirmPassword) }}
-                {{ form_widget(registrationForm.confirmPassword, {'attr': {'class': 'form-control'}}) }}
-                {{ form_errors(registrationForm.confirmPassword) }}
-            </div>
+          <div class="form-group">
+            {{ form_label(registrationForm.plainPassword) }}
+            {{ form_widget(registrationForm.plainPassword, {'attr': {'class': 'form-control', 'placeholder': 'Au moins 6 caractères'}}) }}
+            {{ form_errors(registrationForm.plainPassword) }}
+          </div>
+          <div class="form-group">
+            {{ form_label(registrationForm.confirmPassword) }}
+            {{ form_widget(registrationForm.confirmPassword, {'attr': {'class': 'form-control', 'placeholder': 'Confirmez votre mot de passe'}}) }}
+            {{ form_errors(registrationForm.confirmPassword) }}
+          </div>
         </div>
 
         <div class="checkbox-group">
-            {{ form_widget(registrationForm.agreeTerms) }}
-            {{ form_label(registrationForm.agreeTerms) }}
+          {{ form_widget(registrationForm.agreeTerms) }}
+          {{ form_label(registrationForm.agreeTerms) }}
         </div>
         {{ form_errors(registrationForm.agreeTerms) }}
 
         <button type="submit" class="btn-submit">S'inscrire</button>
 
-    {{ form_end(registrationForm) }}
+      {{ form_end(registrationForm) }}
 
-    <div class="auth-footer">
+      <div class="auth-footer">
         <p>Vous avez déjà un compte ? <a href="{{ path('app_login') }}">Se connecter</a></p>
+      </div>
     </div>
+  </div>
 </div>
 
-<!-- Modal de succès -->
+<style>
+.auth-success-modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); backdrop-filter: blur(5px); z-index: 10000; align-items: center; justify-content: center; opacity: 0; transition: opacity 0.3s; }
+.auth-success-modal.show { display: flex !important; opacity: 1; }
+.auth-success-modal .modal-content-wrapper { background: #fff; border-radius: 16px; padding: 40px; text-align: center; max-width: 400px; width: 90%; box-shadow: 0 20px 60px rgba(0,0,0,0.2); }
+.auth-success-modal h2 { color: var(--heading-color); font-size: 22px; margin: 16px 0 8px; }
+.auth-success-modal p { color: var(--default-color); font-size: 15px; margin: 0; }
+.success-checkmark { width: 64px; height: 64px; margin: 0 auto; border: 4px solid var(--accent-color); border-radius: 50%; position: relative; }
+.check-icon .icon-line { height: 4px; background: var(--accent-color); position: absolute; border-radius: 2px; }
+.icon-line.line-tip { top: 36px; left: 12px; width: 20px; transform: rotate(45deg); }
+.icon-line.line-long { top: 30px; right: 8px; width: 36px; transform: rotate(-45deg); }
+</style>
+
 <div id="successModal" class="auth-success-modal">
-    <div class="modal-content-wrapper">
-        <div class="success-checkmark">
-            <div class="check-icon">
-                <span class="icon-line line-tip"></span>
-                <span class="icon-line line-long"></span>
-                <div class="icon-circle"></div>
-                <div class="icon-fix"></div>
-            </div>
-        </div>
-        <h2>Inscription réussie !</h2>
-        <p>Votre compte a été créé avec succès.<br>Vous allez être redirigé vers la page de connexion...</p>
-    </div>
+  <div class="modal-content-wrapper">
+    <div class="success-checkmark"><div class="check-icon"><span class="icon-line line-tip"></span><span class="icon-line line-long"></span></div></div>
+    <h2>Inscription réussie !</h2>
+    <p>Votre compte a été créé. Vous allez être redirigé vers la page de connexion...</p>
+  </div>
 </div>
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    // Vérifier si on vient de s'inscrire (basé sur l'URL ou un paramètre)
-    const urlParams = new URLSearchParams(window.location.search);
-    if (urlParams.get('registered') === 'success') {
-        showSuccessModal();
-    }
+  if (new URLSearchParams(window.location.search).get('registered') === 'success') {
+    document.getElementById('successModal').classList.add('show');
+    setTimeout(function() { window.location.href = '{{ path('app_login') }}'; }, 3000);
+  }
 });
-
-function showSuccessModal() {
-    const modal = document.getElementById('successModal');
-    modal.classList.add('show');
-    
-    // Rediriger après 3 secondes
-    setTimeout(function() {
-        window.location.href = '{{ path('app_login') }}';
-    }, 3000);
-}
 </script>
 {% endblock %}

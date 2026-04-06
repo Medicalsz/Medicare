@@ -33,8 +33,15 @@ class PartnerController extends AbstractController
     #[Route('/api/partners/{id}/suggest-collaboration', name: 'app_api_partner_suggest_collaboration', methods: ['POST'])]
     public function suggestCollaboration(Partner $partner, AiSuggestionService $aiSuggestionService): JsonResponse
     {
-        $suggestions = $aiSuggestionService->getSuggestions($partner);
+        $result = $aiSuggestionService->getSuggestions($partner);
 
-        return new JsonResponse(['suggestions' => $suggestions]);
+        return new JsonResponse(
+            [
+                'suggestions' => $result['suggestions'] ?? [],
+                'error' => $result['error'] ?? null,
+                'retry_after' => $result['retry_after'] ?? null,
+            ],
+            (int) ($result['status'] ?? 200)
+        );
     }
 }

@@ -37,4 +37,18 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         $this->getEntityManager()->persist($user);
         $this->getEntityManager()->flush();
     }
+
+    /**
+     * Recipients for forum notifications.
+     *
+     * @return User[]
+     */
+    public function findAllRecipients(): array
+    {
+        // Keep it simple: notify all users. NotificationService will skip the author.
+        return $this->createQueryBuilder('u')
+            ->orderBy('u.id', 'ASC')
+            ->getQuery()
+            ->getResult();
+    }
 }

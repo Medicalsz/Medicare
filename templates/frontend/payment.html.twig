@@ -1,0 +1,188 @@
+{% extends 'frontend/base.html.twig' %}
+
+{% block title %}Payment - Medicare{% endblock %}
+{% block body_class %}payment-page{% endblock %}
+
+{% block stylesheets %}
+<style>
+  .payment-card { border: none; box-shadow: 0 4px 24px rgba(0,0,0,0.08); border-radius: 12px; }
+  #card-element {
+    padding: 12px;
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+    background: white;
+    transition: border-color 0.2s;
+  }
+  #card-element.StripeElement--focus { border-color: #2563eb; box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1); }
+  #card-element.StripeElement--invalid { border-color: #dc3545; }
+  #card-errors { color: #dc3545; font-size: 13px; margin-top: 8px; min-height: 20px; }
+  .pay-btn {
+    background: linear-gradient(135deg, #2563eb, #1e40af);
+    border: none;
+    padding: 12px 32px;
+    font-size: 16px;
+    font-weight: 600;
+    border-radius: 8px;
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+  .pay-btn:hover { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(37, 99, 235, 0.4); }
+  .pay-btn:disabled { opacity: 0.7; transform: none; }
+  .payment-loader {
+    display: none;
+    text-align: center;
+    padding: 20px;
+  }
+  .payment-loader.active { display: block; }
+  .spinner-border-custom { width: 2rem; height: 2rem; color: #2563eb; }
+  .secure-badge { font-size: 12px; color: #6b7280; }
+  .secure-badge i { color: #16a34a; }
+</style>
+{% endblock %}
+
+{% block body %}
+<div class="page-title" data-aos="fade">
+  <div class="heading">
+    <div class="container">
+      <div class="row d-flex justify-content-center text-center">
+        <div class="col-lg-8">
+          <h1>Complete Payment</h1>
+          <p class="mb-0">Order: {{ commande.commandeNumber }}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+  <nav class="breadcrumbs">
+    <div class="container">
+      <ol>
+        <li><a href="{{ path('app_home') }}">Home</a></li>
+        <li><a href="{{ path('app_products') }}">Products</a></li>
+        <li class="current">Payment</li>
+      </ol>
+    </div>
+  </nav>
+</div>
+
+<section id="payment-section" class="section">
+  <div class="container">
+    <div class="row justify-content-center">
+      <div class="col-lg-6" data-aos="fade-up">
+        <!-- Order Summary -->
+        <div class="card payment-card mb-4">
+          <div class="card-body p-4">
+            <h5 class="mb-3"><i class="bi bi-receipt"></i> Order Summary</h5>
+            <div class="d-flex justify-content-between mb-2">
+              <span class="text-muted">Product</span>
+              <span class="fw-semibold">{{ product.name }}</span>
+            </div>
+            <div class="d-flex justify-content-between mb-2">
+              <span class="text-muted">Quantity</span>
+              <span>{{ commande.quantity }}</span>
+            </div>
+            <div class="d-flex justify-content-between mb-2">
+              <span class="text-muted">Unit Price</span>
+              <span>${{ product.price|number_format(2) }}</span>
+            </div>
+            <hr>
+            <div class="d-flex justify-content-between">
+              <span class="fw-bold fs-5">Total</span>
+              <span class="fw-bold fs-5 text-primary">${{ commande.totalPrice|number_format(2) }}</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Payment Form -->
+        <div class="card payment-card">
+          <div class="card-body p-4">
+            <h5 class="mb-3"><i class="bi bi-credit-card"></i> Payment Details</h5>
+            <form id="payment-form">
+              <div class="mb-3">
+                <label class="form-label fw-semibold">Card Information</label>
+                <div id="card-element"></div>
+                <div id="card-errors" role="alert"></div>
+              </div>
+
+              <div class="payment-loader" id="paymentLoader">
+                <div class="spinner-border spinner-border-custom" role="status">
+                  <span class="visually-hidden">Processing...</span>
+                </div>
+                <p class="mt-2 text-muted">Processing your payment...</p>
+              </div>
+
+              <button type="submit" class="btn btn-primary pay-btn w-100 mt-3" id="payBtn">
+                <i class="bi bi-lock-fill"></i> Pay ${{ commande.totalPrice|number_format(2) }}
+              </button>
+
+              <div class="text-center mt-3 secure-badge">
+                <i class="bi bi-shield-check"></i> Secured by Stripe — Your data is encrypted
+              </div>
+            </form>
+          </div>
+        </div>
+
+        <div class="text-center mt-3">
+          <a href="{{ path('app_product_detail', {id: product.id}) }}" class="btn btn-outline-secondary btn-sm">
+            <i class="bi bi-arrow-left"></i> Cancel
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}
+
+{% block javascripts %}
+<script src="https://js.stripe.com/v3/"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  const stripe = Stripe('{{ stripePublicKey }}');
+  const elements = stripe.elements();
+  const cardElement = elements.create('card', {
+    style: {
+      base: {
+        fontSize: '16px',
+        color: '#333',
+        '::placeholder': { color: '#9ca3af' },
+      },
+      invalid: { color: '#dc3545' },
+    },
+  });
+  cardElement.mount('#card-element');
+
+  const form = document.getElementById('payment-form');
+  const payBtn = document.getElementById('payBtn');
+  const loader = document.getElementById('paymentLoader');
+  const errorDiv = document.getElementById('card-errors');
+  const clientSecret = '{{ clientSecret }}';
+
+  cardElement.on('change', function(event) {
+    errorDiv.textContent = event.error ? event.error.message : '';
+  });
+
+  form.addEventListener('submit', async function(e) {
+    e.preventDefault();
+    payBtn.disabled = true;
+    payBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span> Processing...';
+    loader.classList.add('active');
+
+    const { paymentIntent, error } = await stripe.confirmCardPayment(clientSecret, {
+      payment_method: { card: cardElement },
+    });
+
+    if (error) {
+      errorDiv.textContent = error.message;
+      payBtn.disabled = false;
+      payBtn.innerHTML = '<i class="bi bi-lock-fill"></i> Pay ${{ commande.totalPrice|number_format(2) }}';
+      loader.classList.remove('active');
+    } else if (paymentIntent.status === 'succeeded') {
+      // Save PI ID and redirect
+      await fetch('/order/{{ commande.id }}/payment-success', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ payment_intent_id: paymentIntent.id }),
+      });
+      window.location.href = '/order/{{ commande.id }}/confirmation';
+    }
+  });
+});
+</script>
+{% endblock %}

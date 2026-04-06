@@ -1,0 +1,56 @@
+{% extends 'admin/base.html.twig' %}
+
+{% block title %}Commande {{ commande.commandeNumber }} - Details{% endblock %}
+
+{% block content %}
+<div class="row">
+  <div class="col-lg-12 grid-margin stretch-card">
+    <div class="card">
+      <div class="card-body">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+          <h4 class="card-title mb-0">Commande Details</h4>
+          <div>
+            {% if commande.status == 'PAID' %}
+            <a href="{{ path('app_order_invoice', {id: commande.id}) }}" class="btn btn-info btn-sm">
+              <i class="mdi mdi-file-pdf-box"></i> Download Invoice
+            </a>
+            {% endif %}
+            <a href="{{ path('admin_commande_edit', {id: commande.id}) }}" class="btn btn-warning btn-sm">
+              <i class="mdi mdi-pencil"></i> Edit
+            </a>
+            <a href="{{ path('admin_commande_index') }}" class="btn btn-outline-secondary btn-sm">
+              <i class="mdi mdi-arrow-left"></i> Back to List
+            </a>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-md-6">
+            <table class="table table-borderless">
+              <tr><th width="40%">Commande Number</th><td><code>{{ commande.commandeNumber }}</code></td></tr>
+              <tr><th>Product</th><td>
+                {% if commande.product %}
+                  <a href="{{ path('admin_product_show', {id: commande.product.id}) }}">{{ commande.product.name }}</a>
+                {% else %}
+                  N/A
+                {% endif %}
+              </td></tr>
+              <tr><th>Quantity</th><td>{{ commande.quantity }}</td></tr>
+              <tr><th>Total Price</th><td><strong>${{ commande.totalPrice|number_format(2) }}</strong></td></tr>
+              <tr><th>Status</th><td><span class="badge {{ commande.statusBadgeClass }}">{{ commande.status }}</span></td></tr>
+            </table>
+          </div>
+          <div class="col-md-6">
+            <table class="table table-borderless">
+              <tr><th width="40%">Commande Date</th><td>{{ commande.commandeDate ? commande.commandeDate|date('Y-m-d H:i') : 'N/A' }}</td></tr>
+              <tr><th>Delivery Date</th><td>{{ commande.deliveryDate ? commande.deliveryDate|date('Y-m-d H:i') : 'Not set' }}</td></tr>
+              <tr><th>Created</th><td>{{ commande.createdAt|date('Y-m-d H:i') }}</td></tr>
+              <tr><th>Notes</th><td>{{ commande.notes ?? 'No notes' }}</td></tr>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

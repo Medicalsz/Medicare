@@ -1,0 +1,83 @@
+{% extends 'frontend/base.html.twig' %}
+
+{% block title %}Products - Medicare{% endblock %}
+{% block body_class %}products-page{% endblock %}
+
+{% block body %}
+<!-- Page Title -->
+<div class="page-title" data-aos="fade">
+  <div class="heading">
+    <div class="container">
+      <div class="row d-flex justify-content-center text-center">
+        <div class="col-lg-8">
+          <h1>Our Products</h1>
+          <p class="mb-0">Browse our medical products and place your order online.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+  <nav class="breadcrumbs">
+    <div class="container">
+      <ol>
+        <li><a href="{{ path('app_home') }}">Home</a></li>
+        <li class="current">Products</li>
+      </ol>
+    </div>
+  </nav>
+</div>
+
+<section id="products" class="section">
+  <div class="container">
+
+    {% for message in app.flashes('success') %}
+      <div class="alert alert-success alert-dismissible fade show" role="alert">
+        {{ message }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+      </div>
+    {% endfor %}
+
+    <div class="row gy-4">
+      {% for product in products %}
+      <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="{{ loop.index * 100 }}">
+        <div class="card h-100 shadow-sm border-0">
+          <div class="card-body">
+            <div class="d-flex justify-content-between align-items-start mb-2">
+              <span class="badge {{ product.type.badgeClass }}">{{ product.type.label }}</span>
+              <span class="text-primary fw-bold fs-5">${{ product.price|number_format(2) }}</span>
+            </div>
+            <h5 class="card-title mt-2">{{ product.name }}</h5>
+            <p class="card-text text-muted small">{{ product.description|length > 120 ? product.description|slice(0, 120) ~ '...' : product.description }}</p>
+            {% if product.dosage %}
+              <p class="mb-1"><small><strong>Dosage:</strong> {{ product.dosage }}</small></p>
+            {% endif %}
+            <p class="mb-2"><small><strong>SKU:</strong> {{ product.sku }}</small></p>
+            <p class="mb-3">
+              {% if product.quantity > 0 %}
+                <span class="badge bg-success">In Stock ({{ product.quantity }})</span>
+              {% else %}
+                <span class="badge bg-danger">Out of Stock</span>
+              {% endif %}
+            </p>
+            <div class="d-flex gap-2">
+              <a href="{{ path('app_product_detail', {id: product.id}) }}" class="btn btn-outline-primary btn-sm">
+                <i class="bi bi-eye"></i> View Details
+              </a>
+              {% if product.quantity > 0 %}
+              <a href="{{ path('app_product_order', {id: product.id}) }}" class="btn btn-primary btn-sm">
+                <i class="bi bi-cart-plus"></i> Order Now
+              </a>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+      </div>
+      {% else %}
+      <div class="col-12 text-center py-5">
+        <p class="text-muted">No products available at the moment.</p>
+      </div>
+      {% endfor %}
+    </div>
+
+  </div>
+</section>
+{% endblock %}
