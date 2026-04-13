@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.VBox?>
+
+<ScrollPane fitToWidth="true" style="-fx-background-color: transparent; -fx-background: transparent;"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="com.medicare.controllers.ForumListController">
+    <content>
+        <VBox spacing="18" style="-fx-background-color: transparent;">
+            <padding>
+                <Insets top="16" right="18" bottom="18" left="18"/>
+            </padding>
+
+            <HBox alignment="CENTER_LEFT" spacing="12">
+                <VBox spacing="4">
+                    <Label text="Forum Medicare"
+                           style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: #f97316;"/>
+                    <Label fx:id="headerStatsLabel" text="0 sujet visible"
+                           style="-fx-font-size: 12px; -fx-text-fill: #64748b;"/>
+                </VBox>
+                <Region HBox.hgrow="ALWAYS"/>
+                <Button fx:id="moderationButton" text="Moderation" onAction="#onModerationClick"
+                        visible="false" managed="false"
+                        style="-fx-background-color: #fef3c7; -fx-text-fill: #b45309; -fx-font-size: 14px; -fx-font-weight: bold; -fx-background-radius: 10; -fx-cursor: hand; -fx-padding: 10 18;"/>
+                <Button fx:id="addButton" text="Ajouter un sujet" onAction="#onAddTopicClick"
+                        style="-fx-background-color: #f97316; -fx-text-fill: white; -fx-font-size: 14px; -fx-font-weight: bold; -fx-background-radius: 10; -fx-cursor: hand; -fx-padding: 10 18;"/>
+            </HBox>
+
+            <HBox spacing="12" alignment="CENTER_LEFT"
+                  style="-fx-background-color: white; -fx-background-radius: 14; -fx-effect: dropshadow(gaussian, rgba(15,23,42,0.05), 12, 0, 0, 2);">
+                <padding>
+                    <Insets top="14" right="16" bottom="14" left="16"/>
+                </padding>
+                <TextField fx:id="searchField" promptText="Rechercher un sujet, un tag ou un auteur..."
+                           prefHeight="40" HBox.hgrow="ALWAYS"
+                           style="-fx-background-radius: 10; -fx-font-size: 13px;"/>
+                <ComboBox fx:id="typeFilterCombo" prefWidth="150" prefHeight="40"
+                          style="-fx-background-radius: 10; -fx-font-size: 13px;"/>
+                <CheckBox fx:id="showHiddenCheckBox" text="Inclure les sujets masques"
+                          visible="false" managed="false"
+                          style="-fx-text-fill: #475569; -fx-font-size: 12px;"/>
+            </HBox>
+
+            <Label fx:id="errorLabel" text=""
+                   style="-fx-text-fill: #dc2626; -fx-font-size: 13px;"/>
+
+            <Label fx:id="emptyLabel" text="Aucun sujet ne correspond a votre recherche."
+                   managed="false" visible="false"
+                   style="-fx-text-fill: #64748b; -fx-font-size: 14px; -fx-padding: 10 4;"/>
+
+            <VBox fx:id="topicsContainer" spacing="14"/>
+        </VBox>
+    </content>
+</ScrollPane>
